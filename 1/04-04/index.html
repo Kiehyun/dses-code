@@ -3,25 +3,25 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
 <h1>IV-04. 대기 중의 수증기량</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/04-04/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 70.</h2><pre><code># 프로젝트(자료 저장) 폴더 생성 — 공통 함수 사용
-proj_dir = du.make_project_dir(du.current_notebook_name() or &quot;04_04_Water_Vapor_in_the_Atmosphere&quot;)
-from pathlib import Path</code></pre>
-<h2>code 71.</h2><pre><code>fname = &quot;SURFACE_ASOS_116_MI_2019-08_2019-08_2019.csv&quot;
+<p class="jump"><a href="#code-66">66</a> <a href="#code-67">67</a> <a href="#code-68">68</a> <a href="#code-69">69</a> <a href="#code-70">70</a> <a href="#code-71">71</a> <a href="#code-72">72</a> <a href="#code-73">73</a> <a href="#code-74">74</a> <a href="#code-75">75</a> <a href="#code-76">76</a> <a href="#code-77">77</a></p>
+<h2 id="code-66">code 66. <button class="copy">복사</button></h2><pre><code>fname = &quot;SURFACE_ASOS_116_MI_2019-08_2019-08_2019.csv&quot;
 fid = &quot;1NLHwhmqnikHC77DdkelYBPnpwkJv8_rb&quot;
 
-# requests 라이브러리를 이용(나의 구글드라이브에서 공유한 파일을 구글 코랩에서 사용할 경우)
+# 구글 드라이브에 공유해 둔 파일 내려받기
 from pathlib import Path
 
 du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={fid}&quot;, Path(proj_dir) / fname)</code></pre>
-<h2>code 72.</h2><pre><code>fpaths = du.list_files(proj_dir, &quot;csv&quot;)</code></pre>
-<h2>code 73.</h2><pre><code>du.preview_text(fpaths[0], n=10)</code></pre>
-<h2>code 74.</h2><pre><code>from metpy.units import units as u
+<h2 id="code-67">code 67. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;csv&quot;)</code></pre>
+<h2 id="code-68">code 68. <button class="copy">복사</button></h2><pre><code>du.preview_text(fpaths[0], n=10)</code></pre>
+<h2 id="code-69">code 69. <button class="copy">복사</button></h2><pre><code>from metpy.units import units as u
 
 # 거리(8미터)에 단위 부여
 v_distance = 8 * u.m
@@ -35,7 +35,7 @@ average_velocity = v_distance / v_time
 print(&quot;type(v_distance):{}&quot;.format(type(v_distance)))
 # 평균 속도 값과 단위 출력
 print(f&quot;average_velocity):{average_velocity:0.03f}&quot;)</code></pre>
-<h2>code 75.</h2><pre><code>import numpy as np
+<h2 id="code-70">code 70. <button class="copy">복사</button></h2><pre><code>import numpy as np
 from metpy.units import units as u
 import metpy.calc as mpcalc
 import matplotlib.pyplot as plt
@@ -71,7 +71,7 @@ plt.savefig(f&#x27;{proj_dir}/saturation_vapor_pressure_curve.pdf&#x27;, dpi=300
 print(f&quot;&#x27;saturation_vapor_pressure_curve.pdf&#x27; saved in {proj_dir}&quot;)
 # 그래프 출력
 plt.show()</code></pre>
-<h2>code 76.</h2><pre><code>import numpy as np
+<h2 id="code-71">code 71. <button class="copy">복사</button></h2><pre><code>import numpy as np
 from metpy.units import units as u
 import metpy.calc as mpcalc
 import matplotlib.pyplot as plt
@@ -119,7 +119,7 @@ ax.legend(fontsize=12)
 
 plt.tight_layout()
 plt.show()</code></pre>
-<h2>code 77.</h2><pre><code># pandas 라이브러리 불러오기
+<h2 id="code-72">code 72. <button class="copy">복사</button></h2><pre><code># pandas 라이브러리 불러오기
 import pandas as pd
 
 # CSV 파일을 데이터프레임으로 읽기
@@ -150,8 +150,8 @@ df.index = df[&#x27;dt_YmdHM-1min&#x27;]
 
 # 데이터프레임 출력
 print(f&quot;df :\n{df}&quot;)</code></pre>
-<h2>code 78.</h2><pre><code>print(&quot;df : \n&quot;, df)</code></pre>
-<h2>code 79.</h2><pre><code># 현지기압(hPa) 값을 1000으로 설정 (관측값이 없으므로 임시로 입력)
+<h2 id="code-73">code 73. <button class="copy">복사</button></h2><pre><code>print(&quot;df : \n&quot;, df)</code></pre>
+<h2 id="code-74">code 74. <button class="copy">복사</button></h2><pre><code># 현지기압(hPa) 값을 1000으로 설정 (관측값이 없으므로 임시로 입력)
 df[&#x27;현지기압(hPa)&#x27;] = 1000
 
 # 이슬점온도(°C) 계산 (기온과 상대습도를 이용)
@@ -170,7 +170,7 @@ df[&#x27;습구온도(°C)&#x27;] = mpcalc.wet_bulb_temperature(
 # 주요 컬럼(기온, 습도, 이슬점온도, 습구온도) 출력
 print(&quot;df[[&#x27;기온(°C)&#x27;, &#x27;습도(%)&#x27;, &#x27;이슬점온도(°C)&#x27;, &#x27;습구온도(°C)&#x27;]] :\n&quot;, 
       df[[&#x27;기온(°C)&#x27;, &#x27;습도(%)&#x27;, &#x27;이슬점온도(°C)&#x27;, &#x27;습구온도(°C)&#x27;]])</code></pre>
-<h2>code 80.</h2><pre><code># 혼합비(kg/kg) 계산 (현지기압, 기온, 상대습도를 이용)
+<h2 id="code-75">code 75. <button class="copy">복사</button></h2><pre><code># 혼합비(kg/kg) 계산 (현지기압, 기온, 상대습도를 이용)
 df[&#x27;혼합비(kg/kg)&#x27;] = mpcalc.mixing_ratio_from_relative_humidity(
             df[&quot;현지기압(hPa)&quot;].values * u.hPa, 
             df[&quot;기온(°C)&quot;].values * u.degC, 
@@ -192,7 +192,7 @@ df[&#x27;수증기압(hPa)&#x27;] = mpcalc.vapor_pressure(
 # 주요 컬럼(현지기압, 혼합비, 비습, 수증기압) 출력
 print(&quot;df[[&#x27;현지기압(hPa)&#x27;, &#x27;혼합비(kg/kg)&#x27;, &#x27;비습(kg/kg)&#x27;, &#x27;수증기압(hPa)&#x27;]] :\n&quot;, 
       df[[&#x27;현지기압(hPa)&#x27;, &#x27;혼합비(kg/kg)&#x27;, &#x27;비습(kg/kg)&#x27;, &#x27;수증기압(hPa)&#x27;]])</code></pre>
-<h2>code 81.</h2><pre><code># 절대습도(absolute humidity) 계산 함수
+<h2 id="code-76">code 76. <button class="copy">복사</button></h2><pre><code># 절대습도(absolute humidity) 계산 함수
 # e: 수증기압(hPa), T: 기온(°C 또는 K)
 # 반환값: g/m^3 단위의 절대습도
 
@@ -231,6 +231,16 @@ df[&#x27;절대습도(g/m^3)&#x27;] = absolute_humidity_from_vapor_pressure(
 # 주요 컬럼(수증기압, 절대습도) 출력
 print(&quot;df[[&#x27;수증기압(hPa)&#x27;, &#x27;절대습도(g/m^3)&#x27;]] :\n&quot;, 
       df[[&#x27;수증기압(hPa)&#x27;, &#x27;절대습도(g/m^3)&#x27;]])</code></pre>
-<h2>code 82.</h2><pre><code>df.to_csv(f&quot;{proj_dir}/{fpaths[0].stem}_result.csv&quot;, index=False)
+<h2 id="code-77">code 77. <button class="copy">복사</button></h2><pre><code>df.to_csv(f&quot;{proj_dir}/{fpaths[0].stem}_result.csv&quot;, index=False)
 print(f&quot;파일 저장 완료: {proj_dir}/{fpaths[0].stem}_result.csv&quot;)</code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>

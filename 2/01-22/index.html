@@ -3,13 +3,16 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
 <h1>I-02. Miniconda와 VS Code로 작업 환경 만들기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/01-22/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 10.</h2><pre><code>import sys
+<p class="jump"><a href="#code-10">10</a> <a href="#code-11">11</a></p>
+<h2 id="code-10">code 10. <button class="copy">복사</button></h2><pre><code>import sys
 from importlib.metadata import version, PackageNotFoundError
 
 print(&quot;실행 중인 파이썬:&quot;, sys.executable)          # 경로에 envs\dses_Python 포함 여부 확인
@@ -22,7 +25,7 @@ for name in packages:
         print(f&quot;  {name:&lt;11} {version(name)}&quot;)
     except PackageNotFoundError:
         print(f&quot;  {name:&lt;11} 설치 안 됨 — conda install {name.lower()}&quot;)</code></pre>
-<h2>code 11.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-11">code 11. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 import os
 
 years = [1980, 1990, 2000, 2010, 2020, 2024]
@@ -36,4 +39,14 @@ ax.set_title(&quot;마우나로아 대기 중 CO$_2$ 연평균 농도&quot;)
 ax.grid(True, alpha=0.4)
 du.save_figure(fig, os.path.join(str(proj_dir), f&quot;{proj_dir.name}_01&quot;))
 plt.show()</code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>

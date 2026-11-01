@@ -3,48 +3,51 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
 <h1>III-07. FITS 이미지 정렬과 합성</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/03-27/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 215.</h2><pre><code># 구글 드라이브에 공유해 둔 압축 파일 받기(du.download 가 gdown 을 조용히 사용)
+<p class="jump"><a href="#code-215">215</a> <a href="#code-216">216</a> <a href="#code-217">217</a> <a href="#code-218">218</a> <a href="#code-219">219</a> <a href="#code-220">220</a> <a href="#code-221">221</a> <a href="#code-222">222</a> <a href="#code-223">223</a> <a href="#code-224">224</a> <a href="#code-225">225</a> <a href="#code-226">226</a> <a href="#code-227">227</a> <a href="#code-228">228</a> <a href="#code-229">229</a> <a href="#code-230">230</a> <a href="#code-231">231</a> <a href="#code-232">232</a> <a href="#code-233">233</a> <a href="#code-234">234</a> <a href="#code-235">235</a> <a href="#code-236">236</a> <a href="#code-237">237</a> <a href="#code-238">238</a> <a href="#code-239">239</a> <a href="#code-240">240</a> <a href="#code-241">241</a> <a href="#code-242">242</a> <a href="#code-243">243</a> <a href="#code-244">244</a></p>
+<h2 id="code-215">code 215. <button class="copy">복사</button></h2><pre><code># 구글 드라이브에 공유해 둔 압축 파일 받기(du.download 가 gdown 을 조용히 사용)
 fname = &quot;IC1848_Light_H_2017-01-16.zip&quot;
 fid = &quot;15f-qGDlbDrg3VGOexCxxNuhoGPc5sxFU&quot;
 
 du.download(f&quot;https://drive.google.com/uc?id={fid}&quot;, proj_dir / fname)</code></pre>
-<h2>code 216.</h2><pre><code>import os
+<h2 id="code-216">code 216. <button class="copy">복사</button></h2><pre><code>import os
 from pathlib import Path
 if not (proj_dir).exists():
     os.mkdir(str(proj_dir))
     print (f&quot;{str(proj_dir)} is created...&quot;)
 else : 
     print (f&quot;{str(proj_dir)} already exists...&quot;)</code></pre>
-<h2>code 217.</h2><pre><code>import shutil
+<h2 id="code-217">code 217. <button class="copy">복사</button></h2><pre><code>import shutil
 
 # 내려받은 압축 파일 찾기
 fpaths = du.list_files(proj_dir, &quot;zip&quot;)
 
 shutil.unpack_archive(str(fpaths[0]), str(proj_dir))
 print(str(fpaths[0]), &quot;is unpacked to&quot;, str(proj_dir))</code></pre>
-<h2>code 218.</h2><pre><code>fpaths = du.list_files(proj_dir, pattern=&quot;*wcs.fit*&quot;)</code></pre>
-<h2>code 219.</h2><pre><code>from astropy.io import fits
+<h2 id="code-218">code 218. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, pattern=&quot;*wcs.fit*&quot;)</code></pre>
+<h2 id="code-219">code 219. <button class="copy">복사</button></h2><pre><code>from astropy.io import fits
 
 hdul1 = fits.open(fpaths[0])
 hdul2 = fits.open(fpaths[1])
 
 print(&quot;type(hdul1): {}&quot;.format(type(hdul1)))</code></pre>
-<h2>code 220.</h2><pre><code># 밑줄로 시작하는 내부용 이름은 뺌
+<h2 id="code-220">code 220. <button class="copy">복사</button></h2><pre><code># 밑줄로 시작하는 내부용 이름은 뺌
 print([name for name in dir(hdul1) if not name.startswith(&#x27;_&#x27;)])</code></pre>
-<h2>code 221.</h2><pre><code>print(&quot;hdul1.info(): {}&quot;.format(hdul1.info()))</code></pre>
-<h2>code 222.</h2><pre><code>print(&quot;type(hdul1[0].data): {}&quot;.format(type(hdul1[0].data)))
+<h2 id="code-221">code 221. <button class="copy">복사</button></h2><pre><code>print(&quot;hdul1.info(): {}&quot;.format(hdul1.info()))</code></pre>
+<h2 id="code-222">code 222. <button class="copy">복사</button></h2><pre><code>print(&quot;type(hdul1[0].data): {}&quot;.format(type(hdul1[0].data)))
 print(&quot;hdul1[0].data.dtype: {}&quot;.format(hdul1[0].data.dtype))
 print(&quot;hdul1[0].data.shape: {}&quot;.format(hdul1[0].data.shape))
 print(&quot;hdul2[0].data.shape: {}&quot;.format(hdul2[0].data.shape))
 
 print(&quot;hdul1[0].data:\n {}&quot;.format(hdul1[0].data))</code></pre>
-<h2>code 223.</h2><pre><code>import numpy as np
+<h2 id="code-223">code 223. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
 # 서브플롯에 쓸 제목과 이미지 정의
@@ -68,7 +71,7 @@ fig.colorbar(im, cax=cbar_ax)
 
 plt.suptitle(&#x27;IC1848 images&#x27;, fontsize=12)
 plt.show()</code></pre>
-<h2>code 224.</h2><pre><code>import numpy as np
+<h2 id="code-224">code 224. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
 # 서브플롯에 쓸 제목과 이미지 정의
@@ -93,7 +96,7 @@ fig.colorbar(im, cax=cbar_ax)
 
 plt.suptitle(&#x27;IC1848 images [:100, :100]&#x27;, fontsize=12)
 plt.show()</code></pre>
-<h2>code 225.</h2><pre><code>import numpy as np
+<h2 id="code-225">code 225. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import astroalign as aa
 
 # 데이터를 리틀엔디언 형식으로 변환
@@ -106,7 +109,7 @@ registered_image2, footprint2 = aa.register(target_data, source_data)
 
 print(type(registered_image1))
 print(type(footprint1))</code></pre>
-<h2>code 226.</h2><pre><code>import numpy as np
+<h2 id="code-226">code 226. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
 fig, axes = plt.subplots(2, 2, figsize=(7.5, 7))
@@ -139,7 +142,7 @@ fig.colorbar(im, cax=cbar_ax)
 
 plt.suptitle(&#x27;IC1848 images [:100, :100]&#x27;, fontsize=13)
 plt.show()</code></pre>
-<h2>code 227.</h2><pre><code>import numpy as np
+<h2 id="code-227">code 227. <button class="copy">복사</button></h2><pre><code>import numpy as np
 from astropy.io import fits
 
 def save_aligned(fname, data, ref_header):
@@ -153,8 +156,8 @@ def save_aligned(fname, data, ref_header):
 save_aligned(f&quot;{fpaths[1].parent/fpaths[1].stem}_aligned.fit&quot;, registered_image1, hdul1[0].header)
 # 2nd 영상에 맞춘 1st 영상
 save_aligned(f&quot;{fpaths[0].parent/fpaths[0].stem}_aligned.fit&quot;, registered_image2, hdul2[0].header)</code></pre>
-<h2>code 228.</h2><pre><code>aligned_list = du.list_files(proj_dir, pattern=&quot;*_aligned.fit&quot;)</code></pre>
-<h2>code 229.</h2><pre><code>from astropy.io import fits
+<h2 id="code-228">code 228. <button class="copy">복사</button></h2><pre><code>aligned_list = du.list_files(proj_dir, pattern=&quot;*_aligned.fit&quot;)</code></pre>
+<h2 id="code-229">code 229. <button class="copy">복사</button></h2><pre><code>from astropy.io import fits
 
 hdul3 = fits.open(f&quot;{fpaths[0].parent/fpaths[0].stem}_aligned.fit&quot;)
 hdul4 = fits.open(f&quot;{fpaths[1].parent/fpaths[1].stem}_aligned.fit&quot;)
@@ -181,7 +184,7 @@ fig.colorbar(im, cax=cbar_ax)
 
 plt.suptitle(&#x27;IC1848 images&#x27;, fontsize=12)
 plt.show()</code></pre>
-<h2>code 230.</h2><pre><code>from astropy.io import fits
+<h2 id="code-230">code 230. <button class="copy">복사</button></h2><pre><code>from astropy.io import fits
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -212,7 +215,7 @@ plt.suptitle(&#x27;IC1848 images [:100, :100]&#x27;, fontsize=12)
 #fig.tight_layout()
 
 plt.show()</code></pre>
-<h2>code 231.</h2><pre><code>from astropy.io import fits
+<h2 id="code-231">code 231. <button class="copy">복사</button></h2><pre><code>from astropy.io import fits
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -250,7 +253,7 @@ fig.colorbar(im, cax=cbar_ax)
 
 plt.suptitle(&#x27;IC1848 images [:100, :100]&#x27;, fontsize=13)
 plt.show()</code></pre>
-<h2>code 232.</h2><pre><code>from astropy.io import fits
+<h2 id="code-232">code 232. <button class="copy">복사</button></h2><pre><code>from astropy.io import fits
 
 hduls_data = []
 for fpath in fpaths : 
@@ -278,7 +281,7 @@ fig.colorbar(im, ax=axs.tolist(), shrink=0.6, pad=0.02)
 plt.suptitle(&#x27;IC1848 images&#x27;, fontsize=13)
 
 plt.show()</code></pre>
-<h2>code 233.</h2><pre><code>import numpy as np
+<h2 id="code-233">code 233. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import astroalign as aa
 
 r = 0 # 기준 이미지 번호
@@ -318,7 +321,7 @@ fig.colorbar(im, ax=axs.tolist(), shrink=0.6, pad=0.02)
 plt.suptitle(&#x27;IC1848 images (aligned)&#x27;, fontsize=13)
 
 plt.show()</code></pre>
-<h2>code 234.</h2><pre><code>import numpy as np
+<h2 id="code-234">code 234. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
 fig, axs = plt.subplots(4, 3, figsize=(6.2, 7.0), constrained_layout=True)   # 영상 10장
@@ -339,7 +342,7 @@ fig.colorbar(im, ax=axs.tolist(), shrink=0.6, pad=0.02)
 plt.suptitle(&#x27;IC1848 images [:100, :100] (aligned)&#x27;, fontsize=13)
 
 plt.show()</code></pre>
-<h2>code 235.</h2><pre><code>def centroid(img, x, y, half=5):
+<h2 id="code-235">code 235. <button class="copy">복사</button></h2><pre><code>def centroid(img, x, y, half=5):
     &quot;&quot;&quot;(x, y) 주변 상자에서 밝기 가중 평균으로 별의 중심을 구함&quot;&quot;&quot;
     xi, yi = int(round(x)), int(round(y))
     cut = np.asarray(img[yi-half:yi+half+1, xi-half:xi+half+1], dtype=float)
@@ -361,7 +364,7 @@ for i in range(len(hduls_data)):
     before = np.median(np.hypot(*(raw_c - ref_c).T))
     after = np.median(np.hypot(*(ali_c - ref_c).T))
     print(f&quot;image({i}): 정렬 전 {before:5.2f} px  -&gt;  정렬 후 {after:5.2f} px&quot;)</code></pre>
-<h2>code 236.</h2><pre><code>import os
+<h2 id="code-236">code 236. <button class="copy">복사</button></h2><pre><code>import os
 from pathlib import Path
 if not (proj_dir).exists():
     os.mkdir(str(proj_dir))
@@ -375,7 +378,7 @@ np_average = np.mean(aligned_hduls_data, axis=0)
 np_median = np.median(aligned_hduls_data, axis=0)
 print(&quot;np_average.shape:&quot;, np_average.shape)
 print(&quot;np_median.shape:&quot;, np_median.shape)</code></pre>
-<h2>code 237.</h2><pre><code>import numpy as np
+<h2 id="code-237">code 237. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
 # 그림과 서브플롯 만들기
@@ -399,7 +402,7 @@ fig.colorbar(im, cax=cbar_ax)
 
 plt.suptitle(&#x27;IC1848 images&#x27;, fontsize=12)
 plt.show()</code></pre>
-<h2>code 238.</h2><pre><code>import numpy as np
+<h2 id="code-238">code 238. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
 fig = plt.figure(figsize=(7.5, 4.7))
@@ -429,7 +432,7 @@ plt.suptitle(&#x27;IC1848 images [:100, :100]&#x27;, fontsize=12)
 #fig.tight_layout()
 
 plt.show()</code></pre>
-<h2>code 239.</h2><pre><code>import numpy as np
+<h2 id="code-239">code 239. <button class="copy">복사</button></h2><pre><code>import numpy as np
 from astropy.nddata import CCDData
 from astropy.stats import mad_std
 
@@ -459,13 +462,13 @@ print(type(combined_light_avg_sigma_False))
 print(type(combined_light_avg_sigma_True))
 print(type(combined_light_med_sigma_False))
 print(type(combined_light_med_sigma_True))</code></pre>
-<h2>code 240.</h2><pre><code>print(&quot;type(combined_light_avg_sigma_False): {}&quot;.format(type(combined_light_avg_sigma_False)))
+<h2 id="code-240">code 240. <button class="copy">복사</button></h2><pre><code>print(&quot;type(combined_light_avg_sigma_False): {}&quot;.format(type(combined_light_avg_sigma_False)))
 print(&quot;combined_light_avg_sigma_False.shape: {}&quot;.format(combined_light_avg_sigma_False.shape))
 print(&quot;combined_light_avg_sigma_False: {}&quot;.format(combined_light_avg_sigma_False))</code></pre>
-<h2>code 241.</h2><pre><code>out_path = proj_dir / &quot;IC1848_combined.fit&quot;
+<h2 id="code-241">code 241. <button class="copy">복사</button></h2><pre><code>out_path = proj_dir / &quot;IC1848_combined.fit&quot;
 combined_light_avg_sigma_True.write(out_path, overwrite=True)
 print(out_path.name, &quot;저장됨&quot;)</code></pre>
-<h2>code 242.</h2><pre><code>import numpy as np
+<h2 id="code-242">code 242. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
 # 그림과 서브플롯 만들기
@@ -492,7 +495,7 @@ fig.colorbar(im, cax=cbar_ax)
 
 plt.suptitle(&#x27;IC1848 images&#x27;, fontsize=12)
 plt.show()</code></pre>
-<h2>code 243.</h2><pre><code>from astropy.stats import sigma_clipped_stats
+<h2 id="code-243">code 243. <button class="copy">복사</button></h2><pre><code>from astropy.stats import sigma_clipped_stats
 
 box = (slice(1750, 1900), slice(3100, 3250))   # 별·성운이 거의 없는 영역 (y, x)
 N = len(aligned_hduls_data)
@@ -511,7 +514,7 @@ for name, image in results.items():
     _, med, std = sigma_clipped_stats(image[box])
     print(f&quot;{name:24s} 배경 {med:7.1f} ADU, 잡음 {std:6.1f} ADU, 1장 대비 {noise1/std:4.2f}배 감소&quot;)
 print(f&quot;이론값 sqrt(N) = {np.sqrt(N):.2f}&quot;)</code></pre>
-<h2>code 244.</h2><pre><code>from astropy.stats import sigma_clip, mad_std
+<h2 id="code-244">code 244. <button class="copy">복사</button></h2><pre><code>from astropy.stats import sigma_clip, mad_std
 
 stack = np.ma.masked_array(aligned_hduls_data, mask=footprints)   # 가장자리는 미리 가림
 clipped = sigma_clip(stack, sigma=5, axis=0,
@@ -528,4 +531,14 @@ ax.imshow(clip_mask[k], cmap=&#x27;gray_r&#x27;, interpolation=&#x27;nearest&#x2
 ax.set_title(f&#x27;clipped pixels in image({k})&#x27;, fontsize=10)
 ax.tick_params(labelsize=8)
 plt.show()</code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>

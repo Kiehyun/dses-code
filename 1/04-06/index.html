@@ -3,13 +3,16 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
 <h1>IV-06. 기상위성 천리안 이미지 RGB 합성</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/04-06/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 94.</h2><pre><code># 국가위성센터로 부터 직접 다운로드
+<p class="jump"><a href="#code-89">89</a> <a href="#code-90">90</a> <a href="#code-91">91</a> <a href="#code-92">92</a> <a href="#code-93">93</a> <a href="#code-94">94</a> <a href="#code-95">95</a> <a href="#code-96">96</a> <a href="#code-97">97</a> <a href="#code-98">98</a></p>
+<h2 id="code-89">code 89. <button class="copy">복사</button></h2><pre><code># 국가위성센터로 부터 직접 다운로드
 from pathlib import Path
 
 du.download(f&quot;http://nmsc.kma.go.kr/IMG/COMS/MI/L1/L1B/201907/10/coms_mi_le1b_vis_en010ge_201907101045.png&quot;, Path(proj_dir) / &#x27;coms_mi_le1b_vis_en010ge_201907101045.png&#x27;)
@@ -17,8 +20,8 @@ du.download(f&quot;http://nmsc.kma.go.kr/IMG/COMS/MI/L1/L1B/201907/10/coms_mi_le
 du.download(f&quot;http://nmsc.kma.go.kr/IMG/COMS/MI/L1/L1B/201907/10/coms_mi_le1b_ir02_en040ge_201907101045.png&quot;, Path(proj_dir) / &#x27;coms_mi_le1b_ir02_en040ge_201907101045.png&#x27;)
 du.download(f&quot;http://nmsc.kma.go.kr/IMG/COMS/MI/L1/L1B/201907/10/coms_mi_le1b_swir_en040ge_201907101045.png&quot;, Path(proj_dir) / &#x27;coms_mi_le1b_swir_en040ge_201907101045.png&#x27;)
 du.download(f&quot;http://nmsc.kma.go.kr/IMG/COMS/MI/L1/L1B/201907/10/coms_mi_le1b_wv_en040ge_201907101045.png&quot;, Path(proj_dir) / &#x27;coms_mi_le1b_wv_en040ge_201907101045.png&#x27;)</code></pre>
-<h2>code 95.</h2><pre><code>fpaths = du.list_files(proj_dir, &quot;png&quot;)</code></pre>
-<h2>code 96.</h2><pre><code>from PIL import Image
+<h2 id="code-90">code 90. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;png&quot;)</code></pre>
+<h2 id="code-91">code 91. <button class="copy">복사</button></h2><pre><code>from PIL import Image
 
 #RGB 각 채널에 해당하는 파일명 입력
 vis_filename = fpaths[3]
@@ -33,7 +36,7 @@ blue = Image.open(ir2_filename)
 
 print(&quot;type(red) :&quot;, type(red))  # red에 담긴 type을 출력
 print(&quot;red :&quot;, red)              # red에 담긴 자료를 출력</code></pre>
-<h2>code 97.</h2><pre><code>import numpy as np
+<h2 id="code-92">code 92. <button class="copy">복사</button></h2><pre><code>import numpy as np
 red_arr = np.array(red)                            #ndarray로 변환
 print(&quot;type(red_arr) : {}&quot;.format(type(red_arr)))  #자료형 확인
 print(red_arr.shape)                               #ndarray로 dimension 확인
@@ -50,7 +53,7 @@ redA = np.array(red)
 print(redA.shape)
 print (type(red))  # red에 담긴 type을 출력
 print (red)        # red에 담긴 자료를 출력</code></pre>
-<h2>code 98.</h2><pre><code>#package 불러오기
+<h2 id="code-93">code 93. <button class="copy">복사</button></h2><pre><code>#package 불러오기
 import matplotlib.pyplot as plt
 
 #화면에 이미지를 출력 출력
@@ -62,7 +65,7 @@ plt.imshow(red, cmap = &#x27;gray&#x27;, interpolation = &#x27;None&#x27;)
 
 plt.xticks([]), plt.yticks([])  # x, y축 눈금값 숨기기
 plt.show()</code></pre>
-<h2>code 99.</h2><pre><code># 그림 너비 15, 높이 13으로 지정
+<h2 id="code-94">code 94. <button class="copy">복사</button></h2><pre><code># 그림 너비 15, 높이 13으로 지정
 from PIL import Image
 
 print(&quot;변환 전 크기&quot;)
@@ -117,9 +120,9 @@ for ax in axes.flat:
 
 plt.tight_layout()
 plt.show()</code></pre>
-<h2>code 100.</h2><pre><code>print (&quot;red.width:{}&quot;.format(red.width))
+<h2 id="code-95">code 95. <button class="copy">복사</button></h2><pre><code>print (&quot;red.width:{}&quot;.format(red.width))
 print (&quot;red.height:{}&quot;.format(red.height))</code></pre>
-<h2>code 101.</h2><pre><code>#RGB 모드, 크기 2×1 의 빈 이미지 만들기
+<h2 id="code-96">code 96. <button class="copy">복사</button></h2><pre><code>#RGB 모드, 크기 2×1 의 빈 이미지 만들기
 new_im=Image.new(&#x27;RGB&#x27;, (red.width*2,red.height*1))
 print (type(new_im))  # new_im에 담긴 type을 출력
 
@@ -127,14 +130,14 @@ new_im.paste(red, (0, 0))
 new_im.paste(green, (green.width, 0))
 print (type(new_im))  # new_im에 담긴 type을 출력
 print (new_im)        # new_im에 담긴 자료를 출력</code></pre>
-<h2>code 102.</h2><pre><code>#RGB 모드, 크기 2×1 의 빈 이미지 만들기
+<h2 id="code-97">code 97. <button class="copy">복사</button></h2><pre><code>#RGB 모드, 크기 2×1 의 빈 이미지 만들기
 new_im=Image.new(&#x27;RGB&#x27;, (red.width*1,red.height*2))
 new_im.paste(red, (0, 0))
 new_im.paste(green, (0, green.height))
 print (type(new_im))  # new_im에 담긴 type을 출력
 print (new_im)        # new_im에 담긴 자료를 출력
 new_im                # new_im을 화면에 보여줌</code></pre>
-<h2>code 103.</h2><pre><code># 6개의 이미지를 2행 3열로 이어 붙이기
+<h2 id="code-98">code 98. <button class="copy">복사</button></h2><pre><code># 6개의 이미지를 2행 3열로 이어 붙이기
 from PIL import Image
 # 파일명 리스트 (순서: vis, ir1, ir2, swir, wv, rgb)
 img_filenames = [vis_filename, ir1_filename, ir2_filename, swir_filename, wv_filename, 
@@ -154,4 +157,14 @@ for idx, im in enumerate(images):
 new_im.save(f&quot;{proj_dir}/coms_mi_6ch_stitched.png&quot;)
 print(f&quot;{proj_dir}/coms_mi_6ch_stitched.png is created&quot;)
 display(new_im)</code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>

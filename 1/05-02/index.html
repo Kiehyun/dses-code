@@ -3,32 +3,23 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
 <h1>V-02. 세계의 지진대</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/05-02/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 14.</h2><pre><code>proj_dir = du.make_project_dir(du.current_notebook_name() or &quot;05_02_Visualizing_Global_Seismic_Belts&quot;)</code></pre>
-<h2>code 15.</h2><pre><code>import requests
-
-# 분석에 사용할 USGS GeoJSON 파일을 확인합니다.
-# 폴더에 JSON 파일이 없으면 공개 USGS feed에서 직접 다운로드합니다.
-proj_dir.mkdir(parents=True, exist_ok=True)
-
+<p class="jump"><a href="#code-12">12</a> <a href="#code-13">13</a> <a href="#code-14">14</a> <a href="#code-15">15</a> <a href="#code-16">16</a> <a href="#code-17">17</a> <a href="#code-18">18</a> <a href="#code-19">19</a> <a href="#code-20">20</a> <a href="#code-21">21</a> <a href="#code-22">22</a> <a href="#code-23">23</a></p>
+<h2 id="code-12">code 12. <button class="copy">복사</button></h2><pre><code># 분석에 사용할 USGS GeoJSON 파일을 내려받습니다(이미 있으면 건너뜀).
 usgs_feeds = {
     &quot;01_usgs_all_month.geojson&quot;: &quot;https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson&quot;,
     &quot;02_usgs_4.5_month.geojson&quot;: &quot;https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_month.geojson&quot;,
 }
 
 for filename, url in usgs_feeds.items():
-    outpath = proj_dir / filename
-    if not outpath.exists():
-        print(f&quot;다운로드 중: {url}&quot;)
-        response = requests.get(url, timeout=60)
-        response.raise_for_status()
-        outpath.write_text(response.text, encoding=&quot;utf-8&quot;)
-        print(f&quot;저장 완료: {outpath}&quot;)
+    du.download(url, proj_dir / filename)
 
 fpaths = sorted(proj_dir.glob(&quot;*.geojson&quot;)) + sorted(proj_dir.glob(&quot;*.json&quot;))
 # 같은 파일이 두 번 잡히지 않도록 중복을 제거합니다.
@@ -39,8 +30,8 @@ if len(fpaths) == 0:
 
 print(f&quot;fpaths: {fpaths}&quot;)
 print(f&quot;len(fpaths): {len(fpaths)}&quot;)</code></pre>
-<h2>code 16.</h2><pre><code>du.preview_text(fpaths[0], n=10)</code></pre>
-<h2>code 17.</h2><pre><code>import pandas as pd
+<h2 id="code-13">code 13. <button class="copy">복사</button></h2><pre><code>du.preview_text(fpaths[0], n=10)</code></pre>
+<h2 id="code-14">code 14. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 import json
 
 def earthquake_json_to_dataframe(json_path):
@@ -85,14 +76,14 @@ def earthquake_json_to_dataframe(json_path):
 df, data = earthquake_json_to_dataframe(fpaths[0])
 
 print(f&quot;파일명: {fpaths[0].name}&quot;)</code></pre>
-<h2>code 18.</h2><pre><code># 앞 셀에서 만든 DataFrame을 확인합니다.
+<h2 id="code-15">code 15. <button class="copy">복사</button></h2><pre><code># 앞 셀에서 만든 DataFrame을 확인합니다.
 # USGS GeoJSON의 properties와 geometry에서 위도, 경도, 깊이, 규모를 추출했습니다.
 print(f&quot;파일명: {fpaths[0].name}&quot;)
 print(f&quot;데이터프레임 크기: {df.shape}&quot;)
 print(f&quot;컬럼: {df.columns.tolist()}&quot;)
 print(f&quot;자료형:\n{df.dtypes}&quot;)
 display(df.head(3))</code></pre>
-<h2>code 19.</h2><pre><code>import hashlib
+<h2 id="code-16">code 16. <button class="copy">복사</button></h2><pre><code>import hashlib
 from pathlib import Path
 
 def _file_hash(path, chunk_size=1024 * 1024):
@@ -118,7 +109,7 @@ def save_csv_if_changed(df_obj, output_path):
     print(f&quot;Saved: {output_path}&quot;)
 
 save_csv_if_changed(df, proj_dir/&quot;noaa_earthquakes.csv&quot;)</code></pre>
-<h2>code 20.</h2><pre><code># 두 번째 분석 단계에서도 같은 폴더의 JSON/GeoJSON 파일 목록을 다시 확인합니다.
+<h2 id="code-17">code 17. <button class="copy">복사</button></h2><pre><code># 두 번째 분석 단계에서도 같은 폴더의 JSON/GeoJSON 파일 목록을 다시 확인합니다.
 fpaths = sorted((proj_dir).glob(&quot;*.geojson&quot;)) + sorted((proj_dir).glob(&quot;*.json&quot;))
 fpaths = list(dict.fromkeys(fpaths))
 
@@ -127,7 +118,7 @@ if len(fpaths) &lt; 2:
 
 print(f&quot;fpaths: {fpaths}&quot;)
 print(f&quot;len(fpaths): {len(fpaths)}&quot;)</code></pre>
-<h2>code 21.</h2><pre><code>import json
+<h2 id="code-18">code 18. <button class="copy">복사</button></h2><pre><code>import json
 
 # 두 번째 JSON/GeoJSON 파일을 읽고 구조를 확인합니다.
 print(f&quot;파일명: {fpaths[1].name}&quot;)
@@ -154,13 +145,13 @@ print(&quot;\n=== DataFrame 확인 ===&quot;)
 print(f&quot;데이터프레임 크기: {df1.shape}&quot;)
 print(f&quot;컬럼: {df1.columns.tolist()}&quot;)
 display(df1.head(3))</code></pre>
-<h2>code 22.</h2><pre><code># 앞 셀에서 만든 두 번째 DataFrame을 확인합니다.
+<h2 id="code-19">code 19. <button class="copy">복사</button></h2><pre><code># 앞 셀에서 만든 두 번째 DataFrame을 확인합니다.
 # df1은 규모 4.5 이상 지진 자료를 같은 형식으로 정리한 표입니다.
 print(f&quot;파일명: {fpaths[1].name}&quot;)
 print(f&quot;데이터프레임 크기: {df1.shape}&quot;)
 print(f&quot;컬럼: {df1.columns.tolist()}&quot;)
 display(df1.head(3))</code></pre>
-<h2>code 23.</h2><pre><code>import folium
+<h2 id="code-20">code 20. <button class="copy">복사</button></h2><pre><code>import folium
 from folium import plugins
 import numpy as np
 
@@ -224,7 +215,7 @@ m.save(str(map_path))
 print(f&quot;\n지도 저장 완료: {map_path}&quot;)
 print(f&quot;지도에 표시된 지진 수: {len(df_clean)}&quot;)
 m</code></pre>
-<h2>code 24.</h2><pre><code>import folium
+<h2 id="code-21">code 21. <button class="copy">복사</button></h2><pre><code>import folium
 import numpy as np
 
 # 데이터 정제: 위도, 경도가 있는 데이터만 추출
@@ -292,7 +283,7 @@ m1.save(str(map_path1))
 print(f&quot;\n지도 저장 완료: {map_path1}&quot;)
 print(f&quot;지도에 표시된 지진 수: {len(df1_clean)}&quot;)
 m1</code></pre>
-<h2>code 25.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-22">code 22. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 
@@ -352,7 +343,7 @@ du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;05_02_Visualizing_global_
 plt.show()
 
 print(f&quot;지도에 표시된 지진 수: {len(df1_clean)}&quot;)</code></pre>
-<h2>code 26.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-23">code 23. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import numpy as np
@@ -418,4 +409,14 @@ plt.show()
 
 # 8. 확인 메시지 출력
 print(f&quot;지도에 표시된 지진 수: {len(df1_clean)}&quot;)</code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>

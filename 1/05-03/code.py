@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | V-03. 지진파 데이터로 진앙 찾기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 27.
+# %% code 24.
 from pathlib import Path
 from datetime import datetime
 from urllib.parse import urlencode
@@ -32,7 +32,7 @@ print(response.url)
 print(f"저장 위치: {event_file}")
 print(f"파일 크기: {event_file.stat().st_size:,} bytes")
 
-# %% code 28.
+# %% code 25.
 def tag_name(element):
     return element.tag.split("}")[-1]
 
@@ -67,7 +67,7 @@ origin_info = {
 
 origin_info
 
-# %% code 29.
+# %% code 26.
 pick_rows = []
 
 for pick in [elem for elem in event.iter() if tag_name(elem) == "pick"]:
@@ -88,10 +88,10 @@ for pick in [elem for elem in event.iter() if tag_name(elem) == "pick"]:
 picks = pd.DataFrame(pick_rows)
 print(picks)
 
-# %% code 30.
+# %% code 27.
 picks["phase"].value_counts(dropna=False)
 
-# %% code 31.
+# %% code 28.
 phase_table = (
     picks[picks["phase"].isin(["P", "S"])]
     .sort_values("pick_time")
@@ -108,7 +108,7 @@ phase_table = phase_table.sort_values("s_minus_p_sec").reset_index(drop=True)
 
 print(phase_table)
 
-# %% code 32.
+# %% code 29.
 def download_station_metadata(network, station, event_time):
     params = {
         "format": "text",
@@ -146,7 +146,7 @@ stations = pd.DataFrame(station_rows)
 
 print(stations)
 
-# %% code 33.
+# %% code 30.
 data = phase_table.merge(stations, on=["network", "station"], how="inner")
 
 # 단순한 지각 평균 속도 가정
@@ -158,7 +158,7 @@ data = data.sort_values("estimated_distance_km").reset_index(drop=True)
 
 print(data[["network", "station", "P", "S", "s_minus_p_sec", "estimated_distance_km", "station_latitude", "station_longitude"]])
 
-# %% code 34.
+# %% code 31.
 def haversine_km(lat1, lon1, lat2, lon2):
     radius = 6371.0
     lat1 = np.radians(lat1)
@@ -195,10 +195,8 @@ print(f"발표 진앙: lat={origin_info['latitude']:.4f}, lon={origin_info['long
 print(f"평균 거리 잔차(RMS): {best_misfit:.1f} km")
 print(f"실제 진앙과의 거리 차이: {haversine_km(estimated_lat, estimated_lon, origin_info['latitude'], origin_info['longitude']):.1f} km")
 
-# %% code 35.
+# %% code 32.
 import matplotlib.pyplot as plt
-plt.rcParams['font.family'] = 'Malgun Gothic'   # macOS: 'AppleGothic'
-plt.rcParams['axes.unicode_minus'] = False
 
 # 관측소와 발표 진앙 사이의 실제 거리(앞 셀의 haversine_km 사용)
 data["true_distance_km"] = haversine_km(data["station_latitude"], data["station_longitude"],
@@ -219,7 +217,7 @@ ax.grid(alpha=0.3)
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "05_03_Finding_epicenter_with_P_and_S_waves_01"))
 plt.show()
 
-# %% code 36.
+# %% code 33.
 import folium
 
 center_lat = np.mean([estimated_lat, origin_info["latitude"]])

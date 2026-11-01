@@ -2,60 +2,18 @@
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
 # %% code 1.
-# 프로젝트(자료 저장) 폴더 생성 — 공통 함수 사용
-proj_dir = du.make_project_dir(du.current_notebook_name() or "04_01_Visualizing_KMA_AWS_Data")
 from pathlib import Path
-
-# %% code 2.
-import requests
-import os
 
 fname = "SURFACE_ASOS_116_MI_2018-01_2018-12_2018.zip"
 fid = "1THyhljJL8p5mhpnqLKNbU5QPC-bVABOI"
 
-# requests 라이브러리를 이용(구글드라이브에서 공유한 파일을 다운로드할 경우)
-url = f"https://docs.google.com/uc?export=download&id={fid}"
-# 디렉토리가 없으면 생성
-os.makedirs(proj_dir, exist_ok=True)
+# 구글 드라이브에 공유해 둔 파일 내려받기
+du.download(f"https://docs.google.com/uc?export=download&id={fid}", Path(proj_dir) / fname)
 
-# 파일 다운로드
-response = requests.get(url, verify=False)  # verify=False
-response.raise_for_status()                 # HTTP 에러 체크
-file_path = os.path.join(proj_dir, fname)   # 파일 저장
-with open(file_path, 'wb') as f:
-    f.write(response.content)
-print(f"파일이 성공적으로 다운로드되었습니다: {file_path}")
-
-# %% code 3.
-# fname = "SURFACE_ASOS_116_MI_2018-01_2018-12_2018.zip"
-# fid = "1THyhljJL8p5mhpnqLKNbU5QPC-bVABOI"
-
-# # Python urllib를 이용한 파일 다운로드 (모든 운영체제에서 작동)
-# import urllib.request
-# import os
-
-# # 다운로드할 URL과 저장할 경로 설정
-# download_url = f"https://docs.google.com/uc?export=download&id={fid}"
-# save_path = os.path.join(proj_dir, fname)
-
-# try:
-# # 파일 다운로드
-# print(f"파일을 다운로드 중입니다: {fname}")
-# urllib.request.urlretrieve(download_url, save_path)
-# print(f"다운로드 완료: {save_path}")
-    
-# # 다운로드된 파일 크기 확인
-# file_size = os.path.getsize(save_path)
-# print(f"파일 크기: {file_size:,} bytes ({file_size/1024/1024:.2f} MB)")
-    
-# except Exception as e:
-# print(f"다운로드 중 오류가 발생했습니다: {e}")
-# print("인터넷 연결을 확인하거나 수동으로 파일을 다운로드해 주세요.")
-
-# %% code 4.
+# %% code 2.
 fpaths = du.list_files(proj_dir, "zip")
 
-# %% code 5.
+# %% code 3.
 import shutil
 shutil.unpack_archive(str(fpaths[0]), str(Path(proj_dir)))
 
@@ -65,7 +23,7 @@ with ZipFile(str(fpaths[0]), 'r') as zip_ref:
 
 fpaths = du.list_files(proj_dir, "csv")
 
-# %% code 6.
+# %% code 4.
 n_lines = 10  # 출력할 줄 수
 
 print(f"파일 내용 출력 (처음 {n_lines}줄):")
@@ -93,12 +51,12 @@ except Exception as e:
 
 print("="*60)
 
-# %% code 7.
+# %% code 5.
 # # !head -n 50 {fpaths[0]} # list the first 50 lines of the file
 # print(f"파일 {fpaths[0]}의 첫 20줄을 출력합니다:")
 # !powershell -Command "Get-Content {fpaths[0]} -TotalCount 20"
 
-# %% code 8.
+# %% code 6.
 # print("\n=== Python으로 직접 읽기 ===")
 # # Python으로 직접 파일 읽기
 # import codecs
@@ -128,7 +86,7 @@ print("="*60)
 # except:
 # print("모든 인코딩 시도 실패")
 
-# %% code 9.
+# %% code 7.
 # 필요한 라이브러리 불러오기
 import pandas as pd
 
@@ -138,7 +96,7 @@ df = pd.read_csv(str(fpaths[0]), thousands=',', encoding='euc-kr')
 # 데이터프레임 출력하여 데이터 확인
 print(f"df :\n{df}")
 
-# %% code 10.
+# %% code 8.
 # 전체 월별 파일을 합치기 위한 처리
 import pandas as pd
 
@@ -157,7 +115,7 @@ df = df.drop_duplicates()
 print(f"총 레코드 수(중복 제거 후): {len(df)}")
 print(f"df :\n{df}")
 
-# %% code 11.
+# %% code 9.
 # '일시' 컬럼을 datetime으로 변환하고 인덱스 재설정
 print(f"type(df['일시'][0]): {type(df['일시'][0])}")
 df['dt_YmdHM'] = pd.to_datetime(df['일시'])
@@ -170,7 +128,7 @@ df['dt_YmdHM-1min'] = df['dt_YmdHM'] - timedelta(minutes=1)
 df.index = df['dt_YmdHM-1min']
 print(f"df :\n{df}")
 
-# %% code 12.
+# %% code 10.
 from datetime import datetime, timedelta
 
 # 특정 날짜 필터링 예시
@@ -184,7 +142,7 @@ df_jan53 = df[(df['dt_YmdHM-1min'] >= '2018-01-12 00:00') & (df['dt_YmdHM-1min']
 # 필터링된 데이터 출력
 print(f"df_jan53 :\n{df_jan53}")
 
-# %% code 13.
+# %% code 11.
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
@@ -230,7 +188,7 @@ ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
 plt.tight_layout()
 plt.show()
 
-# %% code 14.
+# %% code 12.
 import pandas as pd
 import numpy as np
 
@@ -273,7 +231,7 @@ months = ['1월', '2월', '3월', '4월', '5월', '6월',
 for month_num, count in monthly_count.items():
     print(f"{months[month_num-1]}: {count}일")
 
-# %% code 15.
+# %% code 13.
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
@@ -396,7 +354,7 @@ print(f"최대 강수량: {rainy_days['누적강수량(mm)'].max():.2f}mm")
 print(f"최소 강수량: {rainy_days['누적강수량(mm)'].min():.2f}mm")
 print(f"중간값: {rainy_days['누적강수량(mm)'].median():.2f}mm")
 
-# %% code 16.
+# %% code 14.
 import pandas as pd
 import numpy as np
 from datetime import datetime
@@ -572,7 +530,7 @@ results = calculate_temperature_averages(df, 'dt_YmdHM-1min', '기온(°C)')
 # 시각화
 plot_temperature_comparison(results)
 
-# %% code 17.
+# %% code 15.
 # resample 메서드의 반환 타입 확인 (DatetimeIndexResampler 객체)
 print("type(df.resample('D'): {}".format(type(df.resample('D'))))
 print("df.resample('D') :", df.resample('D'))
@@ -581,7 +539,7 @@ print("df.resample('D') :", df.resample('D'))
 df_daily_max = df.resample('D').max()
 print("df_daily_max :\n{}".format(df_daily_max))
 
-# %% code 18.
+# %% code 16.
 print(f"원본 데이터 형태: {df.shape}")
 print(f"인덱스 타입: {type(df.index)}")
 print(f"인덱스 빈도: {df.index.freq}")
@@ -648,7 +606,7 @@ print("df.resample('ME').max().index.month_name(): {}".format(df.resample('ME').
 print(f"YYYY-MM: {df.resample('ME').max().index.strftime('%Y-%m')[:5].values}")
 print(f"Month Year: {df.resample('ME').max().index.strftime('%B %Y')[:5].values}")
 
-# %% code 19.
+# %% code 17.
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
@@ -786,7 +744,7 @@ print(f"평균 일일 기온 변화: {daily_stats['기온변화'].mean():.2f}°C
 print(f"최대 일일 기온 상승: {daily_stats['기온변화'].max():.2f}°C")
 print(f"최대 일일 기온 하락: {daily_stats['기온변화'].min():.2f}°C")
 
-# %% code 20.
+# %% code 18.
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
@@ -908,7 +866,7 @@ for month, row in seasonal_avg.iterrows():
     print(f"{month}월 ({season}): 평균 {row['월평균기온']:.1f}°C, "
           f"최고 {row['월최고기온']:.1f}°C, 최저 {row['월최저기온']:.1f}°C")
 
-# %% code 21.
+# %% code 19.
 import numpy as np
 
 # 풍속과 풍향 변수 생성
@@ -927,7 +885,7 @@ ax = WindroseAxes.from_ax()
 # 막대(bar) 형태로 바람장미 그리기
 ax.bar(wd, ws)
 
-# %% code 22.
+# %% code 20.
 # DataFrame에 바람장미 그래프 생성을 위한 표준 컬럼명 추가
 df['speed'] = df['풍속(m/s)']      # 풍속 데이터를 'speed' 컬럼으로 복사
 df['direction'] = df['풍향(deg)']  # 풍향 데이터를 'direction' 컬럼으로 복사
@@ -988,7 +946,7 @@ print(f"풍향 범위: {df['direction'].min():.1f} - {df['direction'].max():.1f}
 print(f"평균 풍속: {df['speed'].mean():.2f} m/s")
 print(f"최빈 풍향: {df['direction'].mode().values[0]:.1f} degrees")
 
-# %% code 23.
+# %% code 21.
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt

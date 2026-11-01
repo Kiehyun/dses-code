@@ -3,13 +3,16 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
 <h1>IV-06. 기후변화의 원인 가르기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/04-26/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 479.</h2><pre><code>from pathlib import Path
+<p class="jump"><a href="#code-479">479</a> <a href="#code-480">480</a> <a href="#code-481">481</a> <a href="#code-482">482</a> <a href="#code-483">483</a> <a href="#code-484">484</a> <a href="#code-485">485</a> <a href="#code-486">486</a> <a href="#code-487">487</a></p>
+<h2 id="code-479">code 479. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
 import numpy as np
 import pandas as pd
 import xarray as xr
@@ -30,7 +33,7 @@ for name, url in URLS.items():
     if not F[name].exists():
         du.download(url, F[name])
 print(&quot;내려받기 끝:&quot;, &quot;, &quot;.join(URLS))</code></pre>
-<h2>code 480.</h2><pre><code># 1) 기온 편차
+<h2 id="code-480">code 480. <button class="copy">복사</button></h2><pre><code># 1) 기온 편차
 g = pd.read_csv(F[&quot;gistemp.csv&quot;], skiprows=1, na_values=&quot;***&quot;)
 months = [&quot;Jan&quot;, &quot;Feb&quot;, &quot;Mar&quot;, &quot;Apr&quot;, &quot;May&quot;, &quot;Jun&quot;, &quot;Jul&quot;, &quot;Aug&quot;, &quot;Sep&quot;,
           &quot;Oct&quot;, &quot;Nov&quot;, &quot;Dec&quot;]
@@ -70,7 +73,7 @@ for name, x in [(&quot;기온&quot;, temp), (&quot;CO2&quot;, co2), (&quot;ENSO&
                 (&quot;흑점&quot;, sun)]:
     x = x.dropna()
     print(f&quot;{name:5s} {x.index[0]:%Y-%m} ~ {x.index[-1]:%Y-%m}  ({len(x):,}개월)&quot;)</code></pre>
-<h2>code 481.</h2><pre><code>df = pd.concat({&quot;temp&quot;: temp, &quot;co2&quot;: co2, &quot;enso&quot;: enso, &quot;volc&quot;: volc, &quot;sun&quot;: sun},
+<h2 id="code-481">code 481. <button class="copy">복사</button></h2><pre><code>df = pd.concat({&quot;temp&quot;: temp, &quot;co2&quot;: co2, &quot;enso&quot;: enso, &quot;volc&quot;: volc, &quot;sun&quot;: sun},
                axis=1)
 df = df.loc[&quot;1979-01-01&quot;:].dropna()
 df[&quot;co2_forcing&quot;] = 5.35 * np.log(df[&quot;co2&quot;] / 278.0)
@@ -95,7 +98,7 @@ axes[0].set_title(&quot;기온과 네 가지 요인 (1979~)&quot;)
 plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_01&quot;))
 plt.show()</code></pre>
-<h2>code 482.</h2><pre><code>def design(lags):
+<h2 id="code-482">code 482. <button class="copy">복사</button></h2><pre><code>def design(lags):
     l1, l2, l3 = lags
     X = pd.DataFrame({
         &quot;상수&quot;: 1.0,
@@ -138,7 +141,7 @@ for name, b, e1, e2 in zip(X.columns, coef, se, se_adj):
     print(f&quot;  {name:4s} {b:+9.4f}   {e1:8.4f}   {e2:8.4f}&quot;)
 print(f&quot;CO2 계수 × 3.7 = {coef[1] * 3.7:.2f} ± {2 * se_adj[1] * 3.7:.2f} °C &quot;
       &quot;(보정 표준오차 2배 범위)&quot;)</code></pre>
-<h2>code 483.</h2><pre><code>contrib = pd.DataFrame({name: X[name] * b for name,
+<h2 id="code-483">code 483. <button class="copy">복사</button></h2><pre><code>contrib = pd.DataFrame({name: X[name] * b for name,
                         b in zip(X.columns, coef) if name != &quot;상수&quot;})
 contrib = contrib - contrib.mean()
 colors = {&quot;CO2&quot;: &quot;black&quot;, &quot;ENSO&quot;: &quot;teal&quot;, &quot;화산&quot;: &quot;saddlebrown&quot;,
@@ -160,7 +163,7 @@ ax[0].set_title(&quot;관측 기온과 회귀 모형, 요인별 기여&quot;)
 plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_02&quot;))
 plt.show()</code></pre>
-<h2>code 484.</h2><pre><code>years = (y.index.year + (y.index.month - 0.5) / 12).values
+<h2 id="code-484">code 484. <button class="copy">복사</button></h2><pre><code>years = (y.index.year + (y.index.month - 0.5) / 12).values
 trend = {&quot;관측 기온&quot;: np.polyfit(years, y.values, 1)[0] * 10}
 for name in contrib:
     trend[name] = np.polyfit(years, contrib[name].values, 1)[0] * 10
@@ -180,7 +183,7 @@ ax.grid(axis=&quot;y&quot;, alpha=0.3)
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_03&quot;))
 plt.show()
 print(trend.round(3))</code></pre>
-<h2>code 485.</h2><pre><code># CO2 강제력 대신 시간(연도)을 넣은 모형 — 지연은 앞에서 고른 best 그대로
+<h2 id="code-485">code 485. <button class="copy">복사</button></h2><pre><code># CO2 강제력 대신 시간(연도)을 넣은 모형 — 지연은 앞에서 고른 best 그대로
 X_t, y_t = design(best)
 X_t = X_t.rename(columns={&quot;CO2&quot;: &quot;시간&quot;})
 X_t[&quot;시간&quot;] = X_t.index.year + (X_t.index.month - 0.5) / 12   # 소수 연도
@@ -195,7 +198,7 @@ print(f&quot;CO2 강제력과 시간의 상관 r = {r_ct:.4f}&quot;)
 print(f&quot;CO2 모형  R² = {r2:.3f}   CO2 항의 추세 기여 {trend[&#x27;CO2&#x27;]:+.3f} °C/10년&quot;)
 print(f&quot;시간 모형 R² = {r2_t:.3f}   시간 계수          {coef_t[1] * 10:+.3f} °C/10년&quot;)
 print(f&quot;두 모형 예측값의 상관 r = {r_pred:.4f}&quot;)</code></pre>
-<h2>code 486.</h2><pre><code>sun_trend = np.polyfit(years, X[&quot;태양&quot;].values, 1)[0] * 10
+<h2 id="code-486">code 486. <button class="copy">복사</button></h2><pre><code>sun_trend = np.polyfit(years, X[&quot;태양&quot;].values, 1)[0] * 10
 co2_change = df[&quot;co2&quot;].iloc[-12:].mean() - df[&quot;co2&quot;].iloc[:12].mean()
 peak_enso = df[&quot;enso&quot;].idxmax()
 cards = pd.DataFrame([
@@ -211,7 +214,7 @@ cards = pd.DataFrame([
     (&quot;E9&quot;, &quot;모형의 설명력&quot;, f&quot;R² = {r2:.2f}&quot;),
 ], columns=[&quot;번호&quot;, &quot;증거&quot;, &quot;값&quot;])
 cards</code></pre>
-<h2>code 487.</h2><pre><code>pre = temp.loc[&quot;1880&quot;:&quot;1900&quot;].mean()   # 산업화 이전 기준(GISTEMP는 1880년부터)
+<h2 id="code-487">code 487. <button class="copy">복사</button></h2><pre><code>pre = temp.loc[&quot;1880&quot;:&quot;1900&quot;].mean()   # 산업화 이전 기준(GISTEMP는 1880년부터)
 offset = -pre                          # 1951~1980년 기준 → 산업화 이전 기준
 base = (coef[0] + coef[2] * df[&quot;enso&quot;].mean()
         + coef[3] * volc.loc[&quot;1979&quot;:].mean() + coef[4] * sun.loc[&quot;1979&quot;:].mean())
@@ -260,4 +263,14 @@ for a in ax:
 plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_04&quot;))
 plt.show()</code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>

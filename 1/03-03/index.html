@@ -3,13 +3,16 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
 <h1>III-03. 일출·일몰 시각 계산하기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/03-03/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 31.</h2><pre><code># geopy를 이용하여 도시의 위치 정보(위도, 경도) 얻기
+<p class="jump"><a href="#code-31">31</a> <a href="#code-32">32</a> <a href="#code-33">33</a> <a href="#code-34">34</a> <a href="#code-35">35</a> <a href="#code-36">36</a> <a href="#code-37">37</a> <a href="#code-38">38</a> <a href="#code-39">39</a> <a href="#code-40">40</a></p>
+<h2 id="code-31">code 31. <button class="copy">복사</button></h2><pre><code># geopy를 이용하여 도시의 위치 정보(위도, 경도) 얻기
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderInsufficientPrivileges, GeocoderTimedOut
 
@@ -35,14 +38,14 @@ print(&quot;location.point: {}&quot;.format(location_Suwon.point))  # 위도, �
 
 print(f&quot;latitude: {location_Suwon.latitude}&quot;)    # 위도
 print(f&quot;longitude: {location_Suwon.longitude}&quot;)  # 경도</code></pre>
-<h2>code 32.</h2><pre><code># astral 패키지의 LocationInfo를 이용하여 위치 정보 객체 생성
+<h2 id="code-32">code 32. <button class="copy">복사</button></h2><pre><code># astral 패키지의 LocationInfo를 이용하여 위치 정보 객체 생성
 from astral import LocationInfo
 
 city_London = LocationInfo(&quot;London&quot;, &quot;England&quot;, &quot;Europe/London&quot;, 51.5, -0.116)
 
 print(f&quot;type(city_London): {type(city_London)}&quot;)
 print(f&quot;city_London: {city_London}&quot;)</code></pre>
-<h2>code 33.</h2><pre><code># geopy로 얻은 위치 정보를 이용하여 수원 LocationInfo 객체 생성
+<h2 id="code-33">code 33. <button class="copy">복사</button></h2><pre><code># geopy로 얻은 위치 정보를 이용하여 수원 LocationInfo 객체 생성
 from astral import LocationInfo
 
 city_Suwon = LocationInfo(place_Suwon, &quot;Korea&quot;, &quot;Asia/Seoul&quot;, location_Suwon.latitude, location_Suwon.longitude)
@@ -56,7 +59,7 @@ print(f&quot;city_Suwon.region: {city_Suwon.region}&quot;)
 print(f&quot;city_Suwon.timezone: {city_Suwon.timezone}&quot;)
 print(f&quot;city_Suwon.latitude: {city_Suwon.latitude}&quot;)
 print(f&quot;city_Suwon.longitude: {city_Suwon.longitude}&quot;)</code></pre>
-<h2>code 34.</h2><pre><code># astral.sun 함수를 이용하여 일출, 일몰 등 태양 관련 시각 계산
+<h2 id="code-34">code 34. <button class="copy">복사</button></h2><pre><code># astral.sun 함수를 이용하여 일출, 일몰 등 태양 관련 시각 계산
 from datetime import date
 from astral.sun import sun
 
@@ -67,7 +70,7 @@ s = sun(city_Suwon.observer,
 print(f&quot;type(s): {type(s)}&quot;)  # 결과 타입 출력
 print(f&quot;s : {s}&quot;)             # 전체 딕셔너리 출력
 print(s)                      # 전체 딕셔너리 출력</code></pre>
-<h2>code 35.</h2><pre><code># 일출, 일몰, 새벽, 황혼 시각 및 낮의 길이 출력
+<h2 id="code-35">code 35. <button class="copy">복사</button></h2><pre><code># 일출, 일몰, 새벽, 황혼 시각 및 낮의 길이 출력
 print(&quot;s[&#x27;sunrise&#x27;]: {}&quot;.format(s[&#x27;sunrise&#x27;]))  # 일출 시각
 print(&quot;s[&#x27;sunset&#x27;]: {}&quot;.format(s[&#x27;sunset&#x27;]))    # 일몰 시각
 
@@ -76,7 +79,7 @@ print(&quot;s[&#x27;dusk&#x27;]: {}&quot;.format(s[&#x27;dusk&#x27;]))  # 황혼
 
 print(&quot;type(s[&#x27;sunset&#x27;]-s[&#x27;sunrise&#x27;]): {}&quot;.format(type(s[&#x27;sunset&#x27;]-s[&#x27;sunrise&#x27;]))) # 낮의 길이 타입
 print(&quot;daytime: {}&quot;.format(s[&#x27;sunset&#x27;]-s[&#x27;sunrise&#x27;])) # 낮의 길이</code></pre>
-<h2>code 36.</h2><pre><code># astral의 moon 모듈로 월출/월몰 시각 계산
+<h2 id="code-36">code 36. <button class="copy">복사</button></h2><pre><code># astral의 moon 모듈로 월출/월몰 시각 계산
 from datetime import date
 from astral import moon
 from astral import LocationInfo
@@ -95,7 +98,7 @@ moonset_time = moon.moonset(city.observer, date=today)
 print(f&quot;날짜: {today}&quot;)
 print(f&quot;달이 뜨는 시각 (Moonrise): {moonrise_time}&quot;)
 print(f&quot;달이 지는 시각 (Moonset): {moonset_time}&quot;)</code></pre>
-<h2>code 37.</h2><pre><code># suntime 패키지로 태양 객체 생성 및 정보 출력
+<h2 id="code-37">code 37. <button class="copy">복사</button></h2><pre><code># suntime 패키지로 태양 객체 생성 및 정보 출력
 from datetime import datetime
 from suntime import Sun
 
@@ -126,7 +129,7 @@ daytime = sunset - sunrise
 print(f&quot;이전 날짜({yesterday_datetime.date()}) 일출 시각(LST): {sunrise}&quot;)
 print(f&quot;다음 날짜({tomorrow_datetime.date()}) 일몰 시각(LST): {sunset}&quot;)
 print(f&quot;낮의 길이 (일몰-일출): {daytime}&quot;)</code></pre>
-<h2>code 38.</h2><pre><code># 1년 동안 (이전 날짜 일출, 다음 날짜 일몰 기준) 낮의 길이 변화 시각화 (24시간 이상 방지)
+<h2 id="code-38">code 38. <button class="copy">복사</button></h2><pre><code># 1년 동안 (이전 날짜 일출, 다음 날짜 일몰 기준) 낮의 길이 변화 시각화 (24시간 이상 방지)
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta, date
 import pytz
@@ -172,7 +175,7 @@ plt.ylabel(&#x27;낮의 길이 (시간)&#x27;)
 plt.grid(True)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2>code 39.</h2><pre><code># 1년 동안 (이전 날짜 일출, 다음 날짜 일몰 기준) 월별 낮의 총합(시간) 그래프
+<h2 id="code-39">code 39. <button class="copy">복사</button></h2><pre><code># 1년 동안 (이전 날짜 일출, 다음 날짜 일몰 기준) 월별 낮의 총합(시간) 그래프
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta, date
 import pytz
@@ -219,7 +222,7 @@ plt.ylabel(&#x27;월별 낮의 총합 (시간)&#x27;)
 plt.grid(axis=&#x27;y&#x27;)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2>code 40.</h2><pre><code># 수원과 모스코바의 월별 낮의 총합(시간) 비교 그래프
+<h2 id="code-40">code 40. <button class="copy">복사</button></h2><pre><code># 수원과 모스코바의 월별 낮의 총합(시간) 비교 그래프
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta, date
 import pytz
@@ -278,4 +281,14 @@ plt.legend()
 plt.grid(axis=&#x27;y&#x27;)
 plt.tight_layout()
 plt.show()</code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>

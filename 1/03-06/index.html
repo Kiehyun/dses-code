@@ -3,36 +3,29 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
 <h1>III-06. SDO HMI 이미지에서 흑점 탐지</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/03-06/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 77.</h2><pre><code>import requests
-import os
+<p class="jump"><a href="#code-76">76</a> <a href="#code-77">77</a> <a href="#code-78">78</a> <a href="#code-79">79</a> <a href="#code-80">80</a> <a href="#code-81">81</a> <a href="#code-82">82</a> <a href="#code-83">83</a> <a href="#code-84">84</a> <a href="#code-85">85</a> <a href="#code-86">86</a></p>
+<h2 id="code-76">code 76. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
 
 fname = &quot;20170228_231038_1024_HMII.jpg&quot;
 fid = &quot;1yxW326FtXQY_D9VL0DST_pv8QiZ2GBeW&quot;
 
-# requests 라이브러리를 이용 (SDO에서 직접 받을 경우)
+# SDO에서 직접 받을 경우
 # url = &quot;https://sdo.gsfc.nasa.gov/assets/img/browse/2017/02/28/20170228_231038_1024_HMII.jpg&quot;
-# requests 라이브러리를 이용(구글드라이브에서 공유한 파일을 다운로드할 경우)
+# 구글 드라이브에 미리 저장해 둔 파일을 받을 경우
 url = f&quot;https://docs.google.com/uc?export=download&amp;id={fid}&quot;
-# 디렉토리가 없으면 생성
-os.makedirs(proj_dir, exist_ok=True)
-
-# 파일 다운로드
-response = requests.get(url, verify=False)  # verify=False는 --no-check-certificate와 동일
-response.raise_for_status()                 # HTTP 에러 체크
-file_path = os.path.join(proj_dir, fname)   # 파일 저장
-with open(file_path, &#x27;wb&#x27;) as f:
-    f.write(response.content)
-print(f&quot;파일이 성공적으로 다운로드되었습니다: {file_path}&quot;)
+du.download(url, Path(proj_dir) / fname)
 
 # 다운로드한 이미지 파일 목록
 fpaths = sorted(Path(proj_dir).glob(&#x27;*.jpg&#x27;))</code></pre>
-<h2>code 78.</h2><pre><code>import cv2  # OpenCV 라이브러리를 불러옵니다.
+<h2 id="code-77">code 77. <button class="copy">복사</button></h2><pre><code>import cv2  # OpenCV 라이브러리를 불러옵니다.
 
 # 이미지 파일 경로 리스트를 출력합니다.
 print(f&quot;str(fpaths): {str(fpaths)}&quot;)        # fpaths 전체 리스트를 문자열로 출력
@@ -69,7 +62,7 @@ plt.imshow(sun_im,
 # plt.xticks([]), plt.yticks([]) 
 
 plt.show()  # 이미지를 화면에 출력합니다.</code></pre>
-<h2>code 79.</h2><pre><code># 이미지에서 원(태양)을 검출하기 위해 HoughCircles 함수 사용
+<h2 id="code-78">code 78. <button class="copy">복사</button></h2><pre><code># 이미지에서 원(태양)을 검출하기 위해 HoughCircles 함수 사용
 # sun_im: 입력 이미지 (흑백 이미지여야 함)
 # cv2.HOUGH_GRADIENT: 허프 변환 방법 지정
 # 2: 해상도 비율 (dp), 입력 이미지와 누적기(accumulator) 간의 비율
@@ -89,7 +82,7 @@ print(&quot;sun_circle[0, 0, :]: &quot;, sun_circle[0, 0, :])
 # (x, y, r) 좌표와 반지름을 정수형으로 변환
 sun_circle = np.round(sun_circle[0,0,:]).astype(int)
 print(&#x27;circle of sun&#x27;, sun_circle )</code></pre>
-<h2>code 80.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-79">code 79. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 
 # sun_im: 태양 이미지 데이터 (예: 2차원 배열)
@@ -117,7 +110,7 @@ ax = plt.gca()        # 현재의 Axes 객체(좌표축)를 가져옴
 ax.add_patch(circle)  # Axes에 원(circle) 패치 추가
 
 plt.show()          # 화면에 이미지와 원을 함께 출력</code></pre>
-<h2>code 81.</h2><pre><code># 이미지 복사본 생성 (원본 이미지를 보존하기 위해 복사본을 만듦)
+<h2 id="code-80">code 80. <button class="copy">복사</button></h2><pre><code># 이미지 복사본 생성 (원본 이미지를 보존하기 위해 복사본을 만듦)
 sun_im_output = sun_im.copy()
 print(&quot;sun_im_output: &quot;, sun_im_output)
 
@@ -146,7 +139,7 @@ print (np.shape(outer), np.shape(inner))
 print (&quot;outer:&quot;, outer)
 # inner 배열 값 출력 (디버깅용)
 print (&quot;inner&quot;, inner)</code></pre>
-<h2>code 82.</h2><pre><code># 8 bit image에서 흰색은 255이다. 
+<h2 id="code-81">code 81. <button class="copy">복사</button></h2><pre><code># 8 bit image에서 흰색은 255이다. 
 sun_im_output[outer] = 255
 
 print (&#x27;boundary width :&#x27;, boundary_width)
@@ -166,7 +159,7 @@ circle = Circle((sun_circle[0], sun_circle[1]), sun_circle[2],
 ax.add_patch(circle) 
 
 plt.show()</code></pre>
-<h2>code 83.</h2><pre><code># 흑점(태양의 어두운 점)으로 예상되는 픽셀을 얻기 위한 코드
+<h2 id="code-82">code 82. <button class="copy">복사</button></h2><pre><code># 흑점(태양의 어두운 점)으로 예상되는 픽셀을 얻기 위한 코드
 
 # 흑점으로 판단할 밝기 기준값 설정 (이 값보다 어두우면 흑점으로 간주)
 bright_criterion = 70 
@@ -220,7 +213,7 @@ ax.add_patch(circle) # ax(좌표축)에 원 추가
 #plt.xticks([]), plt.yticks([]) 
 
 plt.show() # 그래프(이미지) 화면에 출력</code></pre>
-<h2>code 84.</h2><pre><code># check_pixel을 numpy 배열로 변환
+<h2 id="code-83">code 83. <button class="copy">복사</button></h2><pre><code># check_pixel을 numpy 배열로 변환
 check_pixel = np.asarray(check_pixel)
 print(&quot;check_pixel:&quot;, check_pixel)
 
@@ -255,7 +248,7 @@ ax.add_patch(circle)                             # 원을 axes에 추가
 
 # 이미지와 원을 화면에 표시
 plt.show()</code></pre>
-<h2>code 85.</h2><pre><code>fig, ax = plt.subplots()
+<h2 id="code-84">code 84. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots()
 
 # 이미지 나타내기
 plt.imshow(image.T, 
@@ -272,7 +265,7 @@ ax.add_patch(circle)
 #plt.xticks([]), plt.yticks([]) 
 
 plt.show()</code></pre>
-<h2>code 86.</h2><pre><code>import math
+<h2 id="code-85">code 85. <button class="copy">복사</button></h2><pre><code>import math
 
 # 태양 흑점의 위도(latitude)와 경도(longitude)를 계산하는 함수
 def latitude(y):
@@ -339,7 +332,7 @@ for a in range(0, im_width):
 print (&#x27;*&#x27;*80)
 print (&#x27;number of sunspot : &#x27;, len(sunspot_data))  # 흑점 개수 출력
 print (&#x27;sunspot data : &#x27;, sunspot_data)            # 흑점 데이터(x, y, 픽셀 개수) 출력</code></pre>
-<h2>code 87.</h2><pre><code># sunspot_data를 numpy 배열로 변환
+<h2 id="code-86">code 86. <button class="copy">복사</button></h2><pre><code># sunspot_data를 numpy 배열로 변환
 sunspot_data = np.asarray(sunspot_data)
 print(&quot;sunspot_data:\n&quot;, sunspot_data)
 
@@ -375,4 +368,14 @@ else :
 
  # 그래프를 화면에 표시
     plt.show()</code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>

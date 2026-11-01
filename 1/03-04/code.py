@@ -25,11 +25,6 @@ except Exception:
     du.download("https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=tle", Path(proj_dir) / (fname), overwrite=True)
 
 # %% code 43.
-# 프로젝트(자료 저장) 폴더 생성 — 공통 함수 사용
-proj_dir = du.make_project_dir(du.current_notebook_name() or "03_04_Visualizing_Satellite_Orbits")
-from pathlib import Path
-
-# %% code 44.
 from skyfield.api import Loader
 
 # Skyfield가 자동으로 다운로드할 파일 경로 설정
@@ -47,7 +42,7 @@ print("planets: {}".format(planets))
 earth   = planets['earth']
 print("earth: {}".format(earth))
 
-# %% code 45.
+# %% code 44.
 import numpy as np
 from math import pi
 
@@ -100,7 +95,7 @@ ax.set_aspect('equal')
 
 plt.show()
 
-# %% code 46.
+# %% code 45.
 from skyfield.api import EarthSatellite, Loader
 import numpy as np
 
@@ -141,7 +136,7 @@ print("Rposecl.shape: {}".format(Rposecl.shape))
 hours = np.arange(0, 3, 0.01)
 time = ts.utc(2018, 2, 7, hours)
 
-# %% code 47.
+# %% code 46.
 # 원주율 관련 상수 정의
 halfpi, pi, twopi = [f*np.pi for f in (0.5, 1, 2)]
 degs, rads = 180/pi, pi/180
@@ -190,7 +185,7 @@ ax.set_aspect('equal')
 
 plt.show()
 
-# %% code 48.
+# %% code 47.
 # 3D 플롯의 축 비율을 고정하는 함수
 def makecubelimits(axis, centers=None, hw=None):
     """
@@ -272,7 +267,7 @@ ax.set_aspect('equal')
 
 plt.show()
 
-# %% code 49.
+# %% code 48.
 # 시간 배열 생성 # 위성 위치 계산
 time = ts.utc(1997, 11, 16, hours)
 Rpos = satellite.at(time).position.km
@@ -310,7 +305,7 @@ print(f"평균 고도: {alt_sat.mean():.2f} km")
 plt.tight_layout()
 plt.show()
 
-# %% code 50.
+# %% code 49.
 TLE = """STARLINK-1007
 1 44713U 19074A 24142.62636216 .00014211 00000+0 97051-3 0 9998
 2 44713 53.0541 256.2864 0001579 91.4399 268.6771 15.06419455249719"""
@@ -425,7 +420,7 @@ ax.set_aspect('equal')
 plt.tight_layout()
 plt.show()
 
-# %% code 51.
+# %% code 50.
 import requests
 
 # Celestrak은 위성 궤도 데이터를 제공하는 대표적인 웹사이트입니다
@@ -475,7 +470,7 @@ if response:
 else:
     print("네트워크 오류로 인해 TLE 데이터를 가져올 수 없습니다.")
 
-# %% code 52.
+# %% code 51.
 from datetime import date, datetime
 import pytz
 
@@ -660,7 +655,7 @@ else:
     print("⚠  ISS TLE 데이터가 없어 궤도 계산을 수행할 수 없습니다.")
     print("이전 셀에서 TLE 데이터를 먼저 다운로드해주세요.")
 
-# %% code 53.
+# %% code 52.
 import requests
 from skyfield.api import Loader, EarthSatellite
 import numpy as np

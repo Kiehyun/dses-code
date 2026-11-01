@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | III-05. 태양계 시뮬레이션
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 54.
+# %% code 53.
 # astropy 라이브러리에서 Time 클래스를 가져옴 (천문학적 시간 처리용)
 from astropy.time import Time
 
@@ -23,7 +23,7 @@ print("type(obj1): ", type(obj1))
 # 수성의 위치와 속도 벡터 데이터 출력
 print("obj1: ",obj1)
 
-# %% code 55.
+# %% code 54.
 import numpy as np
 from astropy.time import Time, TimeDelta
 
@@ -72,7 +72,7 @@ dts = [dt.iso for dt in
 print("len(dts) :", len(dts))  # 생성된 시간 목록의 길이 출력
 print("dts :", dts)            # 생성된 시간 목록 출력 (ISO 형식)
 
-# %% code 56.
+# %% code 55.
 import matplotlib.pyplot as plt
 
 # 4x4 인치 크기의 그림 생성
@@ -100,7 +100,7 @@ plot = ax.scatter(0, 0,                    # 위치: 원점 (0, 0)
                   edgecolors = None,  # 테두리 색상: 없음
                   zorder = 10)        # 그리기 순서: 10 (다른 객체보다 앞에 표시)
 
-# %% code 57.
+# %% code 56.
 import matplotlib.pyplot as plt
 
 # 배경을 검게 만들기 위한 어두운 테마 적용
@@ -131,7 +131,7 @@ plot = ax.scatter(0, 0,                    # 위치: 좌표계의 중심점 (0, 
                   edgecolors = None,  # 테두리 색상: 없음 (깔끔한 표현)
                   zorder = 10)        # 그리기 순서: 10 (다른 객체들보다 앞에 표시)
 
-# %% code 58.
+# %% code 57.
 # astropy 라이브러리에서 Time 클래스를 가져옴 (천문학적 시간 처리용)
 from astropy.time import Time
 # 특정 시간을 설정 (2017년 1월 1일)
@@ -160,7 +160,7 @@ print("obj1['vx']: ", obj1['vx'])  # x축 방향 속도 성분
 print("obj1['vy']: ", obj1['vy'])  # y축 방향 속도 성분
 print("obj1['vz']: ", obj1['vz'])  # z축 방향 속도 성분
 
-# %% code 59.
+# %% code 58.
 # astropy 라이브러리에서 Time 클래스를 가져옴 (천문학적 시간 처리용)
 from astropy.time import Time
 # 특정 시간을 설정 (2017년 1월 1일)
@@ -220,7 +220,7 @@ for i in range(4):                             # 4개 행성에 대해 반복
             ha='center',       # 수평 정렬: 중앙 정렬
             fontsize='large')  # 글자 크기: 큰 크기
 
-# %% code 60.
+# %% code 59.
 # astropy 라이브러리에서 Time 클래스를 가져와서 특정 시간 객체 생성
 from astropy.time import Time
 specific_time = Time("2017-01-01")  # 2017년 1월 1일로 시간 설정
@@ -273,7 +273,7 @@ import numpy as np
 r = np.array([np.double(obj[xi]) for xi in ['x', 'y', 'z']], dtype=np.float64)
 r  # 위치 벡터 r 출력
 
-# %% code 61.
+# %% code 60.
 import numpy as np
 from astropy.time import Time, TimeDelta
 
@@ -337,7 +337,7 @@ print("rs[4]: {}".format(rs[4]))
 print("rs[5]: {}".format(rs[5]))
 #print("[item[:2] for item in rs[2]]: {}".format([item[:2] for item in rs[2]]))
 
-# %% code 62.
+# %% code 61.
 import numpy as np
 from astropy.time import Time, TimeDelta
 
@@ -450,7 +450,7 @@ print("rs[4]: {}".format(rs[4]))          # 5번째 위치 벡터 전체
 print("rs[5]: {}".format(rs[5]))          # 6번째 위치 벡터 전체
 #print("[item[:2] for item in rs[2]]: {}".format([item[:2] for item in rs[2]])) # 주석 처리됨
 
-# %% code 63.
+# %% code 62.
 def animate(i):
     plot.set_offsets(rs[i][:2])
     line.set_xdata(xs[:i])
@@ -463,7 +463,7 @@ ani = FuncAnimation(fig, animate,
                      frames=len(dts), 
                      blit=True)
 
-# %% code 64.
+# %% code 63.
 import matplotlib
 import matplotlib.pyplot as plt
 
@@ -480,13 +480,13 @@ print(f"Animation HTML format: {matplotlib.rcParams['animation.html']}")
 from IPython.display import HTML
 HTML(ani.to_jshtml())
 
-# %% code 65.
+# %% code 64.
 import matplotlib
 matplotlib.rcParams['animation.html'] = 'html5'
 print(f"Animation HTML format: {matplotlib.rcParams['animation.html']}")
 HTML(ani.to_html5_video())
 
-# %% code 66.
+# %% code 65.
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.time import Time
@@ -592,7 +592,7 @@ for i, nasaid in enumerate([1, 2, 3, 4]):  # NASA JPL ID: 1=수성, 2=금성, 3=
 # 그래프 화면에 표시
 plt.show()
 
-# %% code 67.
+# %% code 66.
 # 애니메이션 함수 정의 - 각 프레임마다 호출되어 태양계 상태를 한 단계씩 진화시킴
 def animate(i):
     return ss.evolve()  # 태양계 시스템의 evolve() 메서드를 호출하여 행성들의 위치와 속도 업데이트
@@ -608,7 +608,7 @@ ani = animation.FuncAnimation(fig,                # 그래프 figure 객체
                               blit=True,            # 블리팅 사용 (성능 향상을 위해)
                               interval=20)          # 프레임 간 간격 (밀리초 단위)
 
-# %% code 68.
+# %% code 67.
 import matplotlib
 import matplotlib.pyplot as plt
 
@@ -625,13 +625,13 @@ print(f"Animation HTML format: {matplotlib.rcParams['animation.html']}")
 from IPython.display import HTML
 HTML(ani.to_jshtml())
 
-# %% code 69.
+# %% code 68.
 import matplotlib
 matplotlib.rcParams['animation.html'] = 'html5'
 print(f"Animation HTML format: {matplotlib.rcParams['animation.html']}")
 HTML(ani.to_html5_video())
 
-# %% code 70.
+# %% code 69.
 # 파일명 설정
 fname = 'Solar_System_2D_Animation_Class_Based'
 
@@ -659,7 +659,7 @@ except Exception as e:
         except Exception as e3:
             print(f"HTML 저장 중 오류 발생: {e3}")
 
-# %% code 71.
+# %% code 70.
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.time import Time
@@ -791,7 +791,7 @@ print("태양계 시뮬레이션 초기화 완료!")
 plt.tight_layout()
 plt.show()
 
-# %% code 72.
+# %% code 71.
 # 애니메이션 함수 정의 - 각 프레임마다 호출되어 태양계 상태를 진화시킴
 def animate(i):
     return ss.evolve()  # 태양계 시스템의 evolve() 메서드 호출하여 행성들 위치 업데이트
@@ -805,7 +805,7 @@ ani = FuncAnimation(fig, animate,           # figure 객체와 애니메이션 �
                     blit=True)        # 블리팅 활성화 (렌더링 성능 향상)
                     
 
-# %% code 73.
+# %% code 72.
 import matplotlib
 import matplotlib.pyplot as plt
 
@@ -822,13 +822,13 @@ print(f"Animation HTML format: {matplotlib.rcParams['animation.html']}")
 from IPython.display import HTML
 HTML(ani.to_jshtml())
 
-# %% code 74.
+# %% code 73.
 import matplotlib
 matplotlib.rcParams['animation.html'] = 'html5'
 print(f"Animation HTML format: {matplotlib.rcParams['animation.html']}")
 HTML(ani.to_html5_video())
 
-# %% code 75.
+# %% code 74.
 # 저장할 파일명 설정
 fname = 'Solar_System_3D_Animation_Class_Based'  # 3D 태양계 애니메이션 파일명
 
@@ -838,7 +838,7 @@ ani.save(f'{proj_dir}/{fname}.mp4',  # 저장 경로와 파일명
             writer='ffmpeg')  # 동영상 인코더 (ffmpeg 사용)
 print(f"동영상이 저장되었습니다: {proj_dir}/{fname}.mp4")
 
-# %% code 76.
+# %% code 75.
 ani.save(f'{proj_dir}/{fname}.gif',  # GIF 파일로 저장
             fps=30,           # 초당 프레임 수 (30fps, MP4보다 낮음)
             dpi=100,          # 해상도 (MP4보다 낮음)

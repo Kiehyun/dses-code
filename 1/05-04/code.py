@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | V-04. 지질도 작성 및 이해
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 37.
+# %% code 34.
 from pathlib import Path
 from urllib.parse import urlencode
 import json
@@ -63,7 +63,7 @@ print(f"중복 제거 후 지질 단위 수: {len(feature_collection['features']
 print(f"파일 크기: {geojson_file.stat().st_size:,} bytes")
 print(download_log)
 
-# %% code 38.
+# %% code 35.
 clean_geojson_file = Path(proj_dir) / "macrostrat_geologic_units_clean.geojson"
 clean_geojson_file.write_text(
     json.dumps(feature_collection),
@@ -83,7 +83,7 @@ columns_to_show = [
 
 print(gdf[columns_to_show].head(10))
 
-# %% code 39.
+# %% code 36.
 age_summary = (
     gdf.groupby("best_int_name", dropna=False)
     .size()
@@ -103,10 +103,8 @@ lith_summary = (
 print(age_summary)
 print(lith_summary)
 
-# %% code 40.
+# %% code 37.
 import matplotlib.pyplot as plt
-plt.rcParams['font.family'] = 'Malgun Gothic'   # macOS: 'AppleGothic'
-plt.rcParams['axes.unicode_minus'] = False
 
 plot_gdf = gdf.copy()
 plot_gdf["plot_color"] = plot_gdf["color"].fillna("#cccccc")
@@ -126,7 +124,7 @@ ax.set_aspect("equal")
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "05_04_Geologic_map_basics_01"))
 plt.show()
 
-# %% code 41.
+# %% code 38.
 import matplotlib.pyplot as plt
 
 legend_df = (
@@ -150,7 +148,7 @@ ax.set_title("지질 시대 범례", loc="left")
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "05_04_Geologic_map_basics_02"))
 plt.show()
 
-# %% code 42.
+# %% code 39.
 import folium
 
 m = folium.Map(location=[map_center["lat"], map_center["lng"]], zoom_start=6, tiles="CartoDB positron")
@@ -183,7 +181,7 @@ m.save(map_file)
 print(f"지도 저장 위치: {map_file}")
 m
 
-# %% code 43.
+# %% code 40.
 source_summary = (
     gdf.groupby("source_id")
     .size()

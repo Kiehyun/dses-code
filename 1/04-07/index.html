@@ -3,13 +3,16 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
 <h1>IV-07. 엘니뇨와 남방진동</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/04-07/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 104.</h2><pre><code>import cartopy.crs as ccrs
+<p class="jump"><a href="#code-99">99</a> <a href="#code-100">100</a> <a href="#code-101">101</a> <a href="#code-102">102</a> <a href="#code-103">103</a> <a href="#code-104">104</a> <a href="#code-105">105</a> <a href="#code-106">106</a> <a href="#code-107">107</a> <a href="#code-108">108</a> <a href="#code-109">109</a></p>
+<h2 id="code-99">code 99. <button class="copy">복사</button></h2><pre><code>import cartopy.crs as ccrs
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 import matplotlib.ticker as mticker
 import matplotlib.pyplot as plt
@@ -83,20 +86,20 @@ plt.tight_layout()
 
 plt.savefig(f&quot;{proj_dir}/ENSO_map.png&quot;, dpi=300, bbox_inches=&#x27;tight&#x27;)  # 저장
 plt.show()  # 그래프 출력</code></pre>
-<h2>code 105.</h2><pre><code>fname1 = &quot;ENSO.csv&quot;
+<h2 id="code-100">code 100. <button class="copy">복사</button></h2><pre><code>fname1 = &quot;ENSO.csv&quot;
 fid1 = &quot;1QkkjxaXMhiaurtA2RxV7XUxonZoDwmIr&quot;
 
 fname2 = &quot;SOI.signal.txt&quot;
 fid2 = &quot;1n2ZOOvFh6gm0VGc70j3OlzfCkgOvbuKr&quot;
 
-#requests 라이브러리를 이용(나의 구글드라이브에서 공유한 파일을 구글 코랩에서 사용할 경우)
+# 구글 드라이브에 공유해 둔 파일 내려받기
 from pathlib import Path
 
 # ENSO/SOI는 주기적으로 갱신되는 피드이므로 항상 최신으로 새로 받습니다.
 du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={fid1}&quot;, Path(proj_dir) / fname1, overwrite=True)
 du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={fid2}&quot;, Path(proj_dir) / fname2, overwrite=True)</code></pre>
-<h2>code 106.</h2><pre><code>fpaths = du.list_files(proj_dir, [&quot;csv&quot;, &quot;txt&quot;])</code></pre>
-<h2>code 107.</h2><pre><code>n_lines = 10  # 출력할 줄 수
+<h2 id="code-101">code 101. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, [&quot;csv&quot;, &quot;txt&quot;])</code></pre>
+<h2 id="code-102">code 102. <button class="copy">복사</button></h2><pre><code>n_lines = 10  # 출력할 줄 수
 
 print(f&quot;파일 내용 출력 (처음 {n_lines}줄):&quot;)
 print(&quot;=&quot;*40)
@@ -122,7 +125,7 @@ except Exception as e:
     print(f&quot;파일 읽기 실패: {e}&quot;)
 
 print(&quot;=&quot;*60)</code></pre>
-<h2>code 108.</h2><pre><code>n_lines = 10  # 출력할 줄 수
+<h2 id="code-103">code 103. <button class="copy">복사</button></h2><pre><code>n_lines = 10  # 출력할 줄 수
 
 print(f&quot;파일 내용 출력 (처음 {n_lines}줄):&quot;)
 print(&quot;=&quot;*40)
@@ -148,7 +151,7 @@ except Exception as e:
     print(f&quot;파일 읽기 실패: {e}&quot;)
 
 print(&quot;=&quot;*60)</code></pre>
-<h2>code 109.</h2><pre><code>import pandas as pd
+<h2 id="code-104">code 104. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 import numpy as np
 
 #파일 인코딩을 확인해 보자.
@@ -168,7 +171,7 @@ df_Kaggle.index = df_Kaggle[&#x27;dt_date&#x27;]
 df_Kaggle = df_Kaggle.mask(df_Kaggle[&#x27;ONI&#x27;] == -99.9, np.nan)
 
 print(&quot;df_Kaggle : \n&quot;, df_Kaggle)</code></pre>
-<h2>code 110.</h2><pre><code>import numpy as np
+<h2 id="code-105">code 105. <button class="copy">복사</button></h2><pre><code>import numpy as np
 
 arr = np.loadtxt(fpaths[1],
  #delimiter=&#x27; &#x27;, 
@@ -201,7 +204,7 @@ while date1 &lt; EndDT:
 
 print(&quot;len(proc_dates): {}&quot;.format(len(proc_dates)))
 print(f&quot;proc_dates: {proc_dates}&quot;)</code></pre>
-<h2>code 111.</h2><pre><code># import pandas as pd
+<h2 id="code-106">code 106. <button class="copy">복사</button></h2><pre><code># import pandas as pd
 import pandas as pd
  
 # 리스트로 DataFrame 만들기
@@ -212,7 +215,7 @@ df_SOI[&#x27;dt_date&#x27;] = pd.to_datetime(df_SOI[&#x27;date&#x27;])
 df_SOI.index = df_SOI[&#x27;dt_date&#x27;]
 df_SOI[&#x27;SOI&#x27;] = df_SOI[&#x27;SOI&#x27;].replace(-99.9, np.nan)
 print(&quot;df_SOI :&quot;, df_SOI)</code></pre>
-<h2>code 112.</h2><pre><code># 필요한 라이브러리 불러오기
+<h2 id="code-107">code 107. <button class="copy">복사</button></h2><pre><code># 필요한 라이브러리 불러오기
 import matplotlib.pyplot as plt
 from matplotlib import rc
 
@@ -223,7 +226,7 @@ ax.set_title(&#x27;니뇨 3.4 지역의 해양 엘니뇨 지수(ONI)&#x27;, font
 ax.set_xlabel(&#x27;시간(년)&#x27;, fontsize=14)
 ax.set_ylabel(&#x27;수온 편차 (°C)&#x27;, fontsize=14)
 plt.show()</code></pre>
-<h2>code 113.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-108">code 108. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 # 그림 사이즈를 가로로 길게 지정
 fig, ax = plt.subplots(figsize=(12.0, 4.0))
@@ -257,7 +260,7 @@ fig.tight_layout()
 fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0.1)
 
 plt.show()</code></pre>
-<h2>code 114.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-109">code 109. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 # 그림 사이즈를 가로로 길게 지정
 fig, ax = plt.subplots(figsize=(12.0, 4.0))
@@ -294,4 +297,14 @@ fig.tight_layout()
 fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0.1)
 
 plt.show()</code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>

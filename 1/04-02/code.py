@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | IV-02. 킬링 곡선 그리기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 24.
+# %% code 22.
 import matplotlib.pyplot as plt
 
 
@@ -49,12 +49,7 @@ plt.axis('equal')  # 원형 비율 유지
 plt.tight_layout()
 plt.show()
 
-# %% code 25.
-# 프로젝트(자료 저장) 폴더 생성 — 공통 함수 사용
-proj_dir = du.make_project_dir(du.current_notebook_name() or "04_02_Plotting_the_Keeling_Curve")
-from pathlib import Path
-
-# %% code 26.
+# %% code 23.
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
@@ -133,33 +128,19 @@ plt.title('대기 관측소 분포 (태평양 중심 지도)', fontsize=12)
 plt.tight_layout()
 plt.show()
 
-# %% code 27.
-import requests
-import os
+# %% code 24.
+from pathlib import Path
 
 fname = "monthly_in_situ_co2_mlo.csv"
-fid = "1eDpIDHluYJsYv3D5mvOnpLLv93RJk6T8"
 
-# requests 라이브러리를 이용(구글드라이브에서 공유한 파일을 다운로드할 경우)
-# url = f"https://docs.google.com/uc?export=download&id={fid}"
-# Scripps에서 직접 받을 경우
+# 스크립스 CO2 프로그램에서 직접 내려받기
 url = "https://keelinglabsites.ucsd.edu/websitedataco2/monthly_in_situ_co2_mlo.csv"
+du.download(url, Path(proj_dir) / fname)
 
-# 디렉토리가 없으면 생성
-os.makedirs(proj_dir, exist_ok=True)
-
-# 파일 다운로드
-response = requests.get(url, verify=False)  # verify=False
-response.raise_for_status()                 # HTTP 에러 체크
-file_path = os.path.join(proj_dir, fname)   # 파일 저장
-with open(file_path, 'wb') as f:
-    f.write(response.content)
-print(f"파일이 성공적으로 다운로드되었습니다: {file_path}")
-
-# %% code 28.
+# %% code 25.
 fpaths = du.list_files(proj_dir, "csv")
 
-# %% code 29.
+# %% code 26.
 n_lines = 70  # 출력할 줄 수
 
 print(f"파일 내용 출력 (처음 {n_lines}줄):")
@@ -187,12 +168,12 @@ except Exception as e:
 
 print("="*60)
 
-# %% code 30.
+# %% code 27.
 # # !head -n 70 {fpaths[0]} # list the first 50 lines of the file
 # print(f"파일 {fpaths[0]}의 첫 70줄을 출력합니다:")
 # !powershell -Command "Get-Content {fpaths[0]} -TotalCount 70"
 
-# %% code 31.
+# %% code 28.
 import pandas as pd
 
 # CSV 파일을 읽어서 DataFrame으로 변환
@@ -215,7 +196,7 @@ df = pd.read_csv(str(fpaths[0]),           # 파일 경로 (문자열로 변환)
 df = df[df.CO2 != -99.99]
 print("df: ", df)  # 읽어온 DataFrame 출력
 
-# %% code 32.
+# %% code 29.
 df['datetime'] = pd.to_datetime(df['Date'], format='%Y') + pd.to_timedelta((df['Date'] % 1) * 365.25, unit='D')
 
 # 방법 3: numpy를 사용한 벡터화된 방법
@@ -243,7 +224,7 @@ df['datetime'] = decimal_year_to_datetime_vectorized(df['Date'])
 # 결과 확인
 print(df[['Date', 'datetime']])
 
-# %% code 33.
+# %% code 30.
 import matplotlib.pyplot as plt
 
 #차트 크기 설정
@@ -264,7 +245,7 @@ ax.set_title('Mauna Loa Observatory, Hawaii \nMonthly Average Carbon Dioxide Con
              fontdict={'fontsize':16})
 plt.show()
 
-# %% code 34.
+# %% code 31.
 import matplotlib.pyplot as plt
 
 #차트 크기 설정
@@ -285,7 +266,7 @@ ax.set_title('Mauna Loa Observatory, Hawaii \nMonthly Average Carbon Dioxide Con
              fontdict={'fontsize':16})
 plt.show()
 
-# %% code 35.
+# %% code 32.
 import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(10.5, 8))
@@ -337,7 +318,7 @@ ax.text(1985, 422, r'Last updated June 2021',
 
 plt.show()
 
-# %% code 36.
+# %% code 33.
 import matplotlib.pyplot as plt
 
 # 그래프 설정
@@ -369,7 +350,7 @@ ax.text(1985, 422, 'Last updated June 2021', fontsize=12)
 line, = ax.plot(df['Date'].iloc[0], df['CO2'].iloc[0])
 point = ax.scatter(df['Date'].iloc[0], df['CO2'].iloc[0], s=5)
 
-# %% code 37.
+# %% code 34.
 # 애니메이션 함수 정의
 def animate(i):
  # i번째까지의 데이터로 라인 업데이트
@@ -403,7 +384,7 @@ except:
 
 HTML(ani.to_jshtml())
 
-# %% code 38.
+# %% code 35.
 # 파일명 설정
 fname = 'Keeling_curve_MLO'
 
@@ -431,7 +412,7 @@ except Exception as e:
         except Exception as e3:
             print(f"HTML 저장 중 오류 발생: {e3}")
 
-# %% code 39.
+# %% code 36.
 import re
 import numpy as np
 import pandas as pd

@@ -1,32 +1,22 @@
 # 지구과학 데이터 사이언스 1 | III-06. SDO HMI 이미지에서 흑점 탐지
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 77.
-import requests
-import os
+# %% code 76.
+from pathlib import Path
 
 fname = "20170228_231038_1024_HMII.jpg"
 fid = "1yxW326FtXQY_D9VL0DST_pv8QiZ2GBeW"
 
-# requests 라이브러리를 이용 (SDO에서 직접 받을 경우)
+# SDO에서 직접 받을 경우
 # url = "https://sdo.gsfc.nasa.gov/assets/img/browse/2017/02/28/20170228_231038_1024_HMII.jpg"
-# requests 라이브러리를 이용(구글드라이브에서 공유한 파일을 다운로드할 경우)
+# 구글 드라이브에 미리 저장해 둔 파일을 받을 경우
 url = f"https://docs.google.com/uc?export=download&id={fid}"
-# 디렉토리가 없으면 생성
-os.makedirs(proj_dir, exist_ok=True)
-
-# 파일 다운로드
-response = requests.get(url, verify=False)  # verify=False는 --no-check-certificate와 동일
-response.raise_for_status()                 # HTTP 에러 체크
-file_path = os.path.join(proj_dir, fname)   # 파일 저장
-with open(file_path, 'wb') as f:
-    f.write(response.content)
-print(f"파일이 성공적으로 다운로드되었습니다: {file_path}")
+du.download(url, Path(proj_dir) / fname)
 
 # 다운로드한 이미지 파일 목록
 fpaths = sorted(Path(proj_dir).glob('*.jpg'))
 
-# %% code 78.
+# %% code 77.
 import cv2  # OpenCV 라이브러리를 불러옵니다.
 
 # 이미지 파일 경로 리스트를 출력합니다.
@@ -65,7 +55,7 @@ plt.imshow(sun_im,
 
 plt.show()  # 이미지를 화면에 출력합니다.
 
-# %% code 79.
+# %% code 78.
 # 이미지에서 원(태양)을 검출하기 위해 HoughCircles 함수 사용
 # sun_im: 입력 이미지 (흑백 이미지여야 함)
 # cv2.HOUGH_GRADIENT: 허프 변환 방법 지정
@@ -87,7 +77,7 @@ print("sun_circle[0, 0, :]: ", sun_circle[0, 0, :])
 sun_circle = np.round(sun_circle[0,0,:]).astype(int)
 print('circle of sun', sun_circle )
 
-# %% code 80.
+# %% code 79.
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 
@@ -117,7 +107,7 @@ ax.add_patch(circle)  # Axes에 원(circle) 패치 추가
 
 plt.show()          # 화면에 이미지와 원을 함께 출력
 
-# %% code 81.
+# %% code 80.
 # 이미지 복사본 생성 (원본 이미지를 보존하기 위해 복사본을 만듦)
 sun_im_output = sun_im.copy()
 print("sun_im_output: ", sun_im_output)
@@ -148,7 +138,7 @@ print ("outer:", outer)
 # inner 배열 값 출력 (디버깅용)
 print ("inner", inner)
 
-# %% code 82.
+# %% code 81.
 # 8 bit image에서 흰색은 255이다. 
 sun_im_output[outer] = 255
 
@@ -170,7 +160,7 @@ ax.add_patch(circle)
 
 plt.show()
 
-# %% code 83.
+# %% code 82.
 # 흑점(태양의 어두운 점)으로 예상되는 픽셀을 얻기 위한 코드
 
 # 흑점으로 판단할 밝기 기준값 설정 (이 값보다 어두우면 흑점으로 간주)
@@ -226,7 +216,7 @@ ax.add_patch(circle) # ax(좌표축)에 원 추가
 
 plt.show() # 그래프(이미지) 화면에 출력
 
-# %% code 84.
+# %% code 83.
 # check_pixel을 numpy 배열로 변환
 check_pixel = np.asarray(check_pixel)
 print("check_pixel:", check_pixel)
@@ -263,7 +253,7 @@ ax.add_patch(circle)                             # 원을 axes에 추가
 # 이미지와 원을 화면에 표시
 plt.show()
 
-# %% code 85.
+# %% code 84.
 fig, ax = plt.subplots()
 
 # 이미지 나타내기
@@ -282,7 +272,7 @@ ax.add_patch(circle)
 
 plt.show()
 
-# %% code 86.
+# %% code 85.
 import math
 
 # 태양 흑점의 위도(latitude)와 경도(longitude)를 계산하는 함수
@@ -351,7 +341,7 @@ print ('*'*80)
 print ('number of sunspot : ', len(sunspot_data))  # 흑점 개수 출력
 print ('sunspot data : ', sunspot_data)            # 흑점 데이터(x, y, 픽셀 개수) 출력
 
-# %% code 87.
+# %% code 86.
 # sunspot_data를 numpy 배열로 변환
 sunspot_data = np.asarray(sunspot_data)
 print("sunspot_data:\n", sunspot_data)

@@ -3,13 +3,16 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
 <h1>II-03. 시계열에서 주기 찾기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/02-23/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 32.</h2><pre><code>import numpy as np
+<p class="jump"><a href="#code-32">32</a> <a href="#code-33">33</a> <a href="#code-34">34</a> <a href="#code-35">35</a> <a href="#code-36">36</a> <a href="#code-37">37</a> <a href="#code-38">38</a></p>
+<h2 id="code-32">code 32. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
 rng = np.random.default_rng(2)
@@ -25,7 +28,7 @@ series = 350 + trend + seasonal + noise    # 셋을 겹친 관측값
 
 print(f&quot;데이터 길이 : {series.size}개 ({YEARS}년 치, 월 1회)&quot;)
 print(f&quot;값의 범위 : {series.min():.1f} ~ {series.max():.1f}&quot;)</code></pre>
-<h2>code 33.</h2><pre><code>fig, ax = plt.subplots(figsize=(8.5, 3.8))
+<h2 id="code-33">code 33. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(8.5, 3.8))
 ax.plot(time, series, &quot;o-&quot;, ms=3, lw=0.8, color=&quot;steelblue&quot;, label=&quot;관측값&quot;)
 ax.plot(time, 350 + trend, &quot;r--&quot;, lw=2, label=&quot;숨어 있는 추세&quot;)
 ax.set_xlabel(&quot;시간 (년)&quot;)
@@ -35,7 +38,7 @@ ax.legend()
 ax.grid(alpha=0.3)
 du.save_figure(fig, os.path.join(proj_dir, &quot;timeseries&quot;))
 plt.show()</code></pre>
-<h2>code 34.</h2><pre><code>def moving_average(values, window):
+<h2 id="code-34">code 34. <button class="copy">복사</button></h2><pre><code>def moving_average(values, window):
     &quot;&quot;&quot;가장자리를 잘라내지 않고 같은 길이로 돌려주는 이동평균.&quot;&quot;&quot;
     kernel = np.ones(window) / window
     padded = np.pad(values, (window // 2, window - 1 - window // 2),
@@ -55,13 +58,13 @@ ax.legend(fontsize=9)
 ax.grid(alpha=0.3)
 du.save_figure(fig, os.path.join(proj_dir, &quot;moving_average&quot;))
 plt.show()</code></pre>
-<h2>code 35.</h2><pre><code>trend_estimated = moving_average(series, 12)  # 12개월 평균 = 추세 추정
+<h2 id="code-35">code 35. <button class="copy">복사</button></h2><pre><code>trend_estimated = moving_average(series, 12)  # 12개월 평균 = 추세 추정
 detrended = series - trend_estimated          # 추세를 뺀 나머지
 
 print(f&quot;원시 데이터 표준편차 : {series.std():.2f}&quot;)
 print(f&quot;추세 제거 후 표준편차: {detrended.std():.2f}&quot;)
 print(f&quot;넣어 둔 계절 진폭    : 5.0  -&gt;  추정 진폭 약 {detrended.std()*np.sqrt(2):.2f}&quot;)</code></pre>
-<h2>code 36.</h2><pre><code>values = detrended - detrended.mean()             # 평균도 0으로 맞춘다
+<h2 id="code-36">code 36. <button class="copy">복사</button></h2><pre><code>values = detrended - detrended.mean()             # 평균도 0으로 맞춘다
 n = values.size
 dt = 1 / PER_YEAR                                 # 표본 간격(년)
 
@@ -72,7 +75,7 @@ power = np.abs(spectrum) ** 2 / n  # 진동수별 세기
 peak = np.argmax(power[1:]) + 1                   # 0번(평균) 제외하고 최대
 print(f&quot;가장 강한 진동수 : {freqs[peak]:.3f}회/년&quot;)
 print(f&quot;그에 해당하는 주기: {1/freqs[peak]:.2f} 년&quot;)</code></pre>
-<h2>code 37.</h2><pre><code>fig, ax = plt.subplots(figsize=(8.5, 4))
+<h2 id="code-37">code 37. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(8.5, 4))
 ax.plot(freqs[1:], power[1:], color=&quot;steelblue&quot;)
 ax.axvline(1.0, color=&quot;red&quot;, ls=&quot;--&quot;, lw=1, label=&quot;1년 주기(넣어 둔 값)&quot;)
 ax.plot(freqs[peak], power[peak], &quot;ro&quot;, ms=8, label=&quot;찾아낸 봉우리&quot;)
@@ -83,11 +86,21 @@ ax.legend()
 ax.grid(alpha=0.3)
 du.save_figure(fig, os.path.join(proj_dir, &quot;periodogram&quot;))
 plt.show()</code></pre>
-<h2>code 38.</h2><pre><code>nyquist = 1 / (2 * dt)
+<h2 id="code-38">code 38. <button class="copy">복사</button></h2><pre><code>nyquist = 1 / (2 * dt)
 print(f&quot;표본 간격 : {dt*12:.0f}개월&quot;)
 print(f&quot;나이키스트 진동수 : {nyquist:.1f}회/년  (최소 {1/nyquist*12:.0f}개월 주기까지)&quot;)
 
 # 되말림 확인
 alias_freq = abs(8 - round(8 / (2*nyquist)) * 2 * nyquist)
 print(f&quot;\n실제 진동수 8회/년 -&gt; 관측에서는 {alias_freq:.1f}회/년처럼 보인다&quot;)</code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>

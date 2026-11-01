@@ -3,34 +3,23 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
 <h1>V-01. 세계의 화산대</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/05-01/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 1.</h2><pre><code># !sudo apt-get install -y fonts-nanum
-# !sudo fc-cache -fv
-# !rm ~/.cache/matplotlib -rf</code></pre>
-<h2>code 2.</h2><pre><code>proj_dir = du.make_project_dir(du.current_notebook_name() or &quot;05_01_Global_Volcanic_Belts&quot;)</code></pre>
-<h2>code 3.</h2><pre><code>fname = &quot;List_of_Volcanoes_of_the_World_for_VAAC_Use.xls&quot;
+<p class="jump"><a href="#code-1">1</a> <a href="#code-2">2</a> <a href="#code-3">3</a> <a href="#code-4">4</a> <a href="#code-5">5</a> <a href="#code-6">6</a> <a href="#code-7">7</a> <a href="#code-8">8</a> <a href="#code-9">9</a> <a href="#code-10">10</a> <a href="#code-11">11</a></p>
+<h2 id="code-1">code 1. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
+
+fname = &quot;List_of_Volcanoes_of_the_World_for_VAAC_Use.xls&quot;
 fid = &quot;1dmJpAd1RI6LCaoV_iRR72HMeVP8vDoV-&quot;
 
-# 공통 유틸 du.download 사용 (동일 파일이면 dest가 이미 있으므로 건너뜀)
-from pathlib import Path
-
-# proj_dir가 파일명(.ipynb)로 잘못 들어간 경우를 대비해 안전하게 처리
-proj_dir = Path(proj_dir)
-if proj_dir.suffix == &#x27;.ipynb&#x27;:
-    proj_dir = Path(&quot;05_01_Plot_ring_of_fire&quot;)
-    proj_dir.mkdir(parents=True, exist_ok=True)
-
-du.download(
-    f&quot;https://docs.google.com/uc?export=download&amp;id={fid}&quot;,
-    proj_dir / fname
-)</code></pre>
-<h2>code 4.</h2><pre><code>fpaths = du.list_files(proj_dir, &quot;xls&quot;)</code></pre>
-<h2>code 5.</h2><pre><code>n_lines = 10  # 출력할 줄 수
+du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={fid}&quot;, Path(proj_dir) / fname)</code></pre>
+<h2 id="code-2">code 2. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;xls&quot;)</code></pre>
+<h2 id="code-3">code 3. <button class="copy">복사</button></h2><pre><code>n_lines = 10  # 출력할 줄 수
 
 print(f&quot;파일 내용 출력 (처음 {n_lines}줄):&quot;)
 print(&quot;=&quot;*40)
@@ -56,11 +45,11 @@ except Exception as e:
     print(f&quot;파일 읽기 실패: {e}&quot;)
 
 print(&quot;=&quot;*60)</code></pre>
-<h2>code 6.</h2><pre><code>import pandas as pd
+<h2 id="code-4">code 4. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 import lxml.etree as ET
 
 # XML 파싱
-tree = ET.parse(fpaths[0])  # fpaths[1]는 XML 파일 경로로 가정합니다.
+tree = ET.parse(fpaths[0])  # fpaths[0]은 XML 파일 경로입니다.
 ns = {&quot;ss&quot;: &quot;urn:schemas-microsoft-com:office:spreadsheet&quot;}
 
 # Row 추출
@@ -85,16 +74,12 @@ for col in df_vol.columns:
 
 # 데이터 확인
 print(&quot;df_vol :&quot;, df_vol)</code></pre>
-<h2>code 7.</h2><pre><code>df_vol.columns</code></pre>
-<h2>code 8.</h2><pre><code>df_vol[&#x27;Latitude&#x27;] = df_vol[&#x27;LatitudeDecimal&#x27;]
+<h2 id="code-5">code 5. <button class="copy">복사</button></h2><pre><code>df_vol.columns</code></pre>
+<h2 id="code-6">code 6. <button class="copy">복사</button></h2><pre><code>df_vol[&#x27;Latitude&#x27;] = df_vol[&#x27;LatitudeDecimal&#x27;]
 df_vol[&#x27;Longitude&#x27;] = df_vol[&#x27;LongitudeDecimal&#x27;]
 print(df_vol[[&#x27;Latitude&#x27;, &#x27;Longitude&#x27;]])</code></pre>
-<h2>code 9.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-7">code 7. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 import numpy as np
-
-# 한글 글꼴 설정(그래프의 한글이 □로 깨지지 않게)
-plt.rcParams[&#x27;font.family&#x27;] = &#x27;Malgun Gothic&#x27;   # macOS: &#x27;AppleGothic&#x27;
-plt.rcParams[&#x27;axes.unicode_minus&#x27;] = False
 
 # 화산 위치 산점도
 plt.scatter(df_vol[&#x27;Longitude&#x27;], df_vol[&#x27;Latitude&#x27;], 
@@ -116,7 +101,7 @@ plt.axvline(x=0, color=&#x27;k&#x27;, linestyle=&#x27;-&#x27;, alpha=0.3)  # 본
 plt.tight_layout()  # 레이아웃 자동 조정
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;05_01_Plotting_ring_of_fire_01&quot;))
 plt.show()</code></pre>
-<h2>code 10.</h2><pre><code>import pandas as pd
+<h2 id="code-8">code 8. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 import numpy as np
@@ -156,7 +141,7 @@ plt.legend(loc=&#x27;lower left&#x27;)
 plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;05_01_Plotting_ring_of_fire_02&quot;))
 plt.show()</code></pre>
-<h2>code 11.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-9">code 9. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 
@@ -175,7 +160,7 @@ plt.title(&#x27;World Volcanoes Distribution (Cartopy)&#x27;, fontsize=16, fontw
 plt.legend(loc=&#x27;lower left&#x27;)
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;05_01_Plotting_ring_of_fire_03&quot;))
 plt.show()</code></pre>
-<h2>code 12.</h2><pre><code>import folium
+<h2 id="code-10">code 10. <button class="copy">복사</button></h2><pre><code>import folium
 from folium.plugins import MarkerCluster
 import pandas as pd
 
@@ -192,7 +177,7 @@ for idx, row in df_vol.iterrows():
     folium.Marker([lat, lon], popup=name, icon=folium.Icon(color=&#x27;red&#x27;, icon=&#x27;fire&#x27;)).add_to(marker_cluster)
 m.save(&#x27;world_volcanoes_folium.html&#x27;)
 display(m)</code></pre>
-<h2>code 13.</h2><pre><code>import plotly.graph_objects as go
+<h2 id="code-11">code 11. <button class="copy">복사</button></h2><pre><code>import plotly.graph_objects as go
 import plotly.express as px
 
 fig = go.Figure()
@@ -234,4 +219,14 @@ fig.update_layout(
     )
 
 fig.show()  # 지도 출력</code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>

@@ -3,14 +3,16 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
 <h1>II-03. 지도 그리기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/02-03/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 22.</h2><pre><code>proj_dir = du.make_project_dir(du.current_notebook_name() or &quot;02_03_Drawing_Maps&quot;)</code></pre>
-<h2>code 23.</h2><pre><code>from mpl_toolkits.basemap import Basemap
+<p class="jump"><a href="#code-22">22</a> <a href="#code-23">23</a> <a href="#code-24">24</a> <a href="#code-25">25</a> <a href="#code-26">26</a> <a href="#code-27">27</a> <a href="#code-28">28</a> <a href="#code-29">29</a> <a href="#code-30">30</a> <a href="#code-31">31</a> <a href="#code-32">32</a> <a href="#code-33">33</a> <a href="#code-34">34</a> <a href="#code-35">35</a> <a href="#code-36">36</a> <a href="#code-37">37</a> <a href="#code-38">38</a></p>
+<h2 id="code-22">code 22. <button class="copy">복사</button></h2><pre><code>from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
@@ -41,7 +43,7 @@ ax3.set_title(&#x27;중심 위도 37도&#x27;)
 plt.tight_layout()  # 레이아웃 조정
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;02_03_Drawing_maps_01&quot;))
 plt.show()</code></pre>
-<h2>code 24.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-23">code 23. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 
 fig = plt.figure(figsize=(12, 4))
@@ -63,7 +65,7 @@ m3.shadedrelief(scale=0.5, alpha=0.7)  # 음영기복 이미지 (지형의 입�
 
 plt.tight_layout()  # 서브플롯 간격 자동 조정
 plt.show()          # 그래프 출력</code></pre>
-<h2>code 25.</h2><pre><code>from mpl_toolkits.basemap import Basemap
+<h2 id="code-24">code 24. <button class="copy">복사</button></h2><pre><code>from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
 
 fig = plt.figure(figsize=(5, 5))
@@ -78,7 +80,7 @@ plt.text(x, y, &#x27;Suwon&#x27;, fontsize=12)
 
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;02_03_Drawing_maps_02&quot;))
 plt.show()</code></pre>
-<h2>code 26.</h2><pre><code>from mpl_toolkits.basemap import Basemap
+<h2 id="code-25">code 25. <button class="copy">복사</button></h2><pre><code>from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime
@@ -123,7 +125,7 @@ ax2.set_title(&#x27;%s (UTC) 주야 구분 지도&#x27; % date.strftime(&quot;%d
 # 레이아웃 조정 및 표시
 plt.tight_layout()  # 자동 레이아웃 조정
 plt.show()          # 그래프 출력</code></pre>
-<h2>code 27.</h2><pre><code>from itertools import chain
+<h2 id="code-26">code 26. <button class="copy">복사</button></h2><pre><code>from itertools import chain
 
 def draw_map(m, scale=0.2):   # 함수 정의하기
  # 음영 기복도 그리기
@@ -141,7 +143,7 @@ def draw_map(m, scale=0.2):   # 함수 정의하기
  # 이 선들을 돌면서 원하는 스타일을 지정한다
     for line in all_lines:
         line.set(linestyle=&#x27;-&#x27;, alpha=0.3, color=&#x27;w&#x27;)</code></pre>
-<h2>code 28.</h2><pre><code>fig, ax = plt.subplots(1, 3, figsize=(10, 5))
+<h2 id="code-27">code 27. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(1, 3, figsize=(10, 5))
 
 for i, res in enumerate([&#x27;l&#x27;, &#x27;i&#x27;, &#x27;h&#x27;]):
  # 심사 투영법(gnomonic)으로 지도 생성
@@ -162,7 +164,7 @@ for i, res in enumerate([&#x27;l&#x27;, &#x27;i&#x27;, &#x27;h&#x27;]):
     
  # 각 서브플롯의 제목 설정
     ax[i].set_title(&quot;해상도=&#x27;{0}&#x27;&quot;.format(res));</code></pre>
-<h2>code 29.</h2><pre><code>plt.figure(figsize=(8, 6))
+<h2 id="code-28">code 28. <button class="copy">복사</button></h2><pre><code>plt.figure(figsize=(8, 6))
 
 loglat = [90, 0, 180, 62]
 clog = (loglat[2]+loglat[0])/2
@@ -186,7 +188,7 @@ m.drawmeridians(np.arange(-180, 181, 10),
 plt.title(&quot;Weather map\n&quot;, fontsize=20)
 plt.savefig(f&#x27;{proj_dir}/Weather_map.pdf&#x27;)
 plt.show()   </code></pre>
-<h2>code 30.</h2><pre><code>import cartopy.crs as ccrs
+<h2 id="code-29">code 29. <button class="copy">복사</button></h2><pre><code>import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
 import cartopy.feature as cfeature
 
@@ -210,7 +212,7 @@ ax2.set_title(&#x27;Detailed World Map&#x27;)
 plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;02_03_Drawing_maps_03&quot;))
 plt.show()</code></pre>
-<h2>code 31.</h2><pre><code>import cartopy.crs as ccrs
+<h2 id="code-30">code 30. <button class="copy">복사</button></h2><pre><code>import cartopy.crs as ccrs
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 import matplotlib.pyplot as plt
 import cartopy.feature as cfeature
@@ -274,7 +276,7 @@ plt.tight_layout()
 
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;02_03_Drawing_maps_04&quot;))
 plt.show()</code></pre>
-<h2>code 32.</h2><pre><code>import matplotlib.path as mpath
+<h2 id="code-31">code 31. <button class="copy">복사</button></h2><pre><code>import matplotlib.path as mpath
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -319,7 +321,7 @@ ax2.set_boundary(circle, transform=ax2.transAxes)
 
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;02_03_Drawing_maps_05&quot;))
 plt.show()</code></pre>
-<h2>code 33.</h2><pre><code>import cartopy.crs as ccrs
+<h2 id="code-32">code 32. <button class="copy">복사</button></h2><pre><code>import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
 
 # 그림 크기 설정
@@ -346,7 +348,7 @@ plt.title(&#x27;Map of the Korea&#x27;, fontsize=18)
 
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;02_03_Drawing_maps_06&quot;))
 plt.show()</code></pre>
-<h2>code 34.</h2><pre><code>import folium
+<h2 id="code-33">code 33. <button class="copy">복사</button></h2><pre><code>import folium
 from IPython.display import display
 
 # 서울의 좌표(위도: 37.5665, 경도: 126.9780)를 중심으로 하는 기본 지도 생성
@@ -354,7 +356,7 @@ basic_map = folium.Map(location=[37.5665, 126.9780], zoom_start=12)
 
 # Jupyter 노트북에서 지도를 화면에 표시
 display(basic_map)</code></pre>
-<h2>code 35.</h2><pre><code>import folium
+<h2 id="code-34">code 34. <button class="copy">복사</button></h2><pre><code>import folium
 
 # 서울의 위도, 경도 좌표 설정
 seoul_coords = [37.5665, 126.9780]
@@ -373,7 +375,7 @@ folium.Marker(
 # 지도를 HTML 파일로 저장하고 화면에 표시
 basic_map.save(Path(proj_dir)/&#x27;basic_map_of_Seoul.html&#x27;)  # HTML 파일로 저장
 display(basic_map)  # 지도를 화면에 출력</code></pre>
-<h2>code 36.</h2><pre><code>def safe_tile_loader():
+<h2 id="code-35">code 35. <button class="copy">복사</button></h2><pre><code>def safe_tile_loader():
     &quot;&quot;&quot;안전한 타일 로딩&quot;&quot;&quot;
     location = [37.5665, 126.9780]  # 서울시청 좌표
     
@@ -461,7 +463,7 @@ else:
 for name, map_obj in maps.items():
     print(f&quot;\n{name} 지도:&quot;)
     display(map_obj)</code></pre>
-<h2>code 37.</h2><pre><code>def create_marker_showcase():
+<h2 id="code-36">code 36. <button class="copy">복사</button></h2><pre><code>def create_marker_showcase():
     &quot;&quot;&quot;다양한 마커 스타일을 보여주는 지도&quot;&quot;&quot;
     m = folium.Map(location=[37.5665, 126.9780], zoom_start=12)
     
@@ -507,7 +509,7 @@ for name, map_obj in maps.items():
 marker_map = create_marker_showcase()
 marker_map.save(Path(proj_dir)/&#x27;marker_showcase_map.html&#x27;)
 display(marker_map)</code></pre>
-<h2>code 38.</h2><pre><code>import numpy as np
+<h2 id="code-37">code 37. <button class="copy">복사</button></h2><pre><code>import numpy as np
 
 def create_heatmap():
     &quot;&quot;&quot;히트맵을 생성하는 함수&quot;&quot;&quot;
@@ -551,7 +553,7 @@ print(&quot;히트맵이 생성되었습니다.&quot;)
 
 # 히트맵 표시
 display(heatmap)</code></pre>
-<h2>code 39.</h2><pre><code>import pandas as pd
+<h2 id="code-38">code 38. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 def create_choropleth_map():
     &quot;&quot;&quot;한국 시도별 인구 데이터를 표시하는 코로플레스 지도&quot;&quot;&quot;
     
@@ -673,4 +675,14 @@ choropleth_map.save(Path(proj_dir)/&#x27;choropleth_map.html&#x27;)
 print(&quot;코로플레스 지도가 생성되었습니다.&quot;)
 # 코로플레스 지도 표시
 display(choropleth_map) </code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>

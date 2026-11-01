@@ -3,13 +3,16 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
 <h1>IV-02. 킬링 곡선 그리기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/04-02/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 24.</h2><pre><code>import matplotlib.pyplot as plt
+<p class="jump"><a href="#code-22">22</a> <a href="#code-23">23</a> <a href="#code-24">24</a> <a href="#code-25">25</a> <a href="#code-26">26</a> <a href="#code-27">27</a> <a href="#code-28">28</a> <a href="#code-29">29</a> <a href="#code-30">30</a> <a href="#code-31">31</a> <a href="#code-32">32</a> <a href="#code-33">33</a> <a href="#code-34">34</a> <a href="#code-35">35</a> <a href="#code-36">36</a></p>
+<h2 id="code-22">code 22. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 
 # 대기 구성 성분과 비율
@@ -55,10 +58,7 @@ plt.title(&#x27;대기의 구성 성분 (건조 공기)&#x27;, fontsize=14)
 plt.axis(&#x27;equal&#x27;)  # 원형 비율 유지
 plt.tight_layout()
 plt.show()</code></pre>
-<h2>code 25.</h2><pre><code># 프로젝트(자료 저장) 폴더 생성 — 공통 함수 사용
-proj_dir = du.make_project_dir(du.current_notebook_name() or &quot;04_02_Plotting_the_Keeling_Curve&quot;)
-from pathlib import Path</code></pre>
-<h2>code 26.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-23">code 23. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
@@ -135,29 +135,15 @@ ax.text(-155.58 - 5, 19.54, &#x27;MAUNA LOA&#x27;, color=&#x27;red&#x27;, fontsi
 plt.title(&#x27;대기 관측소 분포 (태평양 중심 지도)&#x27;, fontsize=12)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2>code 27.</h2><pre><code>import requests
-import os
+<h2 id="code-24">code 24. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
 
 fname = &quot;monthly_in_situ_co2_mlo.csv&quot;
-fid = &quot;1eDpIDHluYJsYv3D5mvOnpLLv93RJk6T8&quot;
 
-# requests 라이브러리를 이용(구글드라이브에서 공유한 파일을 다운로드할 경우)
-# url = f&quot;https://docs.google.com/uc?export=download&amp;id={fid}&quot;
-# Scripps에서 직접 받을 경우
+# 스크립스 CO2 프로그램에서 직접 내려받기
 url = &quot;https://keelinglabsites.ucsd.edu/websitedataco2/monthly_in_situ_co2_mlo.csv&quot;
-
-# 디렉토리가 없으면 생성
-os.makedirs(proj_dir, exist_ok=True)
-
-# 파일 다운로드
-response = requests.get(url, verify=False)  # verify=False
-response.raise_for_status()                 # HTTP 에러 체크
-file_path = os.path.join(proj_dir, fname)   # 파일 저장
-with open(file_path, &#x27;wb&#x27;) as f:
-    f.write(response.content)
-print(f&quot;파일이 성공적으로 다운로드되었습니다: {file_path}&quot;)</code></pre>
-<h2>code 28.</h2><pre><code>fpaths = du.list_files(proj_dir, &quot;csv&quot;)</code></pre>
-<h2>code 29.</h2><pre><code>n_lines = 70  # 출력할 줄 수
+du.download(url, Path(proj_dir) / fname)</code></pre>
+<h2 id="code-25">code 25. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;csv&quot;)</code></pre>
+<h2 id="code-26">code 26. <button class="copy">복사</button></h2><pre><code>n_lines = 70  # 출력할 줄 수
 
 print(f&quot;파일 내용 출력 (처음 {n_lines}줄):&quot;)
 print(&quot;=&quot;*40)
@@ -183,10 +169,10 @@ except Exception as e:
     print(f&quot;파일 읽기 실패: {e}&quot;)
 
 print(&quot;=&quot;*60)</code></pre>
-<h2>code 30.</h2><pre><code># # !head -n 70 {fpaths[0]} # list the first 50 lines of the file
+<h2 id="code-27">code 27. <button class="copy">복사</button></h2><pre><code># # !head -n 70 {fpaths[0]} # list the first 50 lines of the file
 # print(f&quot;파일 {fpaths[0]}의 첫 70줄을 출력합니다:&quot;)
 # !powershell -Command &quot;Get-Content {fpaths[0]} -TotalCount 70&quot;</code></pre>
-<h2>code 31.</h2><pre><code>import pandas as pd
+<h2 id="code-28">code 28. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 
 # CSV 파일을 읽어서 DataFrame으로 변환
 df = pd.read_csv(str(fpaths[0]),           # 파일 경로 (문자열로 변환)
@@ -207,7 +193,7 @@ df = pd.read_csv(str(fpaths[0]),           # 파일 경로 (문자열로 변환)
 
 df = df[df.CO2 != -99.99]
 print(&quot;df: &quot;, df)  # 읽어온 DataFrame 출력</code></pre>
-<h2>code 32.</h2><pre><code>df[&#x27;datetime&#x27;] = pd.to_datetime(df[&#x27;Date&#x27;], format=&#x27;%Y&#x27;) + pd.to_timedelta((df[&#x27;Date&#x27;] % 1) * 365.25, unit=&#x27;D&#x27;)
+<h2 id="code-29">code 29. <button class="copy">복사</button></h2><pre><code>df[&#x27;datetime&#x27;] = pd.to_datetime(df[&#x27;Date&#x27;], format=&#x27;%Y&#x27;) + pd.to_timedelta((df[&#x27;Date&#x27;] % 1) * 365.25, unit=&#x27;D&#x27;)
 
 # 방법 3: numpy를 사용한 벡터화된 방법
 import numpy as np
@@ -233,7 +219,7 @@ df[&#x27;datetime&#x27;] = decimal_year_to_datetime_vectorized(df[&#x27;Date&#x2
 
 # 결과 확인
 print(df[[&#x27;Date&#x27;, &#x27;datetime&#x27;]])</code></pre>
-<h2>code 33.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-30">code 30. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 #차트 크기 설정
 fig, ax = plt.subplots(figsize=(10.5,8))
@@ -252,7 +238,7 @@ ax.set_xlabel(r&#x27;Year&#x27;)
 ax.set_title(&#x27;Mauna Loa Observatory, Hawaii \nMonthly Average Carbon Dioxide Concentration&#x27;,
              fontdict={&#x27;fontsize&#x27;:16})
 plt.show()</code></pre>
-<h2>code 34.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-31">code 31. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 #차트 크기 설정
 fig, ax = plt.subplots(figsize=(10.5,8))
@@ -271,7 +257,7 @@ ax.set_xlabel(r&#x27;Year&#x27;)
 ax.set_title(&#x27;Mauna Loa Observatory, Hawaii \nMonthly Average Carbon Dioxide Concentration&#x27;,
              fontdict={&#x27;fontsize&#x27;:16})
 plt.show()</code></pre>
-<h2>code 35.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-32">code 32. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(10.5, 8))
 
@@ -321,7 +307,7 @@ ax.text(1985, 422, r&#x27;Last updated June 2021&#x27;,
              fontdict={&#x27;fontsize&#x27;:12})
 
 plt.show()</code></pre>
-<h2>code 36.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-33">code 33. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 # 그래프 설정
 fig, ax = plt.subplots(figsize=(10.5, 8))
@@ -351,7 +337,7 @@ ax.text(1985, 422, &#x27;Last updated June 2021&#x27;, fontsize=12)
 # 초기 데이터 포인트
 line, = ax.plot(df[&#x27;Date&#x27;].iloc[0], df[&#x27;CO2&#x27;].iloc[0])
 point = ax.scatter(df[&#x27;Date&#x27;].iloc[0], df[&#x27;CO2&#x27;].iloc[0], s=5)</code></pre>
-<h2>code 37.</h2><pre><code># 애니메이션 함수 정의
+<h2 id="code-34">code 34. <button class="copy">복사</button></h2><pre><code># 애니메이션 함수 정의
 def animate(i):
  # i번째까지의 데이터로 라인 업데이트
     line.set_data(df[&#x27;Date&#x27;].iloc[:i], df[&#x27;CO2&#x27;].iloc[:i])
@@ -383,7 +369,7 @@ except:
         ani
 
 HTML(ani.to_jshtml())</code></pre>
-<h2>code 38.</h2><pre><code># 파일명 설정
+<h2 id="code-35">code 35. <button class="copy">복사</button></h2><pre><code># 파일명 설정
 fname = &#x27;Keeling_curve_MLO&#x27;
 
 try:
@@ -409,7 +395,7 @@ except Exception as e:
             print(f&quot;HTML 파일이 저장되었습니다: {proj_dir}/{fname}.html&quot;)
         except Exception as e3:
             print(f&quot;HTML 저장 중 오류 발생: {e3}&quot;)</code></pre>
-<h2>code 39.</h2><pre><code>import re
+<h2 id="code-36">code 36. <button class="copy">복사</button></h2><pre><code>import re
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -576,4 +562,14 @@ ax.plot(df1[&#x27;Date&#x27;], df1[&#x27;seasonally adjusted filled&#x27;])
 ax.scatter(df1[&#x27;Date&#x27;], df1[&#x27;seasonally adjusted filled&#x27;], marker=&#x27;o&#x27;, s=5)
 
 plt.show()</code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>

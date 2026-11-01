@@ -3,13 +3,16 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
 <h1>V-03. 지진파 데이터로 진앙 찾기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/05-03/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 27.</h2><pre><code>from pathlib import Path
+<p class="jump"><a href="#code-24">24</a> <a href="#code-25">25</a> <a href="#code-26">26</a> <a href="#code-27">27</a> <a href="#code-28">28</a> <a href="#code-29">29</a> <a href="#code-30">30</a> <a href="#code-31">31</a> <a href="#code-32">32</a> <a href="#code-33">33</a></p>
+<h2 id="code-24">code 24. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
 from datetime import datetime
 from urllib.parse import urlencode
 import xml.etree.ElementTree as ET
@@ -38,7 +41,7 @@ event_file.write_text(xml_text, encoding=&quot;utf-8&quot;)
 print(response.url)
 print(f&quot;저장 위치: {event_file}&quot;)
 print(f&quot;파일 크기: {event_file.stat().st_size:,} bytes&quot;)</code></pre>
-<h2>code 28.</h2><pre><code>def tag_name(element):
+<h2 id="code-25">code 25. <button class="copy">복사</button></h2><pre><code>def tag_name(element):
     return element.tag.split(&quot;}&quot;)[-1]
 
 def first_child(element, name):
@@ -71,7 +74,7 @@ origin_info = {
 }
 
 origin_info</code></pre>
-<h2>code 29.</h2><pre><code>pick_rows = []
+<h2 id="code-26">code 26. <button class="copy">복사</button></h2><pre><code>pick_rows = []
 
 for pick in [elem for elem in event.iter() if tag_name(elem) == &quot;pick&quot;]:
     waveform = first_child(pick, &quot;waveformID&quot;)
@@ -90,8 +93,8 @@ for pick in [elem for elem in event.iter() if tag_name(elem) == &quot;pick&quot;
 
 picks = pd.DataFrame(pick_rows)
 print(picks)</code></pre>
-<h2>code 30.</h2><pre><code>picks[&quot;phase&quot;].value_counts(dropna=False)</code></pre>
-<h2>code 31.</h2><pre><code>phase_table = (
+<h2 id="code-27">code 27. <button class="copy">복사</button></h2><pre><code>picks[&quot;phase&quot;].value_counts(dropna=False)</code></pre>
+<h2 id="code-28">code 28. <button class="copy">복사</button></h2><pre><code>phase_table = (
     picks[picks[&quot;phase&quot;].isin([&quot;P&quot;, &quot;S&quot;])]
     .sort_values(&quot;pick_time&quot;)
     .groupby([&quot;network&quot;, &quot;station&quot;, &quot;phase&quot;], as_index=False)
@@ -106,7 +109,7 @@ phase_table = phase_table[(phase_table[&quot;s_minus_p_sec&quot;] &gt; 0) &amp; 
 phase_table = phase_table.sort_values(&quot;s_minus_p_sec&quot;).reset_index(drop=True)
 
 print(phase_table)</code></pre>
-<h2>code 32.</h2><pre><code>def download_station_metadata(network, station, event_time):
+<h2 id="code-29">code 29. <button class="copy">복사</button></h2><pre><code>def download_station_metadata(network, station, event_time):
     params = {
         &quot;format&quot;: &quot;text&quot;,
         &quot;net&quot;: network,
@@ -142,7 +145,7 @@ for row in phase_table[[&quot;network&quot;, &quot;station&quot;]].drop_duplicat
 stations = pd.DataFrame(station_rows)
 
 print(stations)</code></pre>
-<h2>code 33.</h2><pre><code>data = phase_table.merge(stations, on=[&quot;network&quot;, &quot;station&quot;], how=&quot;inner&quot;)
+<h2 id="code-30">code 30. <button class="copy">복사</button></h2><pre><code>data = phase_table.merge(stations, on=[&quot;network&quot;, &quot;station&quot;], how=&quot;inner&quot;)
 
 # 단순한 지각 평균 속도 가정
 vp = 6.0  # km/s
@@ -152,7 +155,7 @@ data[&quot;estimated_distance_km&quot;] = data[&quot;s_minus_p_sec&quot;] / (1 /
 data = data.sort_values(&quot;estimated_distance_km&quot;).reset_index(drop=True)
 
 print(data[[&quot;network&quot;, &quot;station&quot;, &quot;P&quot;, &quot;S&quot;, &quot;s_minus_p_sec&quot;, &quot;estimated_distance_km&quot;, &quot;station_latitude&quot;, &quot;station_longitude&quot;]])</code></pre>
-<h2>code 34.</h2><pre><code>def haversine_km(lat1, lon1, lat2, lon2):
+<h2 id="code-31">code 31. <button class="copy">복사</button></h2><pre><code>def haversine_km(lat1, lon1, lat2, lon2):
     radius = 6371.0
     lat1 = np.radians(lat1)
     lon1 = np.radians(lon1)
@@ -187,9 +190,7 @@ print(f&quot;추정 진앙: lat={estimated_lat:.4f}, lon={estimated_lon:.4f}&quo
 print(f&quot;발표 진앙: lat={origin_info[&#x27;latitude&#x27;]:.4f}, lon={origin_info[&#x27;longitude&#x27;]:.4f}&quot;)
 print(f&quot;평균 거리 잔차(RMS): {best_misfit:.1f} km&quot;)
 print(f&quot;실제 진앙과의 거리 차이: {haversine_km(estimated_lat, estimated_lon, origin_info[&#x27;latitude&#x27;], origin_info[&#x27;longitude&#x27;]):.1f} km&quot;)</code></pre>
-<h2>code 35.</h2><pre><code>import matplotlib.pyplot as plt
-plt.rcParams[&#x27;font.family&#x27;] = &#x27;Malgun Gothic&#x27;   # macOS: &#x27;AppleGothic&#x27;
-plt.rcParams[&#x27;axes.unicode_minus&#x27;] = False
+<h2 id="code-32">code 32. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 # 관측소와 발표 진앙 사이의 실제 거리(앞 셀의 haversine_km 사용)
 data[&quot;true_distance_km&quot;] = haversine_km(data[&quot;station_latitude&quot;], data[&quot;station_longitude&quot;],
@@ -209,7 +210,7 @@ ax.legend()
 ax.grid(alpha=0.3)
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;05_03_Finding_epicenter_with_P_and_S_waves_01&quot;))
 plt.show()</code></pre>
-<h2>code 36.</h2><pre><code>import folium
+<h2 id="code-33">code 33. <button class="copy">복사</button></h2><pre><code>import folium
 
 center_lat = np.mean([estimated_lat, origin_info[&quot;latitude&quot;]])
 center_lon = np.mean([estimated_lon, origin_info[&quot;longitude&quot;]])
@@ -250,4 +251,14 @@ map_file = Path(proj_dir) / &quot;estimated_epicenter_map.html&quot;
 m.save(map_file)
 print(f&quot;지도 저장 위치: {map_file}&quot;)
 m</code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>

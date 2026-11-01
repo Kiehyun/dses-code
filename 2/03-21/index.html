@@ -3,13 +3,16 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
 <h1>III-01. 은하의 분류와 특이 은하</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/03-21/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 53.</h2><pre><code>import time
+<p class="jump"><a href="#code-53">53</a> <a href="#code-54">54</a> <a href="#code-55">55</a> <a href="#code-56">56</a> <a href="#code-57">57</a> <a href="#code-58">58</a> <a href="#code-59">59</a> <a href="#code-60">60</a> <a href="#code-61">61</a> <a href="#code-62">62</a> <a href="#code-63">63</a> <a href="#code-64">64</a> <a href="#code-65">65</a></p>
+<h2 id="code-53">code 53. <button class="copy">복사</button></h2><pre><code>import time
 from io import StringIO, BytesIO
 from pathlib import Path
 import numpy as np
@@ -51,7 +54,7 @@ def cutout(ra, dec, scale, name, size=400):
                 {&quot;ra&quot;: ra, &quot;dec&quot;: dec, &quot;scale&quot;: scale, &quot;width&quot;: size, &quot;height&quot;: size})
         f.write_bytes(r.content)
     return Image.open(f)</code></pre>
-<h2>code 54.</h2><pre><code>galaxies = pd.DataFrame([
+<h2 id="code-54">code 54. <button class="copy">복사</button></h2><pre><code>galaxies = pd.DataFrame([
     (&quot;M87&quot;, 187.7059, 12.3911, 2.0, &quot;E0&quot;, &quot;타원&quot;),
     (&quot;M49&quot;, 187.4446, 8.0004, 2.0, &quot;E2&quot;, &quot;타원&quot;),
     (&quot;NGC 5866&quot;, 226.6229, 55.7633, 1.2, &quot;S0&quot;, &quot;렌즈형&quot;),
@@ -76,10 +79,10 @@ axes.ravel()[-1].axis(&quot;off&quot;)
 plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_01&quot;))
 plt.show()</code></pre>
-<h2>code 55.</h2><pre><code>answer = pd.DataFrame({&quot;은하&quot;: [list(order).index(k) + 1 for k in range(len(galaxies))],
+<h2 id="code-55">code 55. <button class="copy">복사</button></h2><pre><code>answer = pd.DataFrame({&quot;은하&quot;: [list(order).index(k) + 1 for k in range(len(galaxies))],
                        &quot;이름&quot;: galaxies[&quot;name&quot;], &quot;허블 형&quot;: galaxies[&quot;hubble&quot;], &quot;종류&quot;: galaxies[&quot;kind&quot;]})
 answer.sort_values(&quot;은하&quot;).reset_index(drop=True)</code></pre>
-<h2>code 56.</h2><pre><code>place = {  # 이름: (x, y) — 그림 좌표(0~1)
+<h2 id="code-56">code 56. <button class="copy">복사</button></h2><pre><code>place = {  # 이름: (x, y) — 그림 좌표(0~1)
     &quot;M87&quot;: (0.03, 0.42), &quot;M49&quot;: (0.16, 0.42), &quot;NGC 5866&quot;: (0.31, 0.42),
     &quot;M65&quot;: (0.47, 0.70), &quot;M51&quot;: (0.62, 0.70), &quot;M101&quot;: (0.77, 0.70),
     &quot;M95&quot;: (0.47, 0.14), &quot;M109&quot;: (0.62, 0.14), &quot;NGC 4449&quot;: (0.88, 0.42),
@@ -101,7 +104,7 @@ for text, (x, y) in {&quot;타원 은하 E&quot;: (0.10, 0.36), &quot;렌즈형 
     bg.text(x, y, text, fontsize=13, weight=&quot;bold&quot;, ha=&quot;left&quot;)
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_02&quot;))
 plt.show()</code></pre>
-<h2>code 57.</h2><pre><code>zoo = sql(&quot;&quot;&quot;
+<h2 id="code-57">code 57. <button class="copy">복사</button></h2><pre><code>zoo = sql(&quot;&quot;&quot;
 SELECT TOP 20000 g.objid, g.ra, g.dec, g.spiral, g.elliptical, s.z,
        p.modelMag_u, p.modelMag_g, p.modelMag_r, p.extinction_u, p.extinction_r,
        p.petroR50_r, p.petroR90_r
@@ -112,7 +115,7 @@ WHERE s.z BETWEEN 0.02 AND 0.08 AND (g.spiral = 1 OR g.elliptical = 1)
 &quot;&quot;&quot;, &quot;galaxyzoo_sample&quot;)
 zoo[&quot;type&quot;] = np.where(zoo[&quot;elliptical&quot;] == 1, &quot;타원&quot;, &quot;나선&quot;)
 print(zoo[&quot;type&quot;].value_counts())</code></pre>
-<h2>code 58.</h2><pre><code>from astropy.cosmology import FlatLambdaCDM
+<h2 id="code-58">code 58. <button class="copy">복사</button></h2><pre><code>from astropy.cosmology import FlatLambdaCDM
 
 cosmo = FlatLambdaCDM(H0=70, Om0=0.3)
 zoo[&quot;u_r&quot;] = (zoo[&quot;modelMag_u&quot;] - zoo[&quot;extinction_u&quot;]) - (zoo[&quot;modelMag_r&quot;] - zoo[&quot;extinction_r&quot;])
@@ -121,7 +124,7 @@ d_pc = cosmo.luminosity_distance(zoo[&quot;z&quot;].values).to(&quot;pc&quot;).v
 zoo[&quot;M_r&quot;] = zoo[&quot;modelMag_r&quot;] - zoo[&quot;extinction_r&quot;] - 5 * np.log10(d_pc / 10)
 zoo = zoo[(zoo[&quot;u_r&quot;].between(0.5, 4)) &amp; (zoo[&quot;conc&quot;].between(1.5, 4.5))].copy()
 zoo.groupby(&quot;type&quot;)[[&quot;u_r&quot;, &quot;conc&quot;, &quot;M_r&quot;]].median().round(2)</code></pre>
-<h2>code 59.</h2><pre><code>colors = {&quot;타원&quot;: &quot;tomato&quot;, &quot;나선&quot;: &quot;royalblue&quot;}
+<h2 id="code-59">code 59. <button class="copy">복사</button></h2><pre><code>colors = {&quot;타원&quot;: &quot;tomato&quot;, &quot;나선&quot;: &quot;royalblue&quot;}
 fig, ax = plt.subplots(1, 2, figsize=(7.5, 2.6))
 for t, c in colors.items():
     sub = zoo[zoo[&quot;type&quot;] == t]
@@ -140,7 +143,7 @@ ax[1].set_title(&quot;밝기의 집중도&quot;)
 plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_03&quot;))
 plt.show()</code></pre>
-<h2>code 60.</h2><pre><code>fig, ax = plt.subplots(figsize=(7.5, 4.3))
+<h2 id="code-60">code 60. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(7.5, 4.3))
 for t, c in [(&quot;나선&quot;, &quot;royalblue&quot;), (&quot;타원&quot;, &quot;tomato&quot;)]:
     sub = zoo[zoo[&quot;type&quot;] == t]
     ax.scatter(sub[&quot;M_r&quot;], sub[&quot;u_r&quot;], s=2, alpha=0.25, color=c, label=t)
@@ -156,7 +159,7 @@ ax.grid(alpha=0.3)
 ax.set_title(&quot;은하의 색-등급도 (갤럭시 주 형태 분류)&quot;, fontsize=11)
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_04&quot;))
 plt.show()</code></pre>
-<h2>code 61.</h2><pre><code>def rule(df, cut_color, cut_conc):
+<h2 id="code-61">code 61. <button class="copy">복사</button></h2><pre><code>def rule(df, cut_color, cut_conc):
     return np.where((df[&quot;u_r&quot;] &gt; cut_color) &amp; (df[&quot;conc&quot;] &gt; cut_conc), &quot;타원&quot;,
                     &quot;나선&quot;)
 
@@ -178,7 +181,7 @@ print(&quot;가장 좋은 기준:&quot;, best.round(3).to_dict())
 pred = rule(zoo, best[&quot;색 기준&quot;], best[&quot;집중도 기준&quot;])
 pd.crosstab(zoo[&quot;type&quot;], pred, rownames=[&quot;갤럭시 주 분류&quot;],
             colnames=[&quot;규칙의 예측&quot;], margins=True)</code></pre>
-<h2>code 62.</h2><pre><code>from astropy.io import fits
+<h2 id="code-62">code 62. <button class="copy">복사</button></h2><pre><code>from astropy.io import fits
 
 spectra = [  # (이름, plate, mjd, fiber, z)
     (&quot;타원 은하&quot;, 1665, 52976, 518, 0.0214),
@@ -222,7 +225,7 @@ axes[-1].set_xlabel(&quot;정지 파장 (Å)&quot;)
 plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_05&quot;))
 plt.show()</code></pre>
-<h2>code 63.</h2><pre><code>bpt = sql(&quot;&quot;&quot;
+<h2 id="code-63">code 63. <button class="copy">복사</button></h2><pre><code>bpt = sql(&quot;&quot;&quot;
 SELECT TOP 20000 l.h_alpha_flux, l.h_beta_flux, l.oiii_5007_flux, l.nii_6584_flux, s.z
 FROM galSpecLine AS l JOIN SpecObj AS s ON s.specObjID = l.specObjID
 WHERE s.z BETWEEN 0.02 AND 0.2
@@ -261,7 +264,7 @@ ax.grid(alpha=0.3)
 ax.set_title(&quot;BPT 도표 — 방출선 은하 2만 개&quot;, fontsize=10)
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_06&quot;))
 plt.show()</code></pre>
-<h2>code 64.</h2><pre><code>zdist = pd.concat([
+<h2 id="code-64">code 64. <button class="copy">복사</button></h2><pre><code>zdist = pd.concat([
     sql(&quot;SELECT z, class FROM SpecObj WHERE class = &#x27;QSO&#x27; AND zWarning = 0 AND fiberID % 25 = 0&quot;,
         &quot;redshift_qso&quot;),
     sql(&quot;SELECT z, class FROM SpecObj WHERE class = &#x27;GALAXY&#x27; AND zWarning = 0 AND fiberID % 100 = 0&quot;,
@@ -291,7 +294,7 @@ plt.show()
 
 q = zdist[zdist[&quot;class&quot;] == &quot;QSO&quot;][&quot;z&quot;]
 print(f&quot;퀘이사 적색편이 중앙값 {q.median():.2f} → 빛이 출발한 지 약 {cosmo.lookback_time(q.median()).value * 10:.0f}억 년&quot;)</code></pre>
-<h2>code 65.</h2><pre><code>fig, ax = plt.subplots(1, 2, figsize=(7.5, 3.7))
+<h2 id="code-65">code 65. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(1, 2, figsize=(7.5, 3.7))
 ax[0].imshow(cutout(187.2779, 2.0524, 0.4, &quot;3C273&quot;))
 ax[0].set_title(&quot;퀘이사 3C 273\n(z = 0.158, 빛이 출발한 지 약 20억 년)&quot;)
 ax[1].imshow(cutout(187.7059, 12.3911, 0.25, &quot;M87_core&quot;))
@@ -301,4 +304,14 @@ for a in ax:
 plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_08&quot;))
 plt.show()</code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>

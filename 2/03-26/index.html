@@ -3,13 +3,16 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
 <h1>III-06. FITS 파일 천체 위치 보정</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/03-26/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 192.</h2><pre><code># 파일 ID와 저장 경로를 리스트로 정의
+<p class="jump"><a href="#code-192">192</a> <a href="#code-193">193</a> <a href="#code-194">194</a> <a href="#code-195">195</a> <a href="#code-196">196</a> <a href="#code-197">197</a> <a href="#code-198">198</a> <a href="#code-199">199</a> <a href="#code-200">200</a> <a href="#code-201">201</a> <a href="#code-202">202</a> <a href="#code-203">203</a> <a href="#code-204">204</a> <a href="#code-205">205</a> <a href="#code-206">206</a> <a href="#code-207">207</a> <a href="#code-208">208</a> <a href="#code-209">209</a> <a href="#code-210">210</a> <a href="#code-211">211</a> <a href="#code-212">212</a> <a href="#code-213">213</a> <a href="#code-214">214</a></p>
+<h2 id="code-192">code 192. <button class="copy">복사</button></h2><pre><code># 파일 ID와 저장 경로를 리스트로 정의
 files = [
     (&quot;1qJQdbmdeHg23sPdLKRGfPq93Sfo1HT_3&quot;,
      &quot;46P-WIRTANEN_LIGHT_R_2018-12-13-17-46-15_&quot;
@@ -26,9 +29,9 @@ files = [
 for file_id, output_path in files:
     du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={file_id}&quot;,
                 PROJ / output_path)</code></pre>
-<h2>code 193.</h2><pre><code>fpaths = du.list_files(PROJ, &quot;fit*&quot;)</code></pre>
-<h2>code 194.</h2><pre><code>fpaths[0]</code></pre>
-<h2>code 195.</h2><pre><code>from pathlib import Path
+<h2 id="code-193">code 193. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(PROJ, &quot;fit*&quot;)</code></pre>
+<h2 id="code-194">code 194. <button class="copy">복사</button></h2><pre><code>fpaths[0]</code></pre>
+<h2 id="code-195">code 195. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
 from astropy.io import fits
 
 fpath = Path(fpaths[0])
@@ -38,7 +41,7 @@ hdul = fits.open(fpath)
 
 print(&quot;type(hdul) :&quot;, type(hdul))
 print(&quot;hdul :&quot;, hdul)</code></pre>
-<h2>code 196.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-196">code 196. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 from astropy.visualization import (MinMaxInterval, SqrtStretch,
                                    ImageNormalize)
@@ -65,8 +68,8 @@ fig.suptitle(f&#x27;{str(fpaths[0])}&#x27;, fontsize=8)
 fig.colorbar(im1, ax = axs[0], fraction=0.035, pad=0.04)
 fig.colorbar(im2, ax = axs[1], fraction=0.035, pad=0.04)
 plt.tight_layout()</code></pre>
-<h2>code 197.</h2><pre><code># 영상 표시 함수 znorm · zimshow · norm_imshow 는 Ⅲ-04 「FITS 파일 다루기」에서 설명했고 dses_utils 에 들어 있음</code></pre>
-<h2>code 198.</h2><pre><code>def checkPSolve(fpath,
+<h2 id="code-197">code 197. <button class="copy">복사</button></h2><pre><code># 영상 표시 함수 znorm · zimshow · norm_imshow 는 Ⅲ-04 「FITS 파일 다루기」에서 설명했고 dses_utils 에 들어 있음</code></pre>
+<h2 id="code-198">code 198. <button class="copy">복사</button></h2><pre><code>def checkPSolve(fpath,
                     **kwargs,
                     ):
     &quot;&quot;&quot;
@@ -121,13 +124,13 @@ plt.tight_layout()</code></pre>
     hdul.close()
 
     return SOLVE, ASTAP, LOCAL</code></pre>
-<h2>code 199.</h2><pre><code>SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[0]))
+<h2 id="code-199">code 199. <button class="copy">복사</button></h2><pre><code>SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[0]))
 print(&quot;SOLVE, ASTAP, LOCAL :&quot;, SOLVE, ASTAP, LOCAL)
 SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[1]))
 print(&quot;SOLVE, ASTAP, LOCAL :&quot;, SOLVE, ASTAP, LOCAL)
 SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[2]))
 print(&quot;SOLVE, ASTAP, LOCAL :&quot;, SOLVE, ASTAP, LOCAL)</code></pre>
-<h2>code 200.</h2><pre><code>import os
+<h2 id="code-200">code 200. <button class="copy">복사</button></h2><pre><code>import os
 from astroquery.astrometry_net import AstrometryNet
 
 ast = AstrometryNet()
@@ -140,7 +143,7 @@ if api_key:
 else:
     print(&quot;환경 변수 ASTROMETRY_NET_API_KEY 가 없습니다. 새 파일을 위치 보정하려면 키를 설정하세요.\n&quot;
           &quot;(이미 위치 보정된 파일은 키 없이 다룰 수 있습니다)&quot;)</code></pre>
-<h2>code 201.</h2><pre><code>print(fpaths[0])
+<h2 id="code-201">code 201. <button class="copy">복사</button></h2><pre><code>print(fpaths[0])
 SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[0]))
 print(&quot;SOLVE, ASTAP, LOCAL :&quot;, SOLVE, ASTAP, LOCAL)
 print(&quot;before solving :&quot;, &quot;헤더 카드&quot;, len(hdul[0].header), &quot;개&quot;)
@@ -167,7 +170,7 @@ else:
 
         SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[0]))
         print(&quot;SOLVE, ASTAP, LOCAL :&quot;, SOLVE, ASTAP, LOCAL)</code></pre>
-<h2>code 202.</h2><pre><code>#########################################
+<h2 id="code-202">code 202. <button class="copy">복사</button></h2><pre><code>#########################################
 # 천체 위치 보정기(AstrometrySolver)
 #########################################
 def AstrometrySolver(fpath,
@@ -240,16 +243,16 @@ def AstrometrySolver(fpath,
             print(&quot;Err :&quot;, err)
 
     return SOLVE, ASTAP, LOCAL</code></pre>
-<h2>code 203.</h2><pre><code>AstrometrySolver(fpaths[0])
+<h2 id="code-203">code 203. <button class="copy">복사</button></h2><pre><code>AstrometrySolver(fpaths[0])
 AstrometrySolver(fpaths[1])
 AstrometrySolver(fpaths[2])</code></pre>
-<h2>code 204.</h2><pre><code>SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[0]))
+<h2 id="code-204">code 204. <button class="copy">복사</button></h2><pre><code>SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[0]))
 print(&quot;SOLVE, ASTAP, LOCAL :&quot;, SOLVE, ASTAP, LOCAL)
 SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[1]))
 print(&quot;SOLVE, ASTAP, LOCAL :&quot;, SOLVE, ASTAP, LOCAL)
 SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[2]))
 print(&quot;SOLVE, ASTAP, LOCAL :&quot;, SOLVE, ASTAP, LOCAL)</code></pre>
-<h2>code 205.</h2><pre><code>def show_header(header, n_head=8):
+<h2 id="code-205">code 205. <button class="copy">복사</button></h2><pre><code>def show_header(header, n_head=8):
     &quot;&quot;&quot;헤더 앞부분과 WCS 관련 카드만 출력하고 나머지는 줄임&quot;&quot;&quot;
     cards = list(header.cards)
     for card in cards[:n_head]:
@@ -265,13 +268,13 @@ print(&quot;SOLVE, ASTAP, LOCAL :&quot;, SOLVE, ASTAP, LOCAL)</code></pre>
 print(&quot;fpaths[0] :&quot;, fpaths[0])
 hdul0 = fits.open(str(fpaths[0]))
 show_header(hdul0[0].header)</code></pre>
-<h2>code 206.</h2><pre><code>print(&quot;fpaths[1] :&quot;, fpaths[1])
+<h2 id="code-206">code 206. <button class="copy">복사</button></h2><pre><code>print(&quot;fpaths[1] :&quot;, fpaths[1])
 hdul1 = fits.open(str(fpaths[1]))
 show_header(hdul1[0].header)</code></pre>
-<h2>code 207.</h2><pre><code>print(&quot;fpaths[2] :&quot;, fpaths[2])
+<h2 id="code-207">code 207. <button class="copy">복사</button></h2><pre><code>print(&quot;fpaths[2] :&quot;, fpaths[2])
 hdul2 = fits.open(str(fpaths[2]))
 show_header(hdul2[0].header)</code></pre>
-<h2>code 208.</h2><pre><code>from astropy import units as u
+<h2 id="code-208">code 208. <button class="copy">복사</button></h2><pre><code>from astropy import units as u
 from astropy.time import Time
 from astropy.coordinates import SkyCoord
 from astropy.wcs import WCS
@@ -279,12 +282,12 @@ from astropy.wcs import WCS
 wcs0 = WCS(hdul0[0].header)
 wcs1 = WCS(hdul1[0].header)
 wcs2 = WCS(hdul2[0].header)</code></pre>
-<h2>code 209.</h2><pre><code>print(&quot;wcs0 :&quot;, wcs0)
+<h2 id="code-209">code 209. <button class="copy">복사</button></h2><pre><code>print(&quot;wcs0 :&quot;, wcs0)
 print(&quot;wcs1 :&quot;, wcs1)
 print(&quot;wcs2 :&quot;, wcs2)
 print(&quot;wcs0.world_axis_physical_types :&quot;, wcs0.world_axis_physical_types)
 print(&quot;wcs1.world_axis_physical_types :&quot;, wcs1.world_axis_physical_types)</code></pre>
-<h2>code 210.</h2><pre><code>import numpy as np
+<h2 id="code-210">code 210. <button class="copy">복사</button></h2><pre><code>import numpy as np
 from astropy.wcs.utils import proj_plane_pixel_scales
 
 for name, w, h in [(&quot;hdul0&quot;, wcs0, hdul0[0].header),
@@ -296,7 +299,7 @@ for name, w, h in [(&quot;hdul0&quot;, wcs0, hdul0[0].header),
     print(f&quot;{name}: CRVAL = ({w.wcs.crval[0]:.4f}, {w.wcs.crval[1]:.4f}) deg, &quot;
           f&quot;CRPIX = ({w.wcs.crpix[0]:.1f}, {w.wcs.crpix[1]:.1f}), &quot;
           f&quot;픽셀 축척 = {scale[0]:.3f}″/px, 시야 = {fov_x:.1f}′ × {fov_y:.1f}′&quot;)</code></pre>
-<h2>code 211.</h2><pre><code>fig = plt.figure()
+<h2 id="code-211">code 211. <button class="copy">복사</button></h2><pre><code>fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1, projection=wcs1)   # hdul1(IC434) 영상의 WCS
 im = plt.imshow(hdul1[0].data, origin=&#x27;lower&#x27;, cmap=&quot;viridis&quot;,)
 
@@ -323,7 +326,7 @@ plt.title(&#x27;Image display using WCS&#x27;, fontsize=11, pad=35)
 fig.colorbar(im, fraction=0.035, pad=0.04)
 plt.tight_layout(pad=0.4, w_pad=1, h_pad=1.0)
 plt.show()</code></pre>
-<h2>code 212.</h2><pre><code>fig, axs = plt.subplots(1, 1,
+<h2 id="code-212">code 212. <button class="copy">복사</button></h2><pre><code>fig, axs = plt.subplots(1, 1,
                         sharex=False, sharey=False, gridspec_kw=None,
                         subplot_kw={&#x27;projection&#x27;: wcs0},
                         )
@@ -362,7 +365,7 @@ fig.colorbar(im, fraction=0.035, pad=0.04)
 
 plt.tight_layout()
 plt.show()</code></pre>
-<h2>code 213.</h2><pre><code>fig, axs = plt.subplots(1, 2, figsize=(7.5, 2.5),
+<h2 id="code-213">code 213. <button class="copy">복사</button></h2><pre><code>fig, axs = plt.subplots(1, 2, figsize=(7.5, 2.5),
                         sharex=False, sharey=False, gridspec_kw=None,
                         subplot_kw={&#x27;projection&#x27;: wcs1},
                         )
@@ -404,7 +407,7 @@ fig.colorbar(im1, ax = axs[1], fraction=0.0315, pad=0.04)
 
 plt.tight_layout(pad=0.4, w_pad=1, h_pad=1.0)
 plt.show()</code></pre>
-<h2>code 214.</h2><pre><code>fig, axs = plt.subplots(2, 1, figsize=(5.3, 8),
+<h2 id="code-214">code 214. <button class="copy">복사</button></h2><pre><code>fig, axs = plt.subplots(2, 1, figsize=(5.3, 8),
                         sharex=False, sharey=False, gridspec_kw=None,
                         subplot_kw={&#x27;projection&#x27;: wcs2},
                         )
@@ -463,4 +466,14 @@ fig.colorbar(im1, ax = axs[1], fraction=0.031, pad=0.04)
 
 plt.tight_layout(pad=1.0, w_pad=1.0, h_pad=1.0)
 plt.show()</code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>

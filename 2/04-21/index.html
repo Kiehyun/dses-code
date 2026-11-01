@@ -3,13 +3,16 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
 <h1>IV-01. 지구과학 데이터 형식</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/04-21/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 392.</h2><pre><code># 파일 ID와 저장 경로를 리스트로 정의
+<p class="jump"><a href="#code-392">392</a> <a href="#code-393">393</a> <a href="#code-394">394</a> <a href="#code-395">395</a> <a href="#code-396">396</a> <a href="#code-397">397</a> <a href="#code-398">398</a> <a href="#code-399">399</a> <a href="#code-400">400</a> <a href="#code-401">401</a> <a href="#code-402">402</a> <a href="#code-403">403</a> <a href="#code-404">404</a> <a href="#code-405">405</a> <a href="#code-406">406</a> <a href="#code-407">407</a> <a href="#code-408">408</a> <a href="#code-409">409</a> <a href="#code-410">410</a> <a href="#code-411">411</a> <a href="#code-412">412</a> <a href="#code-413">413</a> <a href="#code-414">414</a> <a href="#code-415">415</a> <a href="#code-416">416</a> <a href="#code-417">417</a></p>
+<h2 id="code-392">code 392. <button class="copy">복사</button></h2><pre><code># 파일 ID와 저장 경로를 리스트로 정의
 files = [
     (&quot;1E5TZgqXhh73i0VZLcY-xh7CNR3OJgB8K&quot;, &quot;sst.wkmean.1990-present.nc&quot;),
     (&quot;1gxp1wK1JBhD215gQgVHPauTJnrfKv9Zi&quot;, &quot;lsmask.nc&quot;),
@@ -21,8 +24,8 @@ files = [
 for file_id, output_path in files:
     du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={file_id}&quot;,
                 PROJ / output_path)</code></pre>
-<h2>code 393.</h2><pre><code>fpaths = du.list_files(PROJ, pattern=&quot;*.*&quot;)</code></pre>
-<h2>code 394.</h2><pre><code>import shutil
+<h2 id="code-393">code 393. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(PROJ, pattern=&quot;*.*&quot;)</code></pre>
+<h2 id="code-394">code 394. <button class="copy">복사</button></h2><pre><code>import shutil
 
 for fpath in fpaths:
     if fpath.suffix == &quot;.zip&quot;:
@@ -30,14 +33,14 @@ for fpath in fpaths:
         shutil.unpack_archive(str(fpath), str(PROJ))
 
 fpaths = du.list_files(PROJ, &quot;nc&quot;)</code></pre>
-<h2>code 395.</h2><pre><code>from netCDF4 import Dataset
+<h2 id="code-395">code 395. <button class="copy">복사</button></h2><pre><code>from netCDF4 import Dataset
 import numpy as np
 
 # 육지·바다 구분 마스크
 file_path = str(PROJ / &quot;lsmask.nc&quot;)  # NetCDF 파일 경로
 nc_file = Dataset(file_path, &#x27;r&#x27;) 
 nc_file.variables</code></pre>
-<h2>code 396.</h2><pre><code>from netCDF4 import Dataset
+<h2 id="code-396">code 396. <button class="copy">복사</button></h2><pre><code>from netCDF4 import Dataset
 import numpy as np
 
 # 육지·바다 구분 마스크
@@ -49,7 +52,7 @@ with Dataset(file_path, &#x27;r&#x27;) as nc_file:
     mask[mask == 0] = np.nan  # 육지 부분을 np.nan으로 변환
 
 print(&quot;Mask data loaded and processed.&quot;)</code></pre>
-<h2>code 397.</h2><pre><code>from netCDF4 import Dataset
+<h2 id="code-397">code 397. <button class="copy">복사</button></h2><pre><code>from netCDF4 import Dataset
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
@@ -61,7 +64,7 @@ mask_path = str(PROJ / &quot;lsmask.nc&quot;)  # Land-sea mask 파일 경로
 # 변수명 확인
 with Dataset(file_path, &#x27;r&#x27;) as sst_file:
     print(&quot;SST file variables:&quot;, list(sst_file.variables.keys()))</code></pre>
-<h2>code 398.</h2><pre><code># 변수명에 따라 수정 (예: &#x27;longitude&#x27;, &#x27;latitude&#x27; 등)
+<h2 id="code-398">code 398. <button class="copy">복사</button></h2><pre><code># 변수명에 따라 수정 (예: &#x27;longitude&#x27;, &#x27;latitude&#x27; 등)
 with Dataset(file_path, &#x27;r&#x27;) as sst_file, Dataset(mask_path, &#x27;r&#x27;) as mask_file:
  # 변수명 자동 탐색
     varnames = list(sst_file.variables.keys())
@@ -103,7 +106,7 @@ levs = np.arange(-2, 35, 1)  # 온도 범위
 jet = [&quot;#000080&quot;, &quot;blue&quot;, &quot;#007FFF&quot;, &quot;cyan&quot;, &quot;#7FFF7F&quot;, &quot;yellow&quot;, &quot;#FF7F00&quot;,
        &quot;red&quot;, &quot;#7F0000&quot;]
 cm = LinearSegmentedColormap.from_list(&#x27;custom_jet&#x27;, jet, N=len(levs))</code></pre>
-<h2>code 399.</h2><pre><code># 시각화
+<h2 id="code-399">code 399. <button class="copy">복사</button></h2><pre><code># 시각화
 fig, ax = plt.subplots(figsize=(7.5, 3.8))
 contour = ax.contourf(lon, lat, sst, levels=levs, cmap=cm, extend=&#x27;both&#x27;)
 cbar = plt.colorbar(contour, ax=ax, orientation=&#x27;vertical&#x27;, fraction=0.02,
@@ -120,7 +123,7 @@ ax.set_ylabel(&#x27;Latitude&#x27;, fontsize=11)
 
 plt.tight_layout()
 plt.show()</code></pre>
-<h2>code 400.</h2><pre><code>from netCDF4 import Dataset
+<h2 id="code-400">code 400. <button class="copy">복사</button></h2><pre><code>from netCDF4 import Dataset
 
 sst_l2 = PROJ / &quot;T2008168030500.L2_LAC_SST.x.nc&quot;   # 위성 해수면 온도(MODIS L2) 파일
 nc = Dataset(sst_l2)
@@ -130,18 +133,18 @@ for key in [&quot;title&quot;, &quot;platform&quot;, &quot;instrument&quot;, &qu
             &quot;time_coverage_start&quot;, &quot;time_coverage_end&quot;, &quot;spatialResolution&quot;]:
     print(f&quot;  {key:20s}: {nc.getncattr(key)}&quot;)
 print(&quot;그룹 :&quot;, list(nc.groups))</code></pre>
-<h2>code 401.</h2><pre><code>for dim in nc.dimensions.values():
+<h2 id="code-401">code 401. <button class="copy">복사</button></h2><pre><code>for dim in nc.dimensions.values():
     print(dim)</code></pre>
-<h2>code 402.</h2><pre><code>print(&quot;nc.groups&quot;, nc.groups)
+<h2 id="code-402">code 402. <button class="copy">복사</button></h2><pre><code>print(&quot;nc.groups&quot;, nc.groups)
 print(&quot;nc.groups[&#x27;geophysical_data&#x27;]&quot;, nc.groups[&#x27;geophysical_data&#x27;])</code></pre>
-<h2>code 403.</h2><pre><code>print(&quot;nc.groups[&#x27;geophysical_data&#x27;][&#x27;sst&#x27;]&quot;,
+<h2 id="code-403">code 403. <button class="copy">복사</button></h2><pre><code>print(&quot;nc.groups[&#x27;geophysical_data&#x27;][&#x27;sst&#x27;]&quot;,
       nc.groups[&#x27;geophysical_data&#x27;][&#x27;sst&#x27;])
 print(&quot;nc.groups[&#x27;geophysical_data&#x27;][&#x27;sst&#x27;].dimensions&quot;,
       nc.groups[&#x27;geophysical_data&#x27;][&#x27;sst&#x27;].dimensions)</code></pre>
-<h2>code 404.</h2><pre><code>print(&quot;nc.groups[&#x27;navigation_data&#x27;]&quot;, nc.groups[&#x27;navigation_data&#x27;])
+<h2 id="code-404">code 404. <button class="copy">복사</button></h2><pre><code>print(&quot;nc.groups[&#x27;navigation_data&#x27;]&quot;, nc.groups[&#x27;navigation_data&#x27;])
 print(&quot;nc.groups[&#x27;navigation_data&#x27;][&#x27;latitude&#x27;]&quot;,
       nc.groups[&#x27;navigation_data&#x27;][&#x27;latitude&#x27;])</code></pre>
-<h2>code 405.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-405">code 405. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.basemap import Basemap
 
@@ -151,7 +154,7 @@ sst = nc.groups[&#x27;geophysical_data&#x27;][&#x27;sst&#x27;][:]
 qual = nc.groups[&#x27;geophysical_data&#x27;][&#x27;qual_sst&#x27;][:]   # 품질 플래그 (0 최상, 클수록 나쁨)
 sst = np.ma.masked_where(qual &gt; 1, sst)               # 품질 0·1 화소만 남김
 print(f&quot;품질 0·1 화소 수: {sst.count():,} / {sst.size:,}&quot;)</code></pre>
-<h2>code 406.</h2><pre><code># 원소를 모두 찍으면 수천 줄이 나오므로 모양과 일부만 확인
+<h2 id="code-406">code 406. <button class="copy">복사</button></h2><pre><code># 원소를 모두 찍으면 수천 줄이 나오므로 모양과 일부만 확인
 import numpy as _np
 _a = _np.asarray(latitude)
 print(f&quot;latitude: shape={_a.shape}, &quot;
@@ -161,10 +164,10 @@ print(&quot;뒤 5개 :&quot;, _np.ravel(_a)[-5:])
 _o = _np.asarray(longitude)
 print(f&quot;longitude: shape={_o.shape}, &quot;
       f&quot;min={_np.nanmin(_o):.4f}, max={_np.nanmax(_o):.4f}&quot;)</code></pre>
-<h2>code 407.</h2><pre><code>print(&quot;latitude.dtype : {}&quot;.format(latitude.dtype))
+<h2 id="code-407">code 407. <button class="copy">복사</button></h2><pre><code>print(&quot;latitude.dtype : {}&quot;.format(latitude.dtype))
 print(&quot;longitude.dtype : {}&quot;.format(longitude.dtype))
 print(&quot;sst.dtype : {}&quot;.format(sst.dtype))</code></pre>
-<h2>code 408.</h2><pre><code>DATAFIELD_NAME = &quot;SST&quot;
+<h2 id="code-408">code 408. <button class="copy">복사</button></h2><pre><code>DATAFIELD_NAME = &quot;SST&quot;
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -183,7 +186,7 @@ plt.grid(True)
 plt.savefig(f&quot;{PROJ}/{sst_l2.stem}_hist.pdf&quot;, bbox_inches=&#x27;tight&#x27;)
 print(f&quot;savefig: {PROJ}/{sst_l2.stem}_hist.pdf&quot;)
 plt.show()   </code></pre>
-<h2>code 409.</h2><pre><code>Llon, Rlon, Slat, Nlat = 100, 150, 10, 60
+<h2 id="code-409">code 409. <button class="copy">복사</button></h2><pre><code>Llon, Rlon, Slat, Nlat = 100, 150, 10, 60
 
 import numpy as np
 from mpl_toolkits.basemap import Basemap
@@ -210,7 +213,7 @@ x, y = m(longitude, latitude) # 투영 지도로 변환
 plt.title(&#x27;SST product using MODIS&#x27;, fontsize=10) 
       
 plt.show()</code></pre>
-<h2>code 410.</h2><pre><code>DATAFIELD_NAME = &quot;SST&quot;
+<h2 id="code-410">code 410. <button class="copy">복사</button></h2><pre><code>DATAFIELD_NAME = &quot;SST&quot;
 
 print(&quot;=&quot;*80)
 print(&quot;Plotting data on the map&quot;)
@@ -264,7 +267,7 @@ plt.text(x2, y2, &quot;{}\nMODIS SST product from Ocean Color Web\n&quot;.format
 plt.savefig(f&quot;{PROJ}/{sst_l2.stem}_{DATAFIELD_NAME}.pdf&quot;, bbox_inches=&#x27;tight&#x27;)
 print(f&quot;savefig: {PROJ}/{sst_l2.stem}_{DATAFIELD_NAME}.pdf&quot;)
 plt.show()</code></pre>
-<h2>code 411.</h2><pre><code>Llon, Rlon, Slat, Nlat = 100, 150, 10, 60     # 지도 영역(경도 · 위도)
+<h2 id="code-411">code 411. <button class="copy">복사</button></h2><pre><code>Llon, Rlon, Slat, Nlat = 100, 150, 10, 60     # 지도 영역(경도 · 위도)
 RES = 24                                      # 4 km 격자: 1도에 24칸
 
 i0, i1 = int((90 - Nlat) * RES), int((90 - Slat) * RES)   # 위도 칸(북 → 남)
@@ -278,11 +281,11 @@ print(&quot;요청 주소 :&quot;, url)
 
 hdf_path = proj_dir / &quot;AQUA_MODIS.201908.L3m.MO.chlor_a.4km_EastAsia.nc4&quot;
 du.download(url, hdf_path)</code></pre>
-<h2>code 412.</h2><pre><code>signature = hdf_path.read_bytes()[:8]
+<h2 id="code-412">code 412. <button class="copy">복사</button></h2><pre><code>signature = hdf_path.read_bytes()[:8]
 print(&quot;파일 크기 :&quot;, f&quot;{hdf_path.stat().st_size / 1e6:.2f} MB&quot;)
 print(&quot;서명      :&quot;, signature)
 print(&quot;HDF5 인가 :&quot;, signature == b&quot;\x89HDF\r\n\x1a\n&quot;)</code></pre>
-<h2>code 413.</h2><pre><code>import h5py
+<h2 id="code-413">code 413. <button class="copy">복사</button></h2><pre><code>import h5py
 
 hdf = h5py.File(hdf_path, &quot;r&quot;)
 print(&quot;맨 위 항목 :&quot;, list(hdf.keys()))
@@ -295,7 +298,7 @@ def show(name, obj):
         print(f&quot;  그룹     {name}&quot;)
 
 hdf.visititems(show)</code></pre>
-<h2>code 414.</h2><pre><code>import numpy as np
+<h2 id="code-414">code 414. <button class="copy">복사</button></h2><pre><code>import numpy as np
 
 def attr(dset, key):
     &quot;&quot;&quot;HDF5 속성 값을 파이썬 값으로 변환(바이트 → 문자열, 길이 1 배열 → 숫자)&quot;&quot;&quot;
@@ -309,7 +312,7 @@ def attr(dset, key):
 chl_ds = hdf[&quot;chlor_a&quot;]
 for key in [&quot;long_name&quot;, &quot;units&quot;, &quot;_FillValue&quot;, &quot;valid_min&quot;, &quot;valid_max&quot;]:
     print(f&quot;{key:12s}: {attr(chl_ds, key)}&quot;)</code></pre>
-<h2>code 415.</h2><pre><code>chl = chl_ds[:].astype(float)
+<h2 id="code-415">code 415. <button class="copy">복사</button></h2><pre><code>chl = chl_ds[:].astype(float)
 lat = hdf[&quot;lat&quot;][:]
 lon = hdf[&quot;lon&quot;][:]
 
@@ -324,7 +327,7 @@ print(&quot;위도 범위     :&quot;, lat.min().round(2), &quot;~&quot;, lat.ma
 print(&quot;경도 범위     :&quot;, lon.min().round(2), &quot;~&quot;, lon.max().round(2))
 print(&quot;유효한 칸 비율:&quot;, f&quot;{np.isfinite(chl).mean() * 100:.1f} %&quot;)
 print(f&quot;최솟값 · 중앙값 · 최댓값: {np.nanmin(chl):.3f} · {np.nanmedian(chl):.3f} · {np.nanmax(chl):.1f} mg/m³&quot;)</code></pre>
-<h2>code 416.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-416">code 416. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 plt.rcParams[&quot;axes.unicode_minus&quot;] = False   # 로그 눈금의 마이너스(−)를 하이픈으로 표시
 
 valid = chl[np.isfinite(chl)]
@@ -342,7 +345,7 @@ ax.set_title(&quot;MODIS Aqua 엽록소 농도 분포 (2019년 8월)&quot;)
 ax.legend()
 plt.savefig(proj_dir / &quot;chlor_a_hist.png&quot;, dpi=150, bbox_inches=&quot;tight&quot;)
 plt.show()</code></pre>
-<h2>code 417.</h2><pre><code>from matplotlib.colors import LogNorm
+<h2 id="code-417">code 417. <button class="copy">복사</button></h2><pre><code>from matplotlib.colors import LogNorm
 from mpl_toolkits.basemap import Basemap
 
 plt.figure(figsize=(4.8, 4.4))
@@ -364,4 +367,14 @@ plt.title(&quot;MODIS Aqua 엽록소 농도 (2019년 8월 평균)&quot;, fontsiz
 plt.savefig(proj_dir / &quot;chlor_a_map.png&quot;, dpi=150, bbox_inches=&quot;tight&quot;)
 plt.show()
 hdf.close()</code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>

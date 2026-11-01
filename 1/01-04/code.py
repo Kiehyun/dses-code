@@ -737,3 +737,15 @@ plt.show()
 print(f"\n현재 시스템: {platform.system()}")
 print(f"설정된 폰트: {current_font}")
 print("한글이 정상적으로 표시되면 설정이 완료되었습니다.")
+
+# %% code 69.
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(figsize=(4, 3))
+ax.plot([1, 2, 3, 4], [2, 3, 5, 10])
+ax.set_xlabel("X축")
+ax.set_ylabel("Y축")
+du.save_figure(fig, proj_dir / "pic_du")  # pic_du.pdf와 pic_du.png로 저장
+plt.close(fig)                             # 화면에는 그리지 않음
+
+fpaths = du.list_files(proj_dir, "pdf")    # 데이터 폴더의 PDF 파일 목록

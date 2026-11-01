@@ -3,13 +3,16 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
 <h1>IV-05. 해수면의 높이 변동 그래프</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/04-05/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 83.</h2><pre><code># 파일 이름과 ID 정의
+<p class="jump"><a href="#code-78">78</a> <a href="#code-79">79</a> <a href="#code-80">80</a> <a href="#code-81">81</a> <a href="#code-82">82</a> <a href="#code-83">83</a> <a href="#code-84">84</a> <a href="#code-85">85</a> <a href="#code-86">86</a> <a href="#code-87">87</a> <a href="#code-88">88</a></p>
+<h2 id="code-78">code 78. <button class="copy">복사</button></h2><pre><code># 파일 이름과 ID 정의
 from pathlib import Path
 
 files = [
@@ -22,9 +25,9 @@ files = [
 # 반복문으로 파일 내려받기
 for file in files:
     du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={file[&#x27;id&#x27;]}&quot;, Path(proj_dir) / file[&#x27;name&#x27;])</code></pre>
-<h2>code 84.</h2><pre><code>fpaths = du.list_files(proj_dir, &quot;txt&quot;)</code></pre>
-<h2>code 85.</h2><pre><code>du.preview_text(fpaths[0], n=10)</code></pre>
-<h2>code 86.</h2><pre><code>import pandas as pd
+<h2 id="code-79">code 79. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;txt&quot;)</code></pre>
+<h2 id="code-80">code 80. <button class="copy">복사</button></h2><pre><code>du.preview_text(fpaths[0], n=10)</code></pre>
+<h2 id="code-81">code 81. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 print(&quot;str(fpaths[2])&quot;, str(fpaths[2]))
 df_60min = pd.read_csv(str(fpaths[2]),
                  skiprows=5,
@@ -34,13 +37,13 @@ df_60min = pd.read_csv(str(fpaths[2]),
  #encoding= &#x27;utf8&#x27;,
                  )
 print(&quot;df_60min :&quot;, df_60min )</code></pre>
-<h2>code 87.</h2><pre><code>print(&quot;df_60min.columns :&quot;, df_60min.columns )
+<h2 id="code-82">code 82. <button class="copy">복사</button></h2><pre><code>print(&quot;df_60min.columns :&quot;, df_60min.columns )
 print(&quot;type(df_60min[&#x27;str_YmdHM&#x27;][0]): {}&quot;.format(type(df_60min[&#x27;str_YmdHM&#x27;][0])))
 print(&quot;type(df_60min[&#x27;height(cm)&#x27;]): {}&quot;.format(type(df_60min[&#x27;height(cm)&#x27;][0])))
 df_60min[&#x27;dt_YmdHM&#x27;] = pd.to_datetime(df_60min[&#x27;str_YmdHM&#x27;])
 df_60min.index = df_60min[&#x27;dt_YmdHM&#x27;]
 print(&quot;df_60min: &quot;, df_60min)</code></pre>
-<h2>code 88.</h2><pre><code># df_60min[&#x27;dt_YmdHM&#x27;] 컬럼이 오름차순으로 정렬되어 있는지 확인
+<h2 id="code-83">code 83. <button class="copy">복사</button></h2><pre><code># df_60min[&#x27;dt_YmdHM&#x27;] 컬럼이 오름차순으로 정렬되어 있는지 확인
 is_sorted = df_60min[&#x27;dt_YmdHM&#x27;].is_monotonic_increasing
 print(&quot;dt_YmdHM 오름차순 정렬 여부:&quot;, is_sorted)
 
@@ -61,7 +64,7 @@ df_60min = df_60min.interpolate(method=&#x27;linear&#x27;)
 
 # 결측치가 남아있는 경우(양 끝 등)는 앞/뒤 값으로 채움
 df_60min = df_60min.fillna(method=&#x27;bfill&#x27;).fillna(method=&#x27;ffill&#x27;)</code></pre>
-<h2>code 89.</h2><pre><code># 10분 간격 데이터 (fpaths[0]) DataFrame 생성 및 정렬/결측치 처리
+<h2 id="code-84">code 84. <button class="copy">복사</button></h2><pre><code># 10분 간격 데이터 (fpaths[0]) DataFrame 생성 및 정렬/결측치 처리
 df_10min = pd.read_csv(
     str(fpaths[0]),
     skiprows=5,
@@ -94,7 +97,7 @@ df_1min = df_1min.sort_index()
 df_1min = df_1min.interpolate(method=&#x27;linear&#x27;)
 df_1min = df_1min.fillna(method=&#x27;bfill&#x27;).fillna(method=&#x27;ffill&#x27;)
 print(&quot;df_1min :&quot;, df_1min)</code></pre>
-<h2>code 90.</h2><pre><code>import numpy as np
+<h2 id="code-85">code 85. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 from datetime import datetime, timedelta
@@ -111,7 +114,7 @@ ax.grid(True, linestyle=&#x27;:&#x27;, alpha=0.5)
 
 plt.tight_layout()
 plt.show()</code></pre>
-<h2>code 91.</h2><pre><code>import numpy as np
+<h2 id="code-86">code 86. <button class="copy">복사</button></h2><pre><code>import numpy as np
 from datetime import timedelta
 import matplotlib.pyplot as plt
 import matplotlib.dates as dates
@@ -159,7 +162,7 @@ fig.suptitle(&#x27;2020년 6월 인천 해수면 높이 변동 (1시간/10분/1�
             fontsize=20, fontweight=&#x27;bold&#x27;, y=0.98)
 fig.tight_layout(rect=[0, 0, 1, 0.97])
 plt.show()</code></pre>
-<h2>code 92.</h2><pre><code># df_1min에서 7일, 8일, 9일 자료만 슬라이싱
+<h2 id="code-87">code 87. <button class="copy">복사</button></h2><pre><code># df_1min에서 7일, 8일, 9일 자료만 슬라이싱
 start_date = df_1min[&#x27;dt_YmdHM&#x27;].dt.floor(&#x27;D&#x27;).min().replace(day=7)
 end_date = df_1min[&#x27;dt_YmdHM&#x27;].dt.floor(&#x27;D&#x27;).min().replace(day=10)
 df_1min_selected = df_1min[(df_1min[&#x27;dt_YmdHM&#x27;] &gt;= start_date) &amp; (df_1min[&#x27;dt_YmdHM&#x27;] &lt; end_date)]
@@ -200,7 +203,7 @@ for i, (df, title) in enumerate(zip(dfs, titles)):
 fig.suptitle(&#x27;2020년 6월 7~9일 인천 해수면 높이 변동 (1분 간격)&#x27;, fontsize=20, fontweight=&#x27;bold&#x27;, y=0.985)
 fig.tight_layout(rect=[0, 0, 1, 0.97])
 plt.show()</code></pre>
-<h2>code 93.</h2><pre><code>import numpy as np
+<h2 id="code-88">code 88. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -239,4 +242,14 @@ plt.xlabel(&#x27;시(hour)&#x27;)
 plt.ylabel(&#x27;날짜 (6월)&#x27;)
 plt.title(&#x27;2020년 6월 인천 해수면 높이(1분 간격) 히트맵&#x27;)
 plt.tight_layout()</code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>

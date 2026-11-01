@@ -3,13 +3,16 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
 <h1>II-04. 기체 분자 운동과 맥스웰-볼츠만 분포</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/02-24/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 39.</h2><pre><code>import numpy as np
+<p class="jump"><a href="#code-39">39</a> <a href="#code-40">40</a> <a href="#code-41">41</a> <a href="#code-42">42</a> <a href="#code-43">43</a> <a href="#code-44">44</a> <a href="#code-45">45</a> <a href="#code-46">46</a> <a href="#code-47">47</a> <a href="#code-48">48</a> <a href="#code-49">49</a> <a href="#code-50">50</a> <a href="#code-51">51</a> <a href="#code-52">52</a></p>
+<h2 id="code-39">code 39. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 from scipy import constants
 
@@ -50,7 +53,7 @@ for T in (300, 1000):
     area = mb_speed_3d(v, m_N2, T).sum() * dv  # 넓이(확률의 합) 확인
     print(f&quot;T = {T:4d} K : v_p = {v_p:5.0f}, &lt;v&gt; = {v_mean:5.0f}, &quot;
           f&quot;v_rms = {v_rms:5.0f} m/s,  넓이 = {area:.4f}&quot;)</code></pre>
-<h2>code 40.</h2><pre><code>fig, ax = plt.subplots(figsize=(8.8, 4))
+<h2 id="code-40">code 40. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(8.8, 4))
 for T, color in zip((100, 300, 600, 1000),
                     (&quot;tab:blue&quot;, &quot;tab:green&quot;, &quot;tab:orange&quot;, &quot;tab:red&quot;)):
     ax.plot(v, mb_speed_3d(v, m_N2, T) * 1000, color=color, lw=2,
@@ -68,7 +71,7 @@ ax.legend(ncol=2)
 ax.grid(alpha=0.3)
 du.save_figure(fig, os.path.join(proj_dir, &quot;mb_temperature&quot;))
 plt.show()</code></pre>
-<h2>code 41.</h2><pre><code>gases = {&quot;H$_2$&quot;: 2.016, &quot;He&quot;: 4.003, &quot;H$_2$O&quot;: 18.015,
+<h2 id="code-41">code 41. <button class="copy">복사</button></h2><pre><code>gases = {&quot;H$_2$&quot;: 2.016, &quot;He&quot;: 4.003, &quot;H$_2$O&quot;: 18.015,
          &quot;N$_2$&quot;: 28.014, &quot;O$_2$&quot;: 31.998, &quot;CO$_2$&quot;: 44.009}
 T = 300
 v_wide = np.linspace(0, 4000, 1601)
@@ -89,7 +92,7 @@ for name, M in gases.items():
     label = name.replace(&quot;$_2$&quot;, &quot;2&quot;).replace(&quot;$&quot;, &quot;&quot;)
     v_p, v_mean, v_rms = char_speeds_3d(M * amu, T)
     print(f&quot;{label:6s} {M:6.1f} {v_p:7.0f} {v_mean:7.0f} {v_rms:7.0f}&quot;)</code></pre>
-<h2>code 42.</h2><pre><code>rng = np.random.default_rng(42)       # 난수 씨앗 고정
+<h2 id="code-42">code 42. <button class="copy">복사</button></h2><pre><code>rng = np.random.default_rng(42)       # 난수 씨앗 고정
 
 m_Ar = 39.948 * amu   # 아르곤 원자 질량 (kg)
 radius = 0.17e-9      # 원자 반지름 (m)
@@ -128,7 +131,7 @@ mfp_air = 1 / (np.sqrt(2) * np.pi * d_air**2 * n_air)
 print(f&quot;\n[해수면 공기] 수 밀도 {n_air:.2e} /m^3, &quot;
       f&quot;평균 분자 간격 {n_air ** (-1 / 3) * 1e9:.1f} nm, &quot;
       f&quot;평균 자유 거리 {mfp_air * 1e9:.0f} nm&quot;)</code></pre>
-<h2>code 43.</h2><pre><code>from scipy.spatial import cKDTree
+<h2 id="code-43">code 43. <button class="copy">복사</button></h2><pre><code>from scipy.spatial import cKDTree
 
 
 def step(pos, vel, dt):
@@ -154,7 +157,7 @@ def step(pos, vel, dt):
             vel[j] -= change
             n_coll += 1
     return wall_impulse, n_coll</code></pre>
-<h2>code 44.</h2><pre><code>import time
+<h2 id="code-44">code 44. <button class="copy">복사</button></h2><pre><code>import time
 
 dt = 0.05e-12        # 시간 간격 (s)
 n_steps = 12000      # 600 ps
@@ -193,7 +196,7 @@ eq_speed, eq_vx = np.concatenate(eq_speed), np.concatenate(eq_vx)
 print(f&quot;계산 시간 {time.perf_counter() - start:.1f} 초, &quot;
       f&quot;충돌 {n_coll_total}번 (원자 하나당 평균 {2 * n_coll_total / N:.1f}번)&quot;)
 print(f&quot;평형 데이터: 속력 표본 {eq_speed.size}개&quot;)</code></pre>
-<h2>code 45.</h2><pre><code>speed_end = np.linalg.norm(vel, axis=1)
+<h2 id="code-45">code 45. <button class="copy">복사</button></h2><pre><code>speed_end = np.linalg.norm(vel, axis=1)
 fig, axes = plt.subplots(1, 2, figsize=(7.5, 3.6), constrained_layout=True)
 for ax, p, s_, title in zip(axes, (pos0, pos), (np.linalg.norm(vel0, axis=1), speed_end),
                             (&quot;처음 (t = 0 ps)&quot;, &quot;마지막 (t = 600 ps)&quot;)):
@@ -208,7 +211,7 @@ axes[0].set_ylabel(&quot;y (nm)&quot;)
 fig.colorbar(sc, ax=axes, shrink=0.85, label=&quot;속력 (m/s)&quot;)
 du.save_figure(fig, os.path.join(proj_dir, &quot;box_snapshots&quot;))
 plt.show()</code></pre>
-<h2>code 46.</h2><pre><code>v_grid = np.linspace(0, 1000, 401)
+<h2 id="code-46">code 46. <button class="copy">복사</button></h2><pre><code>v_grid = np.linspace(0, 1000, 401)
 f2_theory = mb_speed_2d(v_grid, m_Ar, T0)
 bins = np.linspace(0, 1000, 41)
 
@@ -232,7 +235,7 @@ plt.show()
 for t_ps in snap_times_ps:
     sp = snapshots[t_ps]
     print(f&quot;t = {t_ps:3d} ps : 평균 {sp.mean():5.1f} m/s, 표준편차 {sp.std():5.1f} m/s&quot;)</code></pre>
-<h2>code 47.</h2><pre><code>sigma = np.sqrt(k_B * T0 / m_Ar)                     # 성분별 표준편차
+<h2 id="code-47">code 47. <button class="copy">복사</button></h2><pre><code>sigma = np.sqrt(k_B * T0 / m_Ar)                     # 성분별 표준편차
 vx_grid = np.linspace(-1000, 1000, 401)
 gauss = np.exp(-vx_grid**2 / (2 * sigma**2)) / (np.sqrt(2 * np.pi) * sigma)
 
@@ -272,7 +275,7 @@ print(f&quot;{lab(&#x27;최빈 속력&#x27;)}{v_mode_sim:10.0f}{v_p2:10.0f}  m/s
 print(f&quot;{lab(&#x27;평균 속력&#x27;)}{eq_speed.mean():10.1f}{v_mean2:10.1f}  m/s&quot;)
 print(f&quot;{lab(&#x27;rms 속력&#x27;)}{np.sqrt((eq_speed**2).mean()):10.1f}{v_rms2:10.1f}  m/s&quot;)
 print(f&quot;{lab(&#x27;v_x 표준편차&#x27;)}{eq_vx.std():10.1f}{sigma:10.1f}  m/s&quot;)</code></pre>
-<h2>code 48.</h2><pre><code>t_ps = history[&quot;t&quot;] * 1e12
+<h2 id="code-48">code 48. <button class="copy">복사</button></h2><pre><code>t_ps = history[&quot;t&quot;] * 1e12
 E_rel = (history[&quot;E&quot;] - history[&quot;E&quot;][0]) / history[&quot;E&quot;][0]
 shape = history[&quot;v4&quot;] / history[&quot;v2&quot;]**2
 tau = mfp / v_mean_2d * 1e12                          # 평균 충돌 시간 (ps)
@@ -300,7 +303,7 @@ print(f&quot;에너지 상대 변화의 최댓값: {np.abs(E_rel).max():.1e}&quo
 for t_check in (10, 40, 100):
     print(f&quot;t = {t_check:3d} ps의 모양 비율: {shape[np.searchsorted(t_ps, t_check)]:.2f}&quot;)
 print(f&quot;평형 구간 평균 모양 비율 : {shape[t_ps &gt; 200].mean():.3f}&quot;)</code></pre>
-<h2>code 49.</h2><pre><code>duration = n_steps * dt - t_eq
+<h2 id="code-49">code 49. <button class="copy">복사</button></h2><pre><code>duration = n_steps * dt - t_eq
 P_sim = impulse_eq / (duration * 4 * L)               # 측정한 압력 (N/m)
 T_sim = history[&quot;E&quot;][-1] / (N * k_B)                  # 2차원: E/N = k_B T
 P_ideal = N * k_B * T_sim / L**2                      # 이상기체 식
@@ -309,7 +312,7 @@ print(f&quot;운동 에너지로 구한 온도 : {T_sim:.2f} K&quot;)
 print(f&quot;벽 충돌로 잰 압력      : {P_sim:.3e} N/m&quot;)
 print(f&quot;이상기체 식 N k_B T / A : {P_ideal:.3e} N/m&quot;)
 print(f&quot;비율 (측정 / 이상기체)  : {P_sim / P_ideal:.3f}&quot;)</code></pre>
-<h2>code 50.</h2><pre><code>from scipy.special import erfcx
+<h2 id="code-50">code 50. <button class="copy">복사</button></h2><pre><code>from scipy.special import erfcx
 
 G = constants.G
 bodies = {  # 이름: (질량 kg, 반지름 m, 대기 맨 위층 대표 온도 K)
@@ -339,7 +342,7 @@ for body, (M, R, T_top) in bodies.items():
         print(f&quot;   {sp:4s} 평균 속력 {v_mean / 1000:5.2f} km/s, &quot;
               f&quot;v_esc/&lt;v&gt; = {ratio:5.1f}, &quot;
               f&quot;log10 F = {log10_escape_fraction(v_esc, m, T_top):7.1f}  -&gt; {verdict}&quot;)</code></pre>
-<h2>code 51.</h2><pre><code>from matplotlib.ticker import FuncFormatter, LogLocator, NullLocator
+<h2 id="code-51">code 51. <button class="copy">복사</button></h2><pre><code>from matplotlib.ticker import FuncFormatter, LogLocator, NullLocator
 
 v_km = np.linspace(0.01, 16, 800)                    # km/s
 T_exo = bodies[&quot;지구&quot;][2]
@@ -363,7 +366,7 @@ ax.legend(ncol=2, loc=&quot;upper right&quot;)
 ax.grid(alpha=0.3, which=&quot;both&quot;)
 du.save_figure(fig, os.path.join(proj_dir, &quot;escape_tail&quot;))
 plt.show()</code></pre>
-<h2>code 52.</h2><pre><code>MAKE_ANIMATION = False   # True로 바꾸면 애니메이션 생성
+<h2 id="code-52">code 52. <button class="copy">복사</button></h2><pre><code>MAKE_ANIMATION = False   # True로 바꾸면 애니메이션 생성
 
 if MAKE_ANIMATION:
     from matplotlib import animation
@@ -402,4 +405,14 @@ if MAKE_ANIMATION:
     display(HTML(ani.to_jshtml()))
 else:
     print(&quot;애니메이션을 보려면 MAKE_ANIMATION = True로 바꾸어 실행 (책에는 싣지 않음)&quot;)</code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>

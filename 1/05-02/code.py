@@ -1,29 +1,15 @@
 # 지구과학 데이터 사이언스 1 | V-02. 세계의 지진대
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 14.
-proj_dir = du.make_project_dir(du.current_notebook_name() or "05_02_Visualizing_Global_Seismic_Belts")
-
-# %% code 15.
-import requests
-
-# 분석에 사용할 USGS GeoJSON 파일을 확인합니다.
-# 폴더에 JSON 파일이 없으면 공개 USGS feed에서 직접 다운로드합니다.
-proj_dir.mkdir(parents=True, exist_ok=True)
-
+# %% code 12.
+# 분석에 사용할 USGS GeoJSON 파일을 내려받습니다(이미 있으면 건너뜀).
 usgs_feeds = {
     "01_usgs_all_month.geojson": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson",
     "02_usgs_4.5_month.geojson": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_month.geojson",
 }
 
 for filename, url in usgs_feeds.items():
-    outpath = proj_dir / filename
-    if not outpath.exists():
-        print(f"다운로드 중: {url}")
-        response = requests.get(url, timeout=60)
-        response.raise_for_status()
-        outpath.write_text(response.text, encoding="utf-8")
-        print(f"저장 완료: {outpath}")
+    du.download(url, proj_dir / filename)
 
 fpaths = sorted(proj_dir.glob("*.geojson")) + sorted(proj_dir.glob("*.json"))
 # 같은 파일이 두 번 잡히지 않도록 중복을 제거합니다.
@@ -35,10 +21,10 @@ if len(fpaths) == 0:
 print(f"fpaths: {fpaths}")
 print(f"len(fpaths): {len(fpaths)}")
 
-# %% code 16.
+# %% code 13.
 du.preview_text(fpaths[0], n=10)
 
-# %% code 17.
+# %% code 14.
 import pandas as pd
 import json
 
@@ -85,7 +71,7 @@ df, data = earthquake_json_to_dataframe(fpaths[0])
 
 print(f"파일명: {fpaths[0].name}")
 
-# %% code 18.
+# %% code 15.
 # 앞 셀에서 만든 DataFrame을 확인합니다.
 # USGS GeoJSON의 properties와 geometry에서 위도, 경도, 깊이, 규모를 추출했습니다.
 print(f"파일명: {fpaths[0].name}")
@@ -94,7 +80,7 @@ print(f"컬럼: {df.columns.tolist()}")
 print(f"자료형:\n{df.dtypes}")
 display(df.head(3))
 
-# %% code 19.
+# %% code 16.
 import hashlib
 from pathlib import Path
 
@@ -122,7 +108,7 @@ def save_csv_if_changed(df_obj, output_path):
 
 save_csv_if_changed(df, proj_dir/"noaa_earthquakes.csv")
 
-# %% code 20.
+# %% code 17.
 # 두 번째 분석 단계에서도 같은 폴더의 JSON/GeoJSON 파일 목록을 다시 확인합니다.
 fpaths = sorted((proj_dir).glob("*.geojson")) + sorted((proj_dir).glob("*.json"))
 fpaths = list(dict.fromkeys(fpaths))
@@ -133,7 +119,7 @@ if len(fpaths) < 2:
 print(f"fpaths: {fpaths}")
 print(f"len(fpaths): {len(fpaths)}")
 
-# %% code 21.
+# %% code 18.
 import json
 
 # 두 번째 JSON/GeoJSON 파일을 읽고 구조를 확인합니다.
@@ -162,7 +148,7 @@ print(f"데이터프레임 크기: {df1.shape}")
 print(f"컬럼: {df1.columns.tolist()}")
 display(df1.head(3))
 
-# %% code 22.
+# %% code 19.
 # 앞 셀에서 만든 두 번째 DataFrame을 확인합니다.
 # df1은 규모 4.5 이상 지진 자료를 같은 형식으로 정리한 표입니다.
 print(f"파일명: {fpaths[1].name}")
@@ -170,7 +156,7 @@ print(f"데이터프레임 크기: {df1.shape}")
 print(f"컬럼: {df1.columns.tolist()}")
 display(df1.head(3))
 
-# %% code 23.
+# %% code 20.
 import folium
 from folium import plugins
 import numpy as np
@@ -236,7 +222,7 @@ print(f"\n지도 저장 완료: {map_path}")
 print(f"지도에 표시된 지진 수: {len(df_clean)}")
 m
 
-# %% code 24.
+# %% code 21.
 import folium
 import numpy as np
 
@@ -306,7 +292,7 @@ print(f"\n지도 저장 완료: {map_path1}")
 print(f"지도에 표시된 지진 수: {len(df1_clean)}")
 m1
 
-# %% code 25.
+# %% code 22.
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 import numpy as np
@@ -368,7 +354,7 @@ plt.show()
 
 print(f"지도에 표시된 지진 수: {len(df1_clean)}")
 
-# %% code 26.
+# %% code 23.
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature

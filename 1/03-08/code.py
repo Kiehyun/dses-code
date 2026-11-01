@@ -1,29 +1,10 @@
 # 지구과학 데이터 사이언스 1 | III-08. 색등급도 그리기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 109.
-import os
-from pathlib import Path
-if not (proj_dir).exists():
-    os.mkdir(str(proj_dir))
-    print (f"{str(proj_dir)} is created...")
-else : 
-    print (f"{str(proj_dir)} is already exist...")
-
-# %% code 110.
-import os
-from pathlib import Path
-if not (proj_dir).exists():
-    os.mkdir(str(proj_dir))
-    print (f"{str(proj_dir)} is created...")
-else : 
-    print (f"{str(proj_dir)} is already exist...")
-
-# %% code 111.
-import requests
+# %% code 103.
 from pathlib import Path
 
-# 파일 ID와 저장 경로를 리스트로 정의
+# 구글 드라이브 파일 ID와 저장할 파일 이름
 files = [
 ('1aMI1vD-beXV788GMLI62aIQU6rKBPLjh', 'hst_11233_06_wfpc2_multiwave_wf_daophot_trm.cat'),
 ('1FDmjaJUcYDVgaRBnTRH1iGMDrAzFKNGl', 'hst_11233_06_wfpc2_f450w_wf_daophot_trm.cat'),
@@ -31,17 +12,12 @@ files = [
 ]
 
 for file_id, output_path in files:
-    output_fullpath = Path(proj_dir) / output_path
-    response = requests.get(f"https://docs.google.com/uc?export=download&id={file_id}")
-    response.raise_for_status()                 # HTTP 에러 체크
-    with open(output_fullpath, 'wb') as f:
-        f.write(response.content)
-    print(f"다운로드 완료: {output_fullpath}")
+    du.download(f"https://docs.google.com/uc?export=download&id={file_id}", Path(proj_dir) / output_path)
 
 # 다운로드한 파일 목록 (이름순: f450w, f814w, multiwave)
 fpaths = sorted(Path(proj_dir).glob('*.cat'))
 
-# %% code 112.
+# %% code 104.
 n_lines = 40  # 출력할 줄 수
 
 print(f"파일 내용 출력 (처음 {n_lines}줄):")
@@ -69,11 +45,11 @@ except Exception as e:
 
 print("="*60)
 
-# %% code 113.
+# %% code 105.
 print(f"파일 {fpaths[2]}의 첫 50줄을 출력합니다:")
 du.preview_text(fpaths[2], n=50)  # 파일의 첫 50줄을 출력 (OS 무관)
 
-# %% code 114.
+# %% code 106.
 import numpy as np
 
 # 파일의 실제 데이터가 시작되는 줄 번호를 확인하세요!
@@ -91,7 +67,7 @@ DAO_array = np.loadtxt(
 print("type(DAO_array):", type(DAO_array))
 print("DAO_array.shape:", DAO_array.shape)
 
-# %% code 115.
+# %% code 107.
 # 행 방향 슬라이싱
 print("DAO_array[1, :]: {}".format(DAO_array[1, :]))
 
@@ -100,7 +76,7 @@ print("DAO_array[:, 1]: {}".format(DAO_array[:, 1]))
 
 print("CI:\n {}".format(DAO_array[:,5]-DAO_array[:,6]))
 
-# %% code 116.
+# %% code 108.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -113,7 +89,7 @@ plt.gca().invert_yaxis()
 #단열선도 출력
 plt.show()
 
-# %% code 117.
+# %% code 109.
 # DAO_array의 여러 컬럼(등급 데이터 등)의 최소값과 최대값을 출력합니다.
 print("DAO_array[:,5].min(): {}".format(DAO_array[:,5].min()))   # 6번째 열(F606 등급 등)의 최소값
 print("DAO_array[:,5].max(): {}".format(DAO_array[:,5].max()))   # 6번째 열의 최대값
@@ -161,7 +137,7 @@ print("DAO_array_masked.shape: {}".format(DAO_array_masked.shape))  # 마스킹�
 # 마스킹된 데이터의 첫 5행 출력
 print("DAO_array_masked[:5]:\n {}".format(DAO_array_masked[:5]))  # 마스킹된 배열의 첫 5행 출력
 
-# %% code 118.
+# %% code 110.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -174,7 +150,7 @@ plt.gca().invert_yaxis()
 #단열선도 출력
 plt.show()
 
-# %% code 119.
+# %% code 111.
 import numpy as np
 
 ch1, ch2 = "F450", "F814"
@@ -210,7 +186,7 @@ print(f'{proj_dir}/{object_name}_{data_type}_CMD.png is created...')
 
 plt.show()
 
-# %% code 120.
+# %% code 112.
 ch1, ch2 = "F450", "F814"
 data_type = "WFPC2_WFC"
 object_name = 'M80'
@@ -261,7 +237,7 @@ print(f'{proj_dir}/{object_name}_{data_type1}_{data_type2}_CMD.png is created...
 
 plt.show()
 
-# %% code 121.
+# %% code 113.
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -320,7 +296,7 @@ plt.annotate('created by guitar79@gs.hs.kr\n using The Hubble space telescope da
 # 그래프 출력
 plt.show()
 
-# %% code 122.
+# %% code 114.
 n_lines = 65  # 출력할 줄 수
 
 print(f"파일 내용 출력 (처음 {n_lines}줄):")
@@ -348,7 +324,7 @@ except Exception as e:
 
 print("="*60)
 
-# %% code 123.
+# %% code 115.
 n_lines = 65  # 출력할 줄 수
 
 print(f"파일 내용 출력 (처음 {n_lines}줄):")
@@ -376,15 +352,15 @@ except Exception as e:
 
 print("="*60)
 
-# %% code 124.
+# %% code 116.
 print(f"파일 {fpaths[0]}의 첫 65줄을 출력합니다:")  # fpaths[0]에 저장된 파일의 이름을 출력합니다.
 du.preview_text(fpaths[0], n=65)         # 파일의 첫 65줄을 출력 (OS 무관)
 
-# %% code 125.
+# %% code 117.
 # print(f"파일 {fpaths[1]}의 첫 65줄을 출력합니다:")
 # du.preview_text(fpaths[1], n=65)
 
-# %% code 126.
+# %% code 118.
 import numpy as np
 
 # 파일의 실제 데이터가 시작되는 줄 번호를 확인하세요!
@@ -414,13 +390,13 @@ print("F450_array[1, :]: {}".format(F450_array[1, :]))
 # F814_array의 두 번째 행(인덱스 1) 출력
 print("F814_array[1, :]: {}".format(F814_array[1, :]))  
 
-# %% code 127.
+# %% code 119.
 print("F450.shape: {}".format(F450_array.shape))
 print("F814.shape: {}".format(F814_array.shape))
 print("F450[:,4:6]: {}".format(F450_array[:,4:6]))
 print("F814[:,4:6]: {}".format(F814_array[:,4:6]))
 
-# %% code 128.
+# %% code 120.
 import numpy as np
 
 # 실제 데이터에 마스킹 적용 예시
@@ -445,10 +421,10 @@ print("len(F450[mask]):{}".format(len(F450_array[mask])))  # 마스킹된 F450 �
 print("len(color):{}".format(len(color)))  # 전체 color 배열 길이(중복)
 print("len(color[mask]):{}".format(len(color[mask])))  # 마스킹된 color 데이터 개수
 
-# %% code 129.
+# %% code 121.
 color[mask]
 
-# %% code 130.
+# %% code 122.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -460,21 +436,3 @@ plt.gca().invert_yaxis()
 
 #단열선도 출력
 plt.show()
-
-# %% code 131.
-import os
-from pathlib import Path
-if not (proj_dir).exists():
-    os.mkdir(str(proj_dir))
-    print (f"{str(proj_dir)} is created...")
-else : 
-    print (f"{str(proj_dir)} is already exist...")
-
-# %% code 132.
-import os
-from pathlib import Path
-if not (proj_dir).exists():
-    os.mkdir(str(proj_dir))
-    print (f"{str(proj_dir)} is created...")
-else : 
-    print (f"{str(proj_dir)} is already exist...")

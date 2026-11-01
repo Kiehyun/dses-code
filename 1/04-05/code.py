@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | IV-05. 해수면의 높이 변동 그래프
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 83.
+# %% code 78.
 # 파일 이름과 ID 정의
 from pathlib import Path
 
@@ -16,13 +16,13 @@ files = [
 for file in files:
     du.download(f"https://docs.google.com/uc?export=download&id={file['id']}", Path(proj_dir) / file['name'])
 
-# %% code 84.
+# %% code 79.
 fpaths = du.list_files(proj_dir, "txt")
 
-# %% code 85.
+# %% code 80.
 du.preview_text(fpaths[0], n=10)
 
-# %% code 86.
+# %% code 81.
 import pandas as pd
 print("str(fpaths[2])", str(fpaths[2]))
 df_60min = pd.read_csv(str(fpaths[2]),
@@ -34,7 +34,7 @@ df_60min = pd.read_csv(str(fpaths[2]),
                  )
 print("df_60min :", df_60min )
 
-# %% code 87.
+# %% code 82.
 print("df_60min.columns :", df_60min.columns )
 print("type(df_60min['str_YmdHM'][0]): {}".format(type(df_60min['str_YmdHM'][0])))
 print("type(df_60min['height(cm)']): {}".format(type(df_60min['height(cm)'][0])))
@@ -42,7 +42,7 @@ df_60min['dt_YmdHM'] = pd.to_datetime(df_60min['str_YmdHM'])
 df_60min.index = df_60min['dt_YmdHM']
 print("df_60min: ", df_60min)
 
-# %% code 88.
+# %% code 83.
 # df_60min['dt_YmdHM'] 컬럼이 오름차순으로 정렬되어 있는지 확인
 is_sorted = df_60min['dt_YmdHM'].is_monotonic_increasing
 print("dt_YmdHM 오름차순 정렬 여부:", is_sorted)
@@ -65,7 +65,7 @@ df_60min = df_60min.interpolate(method='linear')
 # 결측치가 남아있는 경우(양 끝 등)는 앞/뒤 값으로 채움
 df_60min = df_60min.fillna(method='bfill').fillna(method='ffill')
 
-# %% code 89.
+# %% code 84.
 # 10분 간격 데이터 (fpaths[0]) DataFrame 생성 및 정렬/결측치 처리
 df_10min = pd.read_csv(
     str(fpaths[0]),
@@ -100,7 +100,7 @@ df_1min = df_1min.interpolate(method='linear')
 df_1min = df_1min.fillna(method='bfill').fillna(method='ffill')
 print("df_1min :", df_1min)
 
-# %% code 90.
+# %% code 85.
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
@@ -119,7 +119,7 @@ ax.grid(True, linestyle=':', alpha=0.5)
 plt.tight_layout()
 plt.show()
 
-# %% code 91.
+# %% code 86.
 import numpy as np
 from datetime import timedelta
 import matplotlib.pyplot as plt
@@ -169,7 +169,7 @@ fig.suptitle('2020년 6월 인천 해수면 높이 변동 (1시간/10분/1분)',
 fig.tight_layout(rect=[0, 0, 1, 0.97])
 plt.show()
 
-# %% code 92.
+# %% code 87.
 # df_1min에서 7일, 8일, 9일 자료만 슬라이싱
 start_date = df_1min['dt_YmdHM'].dt.floor('D').min().replace(day=7)
 end_date = df_1min['dt_YmdHM'].dt.floor('D').min().replace(day=10)
@@ -212,7 +212,7 @@ fig.suptitle('2020년 6월 7~9일 인천 해수면 높이 변동 (1분 간격)',
 fig.tight_layout(rect=[0, 0, 1, 0.97])
 plt.show()
 
-# %% code 93.
+# %% code 88.
 import numpy as np
 import pandas as pd
 import seaborn as sns

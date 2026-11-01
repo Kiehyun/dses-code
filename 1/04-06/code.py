@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | IV-06. 기상위성 천리안 이미지 RGB 합성
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 94.
+# %% code 89.
 # 국가위성센터로 부터 직접 다운로드
 from pathlib import Path
 
@@ -11,10 +11,10 @@ du.download(f"http://nmsc.kma.go.kr/IMG/COMS/MI/L1/L1B/201907/10/coms_mi_le1b_ir
 du.download(f"http://nmsc.kma.go.kr/IMG/COMS/MI/L1/L1B/201907/10/coms_mi_le1b_swir_en040ge_201907101045.png", Path(proj_dir) / 'coms_mi_le1b_swir_en040ge_201907101045.png')
 du.download(f"http://nmsc.kma.go.kr/IMG/COMS/MI/L1/L1B/201907/10/coms_mi_le1b_wv_en040ge_201907101045.png", Path(proj_dir) / 'coms_mi_le1b_wv_en040ge_201907101045.png')
 
-# %% code 95.
+# %% code 90.
 fpaths = du.list_files(proj_dir, "png")
 
-# %% code 96.
+# %% code 91.
 from PIL import Image
 
 #RGB 각 채널에 해당하는 파일명 입력
@@ -31,7 +31,7 @@ blue = Image.open(ir2_filename)
 print("type(red) :", type(red))  # red에 담긴 type을 출력
 print("red :", red)              # red에 담긴 자료를 출력
 
-# %% code 97.
+# %% code 92.
 import numpy as np
 red_arr = np.array(red)                            #ndarray로 변환
 print("type(red_arr) : {}".format(type(red_arr)))  #자료형 확인
@@ -50,7 +50,7 @@ print(redA.shape)
 print (type(red))  # red에 담긴 type을 출력
 print (red)        # red에 담긴 자료를 출력
 
-# %% code 98.
+# %% code 93.
 #package 불러오기
 import matplotlib.pyplot as plt
 
@@ -64,7 +64,7 @@ plt.imshow(red, cmap = 'gray', interpolation = 'None')
 plt.xticks([]), plt.yticks([])  # x, y축 눈금값 숨기기
 plt.show()
 
-# %% code 99.
+# %% code 94.
 # 그림 너비 15, 높이 13으로 지정
 from PIL import Image
 
@@ -121,11 +121,11 @@ for ax in axes.flat:
 plt.tight_layout()
 plt.show()
 
-# %% code 100.
+# %% code 95.
 print ("red.width:{}".format(red.width))
 print ("red.height:{}".format(red.height))
 
-# %% code 101.
+# %% code 96.
 #RGB 모드, 크기 2×1 의 빈 이미지 만들기
 new_im=Image.new('RGB', (red.width*2,red.height*1))
 print (type(new_im))  # new_im에 담긴 type을 출력
@@ -135,7 +135,7 @@ new_im.paste(green, (green.width, 0))
 print (type(new_im))  # new_im에 담긴 type을 출력
 print (new_im)        # new_im에 담긴 자료를 출력
 
-# %% code 102.
+# %% code 97.
 #RGB 모드, 크기 2×1 의 빈 이미지 만들기
 new_im=Image.new('RGB', (red.width*1,red.height*2))
 new_im.paste(red, (0, 0))
@@ -144,7 +144,7 @@ print (type(new_im))  # new_im에 담긴 type을 출력
 print (new_im)        # new_im에 담긴 자료를 출력
 new_im                # new_im을 화면에 보여줌
 
-# %% code 103.
+# %% code 98.
 # 6개의 이미지를 2행 3열로 이어 붙이기
 from PIL import Image
 # 파일명 리스트 (순서: vis, ir1, ir2, swir, wv, rgb)

@@ -3,59 +3,24 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
 <h1>IV-01. 기상청 AWS 자료 시각화하기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/04-01/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 1.</h2><pre><code># 프로젝트(자료 저장) 폴더 생성 — 공통 함수 사용
-proj_dir = du.make_project_dir(du.current_notebook_name() or &quot;04_01_Visualizing_KMA_AWS_Data&quot;)
-from pathlib import Path</code></pre>
-<h2>code 2.</h2><pre><code>import requests
-import os
+<p class="jump"><a href="#code-1">1</a> <a href="#code-2">2</a> <a href="#code-3">3</a> <a href="#code-4">4</a> <a href="#code-5">5</a> <a href="#code-6">6</a> <a href="#code-7">7</a> <a href="#code-8">8</a> <a href="#code-9">9</a> <a href="#code-10">10</a> <a href="#code-11">11</a> <a href="#code-12">12</a> <a href="#code-13">13</a> <a href="#code-14">14</a> <a href="#code-15">15</a> <a href="#code-16">16</a> <a href="#code-17">17</a> <a href="#code-18">18</a> <a href="#code-19">19</a> <a href="#code-20">20</a> <a href="#code-21">21</a></p>
+<h2 id="code-1">code 1. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
 
 fname = &quot;SURFACE_ASOS_116_MI_2018-01_2018-12_2018.zip&quot;
 fid = &quot;1THyhljJL8p5mhpnqLKNbU5QPC-bVABOI&quot;
 
-# requests 라이브러리를 이용(구글드라이브에서 공유한 파일을 다운로드할 경우)
-url = f&quot;https://docs.google.com/uc?export=download&amp;id={fid}&quot;
-# 디렉토리가 없으면 생성
-os.makedirs(proj_dir, exist_ok=True)
-
-# 파일 다운로드
-response = requests.get(url, verify=False)  # verify=False
-response.raise_for_status()                 # HTTP 에러 체크
-file_path = os.path.join(proj_dir, fname)   # 파일 저장
-with open(file_path, &#x27;wb&#x27;) as f:
-    f.write(response.content)
-print(f&quot;파일이 성공적으로 다운로드되었습니다: {file_path}&quot;)</code></pre>
-<h2>code 3.</h2><pre><code># fname = &quot;SURFACE_ASOS_116_MI_2018-01_2018-12_2018.zip&quot;
-# fid = &quot;1THyhljJL8p5mhpnqLKNbU5QPC-bVABOI&quot;
-
-# # Python urllib를 이용한 파일 다운로드 (모든 운영체제에서 작동)
-# import urllib.request
-# import os
-
-# # 다운로드할 URL과 저장할 경로 설정
-# download_url = f&quot;https://docs.google.com/uc?export=download&amp;id={fid}&quot;
-# save_path = os.path.join(proj_dir, fname)
-
-# try:
-# # 파일 다운로드
-# print(f&quot;파일을 다운로드 중입니다: {fname}&quot;)
-# urllib.request.urlretrieve(download_url, save_path)
-# print(f&quot;다운로드 완료: {save_path}&quot;)
-    
-# # 다운로드된 파일 크기 확인
-# file_size = os.path.getsize(save_path)
-# print(f&quot;파일 크기: {file_size:,} bytes ({file_size/1024/1024:.2f} MB)&quot;)
-    
-# except Exception as e:
-# print(f&quot;다운로드 중 오류가 발생했습니다: {e}&quot;)
-# print(&quot;인터넷 연결을 확인하거나 수동으로 파일을 다운로드해 주세요.&quot;)</code></pre>
-<h2>code 4.</h2><pre><code>fpaths = du.list_files(proj_dir, &quot;zip&quot;)</code></pre>
-<h2>code 5.</h2><pre><code>import shutil
+# 구글 드라이브에 공유해 둔 파일 내려받기
+du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={fid}&quot;, Path(proj_dir) / fname)</code></pre>
+<h2 id="code-2">code 2. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;zip&quot;)</code></pre>
+<h2 id="code-3">code 3. <button class="copy">복사</button></h2><pre><code>import shutil
 shutil.unpack_archive(str(fpaths[0]), str(Path(proj_dir)))
 
 from zipfile import ZipFile
@@ -63,7 +28,7 @@ with ZipFile(str(fpaths[0]), &#x27;r&#x27;) as zip_ref:
     zip_ref.extractall(str(Path(proj_dir)))
 
 fpaths = du.list_files(proj_dir, &quot;csv&quot;)</code></pre>
-<h2>code 6.</h2><pre><code>n_lines = 10  # 출력할 줄 수
+<h2 id="code-4">code 4. <button class="copy">복사</button></h2><pre><code>n_lines = 10  # 출력할 줄 수
 
 print(f&quot;파일 내용 출력 (처음 {n_lines}줄):&quot;)
 print(&quot;=&quot;*60)
@@ -89,10 +54,10 @@ except Exception as e:
     print(f&quot;파일 읽기 실패: {e}&quot;)
 
 print(&quot;=&quot;*60)</code></pre>
-<h2>code 7.</h2><pre><code># # !head -n 50 {fpaths[0]} # list the first 50 lines of the file
+<h2 id="code-5">code 5. <button class="copy">복사</button></h2><pre><code># # !head -n 50 {fpaths[0]} # list the first 50 lines of the file
 # print(f&quot;파일 {fpaths[0]}의 첫 20줄을 출력합니다:&quot;)
 # !powershell -Command &quot;Get-Content {fpaths[0]} -TotalCount 20&quot;</code></pre>
-<h2>code 8.</h2><pre><code># print(&quot;\n=== Python으로 직접 읽기 ===&quot;)
+<h2 id="code-6">code 6. <button class="copy">복사</button></h2><pre><code># print(&quot;\n=== Python으로 직접 읽기 ===&quot;)
 # # Python으로 직접 파일 읽기
 # import codecs
 # try:
@@ -120,7 +85,7 @@ print(&quot;=&quot;*60)</code></pre>
 # print(line.strip())
 # except:
 # print(&quot;모든 인코딩 시도 실패&quot;)</code></pre>
-<h2>code 9.</h2><pre><code># 필요한 라이브러리 불러오기
+<h2 id="code-7">code 7. <button class="copy">복사</button></h2><pre><code># 필요한 라이브러리 불러오기
 import pandas as pd
 
 # CSV 읽기 (천단위 &#x27;,&#x27; 처리, 인코딩: EUC-KR)
@@ -128,7 +93,7 @@ df = pd.read_csv(str(fpaths[0]), thousands=&#x27;,&#x27;, encoding=&#x27;euc-kr&
 
 # 데이터프레임 출력하여 데이터 확인
 print(f&quot;df :\n{df}&quot;)</code></pre>
-<h2>code 10.</h2><pre><code># 전체 월별 파일을 합치기 위한 처리
+<h2 id="code-8">code 8. <button class="copy">복사</button></h2><pre><code># 전체 월별 파일을 합치기 위한 처리
 import pandas as pd
 
 # 빈 DataFrame 생성
@@ -145,7 +110,7 @@ for fpath in fpaths:
 df = df.drop_duplicates()
 print(f&quot;총 레코드 수(중복 제거 후): {len(df)}&quot;)
 print(f&quot;df :\n{df}&quot;)</code></pre>
-<h2>code 11.</h2><pre><code># &#x27;일시&#x27; 컬럼을 datetime으로 변환하고 인덱스 재설정
+<h2 id="code-9">code 9. <button class="copy">복사</button></h2><pre><code># &#x27;일시&#x27; 컬럼을 datetime으로 변환하고 인덱스 재설정
 print(f&quot;type(df[&#x27;일시&#x27;][0]): {type(df[&#x27;일시&#x27;][0])}&quot;)
 df[&#x27;dt_YmdHM&#x27;] = pd.to_datetime(df[&#x27;일시&#x27;])
 print(f&quot;type(df[&#x27;dt_YmdHM&#x27;][0]): {type(df[&#x27;dt_YmdHM&#x27;][0])}&quot;)
@@ -156,7 +121,7 @@ from datetime import timedelta
 df[&#x27;dt_YmdHM-1min&#x27;] = df[&#x27;dt_YmdHM&#x27;] - timedelta(minutes=1)
 df.index = df[&#x27;dt_YmdHM-1min&#x27;]
 print(f&quot;df :\n{df}&quot;)</code></pre>
-<h2>code 12.</h2><pre><code>from datetime import datetime, timedelta
+<h2 id="code-10">code 10. <button class="copy">복사</button></h2><pre><code>from datetime import datetime, timedelta
 
 # 특정 날짜 필터링 예시
 df_jan51 = df[df[&#x27;일시&#x27;].str.contains(&#x27;2018-01-05&#x27;)]
@@ -168,7 +133,7 @@ print(f&quot;df_jan52 :\n{df_jan52}&quot;)
 df_jan53 = df[(df[&#x27;dt_YmdHM-1min&#x27;] &gt;= &#x27;2018-01-12 00:00&#x27;) &amp; (df[&#x27;dt_YmdHM-1min&#x27;] &lt; &#x27;2018-01-13 00:00&#x27;)]
 # 필터링된 데이터 출력
 print(f&quot;df_jan53 :\n{df_jan53}&quot;)</code></pre>
-<h2>code 13.</h2><pre><code>import numpy as np
+<h2 id="code-11">code 11. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 from datetime import datetime, timedelta
@@ -212,7 +177,7 @@ ax1.legend(lines1 + lines2, labels1 + labels2, loc=&#x27;upper left&#x27;)
 # 레이아웃 자동 조정
 plt.tight_layout()
 plt.show()</code></pre>
-<h2>code 14.</h2><pre><code>import pandas as pd
+<h2 id="code-12">code 12. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 import numpy as np
 
 # 날짜 컬럼 추가 (시간 정보 제거)
@@ -253,7 +218,7 @@ months = [&#x27;1월&#x27;, &#x27;2월&#x27;, &#x27;3월&#x27;, &#x27;4월&#x27;
           &#x27;7월&#x27;, &#x27;8월&#x27;, &#x27;9월&#x27;, &#x27;10월&#x27;, &#x27;11월&#x27;, &#x27;12월&#x27;]
 for month_num, count in monthly_count.items():
     print(f&quot;{months[month_num-1]}: {count}일&quot;)</code></pre>
-<h2>code 15.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-13">code 13. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import numpy as np
@@ -374,7 +339,7 @@ print(f&quot;평균 강수량: {rainy_days[&#x27;누적강수량(mm)&#x27;].mean
 print(f&quot;최대 강수량: {rainy_days[&#x27;누적강수량(mm)&#x27;].max():.2f}mm&quot;)
 print(f&quot;최소 강수량: {rainy_days[&#x27;누적강수량(mm)&#x27;].min():.2f}mm&quot;)
 print(f&quot;중간값: {rainy_days[&#x27;누적강수량(mm)&#x27;].median():.2f}mm&quot;)</code></pre>
-<h2>code 16.</h2><pre><code>import pandas as pd
+<h2 id="code-14">code 14. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 import numpy as np
 from datetime import datetime
 
@@ -548,14 +513,14 @@ results = calculate_temperature_averages(df, &#x27;dt_YmdHM-1min&#x27;, &#x27;�
 
 # 시각화
 plot_temperature_comparison(results)</code></pre>
-<h2>code 17.</h2><pre><code># resample 메서드의 반환 타입 확인 (DatetimeIndexResampler 객체)
+<h2 id="code-15">code 15. <button class="copy">복사</button></h2><pre><code># resample 메서드의 반환 타입 확인 (DatetimeIndexResampler 객체)
 print(&quot;type(df.resample(&#x27;D&#x27;): {}&quot;.format(type(df.resample(&#x27;D&#x27;))))
 print(&quot;df.resample(&#x27;D&#x27;) :&quot;, df.resample(&#x27;D&#x27;))
 
 # 일별(&#x27;D&#x27;) 단위로 리샘플링하여 각 날짜별 최댓값 계산
 df_daily_max = df.resample(&#x27;D&#x27;).max()
 print(&quot;df_daily_max :\n{}&quot;.format(df_daily_max))</code></pre>
-<h2>code 18.</h2><pre><code>print(f&quot;원본 데이터 형태: {df.shape}&quot;)
+<h2 id="code-16">code 16. <button class="copy">복사</button></h2><pre><code>print(f&quot;원본 데이터 형태: {df.shape}&quot;)
 print(f&quot;인덱스 타입: {type(df.index)}&quot;)
 print(f&quot;인덱스 빈도: {df.index.freq}&quot;)
 print(f&quot;인덱스 범위: {df.index.min()} ~ {df.index.max()}&quot;)
@@ -620,7 +585,7 @@ print(&quot;df.resample(&#x27;ME&#x27;).max().index.month: {}&quot;.format(df.re
 print(&quot;df.resample(&#x27;ME&#x27;).max().index.month_name(): {}&quot;.format(df.resample(&#x27;ME&#x27;).max().index.month_name()))
 print(f&quot;YYYY-MM: {df.resample(&#x27;ME&#x27;).max().index.strftime(&#x27;%Y-%m&#x27;)[:5].values}&quot;)
 print(f&quot;Month Year: {df.resample(&#x27;ME&#x27;).max().index.strftime(&#x27;%B %Y&#x27;)[:5].values}&quot;)</code></pre>
-<h2>code 19.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-17">code 17. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import numpy as np
@@ -756,7 +721,7 @@ daily_stats[&#x27;기온변화&#x27;] = daily_stats[&#x27;일평균기온&#x27;]
 print(f&quot;평균 일일 기온 변화: {daily_stats[&#x27;기온변화&#x27;].mean():.2f}°C&quot;)
 print(f&quot;최대 일일 기온 상승: {daily_stats[&#x27;기온변화&#x27;].max():.2f}°C&quot;)
 print(f&quot;최대 일일 기온 하락: {daily_stats[&#x27;기온변화&#x27;].min():.2f}°C&quot;)</code></pre>
-<h2>code 20.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-18">code 18. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import numpy as np
@@ -876,7 +841,7 @@ for month, row in seasonal_avg.iterrows():
     season = seasons[month]
     print(f&quot;{month}월 ({season}): 평균 {row[&#x27;월평균기온&#x27;]:.1f}°C, &quot;
           f&quot;최고 {row[&#x27;월최고기온&#x27;]:.1f}°C, 최저 {row[&#x27;월최저기온&#x27;]:.1f}°C&quot;)</code></pre>
-<h2>code 21.</h2><pre><code>import numpy as np
+<h2 id="code-19">code 19. <button class="copy">복사</button></h2><pre><code>import numpy as np
 
 # 풍속과 풍향 변수 생성
 ws = np.random.random(100) * 6        # 최대 풍속을 6 m/s까지 랜덤하게 생성
@@ -893,7 +858,7 @@ ax = WindroseAxes.from_ax()
 
 # 막대(bar) 형태로 바람장미 그리기
 ax.bar(wd, ws)</code></pre>
-<h2>code 22.</h2><pre><code># DataFrame에 바람장미 그래프 생성을 위한 표준 컬럼명 추가
+<h2 id="code-20">code 20. <button class="copy">복사</button></h2><pre><code># DataFrame에 바람장미 그래프 생성을 위한 표준 컬럼명 추가
 df[&#x27;speed&#x27;] = df[&#x27;풍속(m/s)&#x27;]      # 풍속 데이터를 &#x27;speed&#x27; 컬럼으로 복사
 df[&#x27;direction&#x27;] = df[&#x27;풍향(deg)&#x27;]  # 풍향 데이터를 &#x27;direction&#x27; 컬럼으로 복사
 
@@ -952,7 +917,7 @@ print(f&quot;풍속 범위: {df[&#x27;speed&#x27;].min():.1f} - {df[&#x27;speed&
 print(f&quot;풍향 범위: {df[&#x27;direction&#x27;].min():.1f} - {df[&#x27;direction&#x27;].max():.1f} degrees&quot;)
 print(f&quot;평균 풍속: {df[&#x27;speed&#x27;].mean():.2f} m/s&quot;)
 print(f&quot;최빈 풍향: {df[&#x27;direction&#x27;].mode().values[0]:.1f} degrees&quot;)</code></pre>
-<h2>code 23.</h2><pre><code>import pandas as pd
+<h2 id="code-21">code 21. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from windrose import WindroseAxes
@@ -1044,4 +1009,14 @@ df_monthly_display = df_monthly.copy()
 df_monthly_display[&#x27;Month&#x27;] = df_monthly_display.index.strftime(&#x27;%Y-%m&#x27;)
 for idx, row in df_monthly_display.iterrows():
     print(f&quot;{row[&#x27;Month&#x27;]}: 풍향 {row[&#x27;direction&#x27;]:.1f}°, 풍속 {row[&#x27;speed&#x27;]:.2f} m/s&quot;)</code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>

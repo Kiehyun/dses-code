@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | IV-07. 엘니뇨와 남방진동
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 104.
+# %% code 99.
 import cartopy.crs as ccrs
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 import matplotlib.ticker as mticker
@@ -77,24 +77,24 @@ plt.tight_layout()
 plt.savefig(f"{proj_dir}/ENSO_map.png", dpi=300, bbox_inches='tight')  # 저장
 plt.show()  # 그래프 출력
 
-# %% code 105.
+# %% code 100.
 fname1 = "ENSO.csv"
 fid1 = "1QkkjxaXMhiaurtA2RxV7XUxonZoDwmIr"
 
 fname2 = "SOI.signal.txt"
 fid2 = "1n2ZOOvFh6gm0VGc70j3OlzfCkgOvbuKr"
 
-#requests 라이브러리를 이용(나의 구글드라이브에서 공유한 파일을 구글 코랩에서 사용할 경우)
+# 구글 드라이브에 공유해 둔 파일 내려받기
 from pathlib import Path
 
 # ENSO/SOI는 주기적으로 갱신되는 피드이므로 항상 최신으로 새로 받습니다.
 du.download(f"https://docs.google.com/uc?export=download&id={fid1}", Path(proj_dir) / fname1, overwrite=True)
 du.download(f"https://docs.google.com/uc?export=download&id={fid2}", Path(proj_dir) / fname2, overwrite=True)
 
-# %% code 106.
+# %% code 101.
 fpaths = du.list_files(proj_dir, ["csv", "txt"])
 
-# %% code 107.
+# %% code 102.
 n_lines = 10  # 출력할 줄 수
 
 print(f"파일 내용 출력 (처음 {n_lines}줄):")
@@ -122,7 +122,7 @@ except Exception as e:
 
 print("="*60)
 
-# %% code 108.
+# %% code 103.
 n_lines = 10  # 출력할 줄 수
 
 print(f"파일 내용 출력 (처음 {n_lines}줄):")
@@ -150,7 +150,7 @@ except Exception as e:
 
 print("="*60)
 
-# %% code 109.
+# %% code 104.
 import pandas as pd
 import numpy as np
 
@@ -172,7 +172,7 @@ df_Kaggle = df_Kaggle.mask(df_Kaggle['ONI'] == -99.9, np.nan)
 
 print("df_Kaggle : \n", df_Kaggle)
 
-# %% code 110.
+# %% code 105.
 import numpy as np
 
 arr = np.loadtxt(fpaths[1],
@@ -207,7 +207,7 @@ while date1 < EndDT:
 print("len(proc_dates): {}".format(len(proc_dates)))
 print(f"proc_dates: {proc_dates}")
 
-# %% code 111.
+# %% code 106.
 # import pandas as pd
 import pandas as pd
  
@@ -220,7 +220,7 @@ df_SOI.index = df_SOI['dt_date']
 df_SOI['SOI'] = df_SOI['SOI'].replace(-99.9, np.nan)
 print("df_SOI :", df_SOI)
 
-# %% code 112.
+# %% code 107.
 # 필요한 라이브러리 불러오기
 import matplotlib.pyplot as plt
 from matplotlib import rc
@@ -233,7 +233,7 @@ ax.set_xlabel('시간(년)', fontsize=14)
 ax.set_ylabel('수온 편차 (°C)', fontsize=14)
 plt.show()
 
-# %% code 113.
+# %% code 108.
 import matplotlib.pyplot as plt
 
 # 그림 사이즈를 가로로 길게 지정
@@ -269,7 +269,7 @@ fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0.1)
 
 plt.show()
 
-# %% code 114.
+# %% code 109.
 import matplotlib.pyplot as plt
 
 # 그림 사이즈를 가로로 길게 지정

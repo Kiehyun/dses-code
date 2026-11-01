@@ -1,12 +1,7 @@
 # 지구과학 데이터 사이언스 1 | IV-03. 에어코리아 자료 시각화하기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 40.
-# 프로젝트(자료 저장) 폴더 생성 — 공통 함수 사용
-proj_dir = du.make_project_dir(du.current_notebook_name() or "04_03_Visualizing_AirKorea_Data")
-from pathlib import Path
-
-# %% code 41.
+# %% code 37.
 # 파일 ID와 파일 이름을 튜플 목록으로 묶기
 files = [
     ('146hh8byBZ7r-afm8FgbjNWrSLfFC2juV', '2016-01.zip'),
@@ -22,22 +17,22 @@ for file_id, file_name in files:
         proj_dir / file_name
     )
 
-# %% code 42.
+# %% code 38.
 fpaths = du.list_files(proj_dir, "zip")
 
-# %% code 43.
+# %% code 39.
 import shutil
 for fpath in fpaths:
     shutil.unpack_archive(str(fpath), str(proj_dir))
     print(f"Unzip {fpath} to {proj_dir}")  
 
-# %% code 44.
+# %% code 40.
 fpaths = du.list_files(proj_dir, "csv")
 
-# %% code 45.
+# %% code 41.
 du.preview_text(fpaths[0], n=10)
 
-# %% code 46.
+# %% code 42.
 #package 불러오기
 import pandas as pd
 
@@ -52,7 +47,7 @@ for fpath in fpaths :
     df = pd.concat([df, df_month], ignore_index=True)
 display(df)
 
-# %% code 47.
+# %% code 43.
 print("df['측정일시'].dtype: {}".format(df['측정일시'].dtype))
 df['O_datetime-1hr'] = df['측정일시'] - 1
 
@@ -61,25 +56,25 @@ df['YMdhms-1hr_str'] = df['YMdh-1hr_str'].str.slice(start=0, stop=8) + " " + df[
 df['YMdhms-1hr_dt'] = pd.to_datetime(df['YMdhms-1hr_str'])
 print(df)
 
-# %% code 48.
+# %% code 44.
 print("len(df['측정소코드'].unique()):\n {}".format(len(df['측정소코드'].unique())))
 df = df.set_index(['측정소코드'], drop=False)
 print(df)
 
-# %% code 49.
+# %% code 45.
 print("len(df['YMdhms-1hr_dt'].unique()):\n {}".format(len(df['YMdhms-1hr_dt'].unique())))
 df = df.set_index(['YMdhms-1hr_dt'], drop=False)
 print(df)
 
-# %% code 50.
+# %% code 46.
 df_MI = df.set_index(['측정소코드','YMdhms-1hr_dt'], drop=False)
 print(df_MI)
 
-# %% code 51.
+# %% code 47.
 print("len(df_MI['측정소코드'].unique()): {}".format(len(df_MI['측정소코드'].unique())))
 print("df_MI['측정소코드'].unique(): \n{}".format(df_MI['측정소코드'].unique()))
 
-# %% code 52.
+# %% code 48.
 Ocode = 632151 
 
 print("len(df_MI[(df_MI['측정소코드'] == Ocode)]: {}".\
@@ -87,24 +82,24 @@ print("len(df_MI[(df_MI['측정소코드'] == Ocode)]: {}".\
 
 print(df_MI[(df_MI["측정소코드"] == Ocode)])
 
-# %% code 53.
+# %% code 49.
 print("len(df_MI[(df_MI['YMdhms-1hr_dt'] >= '2016-01-01 00:00:00') & (df_MI['YMdhms-1hr_dt'] < '2016-02-01 00:00:00')]): {}".\
       format(len(df_MI[(df_MI['YMdhms-1hr_dt'] >= '2016-01-01 00:00:00') & (df_MI['YMdhms-1hr_dt'] < '2016-02-01 00:00:00')])))
 
 print(df_MI[(df_MI["YMdhms-1hr_dt"] >= '2016-01-01 00:00:00') & (df_MI["YMdhms-1hr_dt"] < '2016-02-01 00:00:00')])
 
-# %% code 54.
+# %% code 50.
 print(df_MI[["NO2", "O3"]])
 
-# %% code 55.
+# %% code 51.
 print("type(df_MI.xs(632151)): {}".format(type(df_MI.xs(632151))))
 print(df_MI.xs(632151))
 
-# %% code 56.
+# %% code 52.
 print("type(df_MI.xs('2016-01-01 00:00:00', level=1)):{}".format(type(df_MI.xs('2016-01-01 00:00:00', level=1))))
 print(df_MI.xs("2016-01-01 00:00:00", level=1))
 
-# %% code 57.
+# %% code 53.
 Ocode = 632151
 DATA_column1 = "O3"
 DATA_column2 = "NO2"
@@ -116,13 +111,9 @@ df_MI_selected1 = df_MI[(df_MI['YMdhms-1hr_dt'] >= begin_datetime_str) &\
       (df_MI['YMdhms-1hr_dt'] < end_datetime_str) &\
       (df_MI["측정소코드"] == Ocode)][[DATA_column1, DATA_column2]]
 
-# %% code 58.
+# %% code 54.
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import rc
-
-# 한글 폰트 설정
-rc('font', family='NanumGothic')  # 또는 'Malgun Gothic', 'AppleGothic' 등
 
 plt.figure(figsize=(12, 8))
 
@@ -153,11 +144,11 @@ plt.annotate('mean : {0:.02f}, max: {1:.02f}, min: {2:.02f}'\
 # print("{0}_{1}_{2}_hist.png is created..."\
 # .format(fullname[-4], Ocode, DATA_column1))
 
-# %% code 59.
+# %% code 55.
 print("type(df_MI_selected1.xs(Ocode).index) : {}".format(type(df_MI_selected1.xs(Ocode).index)))
 print("df_MI_selected1.xs(Ocode).index) :\n {}".format(df_MI_selected1.xs(Ocode).index))
 
-# %% code 60.
+# %% code 56.
 from datetime import timedelta
 import matplotlib.dates as dates
 import matplotlib.ticker as ticker
@@ -234,7 +225,7 @@ plt.annotate('mean : {0:.02f}, max: {1:.02f}, min: {2:.02f}'\
 # print("{0}_{1}_{2}_hist.png is created..."\
 # .format(fullname[-4], Ocode, DATA_column1))
 
-# %% code 61.
+# %% code 57.
 import matplotlib.pyplot as plt
 
 # df_MI 전체 숫자 컬럼에 대한 상관계수 계산
@@ -302,7 +293,7 @@ ax.set_title('Correlation Matrix of Air Pollutants', fontsize=15, fontweight='bo
 plt.tight_layout()
 plt.show()
 
-# %% code 62.
+# %% code 58.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -332,18 +323,18 @@ plt.annotate('created by guitar79@gs.hs.kr\nAir quality procuct using AirKorea d
 # print("{0}_{1}_{2}_{3}_scatter.png is created..."\
 # .format(fullname[-4], Ocode, DATA_column1, DATA_column2))
 
-# %% code 63.
+# %% code 59.
 # 'W-MON' 월요일, 'W-TUE' 화요일, 'W-WED' 수요일, 'W-THU' 목요일, 'W-FRI' 금요일, 'W-SAT' 토요일, 'W-SUN' 일요일
 
 print(df_MI[["SO2", "CO", "O3", "NO2", "PM10", "PM25"]].xs(632151).resample('W-MON').mean())
 
-# %% code 64.
+# %% code 60.
 df_MI[["SO2", "CO", "O3", "NO2", "PM10", "PM25"]].xs(632151).resample('W-MON').mean().mean()
 
-# %% code 65.
+# %% code 61.
 df_MI["NO2"].xs(632151).resample('W-MON').mean().mean()
 
-# %% code 66.
+# %% code 62.
 Weekday_lst = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
 import pandas as pd 
@@ -358,13 +349,13 @@ for i in range(len(Weekday_lst)):
     df_weekday[Weekday_lst[i]] = df_MI[["SO2", "CO", "O3", "NO2", "PM10", "PM25"]].xs(Ocode).resample(Wday_lst[i]).mean().mean()
 print(df_weekday)
 
-# %% code 67.
+# %% code 63.
 DATA_column3 = "SO2"
 print("df_weekday.columns: {}".format(df_weekday.columns))
 
 print("df_weekday.loc[DATA_column3,:]: {}\n".format(df_weekday.loc[DATA_column3,:]))
 
-# %% code 68.
+# %% code 64.
 #그래프를 그려보자.
 fig, ax1 = plt.subplots(figsize=(10, 10))
 
@@ -390,7 +381,7 @@ plt.annotate('created by guitar79@gs.hs.kr\nAir quality procuct using AirKorea d
 # print("{0}_{1}_bar.png is created..."\
 # .format(fullname[-4], Ocode))
 
-# %% code 69.
+# %% code 65.
 #(과제) 아래에 코딩을 완성하여 제출하시오.
 
 DATA_column3 = "SO2"

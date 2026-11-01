@@ -3,18 +3,21 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
 <h1>III-09. PSF 측광</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/03-29/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 283.</h2><pre><code>fname = (&quot;M13_LIGHT_V_2025-04-26-14-10-00_60sec_&quot;
+<p class="jump"><a href="#code-283">283</a> <a href="#code-284">284</a> <a href="#code-285">285</a> <a href="#code-286">286</a> <a href="#code-287">287</a> <a href="#code-288">288</a> <a href="#code-289">289</a> <a href="#code-290">290</a> <a href="#code-291">291</a> <a href="#code-292">292</a> <a href="#code-293">293</a> <a href="#code-294">294</a> <a href="#code-295">295</a> <a href="#code-296">296</a> <a href="#code-297">297</a> <a href="#code-298">298</a> <a href="#code-299">299</a> <a href="#code-300">300</a></p>
+<h2 id="code-283">code 283. <button class="copy">복사</button></h2><pre><code>fname = (&quot;M13_LIGHT_V_2025-04-26-14-10-00_60sec_&quot;
          &quot;GSON300_STF-8300M_-19c_1bin_cal.fits&quot;)
 fid = &quot;17Ptwl1fvC73CvEhK9tXo9MfPYtG1sawL&quot;
 
 du.download(f&quot;https://drive.google.com/uc?id={fid}&quot;, proj_dir / fname)</code></pre>
-<h2>code 284.</h2><pre><code>import numpy as np
+<h2 id="code-284">code 284. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 from astropy.io import fits
 from astropy.wcs import WCS
@@ -36,7 +39,7 @@ pixscale = proj_plane_pixel_scales(wcs).mean() * 3600      # 화소 하나의 �
 m13 = SkyCoord(&quot;16h41m41.6s&quot;, &quot;+36d27m41s&quot;)                # M13 중심
 cx, cy = wcs.world_to_pixel(m13)                           # 성단 중심의 화소 좌표
 print(f&quot;픽셀 축척 {pixscale:.3f} arcsec/px, 성단 중심 (x, y) = ({cx:.1f}, {cy:.1f})&quot;)</code></pre>
-<h2>code 285.</h2><pre><code>from astropy.visualization import simple_norm
+<h2 id="code-285">code 285. <button class="copy">복사</button></h2><pre><code>from astropy.visualization import simple_norm
 
 def show(ax, img, title, percent=99.5):
     im = ax.imshow(img, origin=&quot;lower&quot;, cmap=&quot;gray&quot;,
@@ -52,7 +55,7 @@ axs[0].add_patch(plt.Rectangle((cx - 100, cy - 100), 200, 200, ec=&quot;r&quot;,
 show(axs[1], data[core], &quot;중심부 200x200 px&quot;, percent=99.9)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2>code 286.</h2><pre><code>from astropy.stats import SigmaClip
+<h2 id="code-286">code 286. <button class="copy">복사</button></h2><pre><code>from astropy.stats import SigmaClip
 from photutils.background import Background2D, MMMBackground
 
 bkg = Background2D(data, (64, 64), filter_size=(3, 3),
@@ -69,7 +72,7 @@ plt.colorbar(im0, ax=axs[0], fraction=0.046, pad=0.04)
 show(axs[1], sub, &quot;배경을 뺀 영상&quot;)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2>code 287.</h2><pre><code>from photutils.detection import DAOStarFinder
+<h2 id="code-287">code 287. <button class="copy">복사</button></h2><pre><code>from photutils.detection import DAOStarFinder
 
 def xy_cols(tab):
     &quot;&quot;&quot;photutils 버전에 따라 다른 중심 열 이름(x_centroid 또는 xcentroid)&quot;&quot;&quot;
@@ -80,7 +83,7 @@ found0 = DAOStarFinder(threshold=4 * bkg_rms, fwhm=FWHM_INIT,
                        min_separation=1.5 * FWHM_INIT)(sub)
 xc, yc = xy_cols(found0)
 print(&quot;찾은 별:&quot;, len(found0))</code></pre>
-<h2>code 288.</h2><pre><code>from scipy.spatial import cKDTree
+<h2 id="code-288">code 288. <button class="copy">복사</button></h2><pre><code>from scipy.spatial import cKDTree
 from photutils.psf import fit_fwhm
 
 def isolated_bright(tab, d_iso=20, peak_rng=(1000, 30000), r_min=300, edge=20):
@@ -98,10 +101,10 @@ fwhms = fit_fwhm(sub, xypos=np.c_[found0[xc][sel], found0[yc][sel]], fit_shape=7
 FWHM = float(np.median(fwhms))
 print(f&quot;고른 별 {sel.sum()}개, FWHM 중앙값 {FWHM:.2f} px = {FWHM * pixscale:.2f} arcsec &quot;
       f&quot;(16~84 백분위 {np.percentile(fwhms, 16):.2f}~{np.percentile(fwhms, 84):.2f} px)&quot;)</code></pre>
-<h2>code 289.</h2><pre><code>finder = DAOStarFinder(threshold=4 * bkg_rms, fwhm=FWHM, min_separation=1.5 * FWHM)
+<h2 id="code-289">code 289. <button class="copy">복사</button></h2><pre><code>finder = DAOStarFinder(threshold=4 * bkg_rms, fwhm=FWHM, min_separation=1.5 * FWHM)
 found = finder(sub)
 print(&quot;FWHM 으로 다시 찾은 별:&quot;, len(found))</code></pre>
-<h2>code 290.</h2><pre><code>from astropy.nddata import NDData
+<h2 id="code-290">code 290. <button class="copy">복사</button></h2><pre><code>from astropy.nddata import NDData
 from astropy.table import Table
 from photutils.psf import extract_stars
 
@@ -118,13 +121,13 @@ for ax, star in zip(axs.flat, stars):
 plt.suptitle(&quot;ePSF 를 만들 별(앞 12개)&quot;, fontsize=9)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2>code 291.</h2><pre><code>from photutils.psf import EPSFBuilder
+<h2 id="code-291">code 291. <button class="copy">복사</button></h2><pre><code>from photutils.psf import EPSFBuilder
 
 result = EPSFBuilder(oversampling=2, maxiters=10, progress_bar=False)(stars)
 # photutils 3 은 결과 객체(.epsf), 2.x 는 (epsf, 맞춘 별) 튜플을 돌려줌
 epsf = result.epsf if hasattr(result, &quot;epsf&quot;) else result[0]
 print(&quot;ePSF 격자:&quot;, epsf.data.shape, &quot;(오버샘플링 2)&quot;)</code></pre>
-<h2>code 292.</h2><pre><code>from astropy.modeling.functional_models import Gaussian1D
+<h2 id="code-292">code 292. <button class="copy">복사</button></h2><pre><code>from astropy.modeling.functional_models import Gaussian1D
 
 from matplotlib.ticker import FuncFormatter
 ov = 2
@@ -148,7 +151,7 @@ axs[1].set_xlabel(&quot;반지름 (px)&quot;); axs[1].set_ylabel(&quot;상대 �
 axs[1].legend(fontsize=8); axs[1].grid(ls=&quot;:&quot;)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2>code 293.</h2><pre><code>from photutils.psf import PSFPhotometry, SourceGrouper
+<h2 id="code-293">code 293. <button class="copy">복사</button></h2><pre><code>from photutils.psf import PSFPhotometry, SourceGrouper
 
 FIT_SHAPE = (7, 7)
 grouper = SourceGrouper(min_separation=2.5 * FWHM)
@@ -165,7 +168,7 @@ print(&quot;맞춘 별:&quot;, len(psf_tab))
 print(&quot;묶음으로 함께 맞춘 별:&quot;, (gsize &gt; 1).sum(), &quot;/ 가장 큰 묶음:&quot;, gsize.max(), &quot;개&quot;)
 print(&quot;품질 표시(flags)가 붙은 별:&quot;, (np.asarray(psf_tab[&quot;flags&quot;]) &gt; 0).sum())
 psf_tab[&quot;id&quot;, &quot;group_id&quot;, &quot;group_size&quot;, &quot;x_fit&quot;, &quot;y_fit&quot;, &quot;flux_fit&quot;, &quot;flux_err&quot;, &quot;qfit&quot;, &quot;flags&quot;][:5]</code></pre>
-<h2>code 294.</h2><pre><code>resid = psfphot.make_residual_image(sub, psf_shape=(19, 19))
+<h2 id="code-294">code 294. <button class="copy">복사</button></h2><pre><code>resid = psfphot.make_residual_image(sub, psf_shape=(19, 19))
 model = sub - resid
 
 outer = (slice(1250, 1450), slice(1250, 1450))                    # 바깥쪽 200x200 화소
@@ -180,7 +183,7 @@ for row, (reg, name) in enumerate([(core, &quot;중심부&quot;), (outer, &quot;
           f&quot;(배경 잡음 {bkg_rms:.1f})&quot;)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2>code 295.</h2><pre><code>from photutils.psf import CircularGaussianPRF
+<h2 id="code-295">code 295. <button class="copy">복사</button></h2><pre><code>from photutils.psf import CircularGaussianPRF
 
 gpsf = CircularGaussianPRF(fwhm=FWHM)
 gpsf.fwhm.fixed = True                                     # FWHM 은 고정, 위치·밝기만 맞춤
@@ -218,7 +221,7 @@ for ax in axs: ax.set_xticks([]); ax.set_yticks([])
 plt.colorbar(im, ax=axs[2], fraction=0.046, pad=0.04)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2>code 296.</h2><pre><code>from photutils.aperture import CircularAperture, aperture_photometry
+<h2 id="code-296">code 296. <button class="copy">복사</button></h2><pre><code>from photutils.aperture import CircularAperture, aperture_photometry
 
 ok = (np.asarray(psf_tab[&quot;flags&quot;]) == 0) &amp; (np.asarray(psf_tab[&quot;flux_fit&quot;]) &gt; 0)
 pt = psf_tab[ok]
@@ -238,7 +241,7 @@ crowd = (dnn &lt; 2 * R_AP) &amp; np.isfinite(dm)                          # 구
 ap_corr = np.median(dm[iso])
 print(f&quot;고립된 밝은 별 {iso.sum()}개: Δm 중앙값 {ap_corr:+.3f} (흩어짐 {np.std(dm[iso]):.3f}) mag&quot;)
 print(f&quot;이웃과 붙은 별 {crowd.sum()}개: Δm 중앙값 {np.median(dm[crowd]):+.3f} mag&quot;)</code></pre>
-<h2>code 297.</h2><pre><code>fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.4))
+<h2 id="code-297">code 297. <button class="copy">복사</button></h2><pre><code>fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.4))
 for ax, xv, xl in [(axs[0], m_psf, &quot;PSF 기기 등급&quot;), (axs[1], r_cl * pixscale / 60, &quot;성단 중심 거리 (arcmin)&quot;)]:
     ax.plot(xv[~crowd], dm[~crowd], &quot;.&quot;, ms=3, color=&quot;C0&quot;, label=&quot;떨어진 별&quot;)
     ax.plot(xv[crowd], dm[crowd], &quot;.&quot;, ms=4, color=&quot;C3&quot;, label=f&quot;이웃 &lt; {2 * R_AP:.0f} px&quot;)
@@ -248,7 +251,7 @@ axs[0].set_ylabel(r&quot;$m_{\rm ap} - m_{\rm PSF}$&quot;)
 axs[0].legend(fontsize=7, loc=&quot;lower left&quot;)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2>code 298.</h2><pre><code>from photutils.aperture import CircularAperture
+<h2 id="code-298">code 298. <button class="copy">복사</button></h2><pre><code>from photutils.aperture import CircularAperture
 
 gid = pt[&quot;group_id&quot;][np.argmax(np.where(r_cl &lt; 150, np.asarray(pt[&quot;group_size&quot;]), 0))]
 g = np.asarray(pt[&quot;group_id&quot;]) == gid
@@ -274,7 +277,7 @@ plt.show()
 print(&quot; 별   x       y     m_PSF   m_ap-보정   차이&quot;)
 for k in np.flatnonzero(g):
     print(f&quot;{pt[&#x27;id&#x27;][k]:4d} {xf[k]:7.1f} {yf[k]:7.1f} {m_psf[k]:7.3f} {m_ap[k] - ap_corr:8.3f} {m_ap[k] - ap_corr - m_psf[k]:+8.3f}&quot;)</code></pre>
-<h2>code 299.</h2><pre><code>from photutils.psf import IterativePSFPhotometry
+<h2 id="code-299">code 299. <button class="copy">복사</button></h2><pre><code>from photutils.psf import IterativePSFPhotometry
 
 itphot = IterativePSFPhotometry(epsf, FIT_SHAPE, finder=finder, grouper=grouper,
                                 aperture_radius=FWHM, xy_bounds=(2, 2),
@@ -291,7 +294,7 @@ for ax, r, ttl in [(axs[0], resid, &quot;한 번 맞춘 잔차&quot;), (axs[1], 
     ax.set_title(ttl, fontsize=9); ax.set_xticks([]); ax.set_yticks([])
 plt.tight_layout()
 plt.show()</code></pre>
-<h2>code 300.</h2><pre><code>out = pt[&quot;id&quot;, &quot;group_id&quot;, &quot;group_size&quot;, &quot;x_fit&quot;, &quot;y_fit&quot;, &quot;flux_fit&quot;, &quot;flux_err&quot;, &quot;qfit&quot;, &quot;cfit&quot;].to_pandas()
+<h2 id="code-300">code 300. <button class="copy">복사</button></h2><pre><code>out = pt[&quot;id&quot;, &quot;group_id&quot;, &quot;group_size&quot;, &quot;x_fit&quot;, &quot;y_fit&quot;, &quot;flux_fit&quot;, &quot;flux_err&quot;, &quot;qfit&quot;, &quot;cfit&quot;].to_pandas()
 out[&quot;mag_psf&quot;] = m_psf
 out[&quot;merr_psf&quot;] = 1.0857 * out[&quot;flux_err&quot;] / out[&quot;flux_fit&quot;]
 out[&quot;mag_ap&quot;] = m_ap
@@ -302,4 +305,14 @@ csv = proj_dir / f&quot;{fpath.stem}_PSF_photometry.csv&quot;
 out.to_csv(csv, index=False)
 print(csv.relative_to(proj_dir.parent), len(out), &quot;행&quot;)
 out.head()</code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>

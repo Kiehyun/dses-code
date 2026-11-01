@@ -3,13 +3,16 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
 <h1>I-04. 코딩 에이전트로 분석 프로젝트 하기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/01-24/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 16.</h2><pre><code>from pathlib import Path
+<p class="jump"><a href="#code-16">16</a> <a href="#code-17">17</a> <a href="#code-18">18</a></p>
+<h2 id="code-16">code 16. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
 
 guide = &#x27;&#x27;&#x27;# 프로젝트 지침 — 우리 학교 기상 관측 데이터 분석
 
@@ -42,7 +45,7 @@ guide = &#x27;&#x27;&#x27;# 프로젝트 지침 — 우리 학교 기상 관측 
 print((proj_dir / &quot;AGENTS.md&quot;).read_text(encoding=&quot;utf-8&quot;))
 print(&quot;--- CLAUDE.md ---&quot;)
 print((proj_dir / &quot;CLAUDE.md&quot;).read_text(encoding=&quot;utf-8&quot;))</code></pre>
-<h2>code 17.</h2><pre><code>import json
+<h2 id="code-17">code 17. <button class="copy">복사</button></h2><pre><code>import json
 
 def check_notebook(path):
     nb = json.loads(Path(path).read_text(encoding=&quot;utf-8-sig&quot;))
@@ -60,7 +63,7 @@ def check_notebook(path):
             &quot;오류 종류&quot;: &quot;, &quot;.join(sorted(set(errors)))}
 
 check_notebook(sorted(Path.cwd().glob(&quot;*.ipynb&quot;))[0])   # 폴더의 첫 노트북으로 시험</code></pre>
-<h2>code 18.</h2><pre><code>import pandas as pd
+<h2 id="code-18">code 18. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 
 folder = Path.cwd()                                  # 점검할 폴더(지금 노트북이 있는 곳)
 report = pd.DataFrame([check_notebook(p) for p in sorted(folder.glob(&quot;*.ipynb&quot;))])
@@ -68,4 +71,14 @@ report = report.sort_values([&quot;오류 셀&quot;, &quot;실행 안 한 셀&qu
                             ignore_index=True)
 display(report)
 print(f&quot;오류가 남은 노트북: {(report[&#x27;오류 셀&#x27;] &gt; 0).sum()}개&quot;)</code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>

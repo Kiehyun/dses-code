@@ -3,13 +3,16 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
 <h1>III-05. 태양계 시뮬레이션</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/03-05/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 54.</h2><pre><code># astropy 라이브러리에서 Time 클래스를 가져옴 (천문학적 시간 처리용)
+<p class="jump"><a href="#code-53">53</a> <a href="#code-54">54</a> <a href="#code-55">55</a> <a href="#code-56">56</a> <a href="#code-57">57</a> <a href="#code-58">58</a> <a href="#code-59">59</a> <a href="#code-60">60</a> <a href="#code-61">61</a> <a href="#code-62">62</a> <a href="#code-63">63</a> <a href="#code-64">64</a> <a href="#code-65">65</a> <a href="#code-66">66</a> <a href="#code-67">67</a> <a href="#code-68">68</a> <a href="#code-69">69</a> <a href="#code-70">70</a> <a href="#code-71">71</a> <a href="#code-72">72</a> <a href="#code-73">73</a> <a href="#code-74">74</a> <a href="#code-75">75</a></p>
+<h2 id="code-53">code 53. <button class="copy">복사</button></h2><pre><code># astropy 라이브러리에서 Time 클래스를 가져옴 (천문학적 시간 처리용)
 from astropy.time import Time
 
 # 특정 시간을 설정 (2017년 1월 1일)
@@ -29,7 +32,7 @@ print(&quot;type(obj1): &quot;, type(obj1))
 
 # 수성의 위치와 속도 벡터 데이터 출력
 print(&quot;obj1: &quot;,obj1)</code></pre>
-<h2>code 55.</h2><pre><code>import numpy as np
+<h2 id="code-54">code 54. <button class="copy">복사</button></h2><pre><code>import numpy as np
 from astropy.time import Time, TimeDelta
 
 # 특정 시각을 문자열로 정의
@@ -76,7 +79,7 @@ dts = [dt.iso for dt in
 
 print(&quot;len(dts) :&quot;, len(dts))  # 생성된 시간 목록의 길이 출력
 print(&quot;dts :&quot;, dts)            # 생성된 시간 목록 출력 (ISO 형식)</code></pre>
-<h2>code 56.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-55">code 55. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 # 4x4 인치 크기의 그림 생성
 fig = plt.figure(figsize=[4, 4])
@@ -102,7 +105,7 @@ plot = ax.scatter(0, 0,                    # 위치: 원점 (0, 0)
                   s = 28**2,          # 크기: 28의 제곱 (점의 크기는 제곱 단위)
                   edgecolors = None,  # 테두리 색상: 없음
                   zorder = 10)        # 그리기 순서: 10 (다른 객체보다 앞에 표시)</code></pre>
-<h2>code 57.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-56">code 56. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 # 배경을 검게 만들기 위한 어두운 테마 적용
 plt.style.use(&#x27;dark_background&#x27;)
@@ -131,7 +134,7 @@ plot = ax.scatter(0, 0,                    # 위치: 좌표계의 중심점 (0, 
                   s = 28**2,          # 크기: 28의 제곱 (점의 크기는 제곱 단위로 지정)
                   edgecolors = None,  # 테두리 색상: 없음 (깔끔한 표현)
                   zorder = 10)        # 그리기 순서: 10 (다른 객체들보다 앞에 표시)</code></pre>
-<h2>code 58.</h2><pre><code># astropy 라이브러리에서 Time 클래스를 가져옴 (천문학적 시간 처리용)
+<h2 id="code-57">code 57. <button class="copy">복사</button></h2><pre><code># astropy 라이브러리에서 Time 클래스를 가져옴 (천문학적 시간 처리용)
 from astropy.time import Time
 # 특정 시간을 설정 (2017년 1월 1일)
 specific_time = Time(&quot;2017-01-01&quot;)
@@ -158,7 +161,7 @@ print(&quot;obj1[&#x27;z&#x27;]: &quot;, obj1[&#x27;z&#x27;])  # z축 방향 위
 print(&quot;obj1[&#x27;vx&#x27;]: &quot;, obj1[&#x27;vx&#x27;])  # x축 방향 속도 성분
 print(&quot;obj1[&#x27;vy&#x27;]: &quot;, obj1[&#x27;vy&#x27;])  # y축 방향 속도 성분
 print(&quot;obj1[&#x27;vz&#x27;]: &quot;, obj1[&#x27;vz&#x27;])  # z축 방향 속도 성분</code></pre>
-<h2>code 59.</h2><pre><code># astropy 라이브러리에서 Time 클래스를 가져옴 (천문학적 시간 처리용)
+<h2 id="code-58">code 58. <button class="copy">복사</button></h2><pre><code># astropy 라이브러리에서 Time 클래스를 가져옴 (천문학적 시간 처리용)
 from astropy.time import Time
 # 특정 시간을 설정 (2017년 1월 1일)
 specific_time = Time(&quot;2017-01-01&quot;)
@@ -216,7 +219,7 @@ for i in range(4):                             # 4개 행성에 대해 반복
             zorder=1000,       # 그리기 순서: 1000 (가장 앞에 표시)
             ha=&#x27;center&#x27;,       # 수평 정렬: 중앙 정렬
             fontsize=&#x27;large&#x27;)  # 글자 크기: 큰 크기</code></pre>
-<h2>code 60.</h2><pre><code># astropy 라이브러리에서 Time 클래스를 가져와서 특정 시간 객체 생성
+<h2 id="code-59">code 59. <button class="copy">복사</button></h2><pre><code># astropy 라이브러리에서 Time 클래스를 가져와서 특정 시간 객체 생성
 from astropy.time import Time
 specific_time = Time(&quot;2017-01-01&quot;)  # 2017년 1월 1일로 시간 설정
 
@@ -267,7 +270,7 @@ import numpy as np
 # 지구의 3차원 위치 벡터를 float64 형태의 numpy 배열로 생성
 r = np.array([np.double(obj[xi]) for xi in [&#x27;x&#x27;, &#x27;y&#x27;, &#x27;z&#x27;]], dtype=np.float64)
 r  # 위치 벡터 r 출력</code></pre>
-<h2>code 61.</h2><pre><code>import numpy as np
+<h2 id="code-60">code 60. <button class="copy">복사</button></h2><pre><code>import numpy as np
 from astropy.time import Time, TimeDelta
 
 start_time_text = &quot;2017-01-01&quot;
@@ -329,7 +332,7 @@ print(&quot;rs[5][:2]: {}&quot;.format(rs[5][:2]))
 print(&quot;rs[4]: {}&quot;.format(rs[4]))
 print(&quot;rs[5]: {}&quot;.format(rs[5]))
 #print(&quot;[item[:2] for item in rs[2]]: {}&quot;.format([item[:2] for item in rs[2]]))</code></pre>
-<h2>code 62.</h2><pre><code>import numpy as np
+<h2 id="code-61">code 61. <button class="copy">복사</button></h2><pre><code>import numpy as np
 from astropy.time import Time, TimeDelta
 
 # 시뮬레이션 시작 시간과 종료 시간 설정
@@ -440,7 +443,7 @@ print(&quot;rs[5][:2]: {}&quot;.format(rs[5][:2]))  # 6번째 위치 벡터의 x
 print(&quot;rs[4]: {}&quot;.format(rs[4]))          # 5번째 위치 벡터 전체
 print(&quot;rs[5]: {}&quot;.format(rs[5]))          # 6번째 위치 벡터 전체
 #print(&quot;[item[:2] for item in rs[2]]: {}&quot;.format([item[:2] for item in rs[2]])) # 주석 처리됨</code></pre>
-<h2>code 63.</h2><pre><code>def animate(i):
+<h2 id="code-62">code 62. <button class="copy">복사</button></h2><pre><code>def animate(i):
     plot.set_offsets(rs[i][:2])
     line.set_xdata(xs[:i])
     line.set_ydata(ys[:i])
@@ -451,7 +454,7 @@ from matplotlib.animation import FuncAnimation
 ani = FuncAnimation(fig, animate, 
                      frames=len(dts), 
                      blit=True)</code></pre>
-<h2>code 64.</h2><pre><code>import matplotlib
+<h2 id="code-63">code 63. <button class="copy">복사</button></h2><pre><code>import matplotlib
 import matplotlib.pyplot as plt
 
 # 애니메이션 용량 한도를 50MB 로 올리기(기본값 약 20MB)
@@ -466,11 +469,11 @@ print(f&quot;Animation HTML format: {matplotlib.rcParams[&#x27;animation.html&#x
 
 from IPython.display import HTML
 HTML(ani.to_jshtml())</code></pre>
-<h2>code 65.</h2><pre><code>import matplotlib
+<h2 id="code-64">code 64. <button class="copy">복사</button></h2><pre><code>import matplotlib
 matplotlib.rcParams[&#x27;animation.html&#x27;] = &#x27;html5&#x27;
 print(f&quot;Animation HTML format: {matplotlib.rcParams[&#x27;animation.html&#x27;]}&quot;)
 HTML(ani.to_html5_video())</code></pre>
-<h2>code 66.</h2><pre><code>import numpy as np
+<h2 id="code-65">code 65. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 from astropy.time import Time
 from astroquery.jplhorizons import Horizons
@@ -574,7 +577,7 @@ for i, nasaid in enumerate([1, 2, 3, 4]):  # NASA JPL ID: 1=수성, 2=금성, 3=
 
 # 그래프 화면에 표시
 plt.show()</code></pre>
-<h2>code 67.</h2><pre><code># 애니메이션 함수 정의 - 각 프레임마다 호출되어 태양계 상태를 한 단계씩 진화시킴
+<h2 id="code-66">code 66. <button class="copy">복사</button></h2><pre><code># 애니메이션 함수 정의 - 각 프레임마다 호출되어 태양계 상태를 한 단계씩 진화시킴
 def animate(i):
     return ss.evolve()  # 태양계 시스템의 evolve() 메서드를 호출하여 행성들의 위치와 속도 업데이트
     
@@ -588,7 +591,7 @@ ani = animation.FuncAnimation(fig,                # 그래프 figure 객체
                               frames=sim_duration,  # 총 프레임 수 (시뮬레이션 기간과 동일)
                               blit=True,            # 블리팅 사용 (성능 향상을 위해)
                               interval=20)          # 프레임 간 간격 (밀리초 단위)</code></pre>
-<h2>code 68.</h2><pre><code>import matplotlib
+<h2 id="code-67">code 67. <button class="copy">복사</button></h2><pre><code>import matplotlib
 import matplotlib.pyplot as plt
 
 # 애니메이션 용량 한도를 50MB 로 올리기(기본값 약 20MB)
@@ -603,11 +606,11 @@ print(f&quot;Animation HTML format: {matplotlib.rcParams[&#x27;animation.html&#x
 
 from IPython.display import HTML
 HTML(ani.to_jshtml())</code></pre>
-<h2>code 69.</h2><pre><code>import matplotlib
+<h2 id="code-68">code 68. <button class="copy">복사</button></h2><pre><code>import matplotlib
 matplotlib.rcParams[&#x27;animation.html&#x27;] = &#x27;html5&#x27;
 print(f&quot;Animation HTML format: {matplotlib.rcParams[&#x27;animation.html&#x27;]}&quot;)
 HTML(ani.to_html5_video())</code></pre>
-<h2>code 70.</h2><pre><code># 파일명 설정
+<h2 id="code-69">code 69. <button class="copy">복사</button></h2><pre><code># 파일명 설정
 fname = &#x27;Solar_System_2D_Animation_Class_Based&#x27;
 
 try:
@@ -633,7 +636,7 @@ except Exception as e:
             print(f&quot;HTML 파일이 저장되었습니다: {proj_dir}/{fname}.html&quot;)
         except Exception as e3:
             print(f&quot;HTML 저장 중 오류 발생: {e3}&quot;)</code></pre>
-<h2>code 71.</h2><pre><code>import numpy as np
+<h2 id="code-70">code 70. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 from astropy.time import Time
 from astroquery.jplhorizons import Horizons
@@ -763,7 +766,7 @@ for i, nasaid in enumerate([1, 2, 3, 4]):
 print(&quot;태양계 시뮬레이션 초기화 완료!&quot;)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2>code 72.</h2><pre><code># 애니메이션 함수 정의 - 각 프레임마다 호출되어 태양계 상태를 진화시킴
+<h2 id="code-71">code 71. <button class="copy">복사</button></h2><pre><code># 애니메이션 함수 정의 - 각 프레임마다 호출되어 태양계 상태를 진화시킴
 def animate(i):
     return ss.evolve()  # 태양계 시스템의 evolve() 메서드 호출하여 행성들 위치 업데이트
     
@@ -775,7 +778,7 @@ ani = FuncAnimation(fig, animate,           # figure 객체와 애니메이션 �
                     frames=len(dts),  # 총 프레임 수 (시간 데이터 목록의 길이)
                     blit=True)        # 블리팅 활성화 (렌더링 성능 향상)
                     </code></pre>
-<h2>code 73.</h2><pre><code>import matplotlib
+<h2 id="code-72">code 72. <button class="copy">복사</button></h2><pre><code>import matplotlib
 import matplotlib.pyplot as plt
 
 # 애니메이션 용량 한도를 50MB 로 올리기(기본값 약 20MB)
@@ -790,11 +793,11 @@ print(f&quot;Animation HTML format: {matplotlib.rcParams[&#x27;animation.html&#x
 
 from IPython.display import HTML
 HTML(ani.to_jshtml())</code></pre>
-<h2>code 74.</h2><pre><code>import matplotlib
+<h2 id="code-73">code 73. <button class="copy">복사</button></h2><pre><code>import matplotlib
 matplotlib.rcParams[&#x27;animation.html&#x27;] = &#x27;html5&#x27;
 print(f&quot;Animation HTML format: {matplotlib.rcParams[&#x27;animation.html&#x27;]}&quot;)
 HTML(ani.to_html5_video())</code></pre>
-<h2>code 75.</h2><pre><code># 저장할 파일명 설정
+<h2 id="code-74">code 74. <button class="copy">복사</button></h2><pre><code># 저장할 파일명 설정
 fname = &#x27;Solar_System_3D_Animation_Class_Based&#x27;  # 3D 태양계 애니메이션 파일명
 
 ani.save(f&#x27;{proj_dir}/{fname}.mp4&#x27;,  # 저장 경로와 파일명
@@ -802,9 +805,19 @@ ani.save(f&#x27;{proj_dir}/{fname}.mp4&#x27;,  # 저장 경로와 파일명
             dpi=150,          # 해상도 (인치당 도트 수)
             writer=&#x27;ffmpeg&#x27;)  # 동영상 인코더 (ffmpeg 사용)
 print(f&quot;동영상이 저장되었습니다: {proj_dir}/{fname}.mp4&quot;)</code></pre>
-<h2>code 76.</h2><pre><code>ani.save(f&#x27;{proj_dir}/{fname}.gif&#x27;,  # GIF 파일로 저장
+<h2 id="code-75">code 75. <button class="copy">복사</button></h2><pre><code>ani.save(f&#x27;{proj_dir}/{fname}.gif&#x27;,  # GIF 파일로 저장
             fps=30,           # 초당 프레임 수 (30fps, MP4보다 낮음)
             dpi=100,          # 해상도 (MP4보다 낮음)
             writer=&#x27;pillow&#x27;)  # GIF 작성기 (Pillow 라이브러리 사용)
 print(f&quot;GIF 파일이 저장되었습니다: {proj_dir}/{fname}.gif&quot;)</code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>

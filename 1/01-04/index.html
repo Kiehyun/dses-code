@@ -3,13 +3,16 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
 <h1>I-04. Python 모듈</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/01-04/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 36.</h2><pre><code>import math                               # math 모듈을 임포트
+<p class="jump"><a href="#code-36">36</a> <a href="#code-37">37</a> <a href="#code-38">38</a> <a href="#code-39">39</a> <a href="#code-40">40</a> <a href="#code-41">41</a> <a href="#code-42">42</a> <a href="#code-43">43</a> <a href="#code-44">44</a> <a href="#code-45">45</a> <a href="#code-46">46</a> <a href="#code-47">47</a> <a href="#code-48">48</a> <a href="#code-49">49</a> <a href="#code-50">50</a> <a href="#code-51">51</a> <a href="#code-52">52</a> <a href="#code-53">53</a> <a href="#code-54">54</a> <a href="#code-55">55</a> <a href="#code-56">56</a> <a href="#code-57">57</a> <a href="#code-58">58</a> <a href="#code-59">59</a> <a href="#code-60">60</a> <a href="#code-61">61</a> <a href="#code-62">62</a> <a href="#code-63">63</a> <a href="#code-64">64</a> <a href="#code-65">65</a> <a href="#code-66">66</a> <a href="#code-67">67</a> <a href="#code-68">68</a> <a href="#code-69">69</a></p>
+<h2 id="code-36">code 36. <button class="copy">복사</button></h2><pre><code>import math                               # math 모듈을 임포트
 help(math)                                # math 모듈의 도움말 정보를 출력
 print(f&quot;math.sin(0.5): {math.sin(0.5)}&quot;)  # 0.5 라디안의 사인 값을 계산하고 출력
 print(f&quot;math.e: {math.e}&quot;)                # 자연상수 e (약 2.718281828...)의 값을 출력
@@ -24,7 +27,7 @@ print(&quot;now1:&quot;, now1)            # 현재 날짜와 시간을 출력 (�
 from datetime import datetime  # datetime 모듈에서 datetime 클래스만을 직접 임포트
 now2 = datetime.now()          # 클래스명.메서드명 형태로 바로 사용 (모듈명 생략 가능)
 print(&quot;now2:&quot;, now2)           # 현재 날짜와 시간을 출력 (now1과 동일한 결과)</code></pre>
-<h2>code 37.</h2><pre><code>import numpy
+<h2 id="code-37">code 37. <button class="copy">복사</button></h2><pre><code>import numpy
 a = numpy.random.rand(6)
 print(&quot;a :&quot;, a)                                       # 0과 1 사이의 난수로 이루어진 배열 출력
 print(&quot;numpy.ndarray.max(a):&quot;, numpy.ndarray.max(a))  # 배열 a의 최대값을 출력
@@ -33,7 +36,7 @@ import numpy as np                              # numpy 모듈을 np로 별칭�
 a = np.random.rand(6)
 print(&quot;a :&quot;, a)                                 # 0과 1 사이의 난수로 이루어진 배열 출력
 print(&quot;np.ndarray.max(a):&quot;, np.ndarray.max(a))  # 배열 a의 최댓값을 출력</code></pre>
-<h2>code 38.</h2><pre><code># 패키지 설치
+<h2 id="code-38">code 38. <button class="copy">복사</button></h2><pre><code># 패키지 설치
 !pip install numpy
 
 # 특정 버전 패키지 설치
@@ -44,7 +47,7 @@ print(&quot;np.ndarray.max(a):&quot;, np.ndarray.max(a))  # 배열 a의 최댓�
 
 # 현재 설치된 패키지 목록 확인
 !pip list </code></pre>
-<h2>code 39.</h2><pre><code>from pathlib import Path                      # 객체 지향적 경로 처리를 위한 pathlib 모듈에서 Path 클래스 임포트
+<h2 id="code-39">code 39. <button class="copy">복사</button></h2><pre><code>from pathlib import Path                      # 객체 지향적 경로 처리를 위한 pathlib 모듈에서 Path 클래스 임포트
 cwd = Path.cwd()                              # cwd()는 current working directory의 줄임말로 현재 작업 중인 디렉토리의 경로를 반환
 print(f&quot;Current working directory: {cwd}&quot;)    # 현재 작업 디렉토리 경로를 출력
 home = Path.home()                            # 사용자의 홈 디렉토리 경로를 반환 (Windows: C:\Users\사용자명, Linux/Mac: /home/사용자명)
@@ -56,7 +59,7 @@ print(f&quot;Relative path: {relative}&quot;)           # 상대 경로 Path 객
 base = Path(&#x27;/home/user&#x27;)                     # 기본 경로를 Path 객체로 생성
 new_path = base / &#x27;data&#x27; / &#x27;file.csv&#x27;         # / 연산자를 사용하여 경로를 단계적으로 결합
 print(f&quot;New path: {new_path}&quot;)                # Windows는 \home\user\data\file.csv, Linux·macOS는 /home/user/data/file.csv(플랫폼에 맞는 경로 구분자로 자동 변환)</code></pre>
-<h2>code 40.</h2><pre><code>from pathlib import Path  # 객체 지향적 경로 처리를 위한 pathlib 모듈에서 Path 클래스 임포트
+<h2 id="code-40">code 40. <button class="copy">복사</button></h2><pre><code>from pathlib import Path  # 객체 지향적 경로 처리를 위한 pathlib 모듈에서 Path 클래스 임포트
 p = Path(&#x27;.&#x27;)             # 현재 디렉토리(&#x27;.&#x27;)를 나타내는 Path 객체 생성
 
 dirs = [x for x in p.iterdir() if x.is_dir()]  # 현재 디렉토리의 모든 항목 중 디렉토리만 필터링
@@ -64,7 +67,7 @@ print(&quot;Directories in current path:&quot;, dirs)  # 현재 경로에 있는
 
 ipynb_files = list(Path(&#x27;.&#x27;).glob(&#x27;*.ipynb&#x27;))  # 현재 디렉토리의 .ipynb 파일을 검색하여 리스트로 변환
 print(&quot;Jupyter Notebook files in current path:&quot;, ipynb_files)  # 현재 경로에 있는 모든 Jupyter Notebook 파일 목록 출력</code></pre>
-<h2>code 41.</h2><pre><code>from datetime import datetime, date, time  # datetime 모듈에서 날짜/시간 관련 클래스들을 임포트
+<h2 id="code-41">code 41. <button class="copy">복사</button></h2><pre><code>from datetime import datetime, date, time  # datetime 모듈에서 날짜/시간 관련 클래스들을 임포트
 now = datetime.now()                       # 현재 시스템의 날짜와 시간을 포함하는 datetime 객체를 생성
 print(&quot;now :&quot;, now)                        # 현재 날짜와 시간을 출력 (예시: 2025-08-03 16:20:00.123456)
 print(&quot;type(now):&quot;, type(now))             # now 객체의 자료형을 출력 
@@ -77,7 +80,7 @@ print(&quot;d:&quot;, d)                         # date 객체 출력 (날짜만
 print(&quot;t:&quot;, t)                         # time 객체 출력 (시간만 포함)
 print(&quot;type(d):&quot;, type(d))             # date 객체의 자료형 출력 
 print(&quot;type(t):&quot;, type(t))             # time 객체의 자료형 출력 </code></pre>
-<h2>code 42.</h2><pre><code>from datetime import datetime, timedelta
+<h2 id="code-42">code 42. <button class="copy">복사</button></h2><pre><code>from datetime import datetime, timedelta
 now = datetime.now()
 str_date = now.strftime(&quot;%Y-%m-%d %H:%M:%S&quot;)
 print(&quot;Formatted date string:&quot;, str_date)  # &#x27;2025-04-22 16:20:00&#x27; 형식의 문자열로 변환된 날짜 출력
@@ -88,7 +91,7 @@ tomorrow = now + timedelta(days=1)
 diff = tomorrow - now
 print(&quot;Time difference:&quot;, diff)   # 1 day, 0:00:00 형식으로 날짜 차이를 출력
 print(&quot;type(diff):&quot;, type(diff))  # timedelta 객체의 자료형 출력</code></pre>
-<h2>code 43.</h2><pre><code>list_1d = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]               # 1차원 리스트
+<h2 id="code-43">code 43. <button class="copy">복사</button></h2><pre><code>list_1d = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]               # 1차원 리스트
 list_2d = [ [1, 2, 3, 4, 5, 6],
             [7, 8, 9, 10, 11, 12] ]           # 2차원 리스트
 list_3d = [ [   [1, 2, 3], [4, 5, 6] ],
@@ -111,13 +114,13 @@ print(&quot;type(list_3d[0]):{}&quot;.format(type(list_3d[0])))  # 첫 번째 �
 print(&quot;len(list_3d[0]):{}&quot;.format(len(list_3d[0])))  # 첫 번째 2차원 배열의 길이
 print(&quot;len(list_3d[0][1]):{}&quot;.format(len(list_3d[0][1])))  # 첫 번째 2차원 배열의 두 번째 행 길이
 print(&quot;list_3d[0][1][0]:{}&quot;.format(list_3d[0][1][0]))  # 첫 번째 2차원 배열의 두 번째 행의 첫 번째 요소</code></pre>
-<h2>code 44.</h2><pre><code>import numpy as np
+<h2 id="code-44">code 44. <button class="copy">복사</button></h2><pre><code>import numpy as np
 arr1 = np.array([[1,2,3],[4,5,6],[7,8,9]])
 print(&quot;arr1: &quot;, arr1)              # 배열 출력
 print(&quot;arr1.dtype: &quot;, arr1.dtype)  # 배열의 자료형 출력
 print(&quot;arr1.ndim: &quot;, arr1.ndim)    # 배열의 차원 수 출력
 print(&quot;arr1.shape: &quot;, arr1.shape)  # 배열의 형태 출력</code></pre>
-<h2>code 45.</h2><pre><code>import numpy as np
+<h2 id="code-45">code 45. <button class="copy">복사</button></h2><pre><code>import numpy as np
 arr2 = np.zeros((3,2))
 print(&quot;arr2:&quot;, arr2)              # 배열 출력
 print(&quot;arr2.dtype:&quot;, arr2.dtype)  # 배열의 자료형 출력 
@@ -133,13 +136,13 @@ print(&quot;arr5:&quot;, arr5)         # 배열 출력
 
 arr6 = np.linspace(1, 3, 5)  # 정해준 포인트 갯수로 나눔
 print(&quot;arr6:&quot;, arr6)         # 배열 출력</code></pre>
-<h2>code 46.</h2><pre><code>import numpy as np
+<h2 id="code-46">code 46. <button class="copy">복사</button></h2><pre><code>import numpy as np
 arr7 = np.arange(20)
 print(&quot;arr7:&quot;, arr7)  # 배열 출력
 
 re_arr7 = arr7.reshape((4,5))
 print(&quot;re_arr7:&quot;, re_arr7)  # 재구성된 배열 출력</code></pre>
-<h2>code 47.</h2><pre><code>float_re_arr7 = re_arr7.astype(np.float64)          # 자료형 변경
+<h2 id="code-47">code 47. <button class="copy">복사</button></h2><pre><code>float_re_arr7 = re_arr7.astype(np.float64)          # 자료형 변경
 print(&quot;float_re_arr7:&quot;, float_re_arr7)              # 자료형 변경된 배열 출력
 print(&quot;float_re_arr7.dtype:&quot;, float_re_arr7.dtype)  # 변경된 배열의 자료형 출력
 # 수정: 유니코드 문자열은 &#x27;U&#x27;, 바이트 길이는 &#x27;S&#x27; 로 지정
@@ -149,7 +152,7 @@ print(&quot;string_arr8:&quot;, string_arr8)             # 문자열 배열 출�
 print(&quot;string_arr8.dtype&quot;, string_arr8.dtype)  # 문자열 배열의 자료형 출력
 float_arr8 = string_arr8.astype(np.float32)
 print(&quot;dtype(float_arr8):&quot;, float_arr8.dtype)  # 문자열 배열을 float로 변환한 결과의 데이터 타입 출력</code></pre>
-<h2>code 48.</h2><pre><code>import numpy as np
+<h2 id="code-48">code 48. <button class="copy">복사</button></h2><pre><code>import numpy as np
 arr1 = np.array([[1,2,3],[4,5,6],[7,8,9]])           # 3x3 배열 arr1 생성 (1부터 9까지)
 arr2 = np.array([[11,12,13],[14,15,16],[17,18,19]])  # 3x3 배열 arr2 생성 (11부터 19까지)
 print(&quot;arr1:\n&quot;, arr1)                               # arr1 배열 출력
@@ -162,7 +165,7 @@ print(&quot;arr1 - 3:\n&quot;, arr1 - 3)    # 각 요소에서 3을 뺌
 print(&quot;arr1 * 3:\n&quot;, arr1 * 3)    # 각 요소에 3을 곱함
 print(&quot;arr1 / 3:\n&quot;, arr1 / 3)    # 각 요소를 3으로 나눔
 print(&quot;arr1 ** 2:\n&quot;, arr1 ** 2)  # 각 요소를 제곱</code></pre>
-<h2>code 49.</h2><pre><code>import numpy as np
+<h2 id="code-49">code 49. <button class="copy">복사</button></h2><pre><code>import numpy as np
 # 2x3 배열 생성
 a = np.array([[-1,2,3],[3,4,8]])
 # 배열의 모든 원소의 합 계산
@@ -173,7 +176,7 @@ print(&#x27;sum by column=&#x27;, a.sum(axis=0))  # 각 열의 합 (세로 방�
 print(&#x27;sum by row=&#x27;, a.sum(axis=1))     # 각 행의 합 (가로 방향으로 합계)
 print(&#x27;mean=&#x27;, a.mean())                # 전체 평균
 print(&#x27;sd=&#x27;, a.std())                   # 전체 표준편차</code></pre>
-<h2>code 50.</h2><pre><code>import numpy as np
+<h2 id="code-50">code 50. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import pandas as pd
 np.random.seed(0)
 
@@ -194,11 +197,11 @@ s3 = pd.Series(r)
 print(&quot;-&quot;*20+&quot;\ns3:\n&quot;, s3)
 s3.index=[&#x27;d&#x27;, &#x27;b&#x27;, &#x27;a&#x27;, &#x27;c&#x27;, &#x27;e&#x27;]  # 인덱스 변경
 print(&quot;-&quot;*20+&quot;\ns3:\n&quot;, s3)</code></pre>
-<h2>code 51.</h2><pre><code>print(&quot;-&quot;*20+&quot;\ns1[:3]:&quot;, s1[:3])                # Series의 처음 3개 요소 출력
+<h2 id="code-51">code 51. <button class="copy">복사</button></h2><pre><code>print(&quot;-&quot;*20+&quot;\ns1[:3]:&quot;, s1[:3])                # Series의 처음 3개 요소 출력
 print(&quot;-&quot;*20+&quot;\ns1[1:4]:&quot;, s1[1:4])              # Series의 1부터 3까지 요소 출력
 print(&quot;-&quot;*20+&quot;\ns1[s1 &gt; s1.median()]:&quot;, s1[s1 &gt; s1.median()])  # Series의 중앙값보다 큰 요소 출력
 print(&quot;-&quot;*20+&quot;\ns1.iloc[[4, 3, 1]]:&quot;, s1.iloc[[4, 3, 1]])  # 특정 위치의 요소 출력</code></pre>
-<h2>code 52.</h2><pre><code>np.exp(s2)
+<h2 id="code-52">code 52. <button class="copy">복사</button></h2><pre><code>np.exp(s2)
 print(&quot;s2.dtype:&quot;, s2.dtype)  # Series의 자료형 출력
 s2.dtype
 print(&quot;np.exp(s2):&quot;, np.exp(s2))  # Series의 각 요소에 지수 함수 적용
@@ -207,7 +210,7 @@ s3_ar = s3.array
 print(&quot;-&quot;*20+&quot;\ns3_ar:&quot;, s3_ar)  # Series의 array 속성 출력
 s3_ndar = s3.to_numpy()
 print(&quot;s3_ndar:&quot;, s3_ndar)  # Series의 to_numpy() 결과 출력</code></pre>
-<h2>code 53.</h2><pre><code>print(&quot;s3[&#x27;a&#x27;]:&quot;, s3[&#x27;a&#x27;])  # Series의 &#x27;a&#x27; 인덱스 요소 출력
+<h2 id="code-53">code 53. <button class="copy">복사</button></h2><pre><code>print(&quot;s3[&#x27;a&#x27;]:&quot;, s3[&#x27;a&#x27;])  # Series의 &#x27;a&#x27; 인덱스 요소 출력
 s3[&#x27;e&#x27;] = 12.
 print(&quot;-&quot;*20+&quot;\ns3:\n&quot;, s3)  # 기존 &#x27;e&#x27; 요소의 값을 12로 변경 후 출력
 
@@ -216,7 +219,7 @@ print(&quot;&#x27;f&#x27; in s3:&quot;, &#x27;f&#x27; in s3)           # Series�
 
 print(&quot;-&quot;*20+&quot;\ns3.get(&#x27;f&#x27;):&quot;, s3.get(&#x27;f&#x27;))         # Series의 &#x27;f&#x27; 인덱스 요소 가져오기 (없으면 None 반환)
 print(&quot;s3.get(&#x27;f&#x27;, np.nan):&quot;, s3.get(&#x27;f&#x27;, np.nan))  # Series의 &#x27;f&#x27; 인덱스 요소 가져오기 (없으면 None 반환)</code></pre>
-<h2>code 54.</h2><pre><code>print(&quot;s1 + s1:\n&quot;, s1 + s1)                 # Series의 요소를 더하기
+<h2 id="code-54">code 54. <button class="copy">복사</button></h2><pre><code>print(&quot;s1 + s1:\n&quot;, s1 + s1)                 # Series의 요소를 더하기
 print(&quot;-&quot;*20+&quot;\ns1 * 2:\n&quot;, s1 * 2)          # Series의 요소를 2배하기
 print(&quot;-&quot;*20+&quot;\nnp.exp(s1):\n&quot;, np.exp(s1))  # Series의 각 요소에 지수 함수 적용
 
@@ -228,7 +231,7 @@ print(&quot;-&quot;*20+&quot;\ns.name:&quot;, s.name)  # Series의 name 속성 �
 
 s = s.rename(&quot;different&quot;)
 print(&quot;s.name(after rename):&quot;, s.name)  # Series의 이름 변경 후 출력</code></pre>
-<h2>code 55.</h2><pre><code>import pandas as pd  # pandas 사용
+<h2 id="code-55">code 55. <button class="copy">복사</button></h2><pre><code>import pandas as pd  # pandas 사용
 import numpy as np   # numpy 사용
 
 d = {&#x27;one&#x27;: pd.Series([1., 2., 3.], index=[&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;])}
@@ -244,7 +247,7 @@ print(&quot;-&quot;*20+&quot;\ndf3:\n&quot;, df3)  # df3 출력
 
 df4 = pd.DataFrame(d, index=[&#x27;d&#x27;, &#x27;b&#x27;, &#x27;a&#x27;], columns=[&#x27;two&#x27;, &#x27;three&#x27;])
 print(&quot;-&quot;*20+&quot;\ndf4:\n&quot;, df4)  # df4 출력 (없는 열은 NaN)</code></pre>
-<h2>code 56.</h2><pre><code>d = {&#x27;one&#x27;: [1., 2., 3., 4.], &#x27;two&#x27;: [4., 3., 2., 1.]}
+<h2 id="code-56">code 56. <button class="copy">복사</button></h2><pre><code>d = {&#x27;one&#x27;: [1., 2., 3., 4.], &#x27;two&#x27;: [4., 3., 2., 1.]}
 df5 = pd.DataFrame(d)
 print(&quot;df5:\n&quot;, df5)  # DataFrame 출력
 
@@ -254,7 +257,7 @@ print(&quot;df5.columns:&quot;, df5.columns)       # DataFrame의 열 이름 출
 
 df6 = pd.DataFrame(d, index=[&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;, &#x27;d&#x27;])
 print(&quot;-&quot;*20+&quot;\ndf6:\n&quot;, df6)  # DataFrame 출력 (인덱스 지정)</code></pre>
-<h2>code 57.</h2><pre><code>data = np.zeros((2,), dtype=[(&#x27;A&#x27;, &#x27;i4&#x27;), (&#x27;B&#x27;, &#x27;f4&#x27;), (&#x27;C&#x27;, &#x27;S10&#x27;)])
+<h2 id="code-57">code 57. <button class="copy">복사</button></h2><pre><code>data = np.zeros((2,), dtype=[(&#x27;A&#x27;, &#x27;i4&#x27;), (&#x27;B&#x27;, &#x27;f4&#x27;), (&#x27;C&#x27;, &#x27;S10&#x27;)])
 print(&quot;data:&quot;, data)  # 구조화된 배열 출력
 df7 = pd.DataFrame(data)    
 print(&quot;-&quot;*20+&quot;\ndf7:\n&quot;, df7)  # DataFrame 출력 (구조화된 배열로부터 생성)
@@ -282,7 +285,7 @@ df12 = pd.DataFrame({(&#x27;a&#x27;, &#x27;b&#x27;): {(&#x27;A&#x27;, &#x27;B&#x
 print(&quot;-&quot;*20+&quot;\ndf12:\n&quot;, df12)                      # DataFrame 출력 (딕셔너리로부터 생성, MultiIndex 사용)
 print(&quot;-&quot;*20+&quot;\ndf12[&#x27;a&#x27;][&#x27;b&#x27;]:\n&quot;, df12[&#x27;a&#x27;][&#x27;b&#x27;])  # DataFrame의 MultiIndex 열 접근
 print(&quot;-&quot;*20+&quot;\ndf12[&#x27;a&#x27;, &#x27;b&#x27;]:\n&quot;, df12[&#x27;a&#x27;, &#x27;b&#x27;])  # DataFrame의 MultiIndex 열 접근 (튜플 사용)</code></pre>
-<h2>code 58.</h2><pre><code>data = {&quot;names&quot;: [&quot;Kilho&quot;, &quot;Kilho&quot;, &quot;Kilho&quot;, &quot;Charles&quot;, &quot;Charles&quot;],
+<h2 id="code-58">code 58. <button class="copy">복사</button></h2><pre><code>data = {&quot;names&quot;: [&quot;Kilho&quot;, &quot;Kilho&quot;, &quot;Kilho&quot;, &quot;Charles&quot;, &quot;Charles&quot;],
            &quot;year&quot;: [2014, 2015, 2016, 2015, 2016],
            &quot;points&quot;: [1.5, 1.7, 3.6, 2.4, 2.9]}
 df3 = pd.DataFrame(data, columns=[&quot;year&quot;, &quot;names&quot;, &quot;points&quot;, &quot;penalty&quot;],
@@ -302,7 +305,7 @@ print(&quot;-&quot;*20+&quot;\ndf3.loc[&#x27;Kilho&#x27;]:\n&quot;, df3.loc[&quo
 
 df3 = df3.reset_index()
 print(&quot;-&quot;*20+&quot;\ndf3:\n&quot;, df3)  # 인덱스 초기화 후 df3 출력</code></pre>
-<h2>code 59.</h2><pre><code># DataFrame 생성
+<h2 id="code-59">code 59. <button class="copy">복사</button></h2><pre><code># DataFrame 생성
 data = {&#x27;names&#x27;: [&#x27;Kilho&#x27;, &#x27;Kilho&#x27;, &#x27;Kilho&#x27;, &#x27;Charles&#x27;, &#x27;Charles&#x27;],
         &#x27;year&#x27;: [2014, 2015, 2016, 2015, 2016],
         &#x27;points&#x27;: [1.5, 1.7, 3.6, 2.4, 2.9]}
@@ -339,7 +342,7 @@ print(&quot;-&quot;*20+&quot;\ndf:\n&quot;, df)  # 1번 인덱스 삭제 후 출
 # 중복 제거 후 인덱스 설정
 df = df.drop_duplicates(subset=&#x27;names&#x27;, keep=&#x27;last&#x27;).set_index(&#x27;names&#x27;)
 print(&quot;-&quot;*20+&quot;\ndf:\n&quot;, df)  # 중복 제거 및 인덱스 설정 후 출력</code></pre>
-<h2>code 60.</h2><pre><code>d1 = {&#x27;one&#x27;: pd.Series([1., 2., 3.], index=[&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;])}
+<h2 id="code-60">code 60. <button class="copy">복사</button></h2><pre><code>d1 = {&#x27;one&#x27;: pd.Series([1., 2., 3.], index=[&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;])}
 df1 = pd.DataFrame(d1)
 print(&quot;df1:\n&quot;, df1)  # df1 출력
 
@@ -352,7 +355,7 @@ print(&quot;df1_df2:\n&quot;, df1_df2)                       # 합친 DataFrame 
 print(&quot;-&quot;*20+&quot;\ndf1_df2.index:\n&quot;, df1_df2.index)  # 인덱스 출력
 
 print(&quot;-&quot;*20+&quot;\ndf1_df2.duplicated():\n&quot;, df1_df2.duplicated())  # 중복 행 확인</code></pre>
-<h2>code 61.</h2><pre><code>import pandas as pd
+<h2 id="code-61">code 61. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 
 df = pd.DataFrame(
     {&#x27;price&#x27;: [100, 200, 300],
@@ -375,7 +378,7 @@ for col, item in df.items():
 ## DataFrame.itertuples() - 튜플 형태로 행 반복
 for row in df.itertuples():
     print(row)</code></pre>
-<h2>code 62.</h2><pre><code>import numpy as np
+<h2 id="code-62">code 62. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator, MultipleLocator, FuncFormatter
 
@@ -510,7 +513,7 @@ ax.text(4.0, -0.4, &quot;Made with http://matplotlib.org&quot;,
         fontsize=10, ha=&quot;right&quot;, color=&#x27;.5&#x27;)
 
 plt.show()</code></pre>
-<h2>code 63.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-63">code 63. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 # 한글 폰트 미설정 시 &#x27;축&#x27; 등 한글 미표시(code 68 참조)
 
 # 데이터 정의
@@ -523,7 +526,7 @@ plt.xlabel(&quot;X축&quot;)          # X축 레이블 설정
 plt.ylabel(&quot;Y축&quot;)          # Y축 레이블 설정
 plt.grid(True)            # 격자 표시 활성화
 plt.show()                # 그래프 화면에 출력</code></pre>
-<h2>code 64.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-64">code 64. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 # 2행 2열의 서브플롯 생성
 fig, axes = plt.subplots(2, 2, figsize=(10, 8))
@@ -552,7 +555,7 @@ axes[1, 1].grid(True)
 # 레이아웃 조정
 plt.tight_layout()
 plt.show()</code></pre>
-<h2>code 65.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-65">code 65. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 fig, axes = plt.subplots(2, 3, figsize=(15, 10))
 
@@ -602,7 +605,7 @@ axes[1,2].set_title(&#x27;Legend with Frame &amp; Shadow&#x27;)
 
 plt.tight_layout()
 plt.show()</code></pre>
-<h2>code 66.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-66">code 66. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 # [0,1] 리스트로 간단한 선 그래프 그리기 (x축은 자동으로 [0,1]이 됨)
 plt.plot([0,1])
@@ -611,7 +614,7 @@ plt.savefig(f&quot;{proj_dir}/pic.png&quot;)
 # PDF(벡터) 형식으로 저장(dpi는 래스터 요소에만 적용), 여백을 최소화하고 패딩 0.1 추가
 plt.savefig(f&quot;{proj_dir}/pic.pdf&quot;, dpi=300, bbox_inches=&#x27;tight&#x27;, pad_inches=0.1 )
 plt.show()</code></pre>
-<h2>code 67.</h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-67">code 67. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 # 파일 경로 설정 (proj_dir 폴더 내의 pic.png 파일)
 fname = f&quot;{proj_dir}/pic.png&quot;
@@ -624,7 +627,7 @@ plt.imshow(chart_png, interpolation=&#x27;none&#x27;)
 
 # 그래프를 화면에 출력
 plt.show()</code></pre>
-<h2>code 68.</h2><pre><code># 한글 폰트 설정 및 깨짐 문제 해결
+<h2 id="code-68">code 68. <button class="copy">복사</button></h2><pre><code># 한글 폰트 설정 및 깨짐 문제 해결
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 import platform
@@ -680,4 +683,24 @@ plt.show()
 print(f&quot;\n현재 시스템: {platform.system()}&quot;)
 print(f&quot;설정된 폰트: {current_font}&quot;)
 print(&quot;한글이 정상적으로 표시되면 설정이 완료되었습니다.&quot;)</code></pre>
+<h2 id="code-69">code 69. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(figsize=(4, 3))
+ax.plot([1, 2, 3, 4], [2, 3, 5, 10])
+ax.set_xlabel(&quot;X축&quot;)
+ax.set_ylabel(&quot;Y축&quot;)
+du.save_figure(fig, proj_dir / &quot;pic_du&quot;)  # pic_du.pdf와 pic_du.png로 저장
+plt.close(fig)                             # 화면에는 그리지 않음
+
+fpaths = du.list_files(proj_dir, &quot;pdf&quot;)    # 데이터 폴더의 PDF 파일 목록</code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>

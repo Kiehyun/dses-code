@@ -1,11 +1,7 @@
 # 지구과학 데이터 사이언스 1 | II-04. 단진자 운동
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 40.
-proj_dir = du.current_notebook_name() or "02_04_Simple_Pendulum_Motion"
-PROJ = du.make_project_dir(proj_dir)
-
-# %% code 41.
+# %% code 39.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -45,7 +41,7 @@ plt.tight_layout()  # subplot 간격 조정
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "02_04_Simple_pendulum_motion_01"))
 plt.show()
 
-# %% code 42.
+# %% code 40.
 fig, ax = plt.subplots(figsize=(8,8))
 
 #단진자의 추의 (x, y) 좌표를 구하기 위한 변수
@@ -73,7 +69,7 @@ obj.set_data([x], [y])
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "02_04_Simple_pendulum_motion_02"))
 plt.show()
 
-# %% code 43.
+# %% code 41.
 import numpy as np
 from scipy.integrate import odeint
 
@@ -106,7 +102,7 @@ print(f"해의 개수: {len(Z)}")
 print(f"각도 변화 (처음 5개): {Z[:12, 0] * 180 / np.pi}")  # 라디안을 도로 변환
 print(f"각속도 변화 (처음 5개): {Z[:12, 1]}")
 
-# %% code 44.
+# %% code 42.
 fig, ax = plt.subplots(figsize=(8,8))  # 8x8 크기의 그림과 축 생성
 
 # 단진자의 추의 (x, y) 좌표를 구하기 위한 변수
@@ -149,7 +145,7 @@ for j in Z[:12] :
 print("x_values :", x_values)  # x 좌표 값들 출력
 print("y_values :", y_values)  # y
 
-# %% code 45.
+# %% code 43.
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -192,7 +188,7 @@ plt.subplots_adjust(top=0.93, bottom=0.1)
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "02_04_Simple_pendulum_motion_03"))
 plt.show()
 
-# %% code 46.
+# %% code 44.
 length = 1
 init_angle = 30
 k = 9.81/length
@@ -227,7 +223,7 @@ obj.set_data([x], [y])
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "02_04_Simple_pendulum_motion_04"))
 plt.show()
 
-# %% code 47.
+# %% code 45.
 def animate(i):
     """애니메이션의 각 프레임을 업데이트하는 함수"""
     theta = Z[i, 0]                                   # i번째 시간 단계의 각도 값
@@ -268,7 +264,7 @@ HTML(ani.to_jshtml())  # JavaScript 기반 HTML 애니메이션으로 변환하�
 # print(f"애니메이션 HTML 형식: {matplotlib.rcParams['animation.html']}")
 # HTML(ani.to_html5_video()) # HTML5 비디오로 변환하여 출력
 
-# %% code 48.
+# %% code 46.
 class Pendulum(object):
     def __init__(self, length=1, init_angle=30, tf=10, dt=0.05):
         self.length = length
@@ -310,7 +306,7 @@ plt.tight_layout()  # subplot 간격 조정
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "02_04_Simple_pendulum_motion_05"))
 plt.show()
 
-# %% code 49.
+# %% code 47.
 def animate(i):
     theta = pend.Z[i, 0]
     x = length*np.sin(theta)
@@ -344,7 +340,7 @@ HTML(ani.to_jshtml())  # JavaScript 기반 HTML 애니메이션으로 변환하�
 # print(f"애니메이션 HTML 형식: {matplotlib.rcParams['animation.html']}")
 # HTML(ani.to_html5_video()) # HTML5 비디오로 변환하여 출력
 
-# %% code 50.
+# %% code 48.
 # 애니메이션 저장
 fname = 'Simple_pendulum'
 

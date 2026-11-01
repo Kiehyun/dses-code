@@ -3,13 +3,16 @@
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
+.jump a{display:inline-block;min-width:2.2em;margin:2px;padding:2px 4px;text-align:center;border:1px solid #9cc;border-radius:3px;text-decoration:none;font-size:13px}
+.copy{margin-left:8px;font-size:12px;padding:1px 8px;cursor:pointer}h2{scroll-margin-top:8px}
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
 <h1>V-02. 마그마 조성과 화성암 분류</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/05-22/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<h2>code 554.</h2><pre><code>from pathlib import Path
+<p class="jump"><a href="#code-554">554</a> <a href="#code-555">555</a> <a href="#code-556">556</a> <a href="#code-557">557</a> <a href="#code-558">558</a></p>
+<h2 id="code-554">code 554. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -51,7 +54,7 @@ print(f&quot;전체 행 수(두 파일): {len(georoc):,}&quot;)
 print(f&quot;우리나라 시료 수: {len(geo):,}&quot;)
 geo[[&quot;LOCATION&quot;, &quot;ROCK NAME&quot;, &quot;ROCK TYPE&quot;, &quot;MATERIAL&quot;, &quot;SIO2(WT%)&quot;, &quot;NA2O(WT%)&quot;,
      &quot;K2O(WT%)&quot;]].head()</code></pre>
-<h2>code 555.</h2><pre><code># 화산암(VOL)의 전암(WR) 분석만
+<h2 id="code-555">code 555. <button class="copy">복사</button></h2><pre><code># 화산암(VOL)의 전암(WR) 분석만
 geo = geo[(geo[&quot;ROCK TYPE&quot;] == &quot;VOL&quot;)
           &amp; geo[&quot;MATERIAL&quot;].str.startswith(&quot;WR&quot;, na=False)].copy()
 
@@ -97,7 +100,7 @@ region_order = [&quot;제주도&quot;, &quot;울릉도&quot;, &quot;독도&quot;
 print(f&quot;화산암 전암 분석(합 확인 전): {n_before:,}&quot;)
 print(f&quot;합 94~102%를 만족해 분석에 쓰는 시료: {len(tas):,}&quot;)
 print(tas[&quot;region&quot;].value_counts().reindex(region_order).to_string())</code></pre>
-<h2>code 556.</h2><pre><code>def silica_group(sio2):
+<h2 id="code-556">code 556. <button class="copy">복사</button></h2><pre><code>def silica_group(sio2):
     &quot;&quot;&quot;SiO2 함량(wt.%)에 따른 전통적 화성암 조성 구분&quot;&quot;&quot;
     if sio2 &lt; 45:
         return &quot;초고철질&quot;
@@ -111,7 +114,7 @@ group_order = [&quot;초고철질&quot;, &quot;고철질&quot;, &quot;중성&quo
 tas[&quot;silica_group&quot;] = tas[&quot;SiO2&quot;].apply(silica_group)
 pd.crosstab(tas[&quot;region&quot;], tas[&quot;silica_group&quot;], margins=True, margins_name=&quot;합계&quot;) \
     .reindex(index=region_order + [&quot;합계&quot;], columns=group_order + [&quot;합계&quot;])</code></pre>
-<h2>code 557.</h2><pre><code>from matplotlib.patches import Polygon
+<h2 id="code-557">code 557. <button class="copy">복사</button></h2><pre><code>from matplotlib.patches import Polygon
 from matplotlib.path import Path as MplPath
 
 # Le Bas 등(1986) TAS 분류 영역의 꼭짓점 (SiO2, Na2O+K2O)
@@ -177,7 +180,7 @@ for name, verts in tas_fields.items():
 tas_counts = pd.crosstab(tas[&quot;tas_name&quot;], tas[&quot;region&quot;]).reindex(columns=region_order)
 tas_counts[&quot;합계&quot;] = tas_counts.sum(axis=1)
 tas_counts.sort_values(&quot;합계&quot;, ascending=False)</code></pre>
-<h2>code 558.</h2><pre><code>fig, ax = plt.subplots(figsize=(7.8, 4))
+<h2 id="code-558">code 558. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(7.8, 4))
 sns.boxplot(data=tas, x=&quot;SiO2&quot;, y=&quot;region&quot;, order=region_order, ax=ax,
             color=&quot;lightsteelblue&quot;)
 for x in [45, 52, 63]:
@@ -195,4 +198,14 @@ summary = tas.groupby(&quot;region&quot;).agg(
     alkali_median=(&quot;total_alkali&quot;, &quot;median&quot;),
 ).reindex(region_order).round(1)
 summary</code></pre>
+<script>
+document.querySelectorAll('button.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var code = b.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      b.textContent = '복사됨'; setTimeout(function () { b.textContent = '복사'; }, 1500);
+    });
+  });
+});
+</script>
 </body></html>
