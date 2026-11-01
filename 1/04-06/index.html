@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IV-06. 기상위성 천리안 이미지 RGB 합성</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
+<h1>IV-06. 기상위성 천리안 이미지 RGB 합성</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/04-06/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 94.</h2><pre><code># 국가위성센터로 부터 직접 다운로드
+from pathlib import Path
+
+du.download(f&quot;http://nmsc.kma.go.kr/IMG/COMS/MI/L1/L1B/201907/10/coms_mi_le1b_vis_en010ge_201907101045.png&quot;, Path(proj_dir) / &#x27;coms_mi_le1b_vis_en010ge_201907101045.png&#x27;)
+du.download(f&quot;http://nmsc.kma.go.kr/IMG/COMS/MI/L1/L1B/201907/10/coms_mi_le1b_ir01_en040ge_201907101045.png&quot;, Path(proj_dir) / &#x27;coms_mi_le1b_ir01_en040ge_201907101045.png&#x27;)
+du.download(f&quot;http://nmsc.kma.go.kr/IMG/COMS/MI/L1/L1B/201907/10/coms_mi_le1b_ir02_en040ge_201907101045.png&quot;, Path(proj_dir) / &#x27;coms_mi_le1b_ir02_en040ge_201907101045.png&#x27;)
+du.download(f&quot;http://nmsc.kma.go.kr/IMG/COMS/MI/L1/L1B/201907/10/coms_mi_le1b_swir_en040ge_201907101045.png&quot;, Path(proj_dir) / &#x27;coms_mi_le1b_swir_en040ge_201907101045.png&#x27;)
+du.download(f&quot;http://nmsc.kma.go.kr/IMG/COMS/MI/L1/L1B/201907/10/coms_mi_le1b_wv_en040ge_201907101045.png&quot;, Path(proj_dir) / &#x27;coms_mi_le1b_wv_en040ge_201907101045.png&#x27;)</code></pre>
+<h2>code 95.</h2><pre><code>fpaths = du.list_files(proj_dir, &quot;png&quot;)</code></pre>
+<h2>code 96.</h2><pre><code>from PIL import Image
+
+#RGB 각 채널에 해당하는 파일명 입력
+vis_filename = fpaths[3]
+ir1_filename = fpaths[0]
+ir2_filename = fpaths[1]
+swir_filename = fpaths[2]
+wv_filename = fpaths[4]
+
+red = Image.open(vis_filename)
+green = Image.open(ir1_filename)
+blue = Image.open(ir2_filename)
+
+print(&quot;type(red) :&quot;, type(red))  # red에 담긴 type을 출력
+print(&quot;red :&quot;, red)              # red에 담긴 자료를 출력</code></pre>
+<h2>code 97.</h2><pre><code>import numpy as np
+red_arr = np.array(red)                            #ndarray로 변환
+print(&quot;type(red_arr) : {}&quot;.format(type(red_arr)))  #자료형 확인
+print(red_arr.shape)                               #ndarray로 dimension 확인
+
+# 24bit RGB 파일을 8bit L 파일로 변환-
+red = red.convert(&#x27;L&#x27;)
+green = green.convert(&#x27;L&#x27;)
+blue = blue.convert(&#x27;L&#x27;)
+
+print (type(red))  # red에 담긴 type을 출력
+print (red)        # red에 담긴 자료를 출력
+
+redA = np.array(red)
+print(redA.shape)
+print (type(red))  # red에 담긴 type을 출력
+print (red)        # red에 담긴 자료를 출력</code></pre>
+<h2>code 98.</h2><pre><code>#package 불러오기
+import matplotlib.pyplot as plt
+
+#화면에 이미지를 출력 출력
+print (&#x27;*&#x27;*80)
+print (&#x27;display COMS_MI image&#x27;)
+
+fig = plt.figure(figsize=(10,8))
+plt.imshow(red, cmap = &#x27;gray&#x27;, interpolation = &#x27;None&#x27;)
+
+plt.xticks([]), plt.yticks([])  # x, y축 눈금값 숨기기
+plt.show()</code></pre>
+<h2>code 99.</h2><pre><code># 그림 너비 15, 높이 13으로 지정
+from PIL import Image
+
+print(&quot;변환 전 크기&quot;)
+print(&quot;red size  :&quot;, red.size)
+print(&quot;green size:&quot;, green.size)
+print(&quot;blue size :&quot;, blue.size)
+
+# RGB 합성을 위해 모든 채널을 같은 크기로 맞춤
+target_size = red.size
+
+green = green.resize(target_size)
+blue = blue.resize(target_size)
+
+# 혹시 mode가 L이 아니면 8-bit grayscale로 변환
+red = red.convert(&quot;L&quot;)
+green = green.convert(&quot;L&quot;)
+blue = blue.convert(&quot;L&quot;)
+
+print(&quot;변환 후 크기&quot;)
+print(&quot;red size  :&quot;, red.size)
+print(&quot;green size:&quot;, green.size)
+print(&quot;blue size :&quot;, blue.size)
+
+rgb = Image.merge(&quot;RGB&quot;, (red, green, blue))
+
+rgb.save(f&quot;{proj_dir}/coms_mi_rgb_201907101045.png&quot;)
+
+print (&quot;type(rgb) :&quot;, type(rgb))  # red에 담긴 type을 출력
+print (&quot;rgb :&quot;, rgb)              # red에 담긴 자료를 출력
+
+# 2행 2열로 이미지 디스플레이 (1,1: vis / 1,2: ir1 / 2,1: ir2 / 2,2: rgb)
+fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+
+# 각 이미지 불러오기
+vis_img = Image.open(vis_filename)
+ir1_img = Image.open(ir1_filename)
+ir2_img = Image.open(ir2_filename)
+rgb_img = rgb  # 이미 합성된 객체
+
+axes[0, 0].imshow(vis_img, cmap=&#x27;gray&#x27;)
+axes[0, 0].set_title(&#x27;VIS&#x27;)
+axes[0, 1].imshow(ir1_img, cmap=&#x27;gray&#x27;)
+axes[0, 1].set_title(&#x27;IR1&#x27;)
+axes[1, 0].imshow(ir2_img, cmap=&#x27;gray&#x27;)
+axes[1, 0].set_title(&#x27;IR2&#x27;)
+axes[1, 1].imshow(rgb_img)
+axes[1, 1].set_title(&#x27;RGB&#x27;)
+
+for ax in axes.flat:
+    ax.set_xticks([])
+    ax.set_yticks([])
+
+plt.tight_layout()
+plt.show()</code></pre>
+<h2>code 100.</h2><pre><code>print (&quot;red.width:{}&quot;.format(red.width))
+print (&quot;red.height:{}&quot;.format(red.height))</code></pre>
+<h2>code 101.</h2><pre><code>#RGB 모드, 크기 2×1 의 빈 이미지 만들기
+new_im=Image.new(&#x27;RGB&#x27;, (red.width*2,red.height*1))
+print (type(new_im))  # new_im에 담긴 type을 출력
+
+new_im.paste(red, (0, 0))
+new_im.paste(green, (green.width, 0))
+print (type(new_im))  # new_im에 담긴 type을 출력
+print (new_im)        # new_im에 담긴 자료를 출력</code></pre>
+<h2>code 102.</h2><pre><code>#RGB 모드, 크기 2×1 의 빈 이미지 만들기
+new_im=Image.new(&#x27;RGB&#x27;, (red.width*1,red.height*2))
+new_im.paste(red, (0, 0))
+new_im.paste(green, (0, green.height))
+print (type(new_im))  # new_im에 담긴 type을 출력
+print (new_im)        # new_im에 담긴 자료를 출력
+new_im                # new_im을 화면에 보여줌</code></pre>
+<h2>code 103.</h2><pre><code># 6개의 이미지를 2행 3열로 이어 붙이기
+from PIL import Image
+# 파일명 리스트 (순서: vis, ir1, ir2, swir, wv, rgb)
+img_filenames = [vis_filename, ir1_filename, ir2_filename, swir_filename, wv_filename, 
+        f&quot;{proj_dir}/coms_mi_rgb_201907101045.png&quot;]
+# 이미지 열기
+images = [Image.open(f) for f in img_filenames]
+# 각 이미지의 크기 (모두 동일하다고 가정)
+w, h = images[0].width, images[0].height
+# 새 이미지 생성 (2행 3열)
+new_im = Image.new(&#x27;RGB&#x27;, (w*3, h*2))
+# 이미지 붙이기
+for idx, im in enumerate(images):
+    x= (idx % 3) * w
+    y= (idx // 3) * h
+    new_im.paste(im, (x, y))
+# 결과 확인 및 저장
+new_im.save(f&quot;{proj_dir}/coms_mi_6ch_stitched.png&quot;)
+print(f&quot;{proj_dir}/coms_mi_6ch_stitched.png is created&quot;)
+display(new_im)</code></pre>
+</body></html>

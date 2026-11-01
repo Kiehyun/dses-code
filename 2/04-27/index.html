@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IV-07. MODIS 에어로졸 광학 두께(AOD) 지도 그리기</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
+<h1>IV-07. MODIS 에어로졸 광학 두께(AOD) 지도 그리기</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/04-27/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 488.</h2><pre><code>from mpl_toolkits.basemap import Basemap
+from pyhdf.SD import SD, SDC</code></pre>
+<h2>code 489.</h2><pre><code># 구글 드라이브에 공유한 MODIS 에어로졸 파일 내려받기
+modis_url = (
+    &quot;https://docs.google.com/uc?export=download&amp;id=1_uveudlJRIk8hMisC0TJf7ngmMy6uh8G&quot;)
+du.download(modis_url, proj_dir / &quot;MOD04_L2.A2023103.0135.061.2023134174649.hdf&quot;)</code></pre>
+<h2>code 490.</h2><pre><code>from pyhdf.SD import SD, SDC
+
+# 파일명 변수 설정
+base_dr = str(proj_dir) + &quot;/&quot;
+filename = &quot;MOD04_L2.A2023103.0135.061.2023134174649.hdf&quot;
+
+# hdf 파일 읽기
+hdf = SD(&quot;{}{}&quot;.format(base_dr, filename), SDC.READ)
+print(&quot;hdf: {}&quot;.format(hdf))</code></pre>
+<h2>code 491.</h2><pre><code>dir(hdf)</code></pre>
+<h2>code 492.</h2><pre><code>hdf.datasets()</code></pre>
+<h2>code 493.</h2><pre><code>DATAFIELD_NAME = &quot;Optical_Depth_Land_And_Ocean&quot;
+hdf_raw = hdf.select(DATAFIELD_NAME)
+print(&quot;hdf_raw: {}&quot;.format(hdf_raw))</code></pre>
+<h2>code 494.</h2><pre><code>dir(hdf_raw)</code></pre>
+<h2>code 495.</h2><pre><code>hdf_raw[:,:]</code></pre>
+<h2>code 496.</h2><pre><code>import numpy as np
+hdf_array = np.array(hdf_raw[:,:])
+print(&quot;np.shape(hdf_array): {}&quot;.format(np.shape(hdf_array)))
+print(&quot;hdf_array:\n {}&quot;.format(hdf_array))</code></pre>
+<h2>code 497.</h2><pre><code>import numpy as np
+
+# 위도값
+lat_raw = hdf.select(&#x27;Latitude&#x27;)
+latitude = np.array(lat_raw[:,:])
+print(&quot;np.shape(latitude): {}&quot;.format(np.shape(latitude)))
+print(&quot;latitude: {}&quot;.format(latitude))
+
+# 경도값
+lon_raw = hdf.select(&#x27;Longitude&#x27;)
+longitude = np.array(lon_raw[:,:])
+print(&quot;np.shape(longitude): {}&quot;.format(np.shape(longitude)))
+print(&quot;longitude: {}&quot;.format(longitude))</code></pre>
+<h2>code 498.</h2><pre><code>for i in longitude[:10] :
+    print(&quot;longitude: {}&quot;.format(i))</code></pre>
+<h2>code 499.</h2><pre><code>for i in latitude[:10] :
+    print(&quot;latitude: {}&quot;.format(i))</code></pre>
+<h2>code 500.</h2><pre><code>#hdf_raw.getcompress()
+#hdf_raw.getdatastrs()
+#hdf_raw.getfillvalue()
+#hdf_raw.getrange()</code></pre>
+<h2>code 501.</h2><pre><code>print(&quot;np.shape(hdf_array): {}&quot;.format(np.shape(hdf_array)))
+print(&quot;np.shape(latitude): {}&quot;.format(np.shape(latitude)))
+print(&quot;np.shape(longitude): {}&quot;.format(np.shape(longitude)))</code></pre>
+<h2>code 502.</h2><pre><code>print(&quot;hdf_array: {}&quot;.format(hdf_array))
+print(&quot;np.shape(hdf_array): {}&quot;.format(np.shape(hdf_array)))
+print(&quot;type(hdf_array): {}&quot;.format(type(hdf_array)))
+print(&quot;hdf_array.dtype: {}&quot;.format(hdf_array.dtype))</code></pre>
+<h2>code 503.</h2><pre><code>print(&quot;hdf_raw.attributes(): {}&quot;.format(hdf_raw.attributes()))
+print(&quot;hdf_raw.dimensions(): {}&quot;.format(hdf_raw.dimensions()))
+print(&quot;hdf_raw.getfillvalue(): {}&quot;.format(hdf_raw.getfillvalue()))</code></pre>
+<h2>code 504.</h2><pre><code>print(&quot;hdf_array.dtype : {}&quot;.format(hdf_array.dtype))
+print(&quot;latitude.dtype : {}&quot;.format(latitude.dtype))
+print(&quot;longitude.dtype : {}&quot;.format(longitude.dtype))</code></pre>
+<h2>code 505.</h2><pre><code>hdf_array = hdf_array.astype(dtype=np.float64)
+print(&quot;type(hdf_array): {}&quot;.format(type(hdf_array)))
+
+hdf_array[hdf_array == hdf_raw.attributes()[&#x27;_FillValue&#x27;]] = np.nan
+print(&quot;hdf_array: {}&quot;.format(hdf_array))</code></pre>
+<h2>code 506.</h2><pre><code>#hdf_array1 = hdf_array.astype(dtype=np.float64)
+#print(&quot;type(hdf_array1): {}&quot;.format(type(hdf_array1)))
+
+#hdf_array1[hdf_array1 == hdf_raw.attributes()[&#x27;_FillValue&#x27;]] = np.nan
+#print(&quot;hdf_array1: {}&quot;.format(hdf_array1))</code></pre>
+<h2>code 507.</h2><pre><code>#hdf_array = hdf_array.astype(dtype=np.float64)
+#for x in range(0, hdf_array.shape[0]):
+# for y in range(0, hdf_array.shape[1]):
+# if hdf_array[x, y] == hdf_raw.attributes()[&#x27;_FillValue&#x27;]:
+# hdf_array[x, y] = np.nan
+
+#print(&quot;hdf_array: {}&quot;.format(hdf_array))</code></pre>
+<h2>code 508.</h2><pre><code>hdf_array[hdf_array &lt; hdf_raw.attributes()[&#x27;valid_range&#x27;][0]] = np.nan
+hdf_array[hdf_array &gt; hdf_raw.attributes()[&#x27;valid_range&#x27;][1]] = np.nan
+print(&quot;hdf_array: {}&quot;.format(hdf_array))</code></pre>
+<h2>code 509.</h2><pre><code>#for x in range(0, hdf_array.shape[0]):
+# for y in range(0, hdf_array.shape[1]):
+# if hdf_array[x, y] == hdf_raw.attributes()[&#x27;_FillValue&#x27;] \
+# or hdf_array[x, y] &lt; hdf_raw.attributes()[&#x27;valid_range&#x27;][0]\
+# or hdf_array[x, y] &gt; hdf_raw.attributes()[&#x27;valid_range&#x27;][1]:
+# hdf_array[x, y] = np.nan
+#print(&quot;hdf_array: {}&quot;.format(hdf_array))</code></pre>
+<h2>code 510.</h2><pre><code>print(&quot;lon_raw.attributes(): {}&quot;.format(lon_raw.attributes()))
+print(&quot;lon_raw.attributes()[&#x27;valid_range&#x27;]: {}&quot;.format(lon_raw.attributes()[&#x27;valid_range&#x27;]))
+
+longitude[longitude &lt; lon_raw.attributes()[&#x27;valid_range&#x27;][0]] = np.nan
+longitude[longitude &gt; lon_raw.attributes()[&#x27;valid_range&#x27;][1]] = np.nan
+print(&quot;longitude: {}&quot;.format(longitude))
+
+print(&quot;lat_raw.attributes(): {}&quot;.format(lat_raw.attributes()))
+print(&quot;lat_raw.attributes()[&#x27;valid_range&#x27;]: {}&quot;.format(lat_raw.attributes()[&#x27;valid_range&#x27;]))
+
+latitude[latitude &lt; lat_raw.attributes()[&#x27;valid_range&#x27;][0]] = np.nan
+latitude[latitude &gt; lat_raw.attributes()[&#x27;valid_range&#x27;][1]] = np.nan
+print(&quot;latitude: {}&quot;.format(latitude))</code></pre>
+<h2>code 511.</h2><pre><code>attrs = hdf_raw.attributes()
+print(&quot;hdf_raw.attributes()[&#x27;scale_factor&#x27;]: {}&quot;.format(attrs[&#x27;scale_factor&#x27;]))
+print(&quot;hdf_raw.attributes()[&#x27;add_offset&#x27;]: {}&quot;.format(attrs[&#x27;add_offset&#x27;]))</code></pre>
+<h2>code 512.</h2><pre><code>fill_value = hdf_raw.attributes()[&#x27;_FillValue&#x27;]
+scale_factor = hdf_raw.attributes()[&#x27;scale_factor&#x27;]
+offset = hdf_raw.attributes()[&#x27;add_offset&#x27;]
+hdf_value = hdf_array * scale_factor + offset
+hdf_value = np.array(hdf_value)
+print(&quot;hdf_value: {}&quot;.format(hdf_value))</code></pre>
+<h2>code 513.</h2><pre><code>print(&quot;np.shape(hdf_value): {}&quot;.format(np.shape(hdf_value)))
+print(&quot;np.shape(latitude): {}&quot;.format(np.shape(latitude)))
+print(&quot;np.shape(longitude): {}&quot;.format(np.shape(longitude)))
+
+print(&quot;hdf_value.dtype : {}&quot;.format(hdf_value.dtype))
+print(&quot;latitude.dtype : {}&quot;.format(latitude.dtype))
+print(&quot;longitude.dtype : {}&quot;.format(longitude.dtype))</code></pre>
+<h2>code 514.</h2><pre><code>import matplotlib.pyplot as plt
+import numpy as np
+
+plt.figure(figsize=(8.2, 4.3))
+
+# 히스토그램 그리기(NaN을 뺀 유효한 값만 1차원으로)
+valid = hdf_value[~np.isnan(hdf_value)]
+plt.hist(valid, bins=50)
+
+# 제목, 축 이름 지정
+plt.title(&quot;Histogram of {0} \n {1}&quot;.format(DATAFIELD_NAME, filename), fontsize=12)
+plt.xlabel(&quot;AOD at 0.55 µm&quot;, fontsize=11)
+plt.ylabel(&quot;Count&quot;, fontsize=11)
+plt.tick_params(labelsize=9)
+
+# 주석(annotate) 지정
+plt.annotate(&quot;mean : {0:.02f}, max: {1:.02f}, min: {2:.02f}&quot;.\
+            format(np.nanmean(hdf_value), np.nanmax(hdf_value),
+                   np.nanmin(hdf_value)),
+        xy=(1, 1), xytext=(-12, -12), va=&#x27;top&#x27;, ha=&#x27;right&#x27;,
+        xycoords=&#x27;axes fraction&#x27;, textcoords=&#x27;offset points&#x27;)
+
+plt.annotate(&quot;longitude : {0:.01f} ~ {1:.01f}, latitude : {2:.01f} ~ {3:.01f}&quot;.\
+            format(np.nanmin(longitude), np.nanmax(longitude),
+                   np.nanmin(latitude), np.nanmax(latitude)),
+        xy=(1, 0.94), xytext=(-12, -12), va=&#x27;top&#x27;, ha=&#x27;right&#x27;,
+        xycoords=&#x27;axes fraction&#x27;, textcoords=&#x27;offset points&#x27;)
+
+print(&quot;유효한 AOD 칸: {} / {} ({:.1f}%)&quot;.format(valid.size, hdf_value.size,
+                                          100 * valid.size / hdf_value.size))
+plt.grid(True)
+plt.show()</code></pre>
+<h2>code 515.</h2><pre><code>import numpy as np
+from mpl_toolkits.basemap import Basemap
+import matplotlib.pyplot as plt
+
+plt.figure()
+
+#####
+# 지도
+m = Basemap(projection=&#x27;cyl&#x27;)
+
+# 대륙 채우기
+m.fillcontinents()
+
+plt.show()</code></pre>
+<h2>code 516.</h2><pre><code>import numpy as np
+from mpl_toolkits.basemap import Basemap
+import matplotlib.pyplot as plt
+
+plt.figure()
+
+#####
+# 지도
+m = Basemap(projection=&#x27;mbtfpq&#x27;,
+            lon_0 = 0)
+
+# 대륙 채우기
+m.fillcontinents()
+
+plt.show()</code></pre>
+<h2>code 517.</h2><pre><code>import numpy as np
+from mpl_toolkits.basemap import Basemap
+import matplotlib.pyplot as plt
+
+plt.figure()
+
+#####
+# 지도
+m = Basemap(projection=&#x27;sinu&#x27;, 
+            lon_0 = 180)
+
+# 대륙 채우기
+m.fillcontinents()
+
+plt.show()</code></pre>
+<h2>code 518.</h2><pre><code>import numpy as np
+from mpl_toolkits.basemap import Basemap
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(6.4, 4.2))
+
+#####
+# 지도
+m = Basemap(projection = &#x27;lcc&#x27;,
+            lat_1=20.,lat_2=40.,
+            lon_0=120.,
+            llcrnrlon=100.,llcrnrlat=10.,
+            urcrnrlon=180.,urcrnrlat=50.)
+
+# 대륙 채우기
+m.fillcontinents()
+
+plt.show()</code></pre>
+<h2>code 519.</h2><pre><code>import numpy as np
+from mpl_toolkits.basemap import Basemap
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(6.4, 4.2))
+
+#####
+# 지도
+m = Basemap(projection=&#x27;laea&#x27;, 
+            lat_ts=37,
+            lat_0 = 37, 
+            lon_0 = 127,\
+            width=1.5e7, height=1.5e7)
+
+# 대륙 채우기
+m.fillcontinents()
+
+plt.show()</code></pre>
+<h2>code 520.</h2><pre><code>import numpy as np
+from mpl_toolkits.basemap import Basemap
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(7.5, 5))
+
+# 원통 도법 지도
+m = Basemap(projection=&#x27;cyl&#x27;)
+
+# 해안선 · 국경 그리기, 대륙 채우기
+m.drawcoastlines(linewidth=0.25)
+m.drawcountries(linewidth=0.25)
+m.fillcontinents()
+
+m.drawparallels(np.arange(-90., 90.1, 30.), labels=[1, 1, 1, 1], fontsize=9)
+m.drawmeridians(np.arange(-180., 180.1, 30.), labels=[1, 1, 1, 1], fontsize=9)
+
+plt.show()</code></pre>
+<h2>code 521.</h2><pre><code>import numpy as np
+from mpl_toolkits.basemap import Basemap
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(4.6, 4.2))
+
+#####
+# 지도
+m = Basemap(projection=&#x27;laea&#x27;, resolution=&#x27;l&#x27;, \
+            lat_ts=37,
+            lat_0 = 37, lon_0 = 127,\
+            width=1.5e7, height=1.5e7)
+
+# 해안선 · 국경 그리기, 대륙 채우기
+m.drawcoastlines(linewidth=0.25)
+m.drawcountries(linewidth=0.25)
+m.fillcontinents()
+
+m.drawparallels(np.arange(-90., 90.1, 45.), labels=[1, 0, 1, 0], fontsize=8)
+m.drawmeridians(np.arange(-180., 180.1, 45.), labels=[0, 1, 0, 1], fontsize=8)
+
+plt.show()</code></pre>
+<h2>code 522.</h2><pre><code>print(&quot;np.nanmin(longitude):{}&quot;.format(np.nanmin(longitude)))
+print(&quot;np.nanmax(longitude):{}&quot;.format(np.nanmax(longitude))) 
+print(&quot;np.nanmin(latitude):{}&quot;.format(np.nanmin(latitude)))
+print(&quot;np.nanmax(latitude):{}&quot;.format(np.nanmax(latitude)))</code></pre>
+<h2>code 523.</h2><pre><code>longitude360 = longitude + 180
+latitude180 = latitude + 90
+
+long_center = ((np.nanmax(longitude360) + np.nanmin(longitude360)) / 2) - 180
+lat_center = ((np.nanmax(latitude180) + np.nanmin(latitude180)) / 2) - 90
+
+print(&quot;long_center:{}&quot;.format(long_center))
+print(&quot;lat_center:{}&quot;.format(lat_center))</code></pre>
+<h2>code 524.</h2><pre><code>longitude360 = longitude + 180
+latitude180 = latitude + 90
+
+Wlon = np.nanmin(longitude360) - 180
+Elon = np.nanmax(longitude360) - 180
+
+Slat = np.nanmin(latitude180) - 90
+Nlat = np.nanmax(latitude180) - 90
+
+Clon = ((np.nanmax(longitude360) + np.nanmin(longitude360)) / 2) - 180
+Clat = ((np.nanmax(latitude180) + np.nanmin(latitude180)) / 2) - 90
+
+print(&quot;Wlon: {}&quot;.format(Wlon))
+print(&quot;Elon: {}&quot;.format(Elon))
+print(&quot;Slat: {}&quot;.format(Slat))
+print(&quot;Nlat: {}&quot;.format(Nlat))
+print(&quot;Clon: {}&quot;.format(Clon))
+print(&quot;Clat: {}&quot;.format(Clat))</code></pre>
+<h2>code 525.</h2><pre><code>def findRangeOfMap(longitude, latitude, idl) :
+ ## idl: 날짜 변경선(IDL) 포함 여부
+ ## 0(날짜 변경선 포함), 1(날짜 변경선 포함 안 함)
+ ## 입력: 위도와 경도의 numpy.array
+ ## 출력: 경도와 위도의 동서남북 경계와 중심 좌표(float)
+    idl = idl
+    longitude360 = longitude + 180
+    latitude180 = latitude + 90
+
+    Slat = np.nanmin(latitude180) - 90
+    Nlat = np.nanmax(latitude180) - 90
+    Clon = ((np.nanmax(longitude360) + np.nanmin(longitude360)) / 2) - 180
+    Clat = ((np.nanmax(latitude180) + np.nanmin(latitude180)) / 2) - 90
+    if idl == 0 :
+        Wlon = np.nanmax(longitude360) - 180
+        Elon = np.nanmin(longitude360) - 180
+    else : 
+        Wlon = np.nanmin(longitude360) - 180
+        Elon = np.nanmax(longitude360) - 180
+        
+    return Wlon, Elon, Slat, Nlat, Clon, Clat   
+
+Wlon, Elon, Slat, Nlat, Clon, Clat = findRangeOfMap(longitude, latitude, 1)
+
+print(&quot;Wlon: {}&quot;.format(Wlon))
+print(&quot;Elon: {}&quot;.format(Elon))
+print(&quot;Slat: {}&quot;.format(Slat))
+print(&quot;Nlat: {}&quot;.format(Nlat)) 
+print(&quot;Clon: {}&quot;.format(Clon))
+print(&quot;Clat: {}&quot;.format(Clat))</code></pre>
+<h2>code 526.</h2><pre><code>Wlon, Elon, Slat, Nlat, Clon, Clat = findRangeOfMap(longitude, latitude, 0)
+
+print(&quot;Wlon: {}&quot;.format(Wlon))
+print(&quot;Elon: {}&quot;.format(Elon))
+print(&quot;Slat: {}&quot;.format(Slat))
+print(&quot;Nlat: {}&quot;.format(Nlat)) 
+print(&quot;Clon: {}&quot;.format(Clon))
+print(&quot;Clat: {}&quot;.format(Clat))
+
+# 뒤의 지도에서는 이 장면에 맞는 경계(idl=1)를 다시 사용
+Wlon, Elon, Slat, Nlat, Clon, Clat = findRangeOfMap(longitude, latitude, 1)</code></pre>
+<h2>code 527.</h2><pre><code>import numpy as np
+from mpl_toolkits.basemap import Basemap
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(8.2, 5))
+
+# 원통 도법 지도
+m = Basemap(projection=&#x27;cyl&#x27;)
+
+# 해안선 · 국경 그리기, 대륙 채우기
+m.drawcoastlines(linewidth=0.25)
+m.drawcountries(linewidth=0.25)
+m.fillcontinents()
+
+m.drawparallels(np.arange(-90., 90.1, 30.), labels=[1, 0, 0, 0], fontsize=9)
+m.drawmeridians(np.arange(-180., 180.1, 30.), labels=[1, 1, 1, 1], fontsize=9)
+
+# 제목 지정
+plt.title(&#x27;MODIS {} \n&#x27;.format(DATAFIELD_NAME), fontsize=12)      
+
+# 지도 위에 데이터 표시
+x, y = m(longitude, latitude) # 투영 지도로 변환
+m.pcolormesh(x, y, hdf_value)
+
+plt.show()</code></pre>
+<h2>code 528.</h2><pre><code>import numpy as np
+from mpl_toolkits.basemap import Basemap
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(8.2, 5))
+
+# 원통 도법 지도
+m = Basemap(projection=&#x27;cyl&#x27;)
+
+# 해안선 · 국경 그리기, 대륙 채우기
+m.drawcoastlines(linewidth=0.25)
+m.drawcountries(linewidth=0.25)
+m.fillcontinents()
+
+m.drawparallels(np.arange(-90., 90.1, 30.), labels=[1, 0, 0, 0], fontsize=9)
+m.drawmeridians(np.arange(-180., 180.1, 30.), labels=[1, 1, 1, 1], fontsize=9)
+
+# 제목 지정
+plt.title(&#x27;MODIS {} \n&#x27;.format(DATAFIELD_NAME), fontsize=12)      
+
+# 지도 위에 데이터 표시
+x, y = m(longitude, latitude) # 투영 지도로 변환
+m.pcolormesh(x, y, hdf_value)
+
+# 컬러바 추가
+m.colorbar()
+
+plt.show()</code></pre>
+<h2>code 529.</h2><pre><code>import numpy as np
+from mpl_toolkits.basemap import Basemap
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(8.2, 5))
+
+# 원통 도법 지도
+m = Basemap(projection=&#x27;cyl&#x27;)
+
+# 해안선 · 국경 그리기, 대륙 채우기
+m.drawcoastlines(linewidth=0.25)
+m.drawcountries(linewidth=0.25)
+m.fillcontinents()
+
+m.drawparallels(np.arange(-90., 90.1, 30.), labels=[1, 0, 0, 0], fontsize=9)
+m.drawmeridians(np.arange(-180., 180.1, 30.), labels=[1, 1, 1, 1], fontsize=9)
+
+# 제목 지정
+plt.title(&#x27;MODIS {} \n&#x27;.format(DATAFIELD_NAME), fontsize=12)      
+
+# 지도 위에 데이터 표시
+x, y = m(longitude, latitude) # 투영 지도로 변환
+m.pcolormesh(x, y, hdf_value)
+
+# 컬러바 추가
+m.colorbar()
+
+# 주석(annotate) 지정
+plt.annotate(&quot;mean : {0:.02f}, max: {1:.02f}, min: {2:.02f}&quot;.\
+            format(np.nanmean(hdf_value), np.nanmax(hdf_value),
+                   np.nanmin(hdf_value)),
+        xy=(0, 0), xytext=(12, -30), va=&#x27;top&#x27;,
+        xycoords=&#x27;axes fraction&#x27;, textcoords=&#x27;offset points&#x27;)
+
+plt.annotate(&quot;longitude : {0:.01f} ~ {1:.01f}, latitude : {2:.01f} ~ {3:.01f}&quot;.\
+            format(Wlon, Elon, Slat, Nlat),
+        xy=(0, 0), xytext=(12, -44), va=&#x27;top&#x27;,
+        xycoords=&#x27;axes fraction&#x27;, textcoords=&#x27;offset points&#x27;)
+
+plt.annotate(&quot;filename:{}&quot;.format(filename),
+        xy=(1, 0), xytext=(12, -58), va=&#x27;top&#x27;, ha=&#x27;right&#x27;,
+        xycoords=&#x27;axes fraction&#x27;, textcoords=&#x27;offset points&#x27;)
+
+plt.show()</code></pre>
+<h2>code 530.</h2><pre><code>import numpy as np
+from mpl_toolkits.basemap import Basemap
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(4.9, 3.9))
+
+# 지도 표시 범위 찾기
+Wlon, Elon, Slat, Nlat, Clon, Clat = findRangeOfMap(longitude, latitude, 1)
+
+#####
+# 지도
+m = Basemap(projection=&#x27;laea&#x27;, 
+            lat_ts = Clat,
+            lat_0 = Clat, 
+            lon_0 = Clon,\
+            width=4e6, height=4e6, resolution=&#x27;i&#x27;)
+
+# 해안선 · 국경 그리기, 대륙 채우기
+m.drawcoastlines(linewidth=0.25)
+m.drawcountries(linewidth=0.25)
+m.fillcontinents()
+
+m.drawparallels(np.arange(-90., 90.1, 10.), labels=[1, 0, 1, 0], fontsize=8)
+m.drawmeridians(np.arange(-180., 180.1, 10.), labels=[0, 0, 1, 1], fontsize=8)
+
+# 제목 지정
+plt.title(&#x27;MODIS {} \n&#x27;.format(DATAFIELD_NAME), fontsize=10)      
+
+# 지도 위에 데이터 표시
+x, y = m(longitude, latitude)
+m.pcolormesh(x, y, hdf_value)
+m.colorbar().ax.tick_params(labelsize=8)
+
+# 주석(annotate) 지정
+plt.annotate(&quot;mean : {0:.02f}, max: {1:.02f}, min: {2:.02f}&quot;.\
+            format(np.nanmean(hdf_value), np.nanmax(hdf_value),
+                   np.nanmin(hdf_value)),
+        xy=(0, 0), xytext=(12, -22), va=&#x27;top&#x27;,
+        xycoords=&#x27;axes fraction&#x27;, textcoords=&#x27;offset points&#x27;, fontsize=8)
+
+plt.annotate(&quot;longitude : {0:.01f} ~ {1:.01f}, latitude : {2:.01f} ~ {3:.01f}&quot;.\
+            format(Wlon, Elon, Slat, Nlat),
+        xy=(0, 0), xytext=(12, -33), va=&#x27;top&#x27;,
+        xycoords=&#x27;axes fraction&#x27;, textcoords=&#x27;offset points&#x27;, fontsize=8)
+
+plt.annotate(&quot;filename:{}&quot;.format(filename),
+        xy=(1, 0), xytext=(12, -44), va=&#x27;top&#x27;, ha=&#x27;right&#x27;,
+        xycoords=&#x27;axes fraction&#x27;, textcoords=&#x27;offset points&#x27;, fontsize=8)
+
+plt.show()</code></pre>
+</body></html>

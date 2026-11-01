@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IV-01. 지구과학 데이터 형식</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
+<h1>IV-01. 지구과학 데이터 형식</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/04-21/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 392.</h2><pre><code># 파일 ID와 저장 경로를 리스트로 정의
+files = [
+    (&quot;1E5TZgqXhh73i0VZLcY-xh7CNR3OJgB8K&quot;, &quot;sst.wkmean.1990-present.nc&quot;),
+    (&quot;1gxp1wK1JBhD215gQgVHPauTJnrfKv9Zi&quot;, &quot;lsmask.nc&quot;),
+    (&quot;1txeMeu4dVESAQj0AcKdOBAtduH3MaiX3&quot;, &quot;T2008168030500.L2_LAC_SST.x.zip&quot;),
+    (&quot;1vf01dzj_qkeY4PG_5VXRCxO-RhkBvYfH&quot;, &quot;T2008170025000.L2_LAC_SST.x.zip&quot;)
+]
+
+# for 루프를 사용하여 파일 다운로드
+for file_id, output_path in files:
+    du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={file_id}&quot;,
+                PROJ / output_path)</code></pre>
+<h2>code 393.</h2><pre><code>fpaths = du.list_files(PROJ, pattern=&quot;*.*&quot;)</code></pre>
+<h2>code 394.</h2><pre><code>import shutil
+
+for fpath in fpaths:
+    if fpath.suffix == &quot;.zip&quot;:
+        print(fpath, &quot;is unpacked to&quot;, str(PROJ))
+        shutil.unpack_archive(str(fpath), str(PROJ))
+
+fpaths = du.list_files(PROJ, &quot;nc&quot;)</code></pre>
+<h2>code 395.</h2><pre><code>from netCDF4 import Dataset
+import numpy as np
+
+# 육지·바다 구분 마스크
+file_path = str(PROJ / &quot;lsmask.nc&quot;)  # NetCDF 파일 경로
+nc_file = Dataset(file_path, &#x27;r&#x27;) 
+nc_file.variables</code></pre>
+<h2>code 396.</h2><pre><code>from netCDF4 import Dataset
+import numpy as np
+
+# 육지·바다 구분 마스크
+file_path = str(PROJ / &quot;lsmask.nc&quot;)  # NetCDF 파일 경로
+with Dataset(file_path, &#x27;r&#x27;) as nc_file:
+    mask = nc_file.variables[&#x27;mask&#x27;][:]  # &#x27;mask&#x27; 변수 읽기
+    mask = mask[0, :, :]                 # 첫 번째 시간 단계 선택
+    mask = mask.astype(float)
+    mask[mask == 0] = np.nan  # 육지 부분을 np.nan으로 변환
+
+print(&quot;Mask data loaded and processed.&quot;)</code></pre>
+<h2>code 397.</h2><pre><code>from netCDF4 import Dataset
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.colors import LinearSegmentedColormap
+
+# NetCDF 파일 경로
+file_path = str(PROJ / &quot;sst.wkmean.1990-present.nc&quot;)  # SST 데이터 파일 경로
+mask_path = str(PROJ / &quot;lsmask.nc&quot;)  # Land-sea mask 파일 경로
+
+# 변수명 확인
+with Dataset(file_path, &#x27;r&#x27;) as sst_file:
+    print(&quot;SST file variables:&quot;, list(sst_file.variables.keys()))</code></pre>
+<h2>code 398.</h2><pre><code># 변수명에 따라 수정 (예: &#x27;longitude&#x27;, &#x27;latitude&#x27; 등)
+with Dataset(file_path, &#x27;r&#x27;) as sst_file, Dataset(mask_path, &#x27;r&#x27;) as mask_file:
+ # 변수명 자동 탐색
+    varnames = list(sst_file.variables.keys())
+    if &#x27;lon&#x27; in varnames:
+        lon = sst_file.variables[&#x27;lon&#x27;][:]
+    elif &#x27;longitude&#x27; in varnames:
+        lon = sst_file.variables[&#x27;longitude&#x27;][:]
+    else:
+        raise KeyError(f&quot;Longitude variable not found in {file_path}&quot;)
+
+    if &#x27;lat&#x27; in varnames:
+        lat = sst_file.variables[&#x27;lat&#x27;][:]
+    elif &#x27;latitude&#x27; in varnames:
+        lat = sst_file.variables[&#x27;latitude&#x27;][:]
+    else:
+        raise KeyError(f&quot;Latitude variable not found in {file_path}&quot;)
+
+ # SST 변수명도 자동 탐색
+    if &#x27;sst&#x27; in varnames:
+        sst = sst_file.variables[&#x27;sst&#x27;][:]
+    else:
+        raise KeyError(f&quot;SST variable not found in {file_path}&quot;)
+
+    mask = mask_file.variables[&#x27;mask&#x27;][0, :, :]
+    print(&quot;sst.shape:&quot;, sst.shape)
+    print(&quot;lon.shape:&quot;, lon.shape)
+    print(&quot;lat.shape:&quot;, lat.shape)
+
+# 데이터 전처리
+sst = np.mean(sst, axis=0)  # 시간 평균 (scale_factor 는 netCDF4 가 이미 적용해 °C 단위)
+mask = mask.astype(float)
+mask[mask == 0] = np.nan  # 육지 부분을 NaN으로 설정
+sst *= mask               # 육지 부분 제거
+sst_c = np.ma.filled(sst, np.nan)
+print(f&quot;평균 SST 범위: {np.nanmin(sst_c):.1f} ~ {np.nanmax(sst_c):.1f} °C&quot;)
+
+# 사용자 정의 컬러맵
+levs = np.arange(-2, 35, 1)  # 온도 범위
+jet = [&quot;#000080&quot;, &quot;blue&quot;, &quot;#007FFF&quot;, &quot;cyan&quot;, &quot;#7FFF7F&quot;, &quot;yellow&quot;, &quot;#FF7F00&quot;,
+       &quot;red&quot;, &quot;#7F0000&quot;]
+cm = LinearSegmentedColormap.from_list(&#x27;custom_jet&#x27;, jet, N=len(levs))</code></pre>
+<h2>code 399.</h2><pre><code># 시각화
+fig, ax = plt.subplots(figsize=(7.5, 3.8))
+contour = ax.contourf(lon, lat, sst, levels=levs, cmap=cm, extend=&#x27;both&#x27;)
+cbar = plt.colorbar(contour, ax=ax, orientation=&#x27;vertical&#x27;, fraction=0.02,
+                    pad=0.04)
+cbar.set_label(&#x27;Sea Surface Temperature (°C)&#x27;, fontsize=11)
+
+ax.set_xticks(np.arange(0, 361, 60))
+ax.set_xticklabels([&#x27;0°&#x27;, &#x27;60°E&#x27;, &#x27;120°E&#x27;, &#x27;180°&#x27;, &#x27;120°W&#x27;, &#x27;60°W&#x27;, &#x27;0°&#x27;])
+ax.set_yticks(np.arange(-90, 91, 30))
+ax.set_yticklabels([&#x27;90°S&#x27;, &#x27;60°S&#x27;, &#x27;30°S&#x27;, &#x27;0°&#x27;, &#x27;30°N&#x27;, &#x27;60°N&#x27;, &#x27;90°N&#x27;])
+ax.set_title(&#x27;NOAA OISST Sea Surface Temperature&#x27;, fontsize=12)
+ax.set_xlabel(&#x27;Longitude&#x27;, fontsize=11)
+ax.set_ylabel(&#x27;Latitude&#x27;, fontsize=11)
+
+plt.tight_layout()
+plt.show()</code></pre>
+<h2>code 400.</h2><pre><code>from netCDF4 import Dataset
+
+sst_l2 = PROJ / &quot;T2008168030500.L2_LAC_SST.x.nc&quot;   # 위성 해수면 온도(MODIS L2) 파일
+nc = Dataset(sst_l2)
+
+print(&quot;전역 속성 개수 :&quot;, len(nc.ncattrs()))
+for key in [&quot;title&quot;, &quot;platform&quot;, &quot;instrument&quot;, &quot;processing_level&quot;,
+            &quot;time_coverage_start&quot;, &quot;time_coverage_end&quot;, &quot;spatialResolution&quot;]:
+    print(f&quot;  {key:20s}: {nc.getncattr(key)}&quot;)
+print(&quot;그룹 :&quot;, list(nc.groups))</code></pre>
+<h2>code 401.</h2><pre><code>for dim in nc.dimensions.values():
+    print(dim)</code></pre>
+<h2>code 402.</h2><pre><code>print(&quot;nc.groups&quot;, nc.groups)
+print(&quot;nc.groups[&#x27;geophysical_data&#x27;]&quot;, nc.groups[&#x27;geophysical_data&#x27;])</code></pre>
+<h2>code 403.</h2><pre><code>print(&quot;nc.groups[&#x27;geophysical_data&#x27;][&#x27;sst&#x27;]&quot;,
+      nc.groups[&#x27;geophysical_data&#x27;][&#x27;sst&#x27;])
+print(&quot;nc.groups[&#x27;geophysical_data&#x27;][&#x27;sst&#x27;].dimensions&quot;,
+      nc.groups[&#x27;geophysical_data&#x27;][&#x27;sst&#x27;].dimensions)</code></pre>
+<h2>code 404.</h2><pre><code>print(&quot;nc.groups[&#x27;navigation_data&#x27;]&quot;, nc.groups[&#x27;navigation_data&#x27;])
+print(&quot;nc.groups[&#x27;navigation_data&#x27;][&#x27;latitude&#x27;]&quot;,
+      nc.groups[&#x27;navigation_data&#x27;][&#x27;latitude&#x27;])</code></pre>
+<h2>code 405.</h2><pre><code>import matplotlib.pyplot as plt
+import numpy as np
+from mpl_toolkits.basemap import Basemap
+
+latitude = nc.groups[&#x27;navigation_data&#x27;][&#x27;latitude&#x27;][:]
+longitude = nc.groups[&#x27;navigation_data&#x27;][&#x27;longitude&#x27;][:]
+sst = nc.groups[&#x27;geophysical_data&#x27;][&#x27;sst&#x27;][:]
+qual = nc.groups[&#x27;geophysical_data&#x27;][&#x27;qual_sst&#x27;][:]   # 품질 플래그 (0 최상, 클수록 나쁨)
+sst = np.ma.masked_where(qual &gt; 1, sst)               # 품질 0·1 화소만 남김
+print(f&quot;품질 0·1 화소 수: {sst.count():,} / {sst.size:,}&quot;)</code></pre>
+<h2>code 406.</h2><pre><code># 원소를 모두 찍으면 수천 줄이 나오므로 모양과 일부만 확인
+import numpy as _np
+_a = _np.asarray(latitude)
+print(f&quot;latitude: shape={_a.shape}, &quot;
+      f&quot;min={_np.nanmin(_a):.4f}, max={_np.nanmax(_a):.4f}&quot;)
+print(&quot;앞 5개 :&quot;, _np.ravel(_a)[:5])
+print(&quot;뒤 5개 :&quot;, _np.ravel(_a)[-5:])
+_o = _np.asarray(longitude)
+print(f&quot;longitude: shape={_o.shape}, &quot;
+      f&quot;min={_np.nanmin(_o):.4f}, max={_np.nanmax(_o):.4f}&quot;)</code></pre>
+<h2>code 407.</h2><pre><code>print(&quot;latitude.dtype : {}&quot;.format(latitude.dtype))
+print(&quot;longitude.dtype : {}&quot;.format(longitude.dtype))
+print(&quot;sst.dtype : {}&quot;.format(sst.dtype))</code></pre>
+<h2>code 408.</h2><pre><code>DATAFIELD_NAME = &quot;SST&quot;
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+plt.figure(figsize=(8.4, 4.2))
+#plt.title(&quot;Histogram&quot;)
+plt.title(&quot;Histogram of {0}: {1}\n mean : {2:.02f}, max: {3:.02f}, min: {4:.02f}\n\
+            longitude : {5:.02f}~{6:.02f}, latitude: {7:.02f}~{8:.02f}&quot;.format(DATAFIELD_NAME, sst_l2.name, 
+            sst.mean(), sst.max(), sst.min(),
+            np.nanmin(longitude), np.nanmax(longitude),
+            np.nanmin(latitude), np.nanmax(latitude)), fontsize=11)
+
+plt.hist(sst.compressed(), bins=40)   # 결측을 뺀 1차원 값
+plt.grid(True)
+
+plt.savefig(f&quot;{PROJ}/{sst_l2.stem}_hist.pdf&quot;, bbox_inches=&#x27;tight&#x27;)
+print(f&quot;savefig: {PROJ}/{sst_l2.stem}_hist.pdf&quot;)
+plt.show()   </code></pre>
+<h2>code 409.</h2><pre><code>Llon, Rlon, Slat, Nlat = 100, 150, 10, 60
+
+import numpy as np
+from mpl_toolkits.basemap import Basemap
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(4.4, 4.4))
+
+# 원통 도법 지도
+m = Basemap(projection=&#x27;cyl&#x27;, resolution=&#x27;l&#x27;, \
+            llcrnrlat = Slat, urcrnrlat = Nlat, \
+            llcrnrlon = Llon, urcrnrlon = Rlon)
+
+m.drawcoastlines(linewidth=0.25)
+m.drawcountries(linewidth=0.25)
+m.fillcontinents()
+m.drawmapboundary()
+
+m.drawparallels(np.arange(-90., 90., 10.), labels=[1, 0, 0, 0], color=&#x27;white&#x27;, fontsize=8)
+m.drawmeridians(np.arange(-180., 181., 15.), labels=[0, 0, 0, 1],
+                color=&#x27;white&#x27;, fontsize=8)
+
+x, y = m(longitude, latitude) # 투영 지도로 변환
+
+plt.title(&#x27;SST product using MODIS&#x27;, fontsize=10) 
+      
+plt.show()</code></pre>
+<h2>code 410.</h2><pre><code>DATAFIELD_NAME = &quot;SST&quot;
+
+print(&quot;=&quot;*80)
+print(&quot;Plotting data on the map&quot;)
+
+Llon, Rlon, Slat, Nlat = 100, 150, 10, 60
+
+import numpy as np
+from mpl_toolkits.basemap import Basemap
+import matplotlib.pyplot as plt
+import warnings
+
+plt.figure(figsize=(4.4, 4.2))
+
+# 원통 도법 지도
+m = Basemap(projection=&#x27;cyl&#x27;, resolution=&#x27;l&#x27;, \
+            llcrnrlat = Slat, urcrnrlat = Nlat, \
+            llcrnrlon = Llon, urcrnrlon = Rlon)
+
+m.drawcoastlines(linewidth=0.25, color=&#x27;white&#x27;)
+m.drawcountries(linewidth=0.25, color=&#x27;white&#x27;)
+m.fillcontinents(color=&#x27;black&#x27;, lake_color=&#x27;black&#x27;)
+m.drawmapboundary(fill_color=&#x27;black&#x27;)
+
+m.drawparallels(np.arange(-90., 90., 10.), labels=[1, 0, 0, 0], color=&#x27;white&#x27;, fontsize=8)
+m.drawmeridians(np.arange(-180., 181., 15.), labels=[0, 0, 0, 1],
+                color=&#x27;white&#x27;, fontsize=8)
+
+x, y = m(longitude, latitude) # 투영 지도로 변환
+# L2 위경도는 화소마다 조금씩 휘어 있어(단조 증가가 아님) pcolormesh가 칸 경계를
+# 어림한다는 UserWarning이 나온다. 그림에는 문제가 없으므로 이 경고만 끈다.
+with warnings.catch_warnings():
+    warnings.simplefilter(&quot;ignore&quot;, UserWarning)
+    m.pcolormesh(x, y, sst, vmin=14, vmax=24, cmap=&#x27;RdYlBu_r&#x27;, shading=&#x27;auto&#x27;)
+m.colorbar(fraction=0.0455, pad=0.044, ticks=np.arange(14, 24.1, 2)).ax.tick_params(labelsize=8)
+
+plt.title(&#x27;SST product using MODIS&#x27;, fontsize=10) 
+
+x1, y1 = m(100, 7.5)
+plt.text(x1, y1, &#x27;Maximum value: {0:.1f}\nMean value: {1:.1f}\nMin value: {2:.1f}\n&#x27;\
+            .format(sst.max(), sst.mean(), sst.min()), 
+            horizontalalignment=&#x27;left&#x27;,
+            verticalalignment=&#x27;top&#x27;, 
+            fontsize=7, style=&#x27;italic&#x27;, wrap=True)
+
+x2, y2 = m(149.5, 7.5)
+plt.text(x2, y2, &quot;{}\nMODIS SST product from Ocean Color Web\n&quot;.format(sst_l2.stem), 
+            horizontalalignment=&#x27;right&#x27;,
+            verticalalignment=&#x27;top&#x27;, 
+            fontsize=7, style=&#x27;italic&#x27;, wrap=True)         
+
+plt.savefig(f&quot;{PROJ}/{sst_l2.stem}_{DATAFIELD_NAME}.pdf&quot;, bbox_inches=&#x27;tight&#x27;)
+print(f&quot;savefig: {PROJ}/{sst_l2.stem}_{DATAFIELD_NAME}.pdf&quot;)
+plt.show()</code></pre>
+<h2>code 411.</h2><pre><code>Llon, Rlon, Slat, Nlat = 100, 150, 10, 60     # 지도 영역(경도 · 위도)
+RES = 24                                      # 4 km 격자: 1도에 24칸
+
+i0, i1 = int((90 - Nlat) * RES), int((90 - Slat) * RES)   # 위도 칸(북 → 남)
+j0, j1 = int((Llon + 180) * RES), int((Rlon + 180) * RES) # 경도 칸(서 → 동)
+
+fname = &quot;AQUA_MODIS.20190801_20190831.L3m.MO.CHL.chlor_a.4km.nc&quot;
+url = (&quot;https://oceandata.sci.gsfc.nasa.gov/opendap/MODISA/L3SMI/2019/0801/&quot;
+       f&quot;{fname}.nc4?chlor_a[{i0}:1:{i1}][{j0}:1:{j1}],&quot;
+       f&quot;lat[{i0}:1:{i1}],lon[{j0}:1:{j1}]&quot;)
+print(&quot;요청 주소 :&quot;, url)
+
+hdf_path = proj_dir / &quot;AQUA_MODIS.201908.L3m.MO.chlor_a.4km_EastAsia.nc4&quot;
+du.download(url, hdf_path)</code></pre>
+<h2>code 412.</h2><pre><code>signature = hdf_path.read_bytes()[:8]
+print(&quot;파일 크기 :&quot;, f&quot;{hdf_path.stat().st_size / 1e6:.2f} MB&quot;)
+print(&quot;서명      :&quot;, signature)
+print(&quot;HDF5 인가 :&quot;, signature == b&quot;\x89HDF\r\n\x1a\n&quot;)</code></pre>
+<h2>code 413.</h2><pre><code>import h5py
+
+hdf = h5py.File(hdf_path, &quot;r&quot;)
+print(&quot;맨 위 항목 :&quot;, list(hdf.keys()))
+
+def show(name, obj):
+    &quot;&quot;&quot;그룹과 데이터셋의 이름 · 모양 · 자료형을 출력&quot;&quot;&quot;
+    if isinstance(obj, h5py.Dataset):
+        print(f&quot;  데이터셋 {name:10s} shape={obj.shape}  dtype={obj.dtype}&quot;)
+    else:
+        print(f&quot;  그룹     {name}&quot;)
+
+hdf.visititems(show)</code></pre>
+<h2>code 414.</h2><pre><code>import numpy as np
+
+def attr(dset, key):
+    &quot;&quot;&quot;HDF5 속성 값을 파이썬 값으로 변환(바이트 → 문자열, 길이 1 배열 → 숫자)&quot;&quot;&quot;
+    v = dset.attrs[key]
+    if isinstance(v, bytes):
+        return v.decode()
+    if isinstance(v, np.ndarray) and v.size == 1:
+        return v.item()
+    return v
+
+chl_ds = hdf[&quot;chlor_a&quot;]
+for key in [&quot;long_name&quot;, &quot;units&quot;, &quot;_FillValue&quot;, &quot;valid_min&quot;, &quot;valid_max&quot;]:
+    print(f&quot;{key:12s}: {attr(chl_ds, key)}&quot;)</code></pre>
+<h2>code 415.</h2><pre><code>chl = chl_ds[:].astype(float)
+lat = hdf[&quot;lat&quot;][:]
+lon = hdf[&quot;lon&quot;][:]
+
+bad = ((chl == attr(chl_ds, &quot;_FillValue&quot;))
+       | (chl &lt; attr(chl_ds, &quot;valid_min&quot;))
+       | (chl &gt; attr(chl_ds, &quot;valid_max&quot;)))
+chl[bad] = np.nan
+longitude, latitude = np.meshgrid(lon, lat)
+
+print(&quot;배열 모양     :&quot;, chl.shape)
+print(&quot;위도 범위     :&quot;, lat.min().round(2), &quot;~&quot;, lat.max().round(2))
+print(&quot;경도 범위     :&quot;, lon.min().round(2), &quot;~&quot;, lon.max().round(2))
+print(&quot;유효한 칸 비율:&quot;, f&quot;{np.isfinite(chl).mean() * 100:.1f} %&quot;)
+print(f&quot;최솟값 · 중앙값 · 최댓값: {np.nanmin(chl):.3f} · {np.nanmedian(chl):.3f} · {np.nanmax(chl):.1f} mg/m³&quot;)</code></pre>
+<h2>code 416.</h2><pre><code>import matplotlib.pyplot as plt
+plt.rcParams[&quot;axes.unicode_minus&quot;] = False   # 로그 눈금의 마이너스(−)를 하이픈으로 표시
+
+valid = chl[np.isfinite(chl)]
+bins = np.logspace(-2, 2, 61)                 # 0.01 ~ 100 mg/m³, 로그 간격
+
+fig, ax = plt.subplots(figsize=(8.2, 4.0))
+ax.hist(valid, bins=bins, color=&quot;tab:green&quot;, alpha=0.8)
+ax.set_xscale(&quot;log&quot;)
+ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda v, _: f&quot;{v:g}&quot;))   # 0.01, 0.1, 1 … 로 표시
+ax.axvline(np.median(valid), color=&quot;k&quot;, ls=&quot;--&quot;,
+           label=f&quot;중앙값 {np.median(valid):.2f} mg/m³&quot;)
+ax.set_xlabel(&quot;엽록소 농도 (mg/m³)&quot;)
+ax.set_ylabel(&quot;칸 수&quot;)
+ax.set_title(&quot;MODIS Aqua 엽록소 농도 분포 (2019년 8월)&quot;)
+ax.legend()
+plt.savefig(proj_dir / &quot;chlor_a_hist.png&quot;, dpi=150, bbox_inches=&quot;tight&quot;)
+plt.show()</code></pre>
+<h2>code 417.</h2><pre><code>from matplotlib.colors import LogNorm
+from mpl_toolkits.basemap import Basemap
+
+plt.figure(figsize=(4.8, 4.4))
+m = Basemap(projection=&quot;cyl&quot;, resolution=&quot;l&quot;,
+            llcrnrlat=Slat, urcrnrlat=Nlat, llcrnrlon=Llon, urcrnrlon=Rlon)
+m.drawcoastlines(linewidth=0.3)
+m.fillcontinents(color=&quot;lightgray&quot;, lake_color=&quot;white&quot;)
+m.drawparallels(np.arange(-90., 90., 10.), labels=[1, 0, 0, 0], linewidth=0.3, fontsize=8)
+m.drawmeridians(np.arange(-180., 181., 15.), labels=[0, 0, 0, 1], linewidth=0.3, fontsize=8)
+
+x, y = m(longitude, latitude)
+pm = m.pcolormesh(x, y, chl, norm=LogNorm(vmin=0.05, vmax=20),
+                  cmap=&quot;viridis&quot;, shading=&quot;auto&quot;)
+cb = m.colorbar(pm, location=&quot;right&quot;, pad=&quot;3%&quot;)
+cb.set_label(&quot;엽록소 농도 (mg/m³)&quot;, fontsize=9)
+cb.ax.tick_params(labelsize=8)
+cb.ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda v, _: f&quot;{v:g}&quot;))
+plt.title(&quot;MODIS Aqua 엽록소 농도 (2019년 8월 평균)&quot;, fontsize=10)
+plt.savefig(proj_dir / &quot;chlor_a_map.png&quot;, dpi=150, bbox_inches=&quot;tight&quot;)
+plt.show()
+hdf.close()</code></pre>
+</body></html>

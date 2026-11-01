@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>V-03. 지진파 데이터로 진앙 찾기</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
+<h1>V-03. 지진파 데이터로 진앙 찾기</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/05-03/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 27.</h2><pre><code>from pathlib import Path
+from datetime import datetime
+from urllib.parse import urlencode
+import xml.etree.ElementTree as ET
+
+import numpy as np
+import pandas as pd
+import requests
+
+EVENT_ID = &quot;73990216&quot;
+EVENT_URL = &quot;https://service.ncedc.org/fdsnws/event/1/query&quot;
+STATION_URL = &quot;https://service.ncedc.org/fdsnws/station/1/query&quot;
+
+params = {
+    &quot;format&quot;: &quot;xml&quot;,
+    &quot;eventid&quot;: EVENT_ID,
+    &quot;includearrivals&quot;: &quot;true&quot;,
+}
+
+response = requests.get(EVENT_URL, params=params, timeout=60)
+response.raise_for_status()
+xml_text = response.text
+
+event_file = Path(proj_dir) / f&quot;ncedc_event_{EVENT_ID}_arrivals.xml&quot;
+event_file.write_text(xml_text, encoding=&quot;utf-8&quot;)
+
+print(response.url)
+print(f&quot;저장 위치: {event_file}&quot;)
+print(f&quot;파일 크기: {event_file.stat().st_size:,} bytes&quot;)</code></pre>
+<h2>code 28.</h2><pre><code>def tag_name(element):
+    return element.tag.split(&quot;}&quot;)[-1]
+
+def first_child(element, name):
+    for child in list(element):
+        if tag_name(child) == name:
+            return child
+    return None
+
+def child_text(element, path):
+    current = element
+    for name in path:
+        current = first_child(current, name)
+        if current is None:
+            return None
+    return current.text
+
+def parse_time(value):
+    return pd.to_datetime(value, utc=True)
+
+root = ET.fromstring(xml_text)
+event = next(elem for elem in root.iter() if tag_name(elem) == &quot;event&quot;)
+origin = next(elem for elem in event.iter() if tag_name(elem) == &quot;origin&quot;)
+
+origin_info = {
+    &quot;event_id&quot;: EVENT_ID,
+    &quot;origin_time&quot;: parse_time(child_text(origin, [&quot;time&quot;, &quot;value&quot;])),
+    &quot;latitude&quot;: float(child_text(origin, [&quot;latitude&quot;, &quot;value&quot;])),
+    &quot;longitude&quot;: float(child_text(origin, [&quot;longitude&quot;, &quot;value&quot;])),
+    &quot;depth_km&quot;: float(child_text(origin, [&quot;depth&quot;, &quot;value&quot;])) / 1000,
+}
+
+origin_info</code></pre>
+<h2>code 29.</h2><pre><code>pick_rows = []
+
+for pick in [elem for elem in event.iter() if tag_name(elem) == &quot;pick&quot;]:
+    waveform = first_child(pick, &quot;waveformID&quot;)
+    if waveform is None:
+        continue
+
+    pick_rows.append({
+        &quot;pick_id&quot;: pick.attrib.get(&quot;publicID&quot;),
+        &quot;phase&quot;: child_text(pick, [&quot;phaseHint&quot;]),
+        &quot;pick_time&quot;: parse_time(child_text(pick, [&quot;time&quot;, &quot;value&quot;])),
+        &quot;network&quot;: waveform.attrib.get(&quot;networkCode&quot;),
+        &quot;station&quot;: waveform.attrib.get(&quot;stationCode&quot;),
+        &quot;channel&quot;: waveform.attrib.get(&quot;channelCode&quot;),
+        &quot;location&quot;: waveform.attrib.get(&quot;locationCode&quot;),
+    })
+
+picks = pd.DataFrame(pick_rows)
+print(picks)</code></pre>
+<h2>code 30.</h2><pre><code>picks[&quot;phase&quot;].value_counts(dropna=False)</code></pre>
+<h2>code 31.</h2><pre><code>phase_table = (
+    picks[picks[&quot;phase&quot;].isin([&quot;P&quot;, &quot;S&quot;])]
+    .sort_values(&quot;pick_time&quot;)
+    .groupby([&quot;network&quot;, &quot;station&quot;, &quot;phase&quot;], as_index=False)
+    .first()
+    .pivot(index=[&quot;network&quot;, &quot;station&quot;], columns=&quot;phase&quot;, values=&quot;pick_time&quot;)
+    .dropna(subset=[&quot;P&quot;, &quot;S&quot;])
+    .reset_index()
+)
+
+phase_table[&quot;s_minus_p_sec&quot;] = (phase_table[&quot;S&quot;] - phase_table[&quot;P&quot;]).dt.total_seconds()
+phase_table = phase_table[(phase_table[&quot;s_minus_p_sec&quot;] &gt; 0) &amp; (phase_table[&quot;s_minus_p_sec&quot;] &lt; 120)]
+phase_table = phase_table.sort_values(&quot;s_minus_p_sec&quot;).reset_index(drop=True)
+
+print(phase_table)</code></pre>
+<h2>code 32.</h2><pre><code>def download_station_metadata(network, station, event_time):
+    params = {
+        &quot;format&quot;: &quot;text&quot;,
+        &quot;net&quot;: network,
+        &quot;sta&quot;: station,
+        &quot;level&quot;: &quot;station&quot;,
+        &quot;startbefore&quot;: event_time.strftime(&quot;%Y-%m-%dT%H:%M:%S&quot;),
+        &quot;endafter&quot;: event_time.strftime(&quot;%Y-%m-%dT%H:%M:%S&quot;),
+    }
+    response = requests.get(STATION_URL, params=params, timeout=30)
+    response.raise_for_status()
+
+    lines = [line for line in response.text.splitlines() if line and not line.startswith(&quot;#&quot;)]
+    if not lines:
+        return None
+
+    values = lines[0].split(&quot;|&quot;)
+    return {
+        &quot;network&quot;: values[0],
+        &quot;station&quot;: values[1],
+        &quot;station_latitude&quot;: float(values[2]),
+        &quot;station_longitude&quot;: float(values[3]),
+        &quot;elevation_m&quot;: float(values[4]),
+        &quot;site_name&quot;: values[5],
+    }
+
+station_rows = []
+
+for row in phase_table[[&quot;network&quot;, &quot;station&quot;]].drop_duplicates().itertuples(index=False):
+    metadata = download_station_metadata(row.network, row.station, origin_info[&quot;origin_time&quot;])
+    if metadata is not None:
+        station_rows.append(metadata)
+
+stations = pd.DataFrame(station_rows)
+
+print(stations)</code></pre>
+<h2>code 33.</h2><pre><code>data = phase_table.merge(stations, on=[&quot;network&quot;, &quot;station&quot;], how=&quot;inner&quot;)
+
+# 단순한 지각 평균 속도 가정
+vp = 6.0  # km/s
+vs = 3.5  # km/s
+
+data[&quot;estimated_distance_km&quot;] = data[&quot;s_minus_p_sec&quot;] / (1 / vs - 1 / vp)
+data = data.sort_values(&quot;estimated_distance_km&quot;).reset_index(drop=True)
+
+print(data[[&quot;network&quot;, &quot;station&quot;, &quot;P&quot;, &quot;S&quot;, &quot;s_minus_p_sec&quot;, &quot;estimated_distance_km&quot;, &quot;station_latitude&quot;, &quot;station_longitude&quot;]])</code></pre>
+<h2>code 34.</h2><pre><code>def haversine_km(lat1, lon1, lat2, lon2):
+    radius = 6371.0
+    lat1 = np.radians(lat1)
+    lon1 = np.radians(lon1)
+    lat2 = np.radians(lat2)
+    lon2 = np.radians(lon2)
+
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+    a = np.sin(dlat / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2) ** 2
+    return 2 * radius * np.arcsin(np.sqrt(a))
+
+# 가까운 관측소 위주로 사용하면 단순 속도 가정의 영향이 줄어듭니다.
+used = data.head(12).copy()
+
+lat_grid = np.linspace(used[&quot;station_latitude&quot;].min() - 0.8, used[&quot;station_latitude&quot;].max() + 0.8, 160)
+lon_grid = np.linspace(used[&quot;station_longitude&quot;].min() - 0.8, used[&quot;station_longitude&quot;].max() + 0.8, 160)
+lon_mesh, lat_mesh = np.meshgrid(lon_grid, lat_grid)
+
+misfit = np.zeros_like(lat_mesh, dtype=float)
+
+for _, row in used.iterrows():
+    model_distance = haversine_km(lat_mesh, lon_mesh, row[&quot;station_latitude&quot;], row[&quot;station_longitude&quot;])
+    misfit += (model_distance - row[&quot;estimated_distance_km&quot;]) ** 2
+
+misfit = np.sqrt(misfit / len(used))
+best_index = np.unravel_index(np.argmin(misfit), misfit.shape)
+estimated_lat = lat_mesh[best_index]
+estimated_lon = lon_mesh[best_index]
+best_misfit = misfit[best_index]
+
+print(f&quot;추정 진앙: lat={estimated_lat:.4f}, lon={estimated_lon:.4f}&quot;)
+print(f&quot;발표 진앙: lat={origin_info[&#x27;latitude&#x27;]:.4f}, lon={origin_info[&#x27;longitude&#x27;]:.4f}&quot;)
+print(f&quot;평균 거리 잔차(RMS): {best_misfit:.1f} km&quot;)
+print(f&quot;실제 진앙과의 거리 차이: {haversine_km(estimated_lat, estimated_lon, origin_info[&#x27;latitude&#x27;], origin_info[&#x27;longitude&#x27;]):.1f} km&quot;)</code></pre>
+<h2>code 35.</h2><pre><code>import matplotlib.pyplot as plt
+plt.rcParams[&#x27;font.family&#x27;] = &#x27;Malgun Gothic&#x27;   # macOS: &#x27;AppleGothic&#x27;
+plt.rcParams[&#x27;axes.unicode_minus&#x27;] = False
+
+# 관측소와 발표 진앙 사이의 실제 거리(앞 셀의 haversine_km 사용)
+data[&quot;true_distance_km&quot;] = haversine_km(data[&quot;station_latitude&quot;], data[&quot;station_longitude&quot;],
+                                        origin_info[&quot;latitude&quot;], origin_info[&quot;longitude&quot;])
+
+fig, ax = plt.subplots(figsize=(7, 5))
+ax.scatter(data[&quot;s_minus_p_sec&quot;], data[&quot;true_distance_km&quot;], s=70, color=&quot;tab:blue&quot;,
+           label=&quot;실제 거리(haversine)&quot;)
+ax.plot(data[&quot;s_minus_p_sec&quot;], data[&quot;estimated_distance_km&quot;], color=&quot;tab:red&quot;,
+        label=&quot;추정 거리(S-P 시간 차이 × 8.4)&quot;)
+for _, row in data.head(12).iterrows():
+    ax.text(row[&quot;s_minus_p_sec&quot;] + 0.05, row[&quot;true_distance_km&quot;], row[&quot;station&quot;], fontsize=9)
+ax.set_xlabel(&quot;S-P 시간 차이 (초)&quot;)
+ax.set_ylabel(&quot;관측소–진앙 거리 (km)&quot;)
+ax.set_title(&quot;S-P 시간 차이와 관측소–진앙 거리&quot;)
+ax.legend()
+ax.grid(alpha=0.3)
+du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;05_03_Finding_epicenter_with_P_and_S_waves_01&quot;))
+plt.show()</code></pre>
+<h2>code 36.</h2><pre><code>import folium
+
+center_lat = np.mean([estimated_lat, origin_info[&quot;latitude&quot;]])
+center_lon = np.mean([estimated_lon, origin_info[&quot;longitude&quot;]])
+
+m = folium.Map(location=[center_lat, center_lon], zoom_start=7, tiles=&quot;CartoDB positron&quot;)
+
+folium.Marker(
+    [origin_info[&quot;latitude&quot;], origin_info[&quot;longitude&quot;]],
+    popup=&quot;발표 진앙&quot;,
+    icon=folium.Icon(color=&quot;red&quot;, icon=&quot;star&quot;),
+).add_to(m)
+
+folium.Marker(
+    [estimated_lat, estimated_lon],
+    popup=&quot;S-P 자료로 추정한 진앙&quot;,
+    icon=folium.Icon(color=&quot;blue&quot;, icon=&quot;info-sign&quot;),
+).add_to(m)
+
+for _, row in used.iterrows():
+    folium.CircleMarker(
+        [row[&quot;station_latitude&quot;], row[&quot;station_longitude&quot;]],
+        radius=5,
+        color=&quot;black&quot;,
+        fill=True,
+        fill_color=&quot;white&quot;,
+        popup=f&quot;{row[&#x27;network&#x27;]}.{row[&#x27;station&#x27;]} / S-P={row[&#x27;s_minus_p_sec&#x27;]:.2f}s&quot;,
+    ).add_to(m)
+    folium.Circle(
+        [row[&quot;station_latitude&quot;], row[&quot;station_longitude&quot;]],
+        radius=row[&quot;estimated_distance_km&quot;] * 1000,
+        color=&quot;steelblue&quot;,
+        weight=1,
+        fill=False,
+        opacity=0.35,
+    ).add_to(m)
+
+map_file = Path(proj_dir) / &quot;estimated_epicenter_map.html&quot;
+m.save(map_file)
+print(f&quot;지도 저장 위치: {map_file}&quot;)
+m</code></pre>
+</body></html>

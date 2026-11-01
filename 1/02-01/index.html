@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>II-01. 물리량 계산하기</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
+<h1>II-01. 물리량 계산하기</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/02-01/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 1.</h2><pre><code>from pint import UnitRegistry            # pint 라이브러리에서 UnitRegistry를 가져옴
+u = UnitRegistry()                       # UnitRegistry의 인스턴스를 생성
+print(&quot;type(u):&quot;, type(u))               # u의 자료형을 출력
+distance = 24.0 * u.meter                # 24.0이라는 수치에 &#x27;meter&#x27; 단위를 곱하여 물리량(Quantity)을 생성
+print(&quot;type(distance)&quot;, type(distance))  # distance의 자료형을 출력
+print(&quot;distance&quot;, distance)              # distance의 값을 출력
+print(&quot;dir(distance):&quot;, dir(distance))   # distance 객체의 속성과 메서드를 출력</code></pre>
+<h2>code 2.</h2><pre><code>print(&quot;distance.magnitude:&quot;, distance.magnitude)  # 수치 값(크기)을 출력
+print(&quot;distance.units:&quot;, distance.units)          # 단위를 출력
+print(&quot;distance.dimensionality:&quot;, distance.dimensionality)  # 차원을 출력
+print(f&#x27;distance**2:P: {distance**2:P}&#x27;)          # 제곱한 값을 읽기 쉬운 형식으로 출력
+print(f&#x27;distance**2:~P: {distance**2:~P}&#x27;)        # 제곱한 값을 단위를 간략화한 형식으로 출력
+print(f&#x27;distance**2:~L: {distance**2:~L}&#x27;)        # 제곱한 값을 LaTeX 형식으로 출력
+print(f&#x27;distance**2:~H : {distance**2:~H}&#x27;)       # 제곱한 값을 HTML 형식으로 출력</code></pre>
+<h2>code 3.</h2><pre><code>h = 6.626e-34 * u.J * u.s      # (플랑크 상수)
+c = 3.0e+8 * u.m / u.s         # (광속)
+k = 1.38e-23 * u.J / u.K       # (볼츠만 상수)
+wavelengths = 0.0000005 * u.m  # (파장)
+T = 6000. * u.K                # (온도)
+print(&quot;h: {}&quot;.format(h))
+print(&quot;c: {}&quot;.format(c))
+print(&quot;k: {}&quot;.format(k))
+print(&quot;wavelengths: {}&quot;.format(wavelengths))
+print(&quot;T: {}&quot;.format(T))
+distance = 8 * u.m
+time = 4 * u.s
+average_velocity = distance / time
+# cm/s로 변환하여 출력
+print(f&#x27;average_velocity.to(u.cm/u.s): {average_velocity.to(u.cm/u.s)}&#x27;)
+# km/s로 변환하여 출력
+print(f&#x27;average_velocity.to(u.km/u.s): {average_velocity.to(u.km/u.s)}&#x27;)</code></pre>
+<h2>code 4.</h2><pre><code>length1 = 15 * u.meter
+length2 = 300 * u.centimeter
+time1 = 10 * u.second
+print(&quot;length1 + length2 =&quot;, length1 + length2)  # 15 m + 3 m = 18 m  # 덧셈 (자동 단위 변환)
+print(&quot;length1 - length2 =&quot;, length1 - length2)  # 15 m - 3 m = 12 m  # 뺄셈
+area = length1 * length2                         # 곱셈
+print(&quot;area =&quot;, area)                            # 15 m * 3 m = 45 m²
+speed = length1 / time1                          # 나눗셈
+print(&quot;speed =&quot;, speed)                          # 15 m / 10 s = 1.5 m/s
+# 단위 변환
+print(&quot;speed.to(&#x27;km/h&#x27;) =&quot;, speed.to(&#x27;km/h&#x27;))  # m/s → km/h
+# 단위가 맞지 않는 덧셈 (오류 발생)
+try:
+    print(length1 + time1)
+except Exception as e:
+    print(&quot;오류 (단위 불일치):&quot;, e)</code></pre>
+<h2>code 5.</h2><pre><code>import scipy.constants as const
+# print(&quot;dir(const):&quot;, dir(const)) # scipy.constants의 속성과 메서드를 출력
+# print(&quot;const.physical_constants:&quot;, const.physical_constants) # 물리 상수의 정보를 출력
+constR1 = const.physical_constants[&quot;molar gas constant&quot;]    # 기체 상수를 가져옴    
+print(&quot;type(constR1):&quot;, type(constR1))
+print(&quot;constR1:&quot;, constR1)
+
+# 태양의 광도 추가 (scipy.constants에는 없으므로 직접 정의)
+# 태양 광도: 3.828 × 10^26 W
+solar_luminosity = (3.828e26, &#x27;W&#x27;, 0.0)    # (값, 단위, 불확실성) 형태로 정의
+print(&quot;type(solar_luminosity):&quot;, type(solar_luminosity))
+print(&quot;solar_luminosity:&quot;, solar_luminosity)
+
+# 또는 scipy.constants에서 직접 값 가져오기
+print(f&quot;천문단위(AU): {const.au} m&quot;)       # 천문단위 (m)</code></pre>
+<h2>code 6.</h2><pre><code>import astropy.units as u
+distance = 8 * u.m  # 8미터를 정의합니다.
+print(&quot;type(distance):{}&quot;.format(type(distance)))
+print(&quot;distance:{}&quot;.format(distance ))
+# print(&quot;dir(distance):&quot;, dir(distance)) 
+
+time = 4 * u.s
+average_velocity = distance / time
+print(&quot;type(average_velocity):{}&quot;.format(type(average_velocity)))
+print(&quot;average_velocity:{}&quot;.format(average_velocity))</code></pre>
+<h2>code 7.</h2><pre><code># 수치와 단위를 분리하여 출력
+print(f&#x27;distance.value:0.1f: {distance.value:.1f}, distance.unit: {distance.unit}&#x27;)
+# 수치와 단위를 LaTeX 형식으로 출력
+print(f&#x27;distance.value:0.8f:{distance.value:0.8f}, distance.unit:fits: {distance.unit:fits}&#x27;)
+# 수치와 단위를 HTML 형식으로 출력
+print(f&#x27;distance.value:0.8f:{distance.value:0.8f}, distance.unit:cds: {distance.unit:cds}&#x27;)
+# 수치와 단위를 Latex 형식으로 출력
+print(f&#x27;distance.value:0.2f:{distance.value:0.2f}, distance.unit:latex: {distance.unit:latex}&#x27;)</code></pre>
+<h2>code 8.</h2><pre><code>h = 6.626e-34 * u.J * u.s                  # 플랑크 상수
+c = 3.0e+8  * u.m / u.s                    # 광속
+k = 1.38e-23 * u.J / u.K                   # 볼츠만 상수
+sigma = 5.67e-8 * u.W / (u.m**2 * u.K**4)  # 스테판-볼츠만 상수
+G = 6.67e-11 * u.m**3 / (u.kg * u.s**2)    # 중력 상수
+
+print(&quot;h (플랑크 상수): {}&quot;.format(h))
+print(&quot;c (광속): {}&quot;.format(c))
+print(&quot;k (볼츠만 상수): {}&quot;.format(k))
+print(&quot;σ (스테판-볼츠만 상수): {}&quot;.format(sigma))
+print(&quot;G (중력 상수): {}&quot;.format(G))
+
+# 자유낙하 운동 예제
+height = 100 * u.m                 # 높이
+g = 9.8 * u.m / u.s**2             # 중력가속도
+fall_time = (2 * height / g)**0.5  # 낙하시간 계산
+
+print(f&#x27;낙하시간: {fall_time}&#x27;)
+# 분 단위로 변환하여 출력
+print(f&#x27;낙하시간 (분): {fall_time.to(u.minute)}&#x27;)
+# 밀리초 단위로 변환하여 출력 
+print(f&#x27;낙하시간 (밀리초): {fall_time.to(u.millisecond)}&#x27;)</code></pre>
+<h2>code 9.</h2><pre><code>import astropy.constants as const
+print(&quot;const.h:{}&quot;.format(const.h))      # 플랑크 상수
+print(&quot;const.c:{}&quot;.format(const.c))      # 광속
+print(&quot;const.k_B:{}&quot;.format(const.k_B))  # 볼츠만 상수
+# 천체 질량
+print(&quot;const.M_sun:{}&quot;.format(const.M_sun))      # 태양 질량
+print(&quot;const.M_earth:{}&quot;.format(const.M_earth))  # 지구 질량
+print(&quot;const.M_jup:{}&quot;.format(const.M_jup))      # 목성 질량
+# 태양의 물리량
+print(&quot;const.L_sun:{}&quot;.format(const.L_sun))  # 태양 광도
+print(&quot;const.R_sun:{}&quot;.format(const.R_sun))  # 태양 반지름
+# 지구의 물리량
+print(&quot;const.R_earth:{}&quot;.format(const.R_earth)) # 지구 반지름
+# 기타 천문 상수
+print(&quot;const.au:{}&quot;.format(const.au))  # 천문단위 (지구-태양 평균 거리)
+print(&quot;const.pc:{}&quot;.format(const.pc))  # 파섹</code></pre>
+<h2>code 10.</h2><pre><code>from metpy.units import units as u
+
+# 길이, 시간, 속력 등 다양한 물리량 정의
+length = 10 * u.meter
+time = 2 * u.second
+speed = length / time
+
+print(&quot;length:&quot;, length)
+print(&quot;time:&quot;, time)
+print(&quot;speed:&quot;, speed)
+
+# 단위 변환 예시
+speed_kmh = speed.to(&#x27;km/hour&#x27;)
+print(&quot;speed (km/h):&quot;, speed_kmh)
+
+# 덧셈, 곱셈 등 연산 예시
+length2 = 500 * u.centimeter
+total_length = length + length2
+print(&quot;total_length:&quot;, total_length)
+
+area = length * length2
+print(&quot;area:&quot;, area)
+
+# 단위가 맞지 않는 연산(오류 발생)
+try:
+    print(length + time)
+except Exception as e:
+    print(&quot;오류 (단위 불일치):&quot;, e)</code></pre>
+<h2>code 11.</h2><pre><code># 수치(magnitude)와 단위(units) 분리 출력
+print(&quot;length.magnitude:&quot;, length.magnitude)
+print(&quot;length.units:&quot;, length.units)
+print(&quot;speed.magnitude:&quot;, speed.magnitude)
+print(&quot;speed.units:&quot;, speed.units)
+
+# 문자열 변환
+print(&quot;length(str):&quot;, str(length))
+print(&quot;speed(str):&quot;, str(speed))
+
+# 단위 변환 후 출력
+print(&quot;length (cm):&quot;, length.to(&#x27;centimeter&#x27;))
+print(&quot;speed (mile/hour):&quot;, speed.to(&#x27;mile/hour&#x27;))
+
+# f-string 활용
+print(f&quot;speed = {speed.magnitude:.2f} [{speed.units}]&quot;)
+print(f&quot;total_length = {total_length.magnitude} {total_length.units}&quot;)
+print(f&quot;area = {area.magnitude} {area.units}&quot;)</code></pre>
+<h2>code 12.</h2><pre><code>from metpy.constants import Rd, g, Cp_d, epsilon
+
+print(f&quot;건조공기 기체상수 Rd: {Rd}&quot;)
+print(f&quot;중력가속도 g: {g}&quot;)
+print(f&quot;건조공기 비열 Cp_d: {Cp_d}&quot;)
+print(f&quot;수증기/건조공기 분자량비 epsilon: {epsilon}&quot;)
+
+# 예시: 이상기체 상태방정식 (p = ρ R T)에서 ρ 계산
+from metpy.units import units as u
+
+p = 1000 * u.hectopascal  # 기압
+T = 300 * u.kelvin        # 온도
+rho = p / (Rd * T)        # 밀도 계산
+print(f&quot;밀도(ρ) = {rho.to(&#x27;kg/m^3&#x27;)}&quot;)</code></pre>
+</body></html>

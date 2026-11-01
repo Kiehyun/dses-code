@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IV-07. 엘니뇨와 남방진동</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
+<h1>IV-07. 엘니뇨와 남방진동</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/04-07/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 104.</h2><pre><code>import cartopy.crs as ccrs
+from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
+import matplotlib.ticker as mticker
+import matplotlib.pyplot as plt
+import numpy as np
+
+# 1행 2행으로 subplot 생성 (1행: 전체 세계지도, 2행: ENSO 영역 지도)
+fig = plt.figure(figsize=(10, 10))
+
+# 1행: 전체 세계 지도
+ax1 = fig.add_subplot(2, 1, 1, projection=ccrs.PlateCarree(central_longitude=180))
+ax1.set_global()
+ax1.stock_img()
+ax1.set_title(&quot;세계 지도&quot;, fontsize=14)
+
+# 2행: ENSO 영역 지도
+ax2 = fig.add_subplot(2, 1, 2, projection=ccrs.PlateCarree(central_longitude=180))
+ax2.set_extent([120, 300, -30, 30], crs=ccrs.PlateCarree())
+ax2.stock_img()
+
+# 격자선 및 레이블 설정
+gl = ax2.gridlines(
+    crs=ccrs.PlateCarree(),
+    draw_labels=True,
+    linewidth=0.5, color=&#x27;gray&#x27;,
+    alpha=0.5, linestyle=&#x27;--&#x27;
+)
+gl.top_labels = False
+gl.xlocator = mticker.FixedLocator(np.arange(-180, 180, 30))
+gl.ylocator = mticker.FixedLocator(np.arange(-90, 90, 15))
+gl.xformatter = LongitudeFormatter()
+gl.yformatter = LatitudeFormatter()
+gl.xlabel_style = {&#x27;size&#x27;: 8, &#x27;color&#x27;: &#x27;k&#x27;}
+gl.ylabel_style = {&#x27;size&#x27;: 8, &#x27;color&#x27;: &#x27;k&#x27;}
+
+# 주요 도시(Darwin, Tahiti) 위치 표시
+latDarwin, lonDarwin = -12, 130
+latTahiti, lonTahiti = -17, -149
+
+ax2.scatter(lonDarwin, latDarwin, color=&#x27;red&#x27;, marker=&#x27;o&#x27;, transform=ccrs.PlateCarree())
+ax2.text(lonDarwin, latDarwin-5, &quot;Darwin&quot;, color=&#x27;red&#x27;, fontsize=8, transform=ccrs.PlateCarree())
+
+ax2.scatter(lonTahiti, latTahiti, color=&#x27;red&#x27;, marker=&#x27;o&#x27;, transform=ccrs.PlateCarree())
+ax2.text(lonTahiti, latTahiti-5, &quot;Tahiti&quot;, color=&#x27;red&#x27;, fontsize=8, transform=ccrs.PlateCarree())
+
+# ENSO 관련 해역(니뇨 영역) 경계선 좌표 정의
+latsNino1 = [0, -10, -10, 0, 0]
+lonsNino1 = [-90, -90, -80, -80, -90]
+latsNino3 = [5, -5, -5, 5, 5]
+lonsNino3 = [-150, -150, -90, -90, -150]
+latsNino34 = [5, -5, -5, 5, 5]
+lonsNino34 = [-170, -170, -120, -120, -170]
+latsNino4 = [5, -5, -5, 5, 5]
+lonsNino4 = [-200, -200, -150, -150, -200]
+
+# 각 영역 경계선 및 라벨 표시
+ax2.plot(lonsNino1, latsNino1, color=&#x27;black&#x27;, linewidth=0.75, transform=ccrs.Geodetic())
+ax2.text(lonsNino1[0], latsNino1[1]-4, &quot;NINO 1+2&quot;, color=&#x27;black&#x27;, fontsize=8, transform=ccrs.PlateCarree())
+
+ax2.plot(lonsNino3, latsNino3, color=&#x27;orange&#x27;, linewidth=0.75, transform=ccrs.Geodetic())
+ax2.text((lonsNino3[0]+lonsNino3[2])/2, latsNino3[1]-4, &quot;NINO 3&quot;, color=&#x27;orange&#x27;, fontsize=8, transform=ccrs.PlateCarree())
+
+ax2.plot(lonsNino34, latsNino34, color=&#x27;purple&#x27;, linewidth=0.75, transform=ccrs.Geodetic())
+ax2.text((lonsNino34[0]+lonsNino34[2])/2, latsNino34[0]+3, &quot;NINO 3.4&quot;, color=&#x27;purple&#x27;, fontsize=8, transform=ccrs.PlateCarree())
+
+ax2.plot(lonsNino4, latsNino4, color=&#x27;blue&#x27;, linewidth=0.75, transform=ccrs.Geodetic())
+ax2.text((lonsNino4[0]+lonsNino4[2])/2, latsNino4[1]-3.5, &quot;NINO 4&quot;, color=&#x27;blue&#x27;, fontsize=8, transform=ccrs.PlateCarree())
+
+ax2.set_title(&quot;ENSO 관련 해역(니뇨 영역)&quot;, fontsize=14) 
+# 그래프 레이아웃 조정
+plt.tight_layout()          
+
+plt.savefig(f&quot;{proj_dir}/ENSO_map.png&quot;, dpi=300, bbox_inches=&#x27;tight&#x27;)  # 저장
+plt.show()  # 그래프 출력</code></pre>
+<h2>code 105.</h2><pre><code>fname1 = &quot;ENSO.csv&quot;
+fid1 = &quot;1QkkjxaXMhiaurtA2RxV7XUxonZoDwmIr&quot;
+
+fname2 = &quot;SOI.signal.txt&quot;
+fid2 = &quot;1n2ZOOvFh6gm0VGc70j3OlzfCkgOvbuKr&quot;
+
+#requests 라이브러리를 이용(나의 구글드라이브에서 공유한 파일을 구글 코랩에서 사용할 경우)
+from pathlib import Path
+
+# ENSO/SOI는 주기적으로 갱신되는 피드이므로 항상 최신으로 새로 받습니다.
+du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={fid1}&quot;, Path(proj_dir) / fname1, overwrite=True)
+du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={fid2}&quot;, Path(proj_dir) / fname2, overwrite=True)</code></pre>
+<h2>code 106.</h2><pre><code>fpaths = du.list_files(proj_dir, [&quot;csv&quot;, &quot;txt&quot;])</code></pre>
+<h2>code 107.</h2><pre><code>n_lines = 10  # 출력할 줄 수
+
+print(f&quot;파일 내용 출력 (처음 {n_lines}줄):&quot;)
+print(&quot;=&quot;*40)
+
+# 순수 파이썬으로 구현 (운영체제 무관)
+try:
+    with open(fpaths[0], encoding=&#x27;utf-8&#x27;) as f:
+        for i, line in enumerate(f):
+            if i &gt;= n_lines:
+                break
+            print(f&quot;{i+1:3d}: {line.rstrip()}&quot;)
+except UnicodeDecodeError:
+ # UTF-8로 읽기 실패시 다른 인코딩 시도
+    try:
+        with open(fpaths[0], encoding=&#x27;cp949&#x27;) as f:
+            for i, line in enumerate(f):
+                if i &gt;= n_lines:
+                    break
+                print(f&quot;{i+1:3d}: {line.rstrip()}&quot;)
+    except Exception as e2:
+        print(f&quot;파일 읽기 실패 (UTF-8, CP949 모두 실패): {e2}&quot;)
+except Exception as e:
+    print(f&quot;파일 읽기 실패: {e}&quot;)
+
+print(&quot;=&quot;*60)</code></pre>
+<h2>code 108.</h2><pre><code>n_lines = 10  # 출력할 줄 수
+
+print(f&quot;파일 내용 출력 (처음 {n_lines}줄):&quot;)
+print(&quot;=&quot;*40)
+
+# 순수 파이썬으로 구현 (운영체제 무관)
+try:
+    with open(fpaths[1], encoding=&#x27;utf-8&#x27;) as f:
+        for i, line in enumerate(f):
+            if i &gt;= n_lines:
+                break
+            print(f&quot;{i+1:3d}: {line.rstrip()}&quot;)
+except UnicodeDecodeError:
+ # UTF-8로 읽기 실패시 다른 인코딩 시도
+    try:
+        with open(fpaths[0], encoding=&#x27;cp949&#x27;) as f:
+            for i, line in enumerate(f):
+                if i &gt;= n_lines:
+                    break
+                print(f&quot;{i+1:3d}: {line.rstrip()}&quot;)
+    except Exception as e2:
+        print(f&quot;파일 읽기 실패 (UTF-8, CP949 모두 실패): {e2}&quot;)
+except Exception as e:
+    print(f&quot;파일 읽기 실패: {e}&quot;)
+
+print(&quot;=&quot;*60)</code></pre>
+<h2>code 109.</h2><pre><code>import pandas as pd
+import numpy as np
+
+#파일 인코딩을 확인해 보자.
+with open(fpaths[0]) as f:
+    print(&quot;f.encoding:&quot;, f.encoding)
+    encoding = f.encoding
+
+# 일반적인 csv 파일 불러오기
+df_Kaggle = pd.read_csv(fpaths[0],
+ # encoding = encoding,
+                encoding = &quot;euc_kr&quot;, 
+                )
+
+df_Kaggle[&#x27;dt_date&#x27;] = pd.to_datetime(df_Kaggle[&#x27;Date&#x27;])
+df_Kaggle.index = df_Kaggle[&#x27;dt_date&#x27;]
+
+df_Kaggle = df_Kaggle.mask(df_Kaggle[&#x27;ONI&#x27;] == -99.9, np.nan)
+
+print(&quot;df_Kaggle : \n&quot;, df_Kaggle)</code></pre>
+<h2>code 110.</h2><pre><code>import numpy as np
+
+arr = np.loadtxt(fpaths[1],
+ #delimiter=&#x27; &#x27;, 
+			    )
+print(&quot;arr.shape :&quot;, arr.shape)
+print(&quot;arr : \n&quot;, arr)
+
+arr1 = arr[:,1:]
+print(&quot;arr1.shape :&quot;, arr1.shape)
+print(&quot;arr1 : \n&quot;, arr1)
+
+arr2 = arr1.reshape(-1)  # 1차원으로 펼침
+print(&quot;arr2.shape :&quot;, arr2.shape)
+print(&quot;arr2 : \n&quot;, arr2)
+
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
+StartDtStr = &quot;1866-01-01&quot;
+EndDTStr = &quot;2023-1-1&quot;
+
+StartDT = datetime.strptime(StartDtStr, &quot;%Y-%m-%d&quot;)
+EndDT = datetime.strptime(EndDTStr, &quot;%Y-%m-%d&quot;)
+
+date1 = StartDT
+proc_dates = []
+while date1 &lt; EndDT:
+    proc_dates.append(date1)
+    date1 +=  relativedelta(months=1)
+
+print(&quot;len(proc_dates): {}&quot;.format(len(proc_dates)))
+print(f&quot;proc_dates: {proc_dates}&quot;)</code></pre>
+<h2>code 111.</h2><pre><code># import pandas as pd
+import pandas as pd
+ 
+# 리스트로 DataFrame 만들기
+df_SOI = pd.DataFrame(list(zip(proc_dates, arr2)),
+                  columns = [&quot;date&quot;, &quot;SOI&quot;],
+              )
+df_SOI[&#x27;dt_date&#x27;] = pd.to_datetime(df_SOI[&#x27;date&#x27;])
+df_SOI.index = df_SOI[&#x27;dt_date&#x27;]
+df_SOI[&#x27;SOI&#x27;] = df_SOI[&#x27;SOI&#x27;].replace(-99.9, np.nan)
+print(&quot;df_SOI :&quot;, df_SOI)</code></pre>
+<h2>code 112.</h2><pre><code># 필요한 라이브러리 불러오기
+import matplotlib.pyplot as plt
+from matplotlib import rc
+
+# 예시 그래프
+fig, ax = plt.subplots(figsize=(12.0, 4.0))
+ax.plot(df_Kaggle[&#x27;dt_date&#x27;], df_Kaggle[&#x27;ONI&#x27;].astype(float), label=&#x27;ONI&#x27;)
+ax.set_title(&#x27;니뇨 3.4 지역의 해양 엘니뇨 지수(ONI)&#x27;, fontsize=18, fontweight=&#x27;bold&#x27;)
+ax.set_xlabel(&#x27;시간(년)&#x27;, fontsize=14)
+ax.set_ylabel(&#x27;수온 편차 (°C)&#x27;, fontsize=14)
+plt.show()</code></pre>
+<h2>code 113.</h2><pre><code>import matplotlib.pyplot as plt
+
+# 그림 사이즈를 가로로 길게 지정
+fig, ax = plt.subplots(figsize=(12.0, 4.0))
+
+ax.plot(df_Kaggle[&#x27;dt_date&#x27;], df_Kaggle[&#x27;ONI&#x27;].astype(float), &quot;k-&quot;, linewidth=0.5)
+#ax.plot(df_Kaggle[&#x27;dt_date&#x27;], df_Kaggle[&#x27;SOI&#x27;], &quot;k-&quot;)
+
+ax.set_xlim([df_Kaggle[&#x27;dt_date&#x27;].min(), df_Kaggle[&#x27;dt_date&#x27;].max()])
+ax.set_ylim([-3, 3])
+
+ax.axhline(y = 0, color = &#x27;black&#x27;, linestyle = &#x27;-&#x27;)
+
+ax.fill_between(df_Kaggle[&#x27;dt_date&#x27;], df_Kaggle[&#x27;ONI&#x27;].astype(float), 1,
+                where=df_Kaggle[&#x27;ONI&#x27;].astype(float) &gt; 1,
+                color=&#x27;red&#x27;, alpha=0.7,
+                )
+
+ax.fill_between(df_Kaggle[&#x27;dt_date&#x27;], df_Kaggle[&#x27;ONI&#x27;].astype(float), -1,
+                where= df_Kaggle[&#x27;ONI&#x27;].astype(float) &lt; -1,
+                color=&#x27;blue&#x27;, alpha=0.7,
+                )
+ax.grid()
+ax.set_xlabel(r&#x27;시간(년)&#x27;, fontsize = 14)
+ax.set_ylabel(r&#x27;수온 편차 ($\rm{^{\circ C}}$)&#x27;, fontsize = 14)
+
+ax.set_title(&#x27;니뇨 3.4 지역의 해양 엘니뇨 지수(ONI)&#x27;,
+          y=1.05,   # 제목 아래 여백
+          fontdict={&#x27;fontsize&#x27;:18,&#x27;fontweight&#x27;:&#x27;bold&#x27;})
+
+fig.tight_layout()
+fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0.1)
+
+plt.show()</code></pre>
+<h2>code 114.</h2><pre><code>import matplotlib.pyplot as plt
+
+# 그림 사이즈를 가로로 길게 지정
+fig, ax = plt.subplots(figsize=(12.0, 4.0))
+
+ax.plot(df_SOI[&#x27;dt_date&#x27;], df_SOI[&#x27;SOI&#x27;].astype(float), &quot;k-&quot;, linewidth=0.5)
+#ax.plot(dfSubset[&#x27;dt_date&#x27;], dfSubset[&#x27;SOI&#x27;], &quot;k-&quot;)
+
+ax.set_xlabel(r&#x27;시간(년)&#x27;, fontsize = 16)
+ax.set_ylabel(r&#x27;기압 편차 ($\rm{hPa}$)&#x27;, fontsize = 16)
+
+ax.set_xlim([df_SOI[&#x27;dt_date&#x27;].min(), df_SOI[&#x27;dt_date&#x27;].max()])
+ax.set_ylim([-6, 6])
+
+ax.axhline(y = 0, color = &#x27;black&#x27;, linestyle = &#x27;-&#x27;)
+
+ax.fill_between(df_SOI[&#x27;dt_date&#x27;], df_SOI[&#x27;SOI&#x27;].astype(float), 0, 
+                where= df_SOI[&#x27;SOI&#x27;].astype(float) &gt; 0,
+                color=&#x27;blue&#x27;, alpha=0.7,
+                )
+
+ax.fill_between(df_SOI[&#x27;dt_date&#x27;], df_SOI[&#x27;SOI&#x27;].astype(float), 0, 
+                where= df_SOI[&#x27;SOI&#x27;].astype(float) &lt; 0,
+                color=&#x27;red&#x27;, alpha=0.7,
+                )
+ax.grid()
+ax.set_title(&#x27;다윈과 타히티의 기압 편차(SOI)&#x27;, 
+          y=1.05,   # 제목 아래 여백
+          fontdict={&#x27;fontsize&#x27;:18,&#x27;fontweight&#x27;:&#x27;bold&#x27;})
+
+plt.setp(ax.get_xticklabels(), fontsize=16)
+plt.setp(ax.get_yticklabels(), fontsize=16)
+
+fig.tight_layout()
+fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0.1)
+
+plt.show()</code></pre>
+</body></html>

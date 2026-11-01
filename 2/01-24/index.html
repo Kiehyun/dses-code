@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>I-04. 코딩 에이전트로 분석 프로젝트 하기</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
+<h1>I-04. 코딩 에이전트로 분석 프로젝트 하기</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/01-24/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 16.</h2><pre><code>from pathlib import Path
+
+guide = &#x27;&#x27;&#x27;# 프로젝트 지침 — 우리 학교 기상 관측 데이터 분석
+
+## 목적
+학교 자동기상관측장비(AWS)의 1분 데이터로 월별 기온 · 강수 요약표와 그래프를 만든다.
+
+## 폴더
+- data/raw/      : 내려받은 원시 데이터 (읽기만 한다. 절대 고치지 않는다)
+- data/clean/    : 전처리한 데이터
+- notebooks/     : 분석 노트북
+- figures/       : 그림 (PNG, PDF)
+
+## 실행 환경
+- conda 환경 dses_Python (파이썬 3.12)에서 실행한다.
+- 새 패키지가 필요하면 설치하기 전에 먼저 물어본다.
+
+## 규칙
+- 기온은 섭씨(°C), 강수량은 mm로 표기한다.
+- 그래프의 축 이름과 제목은 한글로 쓴다.
+- 결측값을 지우거나 채울 때는 몇 개를 어떻게 처리했는지 출력한다.
+
+## 마치기 전에 확인할 것
+- 노트북을 처음부터 다시 실행해 오류 셀이 없는지 확인한다.
+- 바꾼 파일과 이유를 짧게 정리해 보고한다.
+&#x27;&#x27;&#x27;
+
+(proj_dir / &quot;AGENTS.md&quot;).write_text(guide, encoding=&quot;utf-8&quot;)         # 지침 본문
+(proj_dir / &quot;CLAUDE.md&quot;).write_text(&quot;@AGENTS.md\n&quot;, encoding=&quot;utf-8&quot;)  # AGENTS.md 불러오기
+
+print((proj_dir / &quot;AGENTS.md&quot;).read_text(encoding=&quot;utf-8&quot;))
+print(&quot;--- CLAUDE.md ---&quot;)
+print((proj_dir / &quot;CLAUDE.md&quot;).read_text(encoding=&quot;utf-8&quot;))</code></pre>
+<h2>code 17.</h2><pre><code>import json
+
+def check_notebook(path):
+    nb = json.loads(Path(path).read_text(encoding=&quot;utf-8-sig&quot;))
+    code_cells = [c for c in nb[&quot;cells&quot;] if c[&quot;cell_type&quot;] == &quot;code&quot;]
+    errors, not_run = [], 0
+    for c in code_cells:
+        source = &quot;&quot;.join(c[&quot;source&quot;]).strip()
+        for out in c.get(&quot;outputs&quot;, []):
+            if out.get(&quot;output_type&quot;) == &quot;error&quot;:
+                errors.append(out.get(&quot;ename&quot;, &quot;Error&quot;))
+        if source and c.get(&quot;execution_count&quot;) is None:
+            not_run += 1
+    return {&quot;노트북&quot;: Path(path).name, &quot;코드 셀&quot;: len(code_cells),
+            &quot;오류 셀&quot;: len(errors), &quot;실행 안 한 셀&quot;: not_run,
+            &quot;오류 종류&quot;: &quot;, &quot;.join(sorted(set(errors)))}
+
+check_notebook(sorted(Path.cwd().glob(&quot;*.ipynb&quot;))[0])   # 폴더의 첫 노트북으로 시험</code></pre>
+<h2>code 18.</h2><pre><code>import pandas as pd
+
+folder = Path.cwd()                                  # 점검할 폴더(지금 노트북이 있는 곳)
+report = pd.DataFrame([check_notebook(p) for p in sorted(folder.glob(&quot;*.ipynb&quot;))])
+report = report.sort_values([&quot;오류 셀&quot;, &quot;실행 안 한 셀&quot;], ascending=False,
+                            ignore_index=True)
+display(report)
+print(f&quot;오류가 남은 노트북: {(report[&#x27;오류 셀&#x27;] &gt; 0).sum()}개&quot;)</code></pre>
+</body></html>

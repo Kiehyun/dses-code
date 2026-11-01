@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>II-04. 기체 분자 운동과 맥스웰-볼츠만 분포</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
+<h1>II-04. 기체 분자 운동과 맥스웰-볼츠만 분포</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/02-24/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 39.</h2><pre><code>import numpy as np
+import matplotlib.pyplot as plt
+from scipy import constants
+
+plt.rcParams.update({&quot;axes.titlesize&quot;: 13, &quot;axes.labelsize&quot;: 11,
+                     &quot;xtick.labelsize&quot;: 9, &quot;ytick.labelsize&quot;: 9,
+                     &quot;legend.fontsize&quot;: 9})
+
+k_B = constants.k            # 볼츠만 상수 (J/K)
+amu = constants.atomic_mass  # 원자 질량 단위 (kg)
+
+
+def mb_speed_3d(v, m, T):
+    &quot;&quot;&quot;3차원 맥스웰-볼츠만 속력 분포 f(v) (단위: s/m)&quot;&quot;&quot;
+    a = m / (2 * k_B * T)
+    return 4 * np.pi * (a / np.pi) ** 1.5 * v**2 * np.exp(-a * v**2)
+
+
+def mb_speed_2d(v, m, T):
+    &quot;&quot;&quot;2차원 맥스웰-볼츠만 속력 분포 f(v) (단위: s/m)&quot;&quot;&quot;
+    return m * v / (k_B * T) * np.exp(-m * v**2 / (2 * k_B * T))
+
+
+def char_speeds_3d(m, T):
+    &quot;&quot;&quot;3차원 최빈 속력, 평균 속력, 제곱평균제곱근 속력 (m/s)&quot;&quot;&quot;
+    v_p = np.sqrt(2 * k_B * T / m)
+    v_mean = np.sqrt(8 * k_B * T / (np.pi * m))
+    v_rms = np.sqrt(3 * k_B * T / m)
+    return v_p, v_mean, v_rms
+
+
+m_N2 = 28.014 * amu  # 질소 분자 하나의 질량
+v = np.linspace(0, 3000, 1201)  # 속력 격자 (m/s)
+dv = v[1] - v[0]
+
+print(f&quot;질소 분자 하나의 질량: {m_N2:.3e} kg&quot;)
+for T in (300, 1000):
+    v_p, v_mean, v_rms = char_speeds_3d(m_N2, T)
+    area = mb_speed_3d(v, m_N2, T).sum() * dv  # 넓이(확률의 합) 확인
+    print(f&quot;T = {T:4d} K : v_p = {v_p:5.0f}, &lt;v&gt; = {v_mean:5.0f}, &quot;
+          f&quot;v_rms = {v_rms:5.0f} m/s,  넓이 = {area:.4f}&quot;)</code></pre>
+<h2>code 40.</h2><pre><code>fig, ax = plt.subplots(figsize=(8.8, 4))
+for T, color in zip((100, 300, 600, 1000),
+                    (&quot;tab:blue&quot;, &quot;tab:green&quot;, &quot;tab:orange&quot;, &quot;tab:red&quot;)):
+    ax.plot(v, mb_speed_3d(v, m_N2, T) * 1000, color=color, lw=2,
+            label=f&quot;{T} K&quot;)
+
+# 300 K 곡선 위에 세 대표 속력 표시
+for vv, ls, name in zip(char_speeds_3d(m_N2, 300), (&quot;:&quot;, &quot;--&quot;, &quot;-.&quot;),
+                        (&quot;$v_p$&quot;, r&quot;$\langle v \rangle$&quot;, &quot;$v_{rms}$&quot;)):
+    ax.axvline(vv, color=&quot;tab:green&quot;, ls=ls, lw=1, label=f&quot;{name} (300 K)&quot;)
+
+ax.set_xlabel(&quot;속력 (m/s)&quot;)
+ax.set_ylabel(&quot;확률 밀도 (1/(km/s))&quot;)
+ax.set_title(&quot;온도에 따른 질소 분자의 속력 분포&quot;)
+ax.legend(ncol=2)
+ax.grid(alpha=0.3)
+du.save_figure(fig, os.path.join(proj_dir, &quot;mb_temperature&quot;))
+plt.show()</code></pre>
+<h2>code 41.</h2><pre><code>gases = {&quot;H$_2$&quot;: 2.016, &quot;He&quot;: 4.003, &quot;H$_2$O&quot;: 18.015,
+         &quot;N$_2$&quot;: 28.014, &quot;O$_2$&quot;: 31.998, &quot;CO$_2$&quot;: 44.009}
+T = 300
+v_wide = np.linspace(0, 4000, 1601)
+
+fig, ax = plt.subplots(figsize=(8.8, 4))
+for name, M in gases.items():
+    ax.plot(v_wide, mb_speed_3d(v_wide, M * amu, T) * 1000, lw=2, label=name)
+ax.set_xlabel(&quot;속력 (m/s)&quot;)
+ax.set_ylabel(&quot;확률 밀도 (1/(km/s))&quot;)
+ax.set_title(&quot;300 K에서 기체별 분자 속력 분포&quot;)
+ax.legend()
+ax.grid(alpha=0.3)
+du.save_figure(fig, os.path.join(proj_dir, &quot;mb_molecules&quot;))
+plt.show()
+
+print(f&quot;기체   분자량 {&#x27;v_p&#x27;:&gt;7s} {&#x27;&lt;v&gt;&#x27;:&gt;7s} {&#x27;v_rms&#x27;:&gt;7s}  (m/s, 300 K)&quot;)
+for name, M in gases.items():
+    label = name.replace(&quot;$_2$&quot;, &quot;2&quot;).replace(&quot;$&quot;, &quot;&quot;)
+    v_p, v_mean, v_rms = char_speeds_3d(M * amu, T)
+    print(f&quot;{label:6s} {M:6.1f} {v_p:7.0f} {v_mean:7.0f} {v_rms:7.0f}&quot;)</code></pre>
+<h2>code 42.</h2><pre><code>rng = np.random.default_rng(42)       # 난수 씨앗 고정
+
+m_Ar = 39.948 * amu   # 아르곤 원자 질량 (kg)
+radius = 0.17e-9      # 원자 반지름 (m)
+N = 900               # 원자 수
+L = 75e-9             # 상자 한 변 (m)
+T0 = 300.0            # 온도 (K)
+v0 = np.sqrt(2 * k_B * T0 / m_Ar)   # 모든 원자의 처음 속력 (m/s)
+
+# 격자점에 놓고 조금씩 흔들기 (처음부터 겹치지 않게)
+n_side = int(np.ceil(np.sqrt(N)))
+spacing = L / n_side
+grid = (np.arange(n_side) + 0.5) * spacing
+gx, gy = np.meshgrid(grid, grid)
+pos0 = np.column_stack([gx.ravel(), gy.ravel()])[:N]
+pos0 = pos0 + rng.uniform(-0.3, 0.3, size=pos0.shape) * spacing
+
+# 같은 속력, 무작위 방향
+theta = rng.uniform(0, 2 * np.pi, N)
+vel0 = v0 * np.column_stack([np.cos(theta), np.sin(theta)])
+
+# 밀도와 충돌 빈도 어림 (2차원)
+n2d = N / L**2
+fill = N * np.pi * radius**2 / L**2
+mfp = 1 / (2 * np.sqrt(2) * n2d * 2 * radius)        # 평균 자유 거리
+v_mean_2d = np.sqrt(np.pi * k_B * T0 / (2 * m_Ar))  # 2차원 평균 속력
+print(f&quot;처음 속력 v0       : {v0:.1f} m/s (모든 원자 같음)&quot;)
+print(f&quot;원반이 차지한 넓이 : {fill * 100:.2f}%&quot;)
+print(f&quot;평균 원자 간격     : {np.sqrt(1 / n2d) * 1e9:.2f} nm&quot;)
+print(f&quot;평균 자유 거리     : {mfp * 1e9:.1f} nm&quot;)
+print(f&quot;평균 충돌 시간     : {mfp / v_mean_2d * 1e12:.1f} ps&quot;)
+
+# 비교: 해수면 공기 (3차원)
+P_air, T_air, d_air = 101325.0, 288.15, 0.37e-9
+n_air = P_air / (k_B * T_air)
+mfp_air = 1 / (np.sqrt(2) * np.pi * d_air**2 * n_air)
+print(f&quot;\n[해수면 공기] 수 밀도 {n_air:.2e} /m^3, &quot;
+      f&quot;평균 분자 간격 {n_air ** (-1 / 3) * 1e9:.1f} nm, &quot;
+      f&quot;평균 자유 거리 {mfp_air * 1e9:.0f} nm&quot;)</code></pre>
+<h2>code 43.</h2><pre><code>from scipy.spatial import cKDTree
+
+
+def step(pos, vel, dt):
+    &quot;&quot;&quot;원자를 dt 동안 움직이고 벽 · 원자 충돌을 처리 (pos, vel을 제자리에서 바꿈)&quot;&quot;&quot;
+    pos += vel * dt                                   # 1) 이동
+
+    wall_impulse = 0.0                                # 2) 벽 충돌
+    for axis in range(2):
+        hit = ((pos[:, axis] &lt; radius) &amp; (vel[:, axis] &lt; 0)) | \
+              ((pos[:, axis] &gt; L - radius) &amp; (vel[:, axis] &gt; 0))
+        wall_impulse += 2 * m_Ar * np.abs(vel[hit, axis]).sum()
+        vel[hit, axis] *= -1
+
+    n_coll = 0                                        # 3) 원자끼리 충돌
+    pairs = cKDTree(pos).query_pairs(2 * radius, output_type=&quot;ndarray&quot;)
+    for i, j in pairs:
+        dr = pos[j] - pos[i]
+        dv = vel[j] - vel[i]
+        approach = dv @ dr
+        if approach &lt; 0:                              # 다가가는 쌍만
+            change = approach / (dr @ dr) * dr
+            vel[i] += change
+            vel[j] -= change
+            n_coll += 1
+    return wall_impulse, n_coll</code></pre>
+<h2>code 44.</h2><pre><code>import time
+
+dt = 0.05e-12        # 시간 간격 (s)
+n_steps = 12000      # 600 ps
+t_eq = 200e-12       # 이 시각 뒤를 평형 구간으로 봄
+snap_times_ps = (0, 10, 40, 200)
+
+pos, vel = pos0.copy(), vel0.copy()
+history = {&quot;t&quot;: [0.0], &quot;E&quot;: [0.5 * m_Ar * (vel**2).sum()],
+           &quot;v2&quot;: [(vel**2).sum(1).mean()], &quot;v4&quot;: [((vel**2).sum(1)**2).mean()]}
+snapshots = {0: np.linalg.norm(vel, axis=1)}
+eq_speed, eq_vx = [], []
+impulse_eq, n_coll_total = 0.0, 0
+
+start = time.perf_counter()
+for s in range(1, n_steps + 1):
+    impulse, n_coll = step(pos, vel, dt)
+    n_coll_total += n_coll
+    t = s * dt
+    if t &gt; t_eq:
+        impulse_eq += impulse
+    if s % 10 == 0:                                   # 0.5 ps마다 기록
+        v2 = (vel**2).sum(1)
+        history[&quot;t&quot;].append(t)
+        history[&quot;E&quot;].append(0.5 * m_Ar * v2.sum())
+        history[&quot;v2&quot;].append(v2.mean())
+        history[&quot;v4&quot;].append((v2**2).mean())
+    t_ps = round(t * 1e12, 6)
+    if t_ps in snap_times_ps:
+        snapshots[int(t_ps)] = np.linalg.norm(vel, axis=1)
+    if t &gt; t_eq and s % 40 == 0:                      # 2 ps마다 평형 데이터
+        eq_speed.append(np.linalg.norm(vel, axis=1))
+        eq_vx.append(vel[:, 0].copy())
+
+history = {key: np.array(val) for key, val in history.items()}
+eq_speed, eq_vx = np.concatenate(eq_speed), np.concatenate(eq_vx)
+print(f&quot;계산 시간 {time.perf_counter() - start:.1f} 초, &quot;
+      f&quot;충돌 {n_coll_total}번 (원자 하나당 평균 {2 * n_coll_total / N:.1f}번)&quot;)
+print(f&quot;평형 데이터: 속력 표본 {eq_speed.size}개&quot;)</code></pre>
+<h2>code 45.</h2><pre><code>speed_end = np.linalg.norm(vel, axis=1)
+fig, axes = plt.subplots(1, 2, figsize=(7.5, 3.6), constrained_layout=True)
+for ax, p, s_, title in zip(axes, (pos0, pos), (np.linalg.norm(vel0, axis=1), speed_end),
+                            (&quot;처음 (t = 0 ps)&quot;, &quot;마지막 (t = 600 ps)&quot;)):
+    sc = ax.scatter(p[:, 0] * 1e9, p[:, 1] * 1e9, c=s_, s=4, cmap=&quot;plasma&quot;,
+                    vmin=0, vmax=900)
+    ax.set_xlim(0, L * 1e9)
+    ax.set_ylim(0, L * 1e9)
+    ax.set_aspect(&quot;equal&quot;)
+    ax.set_xlabel(&quot;x (nm)&quot;)
+    ax.set_title(title)
+axes[0].set_ylabel(&quot;y (nm)&quot;)
+fig.colorbar(sc, ax=axes, shrink=0.85, label=&quot;속력 (m/s)&quot;)
+du.save_figure(fig, os.path.join(proj_dir, &quot;box_snapshots&quot;))
+plt.show()</code></pre>
+<h2>code 46.</h2><pre><code>v_grid = np.linspace(0, 1000, 401)
+f2_theory = mb_speed_2d(v_grid, m_Ar, T0)
+bins = np.linspace(0, 1000, 41)
+
+fig, axes = plt.subplots(2, 2, figsize=(7.5, 5.2), sharex=True, sharey=True,
+                         constrained_layout=True)
+for ax, t_ps in zip(axes.ravel(), snap_times_ps):
+    ax.hist(snapshots[t_ps], bins=bins, density=True, color=&quot;tab:blue&quot;,
+            alpha=0.6, label=&quot;시뮬레이션&quot;)
+    ax.plot(v_grid, f2_theory, &quot;r-&quot;, lw=2, label=&quot;이론 (300 K)&quot;)
+    ax.set_title(f&quot;t = {t_ps} ps&quot;, fontsize=12)
+    ax.set_ylim(0, 0.006)
+    ax.grid(alpha=0.3)
+for ax in axes[1]:
+    ax.set_xlabel(&quot;속력 (m/s)&quot;)
+for ax in axes[:, 0]:
+    ax.set_ylabel(&quot;확률 밀도 (s/m)&quot;)
+axes[0, 0].legend(loc=&quot;upper right&quot;)
+du.save_figure(fig, os.path.join(proj_dir, &quot;speed_hist_evolution&quot;))
+plt.show()
+
+for t_ps in snap_times_ps:
+    sp = snapshots[t_ps]
+    print(f&quot;t = {t_ps:3d} ps : 평균 {sp.mean():5.1f} m/s, 표준편차 {sp.std():5.1f} m/s&quot;)</code></pre>
+<h2>code 47.</h2><pre><code>sigma = np.sqrt(k_B * T0 / m_Ar)                     # 성분별 표준편차
+vx_grid = np.linspace(-1000, 1000, 401)
+gauss = np.exp(-vx_grid**2 / (2 * sigma**2)) / (np.sqrt(2 * np.pi) * sigma)
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(7.5, 3.2), constrained_layout=True)
+ax1.hist(eq_speed, bins=bins, density=True, color=&quot;tab:blue&quot;, alpha=0.6,
+         label=&quot;시뮬레이션&quot;)
+ax1.plot(v_grid, f2_theory, &quot;r-&quot;, lw=2, label=&quot;2차원 이론&quot;)
+ax1.set_xlabel(&quot;속력 v (m/s)&quot;)
+ax1.set_ylabel(&quot;확률 밀도 (s/m)&quot;)
+ax1.set_title(&quot;속력&quot;)
+ax1.legend()
+ax1.grid(alpha=0.3)
+
+ax2.hist(eq_vx, bins=np.linspace(-1000, 1000, 41), density=True,
+         color=&quot;tab:green&quot;, alpha=0.6, label=&quot;시뮬레이션&quot;)
+ax2.plot(vx_grid, gauss, &quot;r-&quot;, lw=2, label=&quot;정규 분포&quot;)
+ax2.set_xlabel(&quot;속도 성분 $v_x$ (m/s)&quot;)
+ax2.set_title(&quot;x 방향 속도&quot;)
+ax2.legend()
+ax2.grid(alpha=0.3)
+du.save_figure(fig, os.path.join(proj_dir, &quot;speed_equilibrium&quot;))
+plt.show()
+
+v_p2 = np.sqrt(k_B * T0 / m_Ar)
+v_mean2 = np.sqrt(np.pi * k_B * T0 / (2 * m_Ar))
+v_rms2 = np.sqrt(2 * k_B * T0 / m_Ar)
+counts, edges = np.histogram(eq_speed, bins=bins)
+v_mode_sim = 0.5 * (edges[counts.argmax()] + edges[counts.argmax() + 1])
+
+
+def lab(s, n=14):                                    # 한글은 두 칸 너비로 세어 맞춤
+    return s + &quot; &quot; * (n - sum(2 if ord(ch) &gt; 0x1100 else 1 for ch in s))
+
+
+print(lab(&quot;&quot;) + &quot;시뮬레이션&quot; + &quot; &quot; * 6 + &quot;이론&quot;)
+print(f&quot;{lab(&#x27;최빈 속력&#x27;)}{v_mode_sim:10.0f}{v_p2:10.0f}  m/s (막대 폭 25 m/s)&quot;)
+print(f&quot;{lab(&#x27;평균 속력&#x27;)}{eq_speed.mean():10.1f}{v_mean2:10.1f}  m/s&quot;)
+print(f&quot;{lab(&#x27;rms 속력&#x27;)}{np.sqrt((eq_speed**2).mean()):10.1f}{v_rms2:10.1f}  m/s&quot;)
+print(f&quot;{lab(&#x27;v_x 표준편차&#x27;)}{eq_vx.std():10.1f}{sigma:10.1f}  m/s&quot;)</code></pre>
+<h2>code 48.</h2><pre><code>t_ps = history[&quot;t&quot;] * 1e12
+E_rel = (history[&quot;E&quot;] - history[&quot;E&quot;][0]) / history[&quot;E&quot;][0]
+shape = history[&quot;v4&quot;] / history[&quot;v2&quot;]**2
+tau = mfp / v_mean_2d * 1e12                          # 평균 충돌 시간 (ps)
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(7.5, 3.2), constrained_layout=True)
+ax1.plot(t_ps, E_rel / 1e-16, color=&quot;tab:purple&quot;)
+ax1.set_ylim(-5, 5)
+ax1.set_xlabel(&quot;시간 (ps)&quot;)
+ax1.set_ylabel(r&quot;에너지 상대 변화 ($\times 10^{-16}$)&quot;)
+ax1.set_title(&quot;운동 에너지 합&quot;)
+ax1.grid(alpha=0.3)
+
+ax2.plot(t_ps, shape, color=&quot;tab:blue&quot;, lw=1)
+ax2.axhline(2, color=&quot;r&quot;, ls=&quot;--&quot;, label=&quot;2차원 이론값 2&quot;)
+ax2.axvline(tau, color=&quot;gray&quot;, ls=&quot;:&quot;, label=f&quot;평균 충돌 시간 {tau:.0f} ps&quot;)
+ax2.set_xlabel(&quot;시간 (ps)&quot;)
+ax2.set_ylabel(r&quot;$\langle v^4\rangle / \langle v^2\rangle^2$&quot;)
+ax2.set_title(&quot;분포 모양의 변화&quot;)
+ax2.legend(loc=&quot;lower right&quot;)
+ax2.grid(alpha=0.3)
+du.save_figure(fig, os.path.join(proj_dir, &quot;energy_and_shape&quot;))
+plt.show()
+
+print(f&quot;에너지 상대 변화의 최댓값: {np.abs(E_rel).max():.1e}&quot;)
+for t_check in (10, 40, 100):
+    print(f&quot;t = {t_check:3d} ps의 모양 비율: {shape[np.searchsorted(t_ps, t_check)]:.2f}&quot;)
+print(f&quot;평형 구간 평균 모양 비율 : {shape[t_ps &gt; 200].mean():.3f}&quot;)</code></pre>
+<h2>code 49.</h2><pre><code>duration = n_steps * dt - t_eq
+P_sim = impulse_eq / (duration * 4 * L)               # 측정한 압력 (N/m)
+T_sim = history[&quot;E&quot;][-1] / (N * k_B)                  # 2차원: E/N = k_B T
+P_ideal = N * k_B * T_sim / L**2                      # 이상기체 식
+
+print(f&quot;운동 에너지로 구한 온도 : {T_sim:.2f} K&quot;)
+print(f&quot;벽 충돌로 잰 압력      : {P_sim:.3e} N/m&quot;)
+print(f&quot;이상기체 식 N k_B T / A : {P_ideal:.3e} N/m&quot;)
+print(f&quot;비율 (측정 / 이상기체)  : {P_sim / P_ideal:.3f}&quot;)</code></pre>
+<h2>code 50.</h2><pre><code>from scipy.special import erfcx
+
+G = constants.G
+bodies = {  # 이름: (질량 kg, 반지름 m, 대기 맨 위층 대표 온도 K)
+    &quot;지구&quot;: (5.972e24, 6.371e6, 1000),
+    &quot;달&quot;:   (7.342e22, 1.737e6, 390),
+    &quot;화성&quot;: (6.417e23, 3.390e6, 250),
+}
+species = {&quot;H&quot;: 1.008, &quot;He&quot;: 4.003, &quot;N2&quot;: 28.014, &quot;CO2&quot;: 44.009}
+
+
+def log10_escape_fraction(v_esc, m, T):
+    &quot;&quot;&quot;속력이 v_esc보다 큰 분자 비율의 상용로그 (3차원 맥스웰-볼츠만)&quot;&quot;&quot;
+    x = v_esc / np.sqrt(2 * k_B * T / m)
+    return -x**2 * np.log10(np.e) + np.log10(erfcx(x) + 2 * x / np.sqrt(np.pi))
+
+
+v_esc_of = {}
+for body, (M, R, T_top) in bodies.items():
+    v_esc = np.sqrt(2 * G * M / R)
+    v_esc_of[body] = v_esc
+    print(f&quot;[{body}] 탈출 속도 {v_esc / 1000:.2f} km/s, 온도 {T_top} K&quot;)
+    for sp, Mw in species.items():
+        m = Mw * amu
+        v_mean = np.sqrt(8 * k_B * T_top / (np.pi * m))
+        ratio = v_esc / v_mean
+        verdict = &quot;남음&quot; if ratio &gt; 6 else &quot;빠져나감&quot;
+        print(f&quot;   {sp:4s} 평균 속력 {v_mean / 1000:5.2f} km/s, &quot;
+              f&quot;v_esc/&lt;v&gt; = {ratio:5.1f}, &quot;
+              f&quot;log10 F = {log10_escape_fraction(v_esc, m, T_top):7.1f}  -&gt; {verdict}&quot;)</code></pre>
+<h2>code 51.</h2><pre><code>from matplotlib.ticker import FuncFormatter, LogLocator, NullLocator
+
+v_km = np.linspace(0.01, 16, 800)                    # km/s
+T_exo = bodies[&quot;지구&quot;][2]
+
+fig, ax = plt.subplots(figsize=(8.6, 4.2))
+for sp, color in zip((&quot;H&quot;, &quot;He&quot;, &quot;N2&quot;), (&quot;tab:red&quot;, &quot;tab:orange&quot;, &quot;tab:blue&quot;)):
+    f = mb_speed_3d(v_km * 1000, species[sp] * amu, T_exo) * 1000  # 1/(km/s)
+    label = &quot;N$_2$&quot; if sp == &quot;N2&quot; else sp
+    ax.semilogy(v_km, f, color=color, lw=2, label=label)
+for body, ls in zip((&quot;달&quot;, &quot;화성&quot;, &quot;지구&quot;), (&quot;:&quot;, &quot;-.&quot;, &quot;--&quot;)):
+    ax.axvline(v_esc_of[body] / 1000, color=&quot;k&quot;, ls=ls, lw=1.2,
+               label=f&quot;{body} 탈출 속도&quot;)
+ax.set_ylim(1e-12, 1e5)
+ax.yaxis.set_major_locator(LogLocator(base=10, numticks=10))
+ax.yaxis.set_major_formatter(FuncFormatter(lambda y, _: f&quot;$10^{{{np.log10(y):.0f}}}$&quot;))
+ax.yaxis.set_minor_locator(NullLocator())
+ax.set_xlabel(&quot;속력 (km/s)&quot;)
+ax.set_ylabel(&quot;확률 밀도 (1/(km/s))&quot;)
+ax.set_title(f&quot;{T_exo} K에서 기체별 속력 분포와 탈출 속도&quot;)
+ax.legend(ncol=2, loc=&quot;upper right&quot;)
+ax.grid(alpha=0.3, which=&quot;both&quot;)
+du.save_figure(fig, os.path.join(proj_dir, &quot;escape_tail&quot;))
+plt.show()</code></pre>
+<h2>code 52.</h2><pre><code>MAKE_ANIMATION = False   # True로 바꾸면 애니메이션 생성
+
+if MAKE_ANIMATION:
+    from matplotlib import animation
+    from IPython.display import HTML, display
+
+    pos_a, vel_a = pos0.copy(), vel0.copy()
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(7.5, 3.4), constrained_layout=True)
+    dots = ax1.scatter(pos_a[:, 0] * 1e9, pos_a[:, 1] * 1e9, s=4,
+                       c=np.linalg.norm(vel_a, axis=1), cmap=&quot;plasma&quot;, vmin=0, vmax=900)
+    ax1.set_xlim(0, L * 1e9)
+    ax1.set_ylim(0, L * 1e9)
+    ax1.set_aspect(&quot;equal&quot;)
+    ax1.set_xlabel(&quot;x (nm)&quot;)
+    ax1.set_ylabel(&quot;y (nm)&quot;)
+    ax2.plot(v_grid, f2_theory, &quot;r-&quot;, lw=2)
+    _, _, bars = ax2.hist(np.linalg.norm(vel_a, axis=1), bins=bins, density=True,
+                          color=&quot;tab:blue&quot;, alpha=0.6)
+    ax2.set_ylim(0, 0.006)
+    ax2.set_xlabel(&quot;속력 (m/s)&quot;)
+    title = ax2.set_title(&quot;t = 0 ps&quot;)
+
+    def update(frame):
+        for _ in range(10):                          # 10단계 = 0.5 ps
+            step(pos_a, vel_a, dt)
+        speed = np.linalg.norm(vel_a, axis=1)
+        dots.set_offsets(pos_a * 1e9)
+        dots.set_array(speed)
+        heights, _ = np.histogram(speed, bins=bins, density=True)
+        for bar, h in zip(bars, heights):
+            bar.set_height(h)
+        title.set_text(f&quot;t = {(frame + 1) * 0.5:.1f} ps&quot;)
+        return [dots, title, *bars]
+
+    ani = animation.FuncAnimation(fig, update, frames=200, interval=50)
+    plt.close(fig)
+    display(HTML(ani.to_jshtml()))
+else:
+    print(&quot;애니메이션을 보려면 MAKE_ANIMATION = True로 바꾸어 실행 (책에는 싣지 않음)&quot;)</code></pre>
+</body></html>

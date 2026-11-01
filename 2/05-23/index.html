@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>V-03. 화석 산출과 지질 시대</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
+<h1>V-03. 화석 산출과 지질 시대</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/05-23/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 559.</h2><pre><code>from pathlib import Path
+from io import StringIO
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import requests
+
+DATA_DIR = proj_dir
+DATA_DIR.mkdir(exist_ok=True)
+
+params = {
+    &quot;base_name&quot;: &quot;Trilobita&quot;,
+    &quot;show&quot;: &quot;coords,phylo,strat,lith&quot;,
+    &quot;occs_created_before&quot;: &quot;2026-10-26&quot;,  # 이 날짜 전에 등록된 기록만(결과 재현용)
+    &quot;limit&quot;: &quot;all&quot;,  # 숫자를 주면 등록 순서 앞쪽 기록만 받음
+}
+url = &quot;https://paleobiodb.org/data1.2/occs/list.csv&quot;
+
+# PBDB API에서 CSV 문자열 내려받기
+response = requests.get(url, params=params, timeout=180)
+response.raise_for_status()
+
+csv_file = DATA_DIR / &quot;pbdb_trilobita_occurrences.csv&quot;
+csv_file.write_bytes(response.content)   # 받은 그대로 저장(윈도우 줄바꿈 중복 방지)
+
+# 내려받은 CSV를 DataFrame으로 읽기
+fossils = pd.read_csv(StringIO(response.text), low_memory=False)
+
+print(response.url)
+print(f&quot;데이터 개수: {len(fossils):,}&quot;)
+print(f&quot;저장 위치: {csv_file}&quot;)
+fossils.head()</code></pre>
+<h2>code 560.</h2><pre><code>use_cols = [&quot;accepted_name&quot;, &quot;accepted_rank&quot;, &quot;early_interval&quot;,
+            &quot;late_interval&quot;, &quot;max_ma&quot;, &quot;min_ma&quot;, &quot;lng&quot;, &quot;lat&quot;, &quot;phylum&quot;,
+            &quot;class&quot;, &quot;order&quot;, &quot;family&quot;, &quot;genus&quot;, &quot;lithology1&quot;]
+fossils[use_cols].head(10)</code></pre>
+<h2>code 561.</h2><pre><code># 분석을 위해 숫자형 열과 대표 연대 정리
+fossils[&quot;max_ma&quot;] = pd.to_numeric(fossils[&quot;max_ma&quot;], errors=&quot;coerce&quot;)
+fossils[&quot;min_ma&quot;] = pd.to_numeric(fossils[&quot;min_ma&quot;], errors=&quot;coerce&quot;)
+fossils[&quot;mid_ma&quot;] = (fossils[&quot;max_ma&quot;] + fossils[&quot;min_ma&quot;]) / 2
+
+# 좌표가 있는 데이터만 지도 분석에 사용
+fossils_geo = fossils.dropna(subset=[&quot;lng&quot;, &quot;lat&quot;]).copy()
+print(f&quot;좌표가 있는 데이터: {len(fossils_geo):,}&quot;)</code></pre>
+<h2>code 562.</h2><pre><code># 국제 연대층서표(ICS v2026/06)의 고생대 기 경계 (Ma)
+period_edges = [251.902, 298.9, 358.86, 419.62, 443.1, 486.85, 538.8]
+period_names = [&quot;페름기&quot;, &quot;석탄기&quot;, &quot;데본기&quot;, &quot;실루리아기&quot;, &quot;오르도비스기&quot;, &quot;캄브리아기&quot;]
+
+fossils[&quot;period&quot;] = pd.cut(fossils[&quot;mid_ma&quot;], bins=period_edges,
+                           labels=period_names, right=False)
+period_counts = (
+    fossils[&quot;period&quot;]
+    .value_counts()
+    .reindex(period_names[::-1])  # 오래된 기부터
+    .rename_axis(&quot;period&quot;)
+    .reset_index(name=&quot;count&quot;)
+)
+print(f&quot;전체 기록 수: {len(fossils):,}&quot;)
+print(period_counts.to_string(index=False))
+
+fig, ax = plt.subplots(figsize=(7.7, 4.2))
+sns.barplot(data=period_counts, x=&quot;count&quot;, y=&quot;period&quot;, ax=ax,
+            color=&quot;lightseagreen&quot;)
+ax.set_title(&quot;고생대 기별 삼엽충 화석 산출 기록 수&quot;)
+ax.set_xlabel(&quot;산출 기록 수&quot;)
+ax.set_ylabel(&quot;지질 시대(기)&quot;)
+ax.grid(axis=&quot;x&quot;, alpha=0.3)
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_01&quot;))
+plt.show()</code></pre>
+<h2>code 563.</h2><pre><code>fig, ax = plt.subplots(figsize=(8.4, 3.8))
+ax.hist(fossils[&quot;mid_ma&quot;].dropna(), bins=40, color=&quot;slateblue&quot;, alpha=0.8)
+ax.axvline(251.9, color=&quot;red&quot;, ls=&quot;--&quot;, lw=1, label=&quot;페름기 말 대멸종 (251.9 Ma)&quot;)
+ax.invert_xaxis()  # 오래된 시기를 왼쪽에
+ax.set_title(&quot;삼엽충 화석 산출 기록의 연대 분포&quot;)
+ax.set_xlabel(&quot;연대 (Ma, 백만 년 전)&quot;)
+ax.set_ylabel(&quot;산출 기록 수&quot;)
+ax.legend()
+ax.grid(alpha=0.3)
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_02&quot;))
+plt.show()</code></pre>
+<h2>code 564.</h2><pre><code>import folium
+
+# 너무 많은 점을 모두 표시하면 지도가 느려질 수 있어 일부만 사용
+map_data = fossils_geo.sample(min(800, len(fossils_geo)), random_state=42)
+
+m = folium.Map(location=[20, 0], zoom_start=2, tiles=&quot;CartoDB positron&quot;)
+for row in map_data.itertuples(index=False):
+    popup = f&quot;{row.accepted_name}&lt;br&gt;{row.early_interval}&lt;br&gt;{row.max_ma}-{row.min_ma} Ma&quot;
+    folium.CircleMarker(
+        [row.lat, row.lng],
+        radius=3,
+        color=&quot;darkred&quot;,
+        fill=True,
+        fill_opacity=0.6,
+        popup=popup,
+    ).add_to(m)
+
+map_file = DATA_DIR / &quot;pbdb_trilobita_map.html&quot;
+m.save(map_file)
+print(f&quot;지도 저장 위치: {map_file}&quot;)</code></pre>
+</body></html>

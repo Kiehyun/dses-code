@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>I-02. Miniconda와 VS Code로 작업 환경 만들기</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
+<h1>I-02. Miniconda와 VS Code로 작업 환경 만들기</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/01-22/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 10.</h2><pre><code>import sys
+from importlib.metadata import version, PackageNotFoundError
+
+print(&quot;실행 중인 파이썬:&quot;, sys.executable)          # 경로에 envs\dses_Python 포함 여부 확인
+print(&quot;파이썬 버전     :&quot;, sys.version.split()[0])
+
+packages = [&quot;numpy&quot;, &quot;pandas&quot;, &quot;matplotlib&quot;, &quot;scipy&quot;, &quot;astropy&quot;, &quot;photutils&quot;,
+            &quot;cartopy&quot;, &quot;xarray&quot;, &quot;netCDF4&quot;, &quot;metpy&quot;, &quot;gsw&quot;, &quot;folium&quot;]
+for name in packages:
+    try:
+        print(f&quot;  {name:&lt;11} {version(name)}&quot;)
+    except PackageNotFoundError:
+        print(f&quot;  {name:&lt;11} 설치 안 됨 — conda install {name.lower()}&quot;)</code></pre>
+<h2>code 11.</h2><pre><code>import matplotlib.pyplot as plt
+import os
+
+years = [1980, 1990, 2000, 2010, 2020, 2024]
+co2 = [338.9, 354.5, 369.7, 389.9, 414.2, 424.6]     # 마우나로아 연평균 CO2 농도(ppm)
+
+fig, ax = plt.subplots(figsize=(8.5, 4.2))
+ax.plot(years, co2, marker=&quot;o&quot;)
+ax.set_xlabel(&quot;연도&quot;)
+ax.set_ylabel(&quot;CO$_2$ 농도 (ppm)&quot;)
+ax.set_title(&quot;마우나로아 대기 중 CO$_2$ 연평균 농도&quot;)
+ax.grid(True, alpha=0.4)
+du.save_figure(fig, os.path.join(str(proj_dir), f&quot;{proj_dir.name}_01&quot;))
+plt.show()</code></pre>
+</body></html>

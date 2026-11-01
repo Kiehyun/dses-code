@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IV-05. 지구의 열수지와 온실효과</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
+<h1>IV-05. 지구의 열수지와 온실효과</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/04-25/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 470.</h2><pre><code># 필요한 라이브러리 불러오기
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.patches import FancyArrow, Rectangle
+
+%matplotlib inline</code></pre>
+<h2>code 471.</h2><pre><code># 상수
+S = 1361.0          # 태양 상수 [W/m^2]
+albedo = 0.30       # 지구 전체의 알베도 (무차원)
+sigma = 5.670374419e-8   # 슈테판-볼츠만 상수 [W/(m^2·K^4)]
+
+
+def radiative_equilibrium_T(S=S, albedo=albedo):
+    &quot;&quot;&quot;복사 평형 온도 구하기(단위: K)&quot;&quot;&quot;
+    absorbed = S * (1 - albedo) / 4          # 단위 면적당 흡수량 [W/m^2]
+    return (absorbed / sigma) ** 0.25
+
+
+T_e = radiative_equilibrium_T()
+
+print(f&quot;단위 면적당 흡수량 : {S * (1 - albedo) / 4:8.2f} W/m^2&quot;)
+print(f&quot;복사 평형 온도     : {T_e:8.2f} K  =  {T_e - 273.15:6.2f} °C&quot;)</code></pre>
+<h2>code 472.</h2><pre><code>albedos = np.linspace(0.0, 0.8, 200)
+temps = radiative_equilibrium_T(albedo=albedos) - 273.15   # °C
+
+fig, ax = plt.subplots(figsize=(8.3, 4.4))
+ax.plot(albedos, temps, color=&quot;#2b6cb0&quot;, linewidth=2.4)
+
+# 현재 지구
+ax.scatter([0.30], [T_e - 273.15], s=90, color=&quot;#e2553d&quot;, zorder=5)
+ax.annotate(f&quot;현재 지구\n(알베도 0.30, {T_e - 273.15:.1f} °C)&quot;,
+            xy=(0.30, T_e - 273.15), xytext=(0.45, -12),
+            arrowprops=dict(arrowstyle=&quot;-&gt;&quot;, color=&quot;#e2553d&quot;), fontsize=10)
+
+ax.axhline(0, color=&quot;gray&quot;, linestyle=&quot;:&quot;, linewidth=1)
+ax.set_xlabel(&quot;알베도 (반사되는 비율)&quot;)
+ax.set_ylabel(&quot;복사 평형 온도 (°C)&quot;)
+ax.set_title(&quot;알베도에 따른 지구의 복사 평형 온도&quot;, fontsize=12,
+             fontweight=&quot;bold&quot;)
+ax.grid(alpha=0.3)
+plt.show()</code></pre>
+<h2>code 473.</h2><pre><code>T_a = T_e                    # 대기의 온도 = 복사 평형 온도
+T_s = 2 ** 0.25 * T_e        # 지표의 온도
+
+print(f&quot;복사 평형 온도(대기 없음) : {T_e:7.2f} K = {T_e - 273.15:6.2f} °C&quot;)
+print(f&quot;1층 대기 모형의 지표 온도 : {T_s:7.2f} K = {T_s - 273.15:6.2f} °C&quot;)
+print(f&quot;                    차이 : {T_s - T_e:7.2f} K&quot;)
+print()
+print(f&quot;실제 지구의 평균 기온     :  288.15 K =  15.00 °C&quot;)
+print(f&quot;실제 온실효과의 크기      : {288.15 - T_e:7.2f} K&quot;)</code></pre>
+<h2>code 474.</h2><pre><code>N = np.arange(0, 6)                       # 대기 층 수 (0 = 대기 없음)
+T_layers = (N + 1) ** 0.25 * T_e - 273.15  # °C
+
+fig, ax = plt.subplots(figsize=(8.3, 4.4))
+bars = ax.bar(N, T_layers, color=&quot;#4a90d9&quot;, width=0.6)
+bars[0].set_color(&quot;#9aa7b5&quot;)              # 대기 없음
+bars[1].set_color(&quot;#e2553d&quot;)              # 1층 모형
+
+for x, y in zip(N, T_layers):
+    ax.text(x, y + 1.2, f&quot;{y:.1f}&quot;, ha=&quot;center&quot;, fontsize=10,
+            fontweight=&quot;bold&quot;)
+
+ax.axhline(15, color=&quot;green&quot;, linestyle=&quot;--&quot;, linewidth=1.6,
+           label=&quot;실제 지구 평균 기온 15 °C&quot;)
+ax.set_xlabel(&quot;대기 층 수 $N$&quot;)
+ax.set_ylabel(&quot;지표 온도 (°C)&quot;)
+ax.set_title(&quot;대기 층 수에 따른 지표 온도 (단순 모형)&quot;, fontsize=12,
+             fontweight=&quot;bold&quot;)
+ax.legend()
+ax.grid(axis=&quot;y&quot;, alpha=0.3)
+plt.show()</code></pre>
+<h2>code 475.</h2><pre><code># 들어오는 태양 복사를 100으로 놓았을 때의 값
+# (Trenberth 등(2009)의 W/m^2 값을 341.3 = 100으로 환산, 잠열만 23.4 → 24로 조정)
+budget = {
+    &quot;입사&quot;: 100,
+    &quot;대기 반사·산란&quot;: 23, &quot;지표면 반사&quot;: 7,      # 합 30 = 반사
+    &quot;대기 흡수(태양)&quot;: 23, &quot;지표면 흡수&quot;: 47,     # 합 70 = 흡수
+    &quot;지표면 방출&quot;: 116,
+    &quot;대기의 창(우주로)&quot;: 12, &quot;대기 흡수(지구복사)&quot;: 104,
+    &quot;물의 증발(잠열)&quot;: 24, &quot;대류·전도(현열)&quot;: 5,
+    &quot;대기의 복사(우주로)&quot;: 58, &quot;대기의 재복사&quot;: 98,
+}
+
+SUN, EARTH = &quot;#f5c33b&quot;, &quot;#e2553d&quot;
+TOP, ATM_TOP, GND = 62, 42, 13          # 그림 위 / 대기 상단 / 지표면 높이
+
+fig, ax = plt.subplots(figsize=(9.6, 5.6))
+ax.set_xlim(0, 100); ax.set_ylim(0, TOP); ax.axis(&quot;off&quot;)
+
+ax.add_patch(Rectangle((0, ATM_TOP), 100, TOP - ATM_TOP, fc=&quot;#1b2440&quot;))   # 우주
+ax.add_patch(Rectangle((0, GND), 100, ATM_TOP - GND, fc=&quot;#d3e7f7&quot;))       # 대기
+ax.add_patch(Rectangle((0, 0), 100, GND, fc=&quot;#82c98a&quot;))                   # 지표
+for y, t, c in [(TOP - 4, &quot;우주&quot;, &quot;#1b2440&quot;), (ATM_TOP - 4, &quot;대기&quot;, &quot;#12406b&quot;),
+                (GND - 4.5, &quot;지표&quot;, &quot;#12406b&quot;)]:
+    ax.text(97, y, t, fontsize=12, ha=&quot;right&quot;, va=&quot;center&quot;, color=c,
+            bbox=dict(boxstyle=&quot;round,pad=0.3&quot;, fc=&quot;white&quot;, alpha=.9, ec=&quot;none&quot;))
+
+
+def arw(x, y, dx, dy, w, c, val=None, vx=0, vy=0, fs=12):
+    &quot;&quot;&quot;화살표 하나와 그 옆의 숫자 그리기&quot;&quot;&quot;
+    ax.add_patch(FancyArrow(x, y, dx, dy, width=w, head_width=w * 2.1, head_length=2.4,
+                            length_includes_head=True, fc=c, ec=&quot;none&quot;, zorder=4))
+    if val is not None:
+        ax.text(x + dx / 2 + vx, y + dy / 2 + vy, str(val), fontsize=fs, zorder=6,
+                ha=&quot;center&quot;, va=&quot;center&quot;, fontweight=&quot;bold&quot;,
+                bbox=dict(boxstyle=&quot;round,pad=0.2&quot;, fc=&quot;white&quot;, alpha=.92, ec=&quot;none&quot;))
+
+
+def lab(x, y, t, fs=10, c=&quot;#111&quot;):
+    ax.text(x, y, t, fontsize=fs, ha=&quot;center&quot;, va=&quot;center&quot;, color=c, zorder=6)
+
+
+# 태양 복사 (노랑)
+ax.scatter([6], [TOP - 7], s=2300, c=&quot;#ffd94a&quot;, zorder=3,
+           edgecolors=&quot;#eeb200&quot;, linewidths=2)
+arw(10, TOP - 10, 9, -(TOP - 10 - GND - 1), 2.8, SUN, budget[&quot;입사&quot;], vx=-3.6,
+    fs=13)
+arw(23, ATM_TOP - 2, 7, 13, 1.9, SUN, 30, vx=2.8, fs=12)
+lab(34, TOP - 4, &quot;반사 및 산란&quot;, 11, &quot;white&quot;)
+arw(15, GND + 1, 0, 9, 1.4, SUN, budget[&quot;대기 흡수(태양)&quot;], vx=-2.6, fs=10)
+lab(15, GND + 12, &quot;대기의 흡수&quot;, 9.5)
+arw(22, GND + 1, 6, 9, 1.0, SUN, budget[&quot;지표면 반사&quot;], vx=1.4, vy=-1, fs=10)
+lab(28, GND + 12, &quot;지표면 반사&quot;, 9.5)
+lab(15, GND - 5, f&quot;지표면 흡수  {budget[&#x27;지표면 흡수&#x27;]}&quot;, 11)
+
+# 지구 복사 (빨강)
+arw(52, GND, 0, 16, 2.3, EARTH, budget[&quot;지표면 방출&quot;], vx=-4.4, fs=12)
+lab(52, GND - 5, &quot;지표면 방출&quot;, 10)
+arw(46, ATM_TOP - 6, 0, 12, 1.1, EARTH, budget[&quot;대기의 창(우주로)&quot;], vx=-3.2,
+    fs=10)
+lab(41, ATM_TOP + 9, &quot;우주로\n손실&quot;, 9.5, &quot;white&quot;)
+lab(57, GND + 20, f&quot;대기의 흡수  {budget[&#x27;대기 흡수(지구복사)&#x27;]}&quot;, 10)
+arw(62, GND + 22, 0, 14, 1.9, EARTH, budget[&quot;대기의 복사(우주로)&quot;], vx=3.2,
+    fs=11)
+lab(70, ATM_TOP + 3, &quot;대기의 복사&quot;, 10.5, &quot;white&quot;)
+arw(56, ATM_TOP + 6, 0, 10, 2.6, EARTH, 70, vx=4.2, fs=13)
+lab(64, TOP - 4, &quot;지구 복사&quot;, 11, &quot;white&quot;)
+arw(70, GND, 0, 11, 1.1, EARTH, budget[&quot;물의 증발(잠열)&quot;], vx=-2.6, fs=10)
+lab(67, GND - 5, &quot;물의 증발&quot;, 9.5)
+arw(77, GND, 0, 8, 0.7, EARTH, budget[&quot;대류·전도(현열)&quot;], vx=-2.2, fs=10)
+lab(80, GND - 5, &quot;대류와 전도&quot;, 9.5)
+arw(88, GND + 20, 0, -19, 2.2, EARTH, budget[&quot;대기의 재복사&quot;], vx=3.6, fs=11)
+lab(84, GND + 23, &quot;대기의 재복사&quot;, 10)
+
+# 범례
+ax.add_patch(FancyArrow(3, 3.6, 4, 0, width=.8, head_width=1.7, head_length=1.1,
+                        fc=SUN, ec=&quot;none&quot;, zorder=6))
+ax.text(8.5, 3.6, &quot;태양 복사 에너지&quot;, fontsize=10.5, va=&quot;center&quot;, zorder=6)
+ax.add_patch(FancyArrow(28, 3.6, 4, 0, width=.8, head_width=1.7, head_length=1.1,
+                        fc=EARTH, ec=&quot;none&quot;, zorder=6))
+ax.text(33.5, 3.6, &quot;지구 복사 에너지&quot;, fontsize=10.5, va=&quot;center&quot;, zorder=6)
+
+ax.set_title(&quot;지구의 열수지 — 들어오는 태양 복사를 100으로 놓았을 때&quot;,
+             fontsize=13, fontweight=&quot;bold&quot;, pad=12)
+plt.show()</code></pre>
+<h2>code 476.</h2><pre><code>def check(name, incoming, outgoing):
+    &quot;&quot;&quot;들어온 양과 나간 양 견주기&quot;&quot;&quot;
+    ok = &quot;균형&quot; if abs(incoming - outgoing) &lt; 1e-9 else &quot;★ 어긋남&quot;
+    print(f&quot;{name:12} 들어옴 {incoming:6.1f}   나감 {outgoing:6.1f}   → {ok}&quot;)
+
+
+b = budget
+
+# ① 지구 전체 (대기 위쪽 경계)
+check(&quot;지구 전체&quot;,
+      b[&quot;입사&quot;],
+      (b[&quot;대기 반사·산란&quot;] + b[&quot;지표면 반사&quot;])          # 반사 30
+      + b[&quot;대기의 창(우주로)&quot;] + b[&quot;대기의 복사(우주로)&quot;])  # 방출 70
+
+# ② 지표면
+check(&quot;지표면&quot;,
+      b[&quot;지표면 흡수&quot;] + b[&quot;대기의 재복사&quot;],
+      b[&quot;지표면 방출&quot;] + b[&quot;물의 증발(잠열)&quot;] + b[&quot;대류·전도(현열)&quot;])
+
+# ③ 대기
+check(&quot;대기&quot;,
+      b[&quot;대기 흡수(태양)&quot;] + b[&quot;대기 흡수(지구복사)&quot;]
+      + b[&quot;물의 증발(잠열)&quot;] + b[&quot;대류·전도(현열)&quot;],
+      b[&quot;대기의 복사(우주로)&quot;] + b[&quot;대기의 재복사&quot;])
+
+print()
+print(f&quot;지표면 방출 {b[&#x27;지표면 방출&#x27;]} = 대기 흡수 {b[&#x27;대기 흡수(지구복사)&#x27;]}&quot;
+      f&quot; + 대기의 창 {b[&#x27;대기의 창(우주로)&#x27;]}&quot;)
+
+# W/m^2 단위로 바꿔 보기 (100 = 지구 평균 입사량)
+unit = S / 4        # 지구 표면 평균 입사량 [W/m^2]
+print(f&quot;\n1 (= 1%)은 약 {unit / 100:.2f} W/m^2입니다.&quot;)
+print(f&quot;지표면이 받는 대기의 재복사 {b[&#x27;대기의 재복사&#x27;]}&quot;
+      f&quot; → {b[&#x27;대기의 재복사&#x27;] * unit / 100:.0f} W/m^2&quot;)</code></pre>
+<h2>code 477.</h2><pre><code>import urllib.request, io
+
+headers = {&quot;User-Agent&quot;: &quot;Mozilla/5.0 (DSES textbook notebook)&quot;}
+
+
+def fetch(url):
+    &quot;&quot;&quot;공개 데이터를 내려받아 문자열로 돌려주기&quot;&quot;&quot;
+    req = urllib.request.Request(url, headers=headers)
+    with urllib.request.urlopen(req, timeout=30) as res:
+        return res.read().decode(&quot;utf-8&quot;, errors=&quot;replace&quot;)
+
+
+# ── 이산화 탄소 연평균 (NOAA, 마우나로아) ──
+co2_txt = fetch(&quot;https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_mlo.txt&quot;)
+rows = [ln.split() for ln in co2_txt.splitlines() if not ln.startswith(&quot;#&quot;) and ln.strip()]
+co2 = pd.DataFrame(rows, columns=[&quot;year&quot;, &quot;mean&quot;, &quot;unc&quot;]).astype(float)
+
+# ── 전 지구 평균 기온 편차 (NASA GISTEMP) ──
+gis_txt = fetch(&quot;https://data.giss.nasa.gov/gistemp/tabledata_v4/GLB.Ts+dSST.csv&quot;)
+gis = pd.read_csv(io.StringIO(gis_txt), skiprows=1, na_values=&quot;***&quot;)
+temp = gis[[&quot;Year&quot;, &quot;J-D&quot;]].dropna().astype(float)      # J-D = 1~12월 평균
+
+print(f&quot;CO2  : {co2[&#x27;year&#x27;].min():.0f} ~ {co2[&#x27;year&#x27;].max():.0f}년, &quot;
+      f&quot;{co2[&#x27;mean&#x27;].iloc[0]:.1f} → {co2[&#x27;mean&#x27;].iloc[-1]:.1f} ppm&quot;)
+print(f&quot;기온 : {temp[&#x27;Year&#x27;].min():.0f} ~ {temp[&#x27;Year&#x27;].max():.0f}년, &quot;
+      f&quot;최근 편차 {temp[&#x27;J-D&#x27;].iloc[-1]:+.2f} °C&quot;)</code></pre>
+<h2>code 478.</h2><pre><code>fig, ax1 = plt.subplots(figsize=(7.5, 4.1))
+
+# 왼쪽 축 — 이산화 탄소 농도
+line_co2, = ax1.plot(co2[&quot;year&quot;], co2[&quot;mean&quot;], color=&quot;#e2553d&quot;, linewidth=2.4,
+                     label=&quot;이산화 탄소 농도&quot;)
+ax1.set_xlabel(&quot;연도&quot;)
+ax1.set_ylabel(&quot;이산화 탄소 농도 (ppm)&quot;, color=&quot;#e2553d&quot;)
+ax1.tick_params(axis=&quot;y&quot;, labelcolor=&quot;#e2553d&quot;)
+
+# 오른쪽 축 — 전 지구 평균 기온 편차
+ax2 = ax1.twinx()
+sel = temp[temp[&quot;Year&quot;] &gt;= co2[&quot;year&quot;].min()]
+line_temp, = ax2.plot(sel[&quot;Year&quot;], sel[&quot;J-D&quot;], color=&quot;#2b6cb0&quot;, linewidth=2.0,
+                      label=&quot;전 지구 평균 기온 편차&quot;)
+ax2.set_ylabel(&quot;기온 편차 (°C, 1951~1980년 평균 기준)&quot;, color=&quot;#2b6cb0&quot;)
+ax2.tick_params(axis=&quot;y&quot;, labelcolor=&quot;#2b6cb0&quot;)
+ax2.axhline(0, color=&quot;gray&quot;, linestyle=&quot;:&quot;, linewidth=1)   # 기준선(범례에는 넣지 않음)
+
+# 두 축의 선을 함께 모아 하나의 범례로
+lines = [line_co2, line_temp]
+ax1.legend(lines, [l.get_label() for l in lines], loc=&quot;upper left&quot;)
+ax1.set_title(&quot;이산화 탄소 농도와 전 지구 평균 기온의 변화&quot;,
+              fontsize=12, fontweight=&quot;bold&quot;)
+ax1.grid(alpha=0.3)
+plt.show()
+
+# 두 데이터가 함께 있는 기간의 상관계수
+merged = pd.merge(co2[[&quot;year&quot;, &quot;mean&quot;]], temp, left_on=&quot;year&quot;, right_on=&quot;Year&quot;)
+print(f&quot;함께 있는 기간 {merged[&#x27;year&#x27;].min():.0f}~{merged[&#x27;year&#x27;].max():.0f}년 &quot;
+      f&quot;({len(merged)}개), 상관계수 r = {merged[&#x27;mean&#x27;].corr(merged[&#x27;J-D&#x27;]):.3f}&quot;)</code></pre>
+</body></html>

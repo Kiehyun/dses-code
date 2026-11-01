@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>III-01. 은하의 분류와 특이 은하</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
+<h1>III-01. 은하의 분류와 특이 은하</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/03-21/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 53.</h2><pre><code>import time
+from io import StringIO, BytesIO
+from pathlib import Path
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import requests
+from PIL import Image
+
+SKY = &quot;https://skyserver.sdss.org/dr18/SkyServerWS&quot;
+
+
+def get(url, params=None, tries=3):
+    for k in range(tries):
+        try:
+            r = requests.get(url, params=params, timeout=180)
+            r.raise_for_status()
+            return r
+        except requests.RequestException as e:
+            if k == tries - 1:
+                raise
+            time.sleep(5)
+
+
+def sql(query, name):
+    &quot;&quot;&quot;SDSS SkyServer에 SQL을 보내 결과를 DataFrame으로 받기(name.csv로 저장).&quot;&quot;&quot;
+    f = Path(proj_dir) / f&quot;{name}.csv&quot;
+    if not f.exists():
+        text = get(f&quot;{SKY}/SearchTools/SqlSearch&quot;,
+                   {&quot;cmd&quot;: query, &quot;format&quot;: &quot;csv&quot;}).text
+        f.write_text(text, encoding=&quot;utf-8&quot;)
+    return pd.read_csv(f, skiprows=1)
+
+
+def cutout(ra, dec, scale, name, size=400):
+    &quot;&quot;&quot;SDSS 컬러 사진(gri 합성) 받기. scale은 픽셀당 각초.&quot;&quot;&quot;
+    f = Path(proj_dir) / f&quot;img_{name}.jpg&quot;
+    if not f.exists():
+        r = get(f&quot;{SKY}/ImgCutout/getjpeg&quot;,
+                {&quot;ra&quot;: ra, &quot;dec&quot;: dec, &quot;scale&quot;: scale, &quot;width&quot;: size, &quot;height&quot;: size})
+        f.write_bytes(r.content)
+    return Image.open(f)</code></pre>
+<h2>code 54.</h2><pre><code>galaxies = pd.DataFrame([
+    (&quot;M87&quot;, 187.7059, 12.3911, 2.0, &quot;E0&quot;, &quot;타원&quot;),
+    (&quot;M49&quot;, 187.4446, 8.0004, 2.0, &quot;E2&quot;, &quot;타원&quot;),
+    (&quot;NGC 5866&quot;, 226.6229, 55.7633, 1.2, &quot;S0&quot;, &quot;렌즈형&quot;),
+    (&quot;M65&quot;, 169.7330, 13.0923, 1.8, &quot;Sa&quot;, &quot;나선&quot;),
+    (&quot;NGC 4565&quot;, 189.0866, 25.9877, 2.6, &quot;Sb(옆모습)&quot;, &quot;나선&quot;),
+    (&quot;M51&quot;, 202.4696, 47.1952, 2.4, &quot;Sbc&quot;, &quot;나선&quot;),
+    (&quot;M101&quot;, 210.8023, 54.3489, 3.6, &quot;Scd&quot;, &quot;나선&quot;),
+    (&quot;M95&quot;, 160.9906, 11.7037, 1.6, &quot;SBb&quot;, &quot;막대 나선&quot;),
+    (&quot;M109&quot;, 179.3998, 53.3745, 1.8, &quot;SBbc&quot;, &quot;막대 나선&quot;),
+    (&quot;NGC 4449&quot;, 187.0463, 44.0936, 1.4, &quot;IBm&quot;, &quot;불규칙&quot;),
+    (&quot;M82&quot;, 148.9685, 69.6797, 2.2, &quot;I0&quot;, &quot;불규칙&quot;),
+], columns=[&quot;name&quot;, &quot;ra&quot;, &quot;dec&quot;, &quot;scale&quot;, &quot;hubble&quot;, &quot;kind&quot;])
+
+order = np.random.default_rng(7).permutation(len(galaxies))   # 순서 섞기
+fig, axes = plt.subplots(3, 4, figsize=(7.5, 5.8))
+for ax, k in zip(axes.ravel(), order):
+    g = galaxies.iloc[k]
+    ax.imshow(cutout(g.ra, g.dec, g.scale, g[&quot;name&quot;].replace(&quot; &quot;, &quot;&quot;)))
+    ax.set_title(f&quot;은하 {list(order).index(k) + 1}&quot;, fontsize=12)
+    ax.axis(&quot;off&quot;)
+axes.ravel()[-1].axis(&quot;off&quot;)
+plt.tight_layout()
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_01&quot;))
+plt.show()</code></pre>
+<h2>code 55.</h2><pre><code>answer = pd.DataFrame({&quot;은하&quot;: [list(order).index(k) + 1 for k in range(len(galaxies))],
+                       &quot;이름&quot;: galaxies[&quot;name&quot;], &quot;허블 형&quot;: galaxies[&quot;hubble&quot;], &quot;종류&quot;: galaxies[&quot;kind&quot;]})
+answer.sort_values(&quot;은하&quot;).reset_index(drop=True)</code></pre>
+<h2>code 56.</h2><pre><code>place = {  # 이름: (x, y) — 그림 좌표(0~1)
+    &quot;M87&quot;: (0.03, 0.42), &quot;M49&quot;: (0.16, 0.42), &quot;NGC 5866&quot;: (0.31, 0.42),
+    &quot;M65&quot;: (0.47, 0.70), &quot;M51&quot;: (0.62, 0.70), &quot;M101&quot;: (0.77, 0.70),
+    &quot;M95&quot;: (0.47, 0.14), &quot;M109&quot;: (0.62, 0.14), &quot;NGC 4449&quot;: (0.88, 0.42),
+}
+fig = plt.figure(figsize=(7.5, 3.8))
+bg = fig.add_axes([0, 0, 1, 1])
+bg.axis(&quot;off&quot;)
+bg.plot([0.08, 0.40], [0.53, 0.53], color=&quot;gray&quot;, lw=4)           # 손잡이
+bg.plot([0.40, 0.48, 0.92], [0.53, 0.80, 0.80], color=&quot;gray&quot;, lw=4)  # 위 갈래
+bg.plot([0.40, 0.48, 0.77], [0.53, 0.25, 0.25], color=&quot;gray&quot;, lw=4)  # 아래 갈래
+for name, (x, y) in place.items():
+    g = galaxies.set_index(&quot;name&quot;).loc[name]
+    ax = fig.add_axes([x, y, 0.13, 0.22])
+    ax.imshow(cutout(g.ra, g.dec, g.scale, name.replace(&quot; &quot;, &quot;&quot;)))
+    ax.set_title(f&quot;{name} ({g.hubble})&quot;, fontsize=10)
+    ax.axis(&quot;off&quot;)
+for text, (x, y) in {&quot;타원 은하 E&quot;: (0.10, 0.36), &quot;렌즈형 S0&quot;: (0.33, 0.36), &quot;나선 은하 S (a→c)&quot;: (0.80, 0.84),
+                     &quot;막대 나선 은하 SB&quot;: (0.79, 0.21), &quot;불규칙 은하 Irr&quot;: (0.90, 0.36)}.items():
+    bg.text(x, y, text, fontsize=13, weight=&quot;bold&quot;, ha=&quot;left&quot;)
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_02&quot;))
+plt.show()</code></pre>
+<h2>code 57.</h2><pre><code>zoo = sql(&quot;&quot;&quot;
+SELECT TOP 20000 g.objid, g.ra, g.dec, g.spiral, g.elliptical, s.z,
+       p.modelMag_u, p.modelMag_g, p.modelMag_r, p.extinction_u, p.extinction_r,
+       p.petroR50_r, p.petroR90_r
+FROM zooSpec AS g
+JOIN SpecObj AS s ON s.specObjID = g.specobjid
+JOIN PhotoObj AS p ON p.objID = g.objid
+WHERE s.z BETWEEN 0.02 AND 0.08 AND (g.spiral = 1 OR g.elliptical = 1)
+&quot;&quot;&quot;, &quot;galaxyzoo_sample&quot;)
+zoo[&quot;type&quot;] = np.where(zoo[&quot;elliptical&quot;] == 1, &quot;타원&quot;, &quot;나선&quot;)
+print(zoo[&quot;type&quot;].value_counts())</code></pre>
+<h2>code 58.</h2><pre><code>from astropy.cosmology import FlatLambdaCDM
+
+cosmo = FlatLambdaCDM(H0=70, Om0=0.3)
+zoo[&quot;u_r&quot;] = (zoo[&quot;modelMag_u&quot;] - zoo[&quot;extinction_u&quot;]) - (zoo[&quot;modelMag_r&quot;] - zoo[&quot;extinction_r&quot;])
+zoo[&quot;conc&quot;] = zoo[&quot;petroR90_r&quot;] / zoo[&quot;petroR50_r&quot;]
+d_pc = cosmo.luminosity_distance(zoo[&quot;z&quot;].values).to(&quot;pc&quot;).value
+zoo[&quot;M_r&quot;] = zoo[&quot;modelMag_r&quot;] - zoo[&quot;extinction_r&quot;] - 5 * np.log10(d_pc / 10)
+zoo = zoo[(zoo[&quot;u_r&quot;].between(0.5, 4)) &amp; (zoo[&quot;conc&quot;].between(1.5, 4.5))].copy()
+zoo.groupby(&quot;type&quot;)[[&quot;u_r&quot;, &quot;conc&quot;, &quot;M_r&quot;]].median().round(2)</code></pre>
+<h2>code 59.</h2><pre><code>colors = {&quot;타원&quot;: &quot;tomato&quot;, &quot;나선&quot;: &quot;royalblue&quot;}
+fig, ax = plt.subplots(1, 2, figsize=(7.5, 2.6))
+for t, c in colors.items():
+    sub = zoo[zoo[&quot;type&quot;] == t]
+    ax[0].hist(sub[&quot;u_r&quot;], bins=np.arange(0.5, 4.01, 0.05), density=True,
+               alpha=0.55, color=c, label=f&quot;{t} ({len(sub):,})&quot;)
+    ax[1].hist(sub[&quot;conc&quot;], bins=np.arange(1.5, 4.51, 0.05), density=True,
+               alpha=0.55, color=c, label=t)
+ax[0].set_xlabel(&quot;색지수 u − r (클수록 붉음)&quot;)
+ax[1].set_xlabel(&quot;집중도 R90 / R50 (클수록 중심에 빛이 몰림)&quot;)
+for a in ax:
+    a.set_ylabel(&quot;비율&quot;)
+    a.legend()
+    a.grid(alpha=0.3)
+ax[0].set_title(&quot;은하의 색&quot;)
+ax[1].set_title(&quot;밝기의 집중도&quot;)
+plt.tight_layout()
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_03&quot;))
+plt.show()</code></pre>
+<h2>code 60.</h2><pre><code>fig, ax = plt.subplots(figsize=(7.5, 4.3))
+for t, c in [(&quot;나선&quot;, &quot;royalblue&quot;), (&quot;타원&quot;, &quot;tomato&quot;)]:
+    sub = zoo[zoo[&quot;type&quot;] == t]
+    ax.scatter(sub[&quot;M_r&quot;], sub[&quot;u_r&quot;], s=2, alpha=0.25, color=c, label=t)
+ax.invert_xaxis()
+ax.set_xlim(-18, -23.5)
+ax.set_ylim(0.8, 3.6)
+ax.set_xlabel(&quot;r 필터 절대 등급 M_r (왼쪽일수록 어두움)&quot;)
+ax.set_ylabel(&quot;색지수 u − r&quot;)
+ax.text(-22.8, 3.0, &quot;붉은 계열\n(red sequence)&quot;, color=&quot;darkred&quot;, fontsize=11)
+ax.text(-19.0, 1.25, &quot;푸른 구름\n(blue cloud)&quot;, color=&quot;navy&quot;, fontsize=11)
+ax.legend(markerscale=6)
+ax.grid(alpha=0.3)
+ax.set_title(&quot;은하의 색-등급도 (갤럭시 주 형태 분류)&quot;, fontsize=11)
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_04&quot;))
+plt.show()</code></pre>
+<h2>code 61.</h2><pre><code>def rule(df, cut_color, cut_conc):
+    return np.where((df[&quot;u_r&quot;] &gt; cut_color) &amp; (df[&quot;conc&quot;] &gt; cut_conc), &quot;타원&quot;,
+                    &quot;나선&quot;)
+
+
+results = []
+for cc in np.arange(1.8, 3.01, 0.1):
+    for ck in np.arange(2.2, 3.21, 0.1):
+        pred = rule(zoo, cc, ck)
+        acc = (pred == zoo[&quot;type&quot;]).mean()
+        # 두 종류의 수가 크게 다르므로 종류별 정확도의 평균도 확인
+        bal = np.mean([(pred[zoo[&quot;type&quot;] == t] == t).mean() for t in (&quot;타원&quot;,
+                                                                      &quot;나선&quot;)])
+        results.append((round(cc, 1), round(ck, 1), acc, bal))
+res = pd.DataFrame(results,
+                   columns=[&quot;색 기준&quot;, &quot;집중도 기준&quot;, &quot;정확도&quot;, &quot;균형 정확도&quot;])
+best = res.loc[res[&quot;균형 정확도&quot;].idxmax()]
+print(&quot;가장 좋은 기준:&quot;, best.round(3).to_dict())
+
+pred = rule(zoo, best[&quot;색 기준&quot;], best[&quot;집중도 기준&quot;])
+pd.crosstab(zoo[&quot;type&quot;], pred, rownames=[&quot;갤럭시 주 분류&quot;],
+            colnames=[&quot;규칙의 예측&quot;], margins=True)</code></pre>
+<h2>code 62.</h2><pre><code>from astropy.io import fits
+
+spectra = [  # (이름, plate, mjd, fiber, z)
+    (&quot;타원 은하&quot;, 1665, 52976, 518, 0.0214),
+    (&quot;별 생성 나선 은하&quot;, 539, 52017, 194, 0.0351),
+    (&quot;세이퍼트은하(1형, 활동 은하핵)&quot;, 1820, 54208, 373, 0.0337),
+    (&quot;퀘이사&quot;, 487, 51943, 391, 0.4869),
+]
+LINES = {&quot;Hβ&quot;: 4861, &quot;[OIII]&quot;: 5007, &quot;Hα&quot;: 6563, &quot;[NII]&quot;: 6584, &quot;Mg II&quot;: 2798,
+         &quot;Hγ&quot;: 4341}
+
+
+def spectrum(plate, mjd, fiber):
+    f = Path(proj_dir) / f&quot;spec-{plate:04d}-{mjd}-{fiber:04d}.fits&quot;
+    if not f.exists():
+        url = (f&quot;https://data.sdss.org/sas/dr17/sdss/spectro/redux/26/spectra/lite/{plate:04d}/&quot;
+               f&quot;spec-{plate:04d}-{mjd}-{fiber:04d}.fits&quot;)
+        f.write_bytes(get(url).content)
+    with fits.open(f) as h:
+        d = h[1].data
+        return 10 ** d[&quot;loglam&quot;], d[&quot;flux&quot;]
+
+
+fig, axes = plt.subplots(4, 1, figsize=(7.5, 6.6), sharex=False)
+for ax, (name, plate, mjd, fiber, z) in zip(axes, spectra):
+    wave, flux = spectrum(plate, mjd, fiber)
+    rest = wave / (1 + z)
+    smooth = pd.Series(flux).rolling(5, center=True).mean()
+    ax.plot(rest, smooth, color=&quot;k&quot;, lw=0.7)
+    top = np.nanpercentile(smooth, 99.7)
+    for line, lam in LINES.items():
+        if rest.min() &lt; lam &lt; rest.max():
+            ax.axvline(lam, color=&quot;crimson&quot;, ls=&quot;:&quot;, lw=0.8)
+            ax.text(lam, top * (0.9 if line in (&quot;[OIII]&quot;, &quot;[NII]&quot;) else 1.02), line,   # 가까운 두 선은 높이를 달리
+                    color=&quot;crimson&quot;, fontsize=9,
+                    ha=&quot;center&quot;)
+    ax.set_ylim(0, top * 1.15)
+    ax.set_ylabel(&quot;밝기&quot;)
+    ax.set_title(f&quot;{name} (z = {z})&quot;, fontsize=11, loc=&quot;left&quot;)
+    ax.grid(alpha=0.3)
+axes[-1].set_xlabel(&quot;정지 파장 (Å)&quot;)
+plt.tight_layout()
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_05&quot;))
+plt.show()</code></pre>
+<h2>code 63.</h2><pre><code>bpt = sql(&quot;&quot;&quot;
+SELECT TOP 20000 l.h_alpha_flux, l.h_beta_flux, l.oiii_5007_flux, l.nii_6584_flux, s.z
+FROM galSpecLine AS l JOIN SpecObj AS s ON s.specObjID = l.specObjID
+WHERE s.z BETWEEN 0.02 AND 0.2
+  AND l.h_alpha_flux &gt; 5 * l.h_alpha_flux_err AND l.h_beta_flux &gt; 3 * l.h_beta_flux_err
+  AND l.oiii_5007_flux &gt; 3 * l.oiii_5007_flux_err AND l.nii_6584_flux &gt; 3 * l.nii_6584_flux_err
+&quot;&quot;&quot;, &quot;bpt_sample&quot;)
+x = np.log10(bpt[&quot;nii_6584_flux&quot;] / bpt[&quot;h_alpha_flux&quot;])
+y = np.log10(bpt[&quot;oiii_5007_flux&quot;] / bpt[&quot;h_beta_flux&quot;])
+ok = np.isfinite(x) &amp; np.isfinite(y)
+x, y = x[ok], y[ok]
+
+kauff = lambda v: 0.61 / (v - 0.05) + 1.30      # v &lt; 0.05
+kewley = lambda v: 0.61 / (v - 0.47) + 1.19     # v &lt; 0.47
+sf = (x &lt; 0.05) &amp; (y &lt; kauff(x))
+agn = (x &gt;= 0.47) | (y &gt; kewley(x))
+comp = ~sf &amp; ~agn
+seyfert = agn &amp; (y &gt; 1.05 * x + 0.45)
+liner = agn &amp; ~seyfert
+
+fig, ax = plt.subplots(figsize=(5.0, 4.4))
+for mask, c, label in [(sf, &quot;royalblue&quot;, &quot;별 생성 은하&quot;), (comp, &quot;seagreen&quot;, &quot;중간(복합)&quot;),
+                       (seyfert, &quot;crimson&quot;, &quot;세이퍼트&quot;), (liner, &quot;darkorange&quot;, &quot;라이너&quot;)]:
+    ax.scatter(x[mask], y[mask], s=2, alpha=0.3, color=c,
+               label=f&quot;{label} {mask.mean() * 100:.0f}%&quot;)
+v1 = np.linspace(-2, 0.0, 200)
+v2 = np.linspace(-2, 0.4, 200)
+ax.plot(v1, kauff(v1), &quot;k--&quot;, lw=1.2, label=&quot;Kauffmann(2003)&quot;)
+ax.plot(v2, kewley(v2), &quot;k-&quot;, lw=1.2, label=&quot;Kewley(2001)&quot;)
+ax.set_xlim(-1.6, 0.6)
+ax.set_ylim(-1.2, 1.4)
+ax.set_xlabel(&quot;log([NII] 6584 / Hα)&quot;, fontsize=9)
+ax.set_ylabel(&quot;log([OIII] 5007 / Hβ)&quot;, fontsize=9)
+ax.tick_params(labelsize=8)
+ax.legend(markerscale=6, fontsize=8)
+ax.grid(alpha=0.3)
+ax.set_title(&quot;BPT 도표 — 방출선 은하 2만 개&quot;, fontsize=10)
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_06&quot;))
+plt.show()</code></pre>
+<h2>code 64.</h2><pre><code>zdist = pd.concat([
+    sql(&quot;SELECT z, class FROM SpecObj WHERE class = &#x27;QSO&#x27; AND zWarning = 0 AND fiberID % 25 = 0&quot;,
+        &quot;redshift_qso&quot;),
+    sql(&quot;SELECT z, class FROM SpecObj WHERE class = &#x27;GALAXY&#x27; AND zWarning = 0 AND fiberID % 100 = 0&quot;,
+        &quot;redshift_galaxy&quot;),
+])
+
+fig, ax = plt.subplots(figsize=(7.5, 3.4))
+bins = np.arange(0, 5.01, 0.05)
+for cls, c, label in [(&quot;GALAXY&quot;, &quot;seagreen&quot;, &quot;은하&quot;),
+                      (&quot;QSO&quot;, &quot;purple&quot;, &quot;퀘이사&quot;)]:
+    sub = zdist[zdist[&quot;class&quot;] == cls][&quot;z&quot;]
+    ax.hist(sub, bins=bins, alpha=0.6, color=c,
+            label=f&quot;{label} (중앙값 z = {sub.median():.2f})&quot;)
+ax.set_xlabel(&quot;적색편이 z&quot;)
+ax.set_ylabel(&quot;천체 수&quot;)
+ax.legend()
+ax.grid(alpha=0.3)
+zz = np.linspace(0, 5, 200)
+tt = cosmo.lookback_time(zz).value
+top = ax.secondary_xaxis(&quot;top&quot;,
+                         functions=(lambda z: np.interp(z, zz, tt), lambda t: np.interp(t, tt, zz)))
+top.set_xticks([4, 6, 8, 10, 11, 12])   # 가까운 쪽(z &lt; 0.3)은 눈금이 몰리므로 4 Gyr부터
+top.set_xlabel(&quot;되돌아본 시간 (10억 년, Gyr)&quot;)
+ax.set_title(&quot;은하와 퀘이사의 적색편이 분포&quot;, fontsize=11)
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_07&quot;))
+plt.show()
+
+q = zdist[zdist[&quot;class&quot;] == &quot;QSO&quot;][&quot;z&quot;]
+print(f&quot;퀘이사 적색편이 중앙값 {q.median():.2f} → 빛이 출발한 지 약 {cosmo.lookback_time(q.median()).value * 10:.0f}억 년&quot;)</code></pre>
+<h2>code 65.</h2><pre><code>fig, ax = plt.subplots(1, 2, figsize=(7.5, 3.7))
+ax[0].imshow(cutout(187.2779, 2.0524, 0.4, &quot;3C273&quot;))
+ax[0].set_title(&quot;퀘이사 3C 273\n(z = 0.158, 빛이 출발한 지 약 20억 년)&quot;)
+ax[1].imshow(cutout(187.7059, 12.3911, 0.25, &quot;M87_core&quot;))
+ax[1].set_title(&quot;전파 은하 M87의 중심부와 제트&quot;)
+for a in ax:
+    a.axis(&quot;off&quot;)
+plt.tight_layout()
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_08&quot;))
+plt.show()</code></pre>
+</body></html>

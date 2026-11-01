@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>III-13. 차등 측광과 소행성 광도 곡선</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
+<h1>III-13. 차등 측광과 소행성 광도 곡선</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/03-33/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 382.</h2><pre><code>import shutil
+
+fname = &quot;925ALPHONSINA_V_2016-11-08_RiLA600_reduced.zip&quot;
+fid = &quot;1MTFCA4uXo3HpsJ0tYeawIwTWVpQinHyQ&quot;
+du.download(f&quot;https://drive.google.com/uc?id={fid}&quot;, proj_dir / fname)
+shutil.unpack_archive(str(proj_dir / fname), str(proj_dir))   # 압축 풀기</code></pre>
+<h2>code 383.</h2><pre><code>fpaths = du.list_files(proj_dir, &quot;fit*&quot;)</code></pre>
+<h2>code 384.</h2><pre><code>import re
+from pathlib import Path
+import numpy as np
+import pandas as pd
+from astropy.io import fits
+from astropy.wcs import WCS
+from astropy.time import Time
+from astropy import units as u
+from astropy.coordinates import SkyCoord, EarthLocation, AltAz
+from photutils.aperture import CircularAperture as CAp
+from photutils.aperture import CircularAnnulus as CAn
+
+fpath = Path(fpaths[0])                      # 첫 영상
+hdul = fits.open(str(fpath), unit=&quot;adu&quot;)
+hdr = hdul[0].header
+flt = hdr[&quot;FILTER&quot;]                          # 영상의 필터(이 데이터는 V)
+for _k in [&quot;NAXIS1&quot;, &quot;NAXIS2&quot;, &quot;DATE-OBS&quot;, &quot;EXPTIME&quot;, &quot;OBJECT&quot;, &quot;FILTER&quot;, &quot;CCDNAME&quot;]:
+    print(f&quot;{_k:9s} = {hdr[_k]}&quot;)
+
+# CCD 사양(헤더의 CCDNAME으로 고름)
+if hdr[&quot;CCDNAME&quot;] == &quot;STF-8300M&quot;:
+    gain, rdnoise = 0.37, 9.3
+elif hdr[&quot;CCDNAME&quot;] == &quot;STX-16803&quot;:
+    gain, rdnoise = 1.27, 9.0
+
+# 구경 · 고리 반지름(Ⅲ-08과 같음): FWHM 어림값의 배수
+FWHM_INIT = 6
+R_AP, R_IN, R_OUT = 1.5 * FWHM_INIT, 4 * FWHM_INIT, 6 * FWHM_INIT
+
+wcs = WCS(hdr)
+SKYC_KW = dict(unit=u.deg, frame=&quot;icrs&quot;)
+Suwon = EarthLocation(lon=127.005 * u.deg, lat=37.308889 * u.deg, height=101 * u.m)
+observatory_code = &quot;P64&quot;
+OBJID = str(int(re.match(r&quot;\d+&quot;, fpath.name).group()))   # 파일 이름 앞의 소행성 번호(0000925 -&gt; 925)
+print(&quot;gain, rdnoise :&quot;, gain, rdnoise, &quot;/ 소행성 번호 :&quot;, OBJID)</code></pre>
+<h2>code 385.</h2><pre><code>from astroquery.jplhorizons import Horizons
+from astroquery.mpc import MPC
+
+
+def asteroid_ephem(objid, times):
+    &quot;&quot;&quot;소행성의 예보 위치(Horizons, 응답하지 않으면 MPC 천체력을 1분 간격으로 받아 보간)&quot;&quot;&quot;
+    try:
+        eph = Horizons(id=objid, id_type=&quot;smallbody&quot;, location=observatory_code,
+                       epochs=list(times.jd)).ephemerides().to_pandas()
+        return eph[[&quot;targetname&quot;, &quot;datetime_str&quot;, &quot;RA&quot;, &quot;DEC&quot;]]
+    except Exception as e:                       # 서버 오류 등
+        print(f&quot;Horizons 응답 없음({type(e).__name__}) → MPC 천체력으로 대신 조회&quot;)
+        t0 = Time(times[0].isot[:16])            # 첫 시각의 분 단위 내림
+        n = int(np.ceil((times[-1] - t0).to_value(u.min))) + 2
+        eph = MPC.get_ephemeris(objid, location=observatory_code, start=t0,
+                                step=1 * u.min, number=n)
+        dt = (Time(eph[&quot;Date&quot;]) - t0).to_value(u.min)
+        x = (times - t0).to_value(u.min)
+        return pd.DataFrame({&quot;targetname&quot;: f&quot;{objid} &quot; + hdr[&quot;OBJECT&quot;].split(&quot;-&quot;, 1)[-1].title(),   # 0000925-ALPHONSINA -&gt; Alphonsina
+                             &quot;datetime_str&quot;: times.isot,
+                             &quot;RA&quot;: np.interp(x, dt, eph[&quot;RA&quot;]),
+                             &quot;DEC&quot;: np.interp(x, dt, eph[&quot;Dec&quot;])})
+
+
+# 모든 영상의 노출 중앙 시각과 그 시각의 소행성 예보 위치
+t_mids = []
+for f in fpaths:
+    h = fits.getheader(f)
+    t_mids.append(Time(h[&quot;DATE-OBS&quot;], format=&quot;isot&quot;) + h[&quot;EXPTIME&quot;] * u.s / 2)
+t_mids = Time(t_mids)
+ny, nx = hdul[0].data.shape
+img_center = wcs.pixel_to_world((nx - 1) / 2, (ny - 1) / 2)   # 영상 중심
+eph_all = asteroid_ephem(OBJID, t_mids)
+# 소행성 방향의 대기질량(고도에서 계산)
+altaz = SkyCoord(eph_all[&quot;RA&quot;].values * u.deg, eph_all[&quot;DEC&quot;].values * u.deg, **SKYC_KW)\
+    .transform_to(AltAz(obstime=t_mids, location=Suwon))
+eph_all[&quot;airmass&quot;] = altaz.secz.value
+
+# 첫 영상에서의 픽셀 좌표와 밤사이 지나간 길
+xt, yt = wcs.world_to_pixel(SkyCoord(eph_all[&quot;RA&quot;].values, eph_all[&quot;DEC&quot;].values, **SKYC_KW))
+targ_ap = CAp((xt[0], yt[0]), r=R_AP)
+targ_an = CAn((xt[0], yt[0]), r_in=R_IN, r_out=R_OUT)
+print(f&quot;영상 {len(fpaths)}장, {t_mids[0].isot[11:16]} ~ {t_mids[-1].isot[11:16]} UT&quot;)
+print(f&quot;{eph_all[&#x27;targetname&#x27;][0]}: 첫 영상 (x, y) = ({xt[0]:.1f}, {yt[0]:.1f}), &quot;
+      f&quot;밤사이 움직인 거리 {np.hypot(xt[-1] - xt[0], yt[-1] - yt[0]):.0f} px&quot;)</code></pre>
+<h2>code 386.</h2><pre><code>from astroquery.vizier import Vizier
+
+# 영상을 모두 덮는 원(중심 · 반지름) 안의 PS1 별을 받음
+corners = wcs.pixel_to_world([-0.5, nx - 0.5, -0.5, nx - 0.5], [-0.5, -0.5, ny - 0.5, ny - 0.5])
+rad = img_center.separation(corners).max().to(u.deg)
+base = &quot;g&quot; if flt == &quot;B&quot; else &quot;r&quot;           # 영상 필터에 가까운 PS1 등급(B -&gt; g, 그 밖 -&gt; r)
+vquery = Vizier(columns=[&quot;**&quot;, &quot;+_r&quot;], row_limit=-1, timeout=300,
+                column_filters={f&quot;{base}mag&quot;: &quot;11.0..15.0&quot;, f&quot;e_{base}mag&quot;: &quot;&lt;0.10&quot;})
+q = vquery.query_region(img_center, radius=rad, catalog=&quot;II/349/ps1&quot;)[0]
+print(f&quot;PS1   : {len(q)} (반지름 {rad:.3f})&quot;)
+
+q = du.select_in_fov(q, wcs, hdul[0].data.shape, bezel=5 * FWHM_INIT)   # 가장자리 30 px 안쪽
+q = du.drop_ps1_flags(q, drop_by_kron=True)                             # 품질 깃발 · 은하
+q = du.drop_star_groups(q, crit_sep=6 * FWHM_INIT)                      # 36 px 안의 쌍
+q = du.add_jc_mags(q)                                                   # g, r -&gt; B, V, R
+
+# 소행성이 지나간 길에서 2 * R_OUT 안에 드는 별 빼기
+d_track = np.hypot(np.subtract.outer(np.asarray(q[&quot;x&quot;]), xt),
+                   np.subtract.outer(np.asarray(q[&quot;y&quot;]), yt)).min(axis=1)
+print(f&quot;track : {len(q)} -&gt; {(d_track &gt; 2 * R_OUT).sum()} ({2 * R_OUT:.0f} px)&quot;)
+df_stars = q[d_track &gt; 2 * R_OUT].to_pandas()</code></pre>
+<h2>code 387.</h2><pre><code>from astropy.stats import sigma_clip
+from photutils.aperture import ApertureStats
+
+xy = np.c_[df_stars[&quot;x&quot;], df_stars[&quot;y&quot;]]
+ph = du.apphot_annulus(hdul[0].data, CAp(xy, r=R_AP), CAn(xy, r_in=R_IN, r_out=R_OUT),
+                       gain=gain, rdnoise=rdnoise)
+dm = ph[&quot;mag&quot;].to_numpy() - df_stars[f&quot;{flt}mag&quot;].to_numpy()   # 별마다의 m - M
+peak = ApertureStats(hdul[0].data, CAp(xy, r=R_AP)).max
+good = (ph[&quot;merr&quot;].to_numpy() &lt; 0.1) &amp; (peak &lt; 40000) &amp; np.isfinite(dm)
+print(f&quot;후보 {len(df_stars)}개 -&gt; 오차 · 포화 조건 {good.sum()}개&quot;, end=&quot;&quot;)
+clip = sigma_clip(dm[good], sigma=3, maxiters=5, cenfunc=&quot;median&quot;, stdfunc=&quot;mad_std&quot;)
+good[np.flatnonzero(good)[clip.mask]] = False
+comp_ids = np.flatnonzero(good)                                 # 비교성(df_stars의 행 번호)
+print(f&quot; -&gt; 3σ 클리핑 뒤 비교성 {len(comp_ids)}개&quot;)
+z0 = np.median(dm[good])
+print(f&quot;첫 영상: 영점 Z = {z0:.3f}, 비교성 잔차의 표준편차 {np.std(dm[good] - z0, ddof=1):.3f} mag, &quot;
+      f&quot;{flt} 등급 {df_stars.loc[comp_ids, f&#x27;{flt}mag&#x27;].min():.1f} ~ {df_stars.loc[comp_ids, f&#x27;{flt}mag&#x27;].max():.1f}&quot;)</code></pre>
+<h2>code 388.</h2><pre><code>import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(figsize=(6.4, 5.6), subplot_kw={&quot;projection&quot;: wcs})
+du.zimshow(ax, hdul[0].data, cmap=&quot;gray&quot;)
+ax.plot(xt, yt, &quot;:&quot;, color=&quot;c&quot;, lw=1.5, label=&quot;소행성이 지나간 길&quot;)
+targ_an.plot(ax=ax, color=&quot;r&quot;, lw=1)
+targ_ap.plot(ax=ax, color=&quot;b&quot;, lw=1)
+CAp(xy[~good], r=R_IN).plot(ax=ax, color=&quot;0.6&quot;, lw=0.8)
+CAp(xy[good], r=R_IN).plot(ax=ax, color=&quot;orange&quot;, lw=1)
+for n in comp_ids:
+    ax.text(xy[n, 0] + 20, xy[n, 1] + 20, n, color=&quot;orange&quot;, fontsize=7)
+ax.coords[&quot;ra&quot;].set_axislabel(&quot;Right Ascension (J2000)&quot;, fontsize=9.5)
+ax.coords[&quot;dec&quot;].set_axislabel(&quot;Declination (J2000)&quot;, fontsize=9.5)
+ax.coords[&quot;ra&quot;].set_ticklabel(size=9)
+ax.coords[&quot;dec&quot;].set_ticklabel(size=9)
+ax.set_title(f&quot;925 Alphonsina와 비교성 ({flt}, {t_mids[0].isot[:16]} UT)&quot;, fontsize=11)
+from matplotlib.lines import Line2D
+ring = dict(ls=&quot;&quot;, marker=&quot;o&quot;, mfc=&quot;none&quot;, ms=8)
+handles = [Line2D([], [], ls=&quot;:&quot;, color=&quot;c&quot;, label=&quot;소행성이 지나간 길&quot;),
+           Line2D([], [], color=&quot;b&quot;, label=&quot;소행성(첫 영상)&quot;, **ring),
+           Line2D([], [], color=&quot;orange&quot;, label=&quot;비교성&quot;, **ring),
+           Line2D([], [], color=&quot;0.6&quot;, label=&quot;뺀 후보&quot;, **ring)]
+ax.legend(handles=handles, loc=&quot;lower left&quot;, fontsize=8)
+plt.tight_layout()
+plt.show()</code></pre>
+<h2>code 389.</h2><pre><code>from astropy.io import fits
+
+def phot_frame(fpath, ra, dec, ids):
+    &quot;&quot;&quot;영상 한 장에서 소행성(ra, dec)과 비교성(df_stars의 행 ids)을 구경 측광&quot;&quot;&quot;
+    data = fits.getdata(fpath).astype(float)
+    w = WCS(fits.getheader(fpath))
+    x0, y0 = w.world_to_pixel(SkyCoord(ra * u.deg, dec * u.deg, **SKYC_KW))
+    pt = du.apphot_annulus(data, CAp([x0, y0], r=R_AP), CAn([x0, y0], r_in=R_IN, r_out=R_OUT),
+                           gain=gain, rdnoise=rdnoise)
+    c = df_stars.loc[ids]
+    xs, ys = w.world_to_pixel(SkyCoord(c[&quot;RAJ2000&quot;].values * u.deg, c[&quot;DEJ2000&quot;].values * u.deg, **SKYC_KW))
+    ps = du.apphot_annulus(data, CAp(np.c_[xs, ys], r=R_AP), CAn(np.c_[xs, ys], r_in=R_IN, r_out=R_OUT),
+                           gain=gain, rdnoise=rdnoise)
+    ps.index = list(ids)
+    return pt.iloc[0], ps
+
+def zero_point(ps, ids):
+    &quot;&quot;&quot;비교성 ids의 (기기 등급 - 표준 등급) 중앙값과 그 표준 오차, 쓴 별 수&quot;&quot;&quot;
+    dm = ps.loc[ids, &quot;mag&quot;].to_numpy() - df_stars.loc[ids, f&quot;{flt}mag&quot;].to_numpy()
+    dm = dm[np.isfinite(dm)]
+    zp = np.median(dm)
+    return zp, np.std(dm - zp, ddof=1) / np.sqrt(len(dm)), len(dm)
+
+# 점검성: 첫 영상에서 소행성과 밝기가 가장 비슷한 비교성
+pt0, _ = phot_frame(fpaths[0], eph_all[&quot;RA&quot;][0], eph_all[&quot;DEC&quot;][0], comp_ids)
+chk = comp_ids[np.argmin(np.abs(df_stars.loc[comp_ids, f&quot;{flt}mag&quot;].to_numpy() - (pt0[&quot;mag&quot;] - z0)))]
+ens_ids = comp_ids[comp_ids != chk]                 # 영점(앙상블)에 쓰는 비교성
+print(f&quot;점검성 {chk}번 ({flt} = {df_stars.loc[chk, f&#x27;{flt}mag&#x27;]:.2f}), 앙상블 비교성 {len(ens_ids)}개&quot;)
+
+rows = []
+for f, t, (_, e) in zip(fpaths, t_mids, eph_all.iterrows()):
+    pt, ps = phot_frame(f, e[&quot;RA&quot;], e[&quot;DEC&quot;], comp_ids)
+    zp, e_zp, n = zero_point(ps, ens_ids)
+    rows.append({&quot;utc&quot;: t.isot[11:19], &quot;jd&quot;: t.jd,
+                 flt: pt[&quot;mag&quot;] - zp, f&quot;e_{flt}&quot;: np.hypot(pt[&quot;merr&quot;], e_zp),
+                 &quot;check&quot;: ps.loc[chk, &quot;mag&quot;] - zp, &quot;e_check&quot;: np.hypot(ps.loc[chk, &quot;merr&quot;], e_zp),
+                 &quot;zeropt&quot;: zp, &quot;e_zeropt&quot;: e_zp, &quot;n_comp&quot;: n, &quot;airmass&quot;: e[&quot;airmass&quot;]})
+df_lc = pd.DataFrame(rows)
+df_lc.to_csv(proj_dir / f&quot;925_Alphonsina_{flt}_lightcurve.csv&quot;, index=False)
+df_lc.round(3)</code></pre>
+<h2>code 390.</h2><pre><code>hours = (df_lc[&quot;jd&quot;] - df_lc[&quot;jd&quot;].iloc[0]) * 24          # 첫 영상부터 지난 시간
+fig, axs = plt.subplots(3, 1, figsize=(7.5, 6.4), sharex=True,
+                        gridspec_kw={&quot;height_ratios&quot;: [2.2, 1, 1]})
+axs[0].errorbar(hours, df_lc[flt], yerr=df_lc[f&quot;e_{flt}&quot;], fmt=&quot;o&quot;, ms=4, capsize=2)
+axs[0].invert_yaxis()
+axs[0].set_ylabel(f&quot;{flt} (mag)&quot;, fontsize=11)
+axs[0].set_title(f&quot;925 Alphonsina, 2016-11-08 ({t_mids[0].isot[11:16]} UT 부터)&quot;, fontsize=12)
+dchk = df_lc[&quot;check&quot;] - df_lc[&quot;check&quot;].mean()
+axs[1].errorbar(hours, dchk, yerr=df_lc[&quot;e_check&quot;], fmt=&quot;s&quot;, ms=3, color=&quot;C2&quot;, capsize=2)
+axs[1].set_ylim(0.15, -0.15)
+axs[1].set_ylabel(&quot;점검성 (mag)&quot;, fontsize=11)
+axs[2].plot(hours, df_lc[&quot;zeropt&quot;], &quot;s&quot;, ms=3, color=&quot;C1&quot;)
+axs[2].set_ylabel(&quot;영점 (mag)&quot;, fontsize=11)
+ax2 = axs[2].twinx()
+ax2.plot(hours, df_lc[&quot;airmass&quot;], &quot;-&quot;, color=&quot;gray&quot;)
+ax2.set_ylabel(&quot;대기질량&quot;, fontsize=11)
+axs[2].set_xlabel(&quot;시간 (h)&quot;, fontsize=11)
+for ax in [*axs, ax2]:
+    ax.tick_params(labelsize=9)
+for ax in axs:
+    ax.grid(ls=&quot;:&quot;)
+plt.tight_layout()
+plt.show()
+
+v = df_lc[flt]
+print(f&quot;소행성: {v.min():.2f} ~ {v.max():.2f} (변광 폭 {v.max() - v.min():.2f} mag), &quot;
+      f&quot;등급 오차 중앙값 {df_lc[f&#x27;e_{flt}&#x27;].median():.3f} mag&quot;)
+print(f&quot;점검성: 표준편차 {df_lc[&#x27;check&#x27;].std(ddof=1):.3f} mag, 등급 오차 중앙값 {df_lc[&#x27;e_check&#x27;].median():.3f} mag&quot;)
+print(f&quot;영점: {df_lc[&#x27;zeropt&#x27;].min():.3f} ~ {df_lc[&#x27;zeropt&#x27;].max():.3f} (폭 {df_lc[&#x27;zeropt&#x27;].max() - df_lc[&#x27;zeropt&#x27;].min():.2f} mag), &quot;
+      f&quot;대기질량 {df_lc[&#x27;airmass&#x27;].min():.2f} ~ {df_lc[&#x27;airmass&#x27;].max():.2f}&quot;)</code></pre>
+<h2>code 391.</h2><pre><code>from astropy.timeseries import LombScargle
+
+t_h, mag, emag = hours.to_numpy(), df_lc[flt].to_numpy(), df_lc[f&quot;e_{flt}&quot;].to_numpy()
+ls = LombScargle(t_h, mag, emag)
+freq, power = ls.autopower(minimum_frequency=1 / 20, maximum_frequency=1 / 2, samples_per_peak=50)
+P_half = 1 / freq[np.argmax(power)]               # 가장 높은 봉우리의 주기(h)
+P_rot = 2 * P_half                                # 자전 주기 = 두 배
+print(f&quot;주기도의 가장 높은 봉우리 {P_half:.2f} h -&gt; 자전 주기 {P_rot:.2f} h&quot;)
+
+# 자전 주기로 접기: 위상 0~1, 두 배음 사인 곡선(nterms=2)으로 모양을 맞춤
+phase = (t_h / P_rot) % 1
+ls2 = LombScargle(t_h, mag, emag, nterms=2)
+ph_fit = np.linspace(0, 1, 200)
+m_fit = ls2.model(ph_fit * P_rot, 1 / P_rot)
+
+fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.2))
+axs[0].plot(1 / freq, power, color=&quot;steelblue&quot;)
+axs[0].axvline(P_half, color=&quot;r&quot;, ls=&quot;--&quot;, lw=1, label=f&quot;봉우리 {P_half:.2f} h&quot;)
+axs[0].set_xlabel(&quot;주기 (h)&quot;, fontsize=11)
+axs[0].set_ylabel(&quot;세기&quot;, fontsize=11)
+axs[0].set_title(&quot;롬-스카글 주기도&quot;, fontsize=12)
+axs[0].legend(fontsize=8)
+axs[1].errorbar(phase, mag, yerr=emag, fmt=&quot;o&quot;, ms=3, capsize=2)
+axs[1].plot(ph_fit, m_fit, &quot;r-&quot;, lw=1)
+axs[1].invert_yaxis()
+axs[1].set_xlabel(f&quot;위상 (P = {P_rot:.2f} h)&quot;, fontsize=11)
+axs[1].set_ylabel(f&quot;{flt} (mag)&quot;, fontsize=11)
+axs[1].set_title(&quot;자전 주기로 접은 광도 곡선&quot;, fontsize=12)
+for ax in axs:
+    ax.tick_params(labelsize=9)
+    ax.grid(ls=&quot;:&quot;)
+plt.tight_layout()
+plt.show()</code></pre>
+</body></html>

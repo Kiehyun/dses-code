@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>I-03. AI 코딩 도우미로 데이터 분석하기</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
+<h1>I-03. AI 코딩 도우미로 데이터 분석하기</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/01-23/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 12.</h2><pre><code>import numpy as np
+import pandas as pd
+
+rng = np.random.default_rng(0)                       # 같은 난수가 나오도록 씨앗 고정
+days = pd.date_range(&quot;2025-01-01&quot;, &quot;2025-12-31&quot;, freq=&quot;D&quot;)
+doy = days.dayofyear.to_numpy()
+
+season = -np.cos(2 * np.pi * (doy - 15) / 365)       # 1월 중순 -1, 7월 중순 +1
+tmean = 12.5 + 14.5 * season                         # 일평균기온의 계절 변화(°C)
+drange = 8.5 + 1.5 * np.cos(4 * np.pi * (doy - 105) / 365)  # 일교차(반년 주기: 4·10월 최대, 1·7월 최소)
+
+df = pd.DataFrame({
+    &quot;tmax&quot;: tmean + drange / 2 + rng.normal(0, 2.0, len(days)),
+    &quot;tmin&quot;: tmean - drange / 2 + rng.normal(0, 2.0, len(days)),
+}, index=days)
+df.head()</code></pre>
+<h2>code 13.</h2><pre><code>import matplotlib.pyplot as plt
+
+ai = df.copy()
+ai[&quot;month&quot;] = ai.index.month.astype(str) + &quot;월&quot;           # 1월, 2월, … 을 글자로 만든다
+ai[&quot;range&quot;] = ai[&quot;tmax&quot;] - ai[&quot;tmin&quot;]
+monthly = ai.groupby(&quot;month&quot;)[[&quot;tmax&quot;, &quot;tmin&quot;, &quot;range&quot;]].mean()
+
+fig, ax = plt.subplots(figsize=(8.5, 4))
+monthly.plot(ax=ax, marker=&quot;o&quot;)
+ax.set_xlabel(&quot;월&quot;)
+ax.set_ylabel(&quot;기온 (°C)&quot;)
+ax.set_title(&quot;AI가 처음 그린 그래프&quot;)
+plt.show()
+print(list(monthly.index))</code></pre>
+<h2>code 14.</h2><pre><code>expected = [f&quot;{m}월&quot; for m in range(1, 13)]
+print(&quot;월 순서가 1월~12월인가? &quot;, list(monthly.index) == expected)
+
+july_direct = df.loc[df.index.month == 7, &quot;tmax&quot;].mean()     # 다른 방법으로 다시 계산
+print(&quot;7월 평균 최고기온이 같은가?&quot;,
+      np.isclose(july_direct, monthly.loc[&quot;7월&quot;, &quot;tmax&quot;]))</code></pre>
+<h2>code 15.</h2><pre><code>import os
+
+fixed = (df.assign(range=df[&quot;tmax&quot;] - df[&quot;tmin&quot;])
+         .groupby(df.index.month)[[&quot;tmax&quot;, &quot;tmin&quot;, &quot;range&quot;]].mean())
+
+fig, ax = plt.subplots(figsize=(8.5, 4))
+ax.plot(fixed.index, fixed[&quot;tmax&quot;], marker=&quot;o&quot;, label=&quot;평균 최고기온&quot;)
+ax.plot(fixed.index, fixed[&quot;tmin&quot;], marker=&quot;o&quot;, label=&quot;평균 최저기온&quot;)
+ax.plot(fixed.index, fixed[&quot;range&quot;], marker=&quot;s&quot;, label=&quot;평균 일교차&quot;)
+ax.set_xticks(range(1, 13))
+ax.set_xticklabels([f&quot;{m}월&quot; for m in range(1, 13)])
+ax.set_ylabel(&quot;기온 (°C)&quot;)
+ax.set_title(&quot;고친 그래프 — 월별 기온과 일교차&quot;)
+ax.grid(True, alpha=0.4)
+ax.legend()
+du.save_figure(fig, os.path.join(str(proj_dir), f&quot;{proj_dir.name}_01&quot;))
+plt.show()
+
+print(&quot;월 순서가 1~12인가?&quot;, list(fixed.index) == list(range(1, 13)))</code></pre>
+</body></html>

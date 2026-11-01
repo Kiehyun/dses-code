@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>V-04. 지질도 작성 및 이해</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
+<h1>V-04. 지질도 작성 및 이해</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/05-04/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 37.</h2><pre><code>from pathlib import Path
+from urllib.parse import urlencode
+import json
+
+import geopandas as gpd
+import numpy as np
+import pandas as pd
+import requests
+
+MACROSTRAT_URL = &quot;https://macrostrat.org/api/v2/geologic_units/map&quot;
+
+places = pd.DataFrame([
+    {&quot;name&quot;: &quot;서울&quot;, &quot;lat&quot;: 37.5665, &quot;lng&quot;: 126.9780},
+    {&quot;name&quot;: &quot;대전&quot;, &quot;lat&quot;: 36.3504, &quot;lng&quot;: 127.3845},
+    {&quot;name&quot;: &quot;부산&quot;, &quot;lat&quot;: 35.1796, &quot;lng&quot;: 129.0756},
+    {&quot;name&quot;: &quot;광주&quot;, &quot;lat&quot;: 35.1595, &quot;lng&quot;: 126.8526},
+    {&quot;name&quot;: &quot;강릉&quot;, &quot;lat&quot;: 37.7519, &quot;lng&quot;: 128.8761},
+    {&quot;name&quot;: &quot;제주&quot;, &quot;lat&quot;: 33.4996, &quot;lng&quot;: 126.5312},
+])
+
+map_center = {
+    &quot;name&quot;: &quot;대한민국&quot;,
+    &quot;lat&quot;: places[&quot;lat&quot;].mean(),
+    &quot;lng&quot;: places[&quot;lng&quot;].mean(),
+}
+
+features_by_map_id = {}
+refs = {}
+download_log = []
+
+for row in places.itertuples(index=False):
+    params = {&quot;lat&quot;: row.lat, &quot;lng&quot;: row.lng, &quot;format&quot;: &quot;geojson&quot;}
+    response = requests.get(MACROSTRAT_URL, params=params, timeout=60)
+    response.raise_for_status()
+    geojson_data = response.json()
+
+    for feature in geojson_data[&quot;success&quot;][&quot;data&quot;].get(&quot;features&quot;, []):
+        map_id = feature.get(&quot;properties&quot;, {}).get(&quot;map_id&quot;)
+        features_by_map_id[map_id] = feature
+
+    refs.update(geojson_data[&quot;success&quot;].get(&quot;refs&quot;, {}))
+    download_log.append({
+        &quot;name&quot;: row.name,
+        &quot;url&quot;: response.url,
+        &quot;feature_count&quot;: len(geojson_data[&quot;success&quot;][&quot;data&quot;].get(&quot;features&quot;, [])),
+    })
+
+feature_collection = {
+    &quot;type&quot;: &quot;FeatureCollection&quot;,
+    &quot;features&quot;: list(features_by_map_id.values()),
+}
+
+geojson_file = Path(proj_dir) / &quot;macrostrat_geologic_units_korea.geojson&quot;
+geojson_file.write_text(json.dumps(feature_collection), encoding=&quot;utf-8&quot;)
+
+download_log = pd.DataFrame(download_log)
+
+print(f&quot;중복 제거 후 지질 단위 수: {len(feature_collection[&#x27;features&#x27;])}&quot;)
+print(f&quot;파일 크기: {geojson_file.stat().st_size:,} bytes&quot;)
+print(download_log)</code></pre>
+<h2>code 38.</h2><pre><code>clean_geojson_file = Path(proj_dir) / &quot;macrostrat_geologic_units_clean.geojson&quot;
+clean_geojson_file.write_text(
+    json.dumps(feature_collection),
+    encoding=&quot;utf-8&quot;,
+)
+
+gdf = gpd.read_file(clean_geojson_file)
+gdf = gdf.set_crs(&quot;EPSG:4326&quot;, allow_override=True)
+
+print(gdf.shape)
+gdf.head()
+
+columns_to_show = [
+    &quot;map_id&quot;, &quot;source_id&quot;, &quot;name&quot;, &quot;lith&quot;, &quot;t_int_name&quot;, &quot;b_int_name&quot;,
+    &quot;best_int_name&quot;, &quot;t_age&quot;, &quot;b_age&quot;, &quot;color&quot;
+]
+
+print(gdf[columns_to_show].head(10))</code></pre>
+<h2>code 39.</h2><pre><code>age_summary = (
+    gdf.groupby(&quot;best_int_name&quot;, dropna=False)
+    .size()
+    .sort_values(ascending=False)
+    .rename(&quot;polygon_count&quot;)
+    .reset_index()
+)
+
+lith_summary = (
+    gdf.groupby(&quot;lith&quot;, dropna=False)
+    .size()
+    .sort_values(ascending=False)
+    .rename(&quot;polygon_count&quot;)
+    .reset_index()
+)
+
+print(age_summary)
+print(lith_summary)</code></pre>
+<h2>code 40.</h2><pre><code>import matplotlib.pyplot as plt
+plt.rcParams[&#x27;font.family&#x27;] = &#x27;Malgun Gothic&#x27;   # macOS: &#x27;AppleGothic&#x27;
+plt.rcParams[&#x27;axes.unicode_minus&#x27;] = False
+
+plot_gdf = gdf.copy()
+plot_gdf[&quot;plot_color&quot;] = plot_gdf[&quot;color&quot;].fillna(&quot;#cccccc&quot;)
+
+fig, ax = plt.subplots(figsize=(8, 9))
+plot_gdf.plot(ax=ax, color=plot_gdf[&quot;plot_color&quot;], edgecolor=&quot;black&quot;, linewidth=0.4, alpha=0.85)
+
+ax.scatter(places[&quot;lng&quot;], places[&quot;lat&quot;], color=&quot;red&quot;, marker=&quot;*&quot;, s=120, label=&quot;예시 지점&quot;, zorder=5)
+for row in places.itertuples(index=False):
+    ax.text(row.lng + 0.08, row.lat, row.name, fontsize=10, zorder=6)
+
+ax.set_title(&quot;Macrostrat 자료로 그린 대한민국 주변 지질 단위&quot;)
+ax.set_xlabel(&quot;경도&quot;)
+ax.set_ylabel(&quot;위도&quot;)
+ax.legend(loc=&quot;upper right&quot;)
+ax.set_aspect(&quot;equal&quot;)
+du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;05_04_Geologic_map_basics_01&quot;))
+plt.show()</code></pre>
+<h2>code 41.</h2><pre><code>import matplotlib.pyplot as plt
+
+legend_df = (
+    plot_gdf[[&quot;best_int_name&quot;, &quot;plot_color&quot;]]
+    .dropna()
+    .drop_duplicates()
+    .sort_values(&quot;best_int_name&quot;)
+)
+
+fig, ax = plt.subplots(figsize=(6, max(2, len(legend_df) * 0.35)))
+ax.axis(&quot;off&quot;)
+
+for i, row in enumerate(legend_df.itertuples(index=False)):
+    ax.add_patch(plt.Rectangle((0, i), 0.5, 0.25, color=row.plot_color, ec=&quot;black&quot;, lw=0.4))
+    ax.text(0.65, i + 0.12, row.best_int_name, va=&quot;center&quot;, fontsize=10)
+
+ax.set_xlim(0, 3)
+ax.set_ylim(-0.2, len(legend_df))
+ax.invert_yaxis()
+ax.set_title(&quot;지질 시대 범례&quot;, loc=&quot;left&quot;)
+du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;05_04_Geologic_map_basics_02&quot;))
+plt.show()</code></pre>
+<h2>code 42.</h2><pre><code>import folium
+
+m = folium.Map(location=[map_center[&quot;lat&quot;], map_center[&quot;lng&quot;]], zoom_start=6, tiles=&quot;CartoDB positron&quot;)
+
+tooltip = folium.GeoJsonTooltip(
+    fields=[&quot;name&quot;, &quot;lith&quot;, &quot;best_int_name&quot;, &quot;t_int_name&quot;, &quot;b_int_name&quot;],
+    aliases=[&quot;이름&quot;, &quot;암상&quot;, &quot;대표 시대&quot;, &quot;상한 시대&quot;, &quot;하한 시대&quot;],
+    localize=True,
+)
+
+folium.GeoJson(
+    feature_collection,
+    name=&quot;Macrostrat geologic units&quot;,
+    style_function=lambda feature: {
+        &quot;fillColor&quot;: feature[&quot;properties&quot;].get(&quot;color&quot;) or &quot;#cccccc&quot;,
+        &quot;color&quot;: &quot;#333333&quot;,
+        &quot;weight&quot;: 0.5,
+        &quot;fillOpacity&quot;: 0.65,
+    },
+    tooltip=tooltip,
+).add_to(m)
+
+for row in places.itertuples(index=False):
+    folium.Marker([row.lat, row.lng], popup=row.name).add_to(m)
+
+folium.LayerControl().add_to(m)
+
+map_file = Path(proj_dir) / &quot;macrostrat_geologic_map_korea.html&quot;
+m.save(map_file)
+print(f&quot;지도 저장 위치: {map_file}&quot;)
+m</code></pre>
+<h2>code 43.</h2><pre><code>source_summary = (
+    gdf.groupby(&quot;source_id&quot;)
+    .size()
+    .sort_values(ascending=False)
+    .rename(&quot;polygon_count&quot;)
+    .reset_index()
+)
+
+source_summary[&quot;reference&quot;] = source_summary[&quot;source_id&quot;].astype(str).map(refs)
+print(source_summary)</code></pre>
+</body></html>

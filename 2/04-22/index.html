@@ -1,0 +1,962 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IV-02. 단열선도(Skew T-log P) 그리기</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
+<h1>IV-02. 단열선도(Skew T-log P) 그리기</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/04-22/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 418.</h2><pre><code>fname = &quot;UPPER_SONDE_47122_ALL_2018_2018_2019.csv&quot;
+fid = &quot;1mwSTMFOpKeIcP1fZ_tTqiY3s80dWe3_n&quot;
+
+# du.download()로 파일 내려받기
+du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={fid}&quot;,
+            proj_dir / fname)</code></pre>
+<h2>code 419.</h2><pre><code>fpaths = du.list_files(proj_dir, &quot;csv&quot;)</code></pre>
+<h2>code 420.</h2><pre><code>du.preview_text(fpaths[0], n=10)</code></pre>
+<h2>code 421.</h2><pre><code>import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
+from metpy.plots import SkewT
+from metpy.units import units
+from metpy.calc import dewpoint, vapor_pressure
+
+# 표준 등압면(hPa)과 포화 혼합비(g/kg)
+STANDARD_ISOBARS = [1000, 925, 850, 700, 600, 500, 400, 300, 250, 200, 150,
+                    100]
+STANDARD_MIXING = [0.4, 1, 2, 3, 5, 8, 12, 16, 20]
+
+# 선 종류 : (색, 선 모양, 굵기, 이름)
+LINE_STYLE = {
+    &#x27;isobar&#x27;:   (&#x27;black&#x27;,  &#x27;-&#x27;,         0.6, &#x27;등압선&#x27;),
+    &#x27;isotherm&#x27;: (&#x27;brown&#x27;,  &#x27;-&#x27;,         0.6, &#x27;등온선&#x27;),
+    &#x27;dry&#x27;:      (&#x27;orange&#x27;, &#x27;-&#x27;,         0.7, &#x27;건조 단열선&#x27;),
+    &#x27;moist&#x27;:    (&#x27;green&#x27;,  &#x27;-&#x27;,         1.2, &#x27;습윤 단열선&#x27;),
+    &#x27;mixing&#x27;:   (&#x27;blue&#x27;,   (0, (6, 4)), 0.7, &#x27;포화 혼합비선&#x27;),
+}
+
+
+def draw_skewt_paper(skew, xlim=(-40, 40), ylim=(1050, 100), *,
+                     isotherm_step=10, isobars=STANDARD_ISOBARS,
+                     dry_step=10, moist_step=5, mixing_ratios=STANDARD_MIXING,
+                     draw=(&#x27;isobar&#x27;, &#x27;isotherm&#x27;, &#x27;dry&#x27;, &#x27;moist&#x27;, &#x27;mixing&#x27;),
+                     mixing_label_p=850, legend=True):
+    &quot;&quot;&quot;Skew T-log P 선도의 &#x27;용지&#x27;(기준선)를 그린다.
+
+    skew           : SkewT 객체
+    xlim           : 기온 축 범위 (°C)
+    ylim           : 기압 축 범위 (hPa) — (아래, 위) 순서
+    isotherm_step  : 등온선 간격 (°C)
+    dry_step       : 건조 단열선 간격 (°C)
+    moist_step     : 습윤 단열선 간격 (°C)
+    mixing_ratios  : 포화 혼합비선 값 (g/kg)
+    draw           : 그릴 선의 종류를 고른다
+    mixing_label_p : 혼합비 값을 적을 기압 (hPa)
+    &quot;&quot;&quot;
+    p_bottom, p_top = max(ylim), min(ylim)
+
+    # 등압선 — 가로 직선
+    if &#x27;isobar&#x27; in draw:
+        color, ls, lw, _ = LINE_STYLE[&#x27;isobar&#x27;]
+        for p in isobars:
+            if p_top &lt;= p &lt;= p_bottom:
+                skew.ax.axhline(p, color=color, linestyle=ls, linewidth=lw,
+                                alpha=0.6)
+
+    # 등온선 — 오른쪽 위로 기울어진 직선
+    if &#x27;isotherm&#x27; in draw:
+        color, ls, lw, _ = LINE_STYLE[&#x27;isotherm&#x27;]
+        for t in np.arange(-160, 61, isotherm_step):      # 화면 밖에서 들어오는 선까지
+            skew.ax.axvline(t, color=color, linestyle=ls,
+                            linewidth=lw * (1.8 if t == 0 else 1.0), alpha=0.6)
+
+    # 건조 단열선
+    if &#x27;dry&#x27; in draw:
+        color, ls, lw, _ = LINE_STYLE[&#x27;dry&#x27;]
+        skew.plot_dry_adiabats(t0=np.arange(-50, 260, dry_step) * units.degC,
+                               colors=color, linestyles=ls, linewidths=lw, alpha=1.0)
+
+    # 습윤 단열선
+    if &#x27;moist&#x27; in draw:
+        color, ls, lw, _ = LINE_STYLE[&#x27;moist&#x27;]
+        skew.plot_moist_adiabats(t0=np.arange(-40, 45, moist_step) * units.degC,
+                                 colors=color, linestyles=ls, linewidths=lw, alpha=1.0)
+
+    # 포화 혼합비선 + 값 표시
+    if &#x27;mixing&#x27; in draw:
+        color, ls, lw, _ = LINE_STYLE[&#x27;mixing&#x27;]
+        w = np.array(mixing_ratios) / 1000.                     # g/kg → kg/kg
+        p_line = np.linspace(p_bottom, max(p_top, 400), 40) * units.hPa
+        skew.plot_mixing_lines(mixing_ratio=w, pressure=p_line,
+                               colors=color, linestyles=ls, linewidths=lw, alpha=1.0)
+        if p_top &lt;= mixing_label_p &lt;= p_bottom:
+            t_lab = dewpoint(vapor_pressure(mixing_label_p * units.hPa, w)).to(units.degC)
+            for value, t in zip(mixing_ratios, t_lab.magnitude):
+                if xlim[0] &lt; t &lt; xlim[1]:
+                    skew.ax.text(t, mixing_label_p, f&#x27;{value:g}&#x27;, color=color,
+                                 fontsize=7, ha=&#x27;center&#x27;, va=&#x27;center&#x27;,
+                                 clip_on=True,
+                                 bbox=dict(boxstyle=&#x27;round,pad=0.1&#x27;, fc=&#x27;white&#x27;,
+                                           ec=&#x27;none&#x27;, alpha=0.8))
+
+    skew.ax.set_xlim(*xlim)
+    skew.ax.set_ylim(p_bottom, p_top)
+    skew.ax.set_xlabel(r&#x27;기온 (${\degree \mathrm{C}}$)&#x27;, fontsize=9)
+    skew.ax.set_ylabel(r&#x27;기압 (${\mathrm{hPa}}$)&#x27;, fontsize=9)
+    skew.ax.tick_params(labelsize=8)
+
+    # 같은 선이 수십 개이므로 종류마다 하나씩만 범례에 넣는다
+    if legend:
+        handles = [Line2D([], [], color=LINE_STYLE[k][0], linestyle=LINE_STYLE[k][1],
+                          linewidth=max(LINE_STYLE[k][2], 1.2), label=LINE_STYLE[k][3])
+                   for k in draw]
+        skew.ax.legend(handles=handles, loc=&#x27;upper right&#x27;, fontsize=7.5)
+    return skew</code></pre>
+<h2>code 422.</h2><pre><code># 단열선도 전체 그리기 (지상 1050 hPa ~ 100 hPa)
+xxlim = [-40, 40]        # 기온 축 범위 (°C)
+yylim = [1050, 100]      # 기압 축 범위 (hPa)
+
+fig = plt.figure(figsize=(5.4, 4.6))
+skew = SkewT(fig, rotation=45)          # rotation : 등온선을 기울이는 각도
+
+draw_skewt_paper(skew, xlim=xxlim, ylim=yylim)
+
+plt.tight_layout()
+plt.savefig(f&#x27;{str(proj_dir)}/SkewTlogP_paper_{xxlim[0]}_{xxlim[1]}_{yylim[0]}_{yylim[1]}_kr.png&#x27;,
+            dpi=150)
+plt.savefig(f&#x27;{str(proj_dir)}/SkewTlogP_paper_{xxlim[0]}_{xxlim[1]}_{yylim[0]}_{yylim[1]}_kr.pdf&#x27;)
+plt.show()
+plt.close()</code></pre>
+<h2>code 423.</h2><pre><code># 아래쪽 일부만 확대해 보기 — 범위와 간격만 바꾸어 같은 함수 호출
+xxlim = [-30, 10]        # 기온 축 범위 (°C)
+yylim = [1050, 700]      # 기압 축 범위 (hPa)
+
+fig = plt.figure(figsize=(6.0, 3.2))
+skew = SkewT(fig, rotation=45)
+
+draw_skewt_paper(skew, xlim=xxlim, ylim=yylim,
+                 isotherm_step=5,     # 확대했으므로 등온선을 5 °C 간격으로 촘촘히
+                 dry_step=5,
+                 mixing_label_p=900)
+
+plt.tight_layout()
+plt.savefig(f&#x27;{str(proj_dir)}/SkewTlogP_crop_{xxlim[0]}_{xxlim[1]}_{yylim[0]}_{yylim[1]}_kr.png&#x27;,
+            dpi=150)
+plt.show()
+plt.close()</code></pre>
+<h2>code 424.</h2><pre><code>import urllib.request
+from IPython.display import Image, display
+
+try:
+    import pymupdf                      # PyMuPDF 1.24 이상
+except ImportError:
+    import fitz as pymupdf              # 예전 이름
+
+url = &quot;https://www.noaa.gov/sites/default/files/2022-06/skew_t_fullsize.pdf&quot;
+pdf_path = f&quot;{str(proj_dir)}/noaa_skew_t_fullsize.pdf&quot;
+png_path = f&quot;{str(proj_dir)}/noaa_skew_t_fullsize.png&quot;
+
+# 1) PDF 내려받기 (이미 받아 두었으면 건너뜀)
+if not os.path.exists(pdf_path):
+    print(&quot;내려받는 중입니다 …&quot;)
+    # 브라우저와 같은 머리말
+    ua = (&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 &quot;
+          &quot;(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36&quot;)
+    req = urllib.request.Request(url, headers={&quot;User-Agent&quot;: ua,
+                                               &quot;Accept&quot;: &quot;application/pdf,*/*&quot;})
+    with urllib.request.urlopen(req, timeout=60) as res, open(pdf_path, &quot;wb&quot;) as f:
+        f.write(res.read())
+print(f&quot;파일 크기: {os.path.getsize(pdf_path) / 1e3:.0f} KB&quot;)
+
+# 2) 첫 쪽을 그림으로 바꾸기
+doc = pymupdf.open(pdf_path)
+page = doc[0]
+print(f&quot;쪽 수: {doc.page_count},  용지 크기: {page.rect.width:.0f} x {page.rect.height:.0f} pt&quot;)
+
+pix = page.get_pixmap(dpi=110)          # dpi 를 올리면 더 또렷해집니다
+pix.save(png_path)
+doc.close()
+
+# 3) 노트북에 표시
+display(Image(filename=png_path, width=1000))</code></pre>
+<h2>code 425.</h2><pre><code>import matplotlib.pyplot as plt
+from metpy.plots import SkewT
+
+# 새 그림 만들기
+fig = plt.figure(figsize=(5.4, 4.6)) 
+
+# 단열선도 그리기
+skew = SkewT(fig)
+
+# 차트와 축 제목 넣기
+skew.ax.set_title(&#x27;Skew T Adiabatic Diagram\n&#x27;, fontsize=10) 
+skew.ax.set_xlabel(r&#x27;temperature (${\degree \mathrm{C}}$)&#x27;, fontsize=9)
+skew.ax.set_ylabel(r&#x27;pressure (${\mathrm{hPa}}$)&#x27;, fontsize=9)
+skew.ax.tick_params(labelsize=8)
+
+plt.show()</code></pre>
+<h2>code 426.</h2><pre><code>import matplotlib.pyplot as plt
+from metpy.plots import SkewT
+
+# 새 그림 만들기
+fig = plt.figure(figsize=(5.4, 4.6)) 
+
+# 온도축과 기압축 범위 지정
+xxlim = [-50, 50]       #온도축
+yylim = [1050.1, 99.9]  #기압축
+
+# 온도축 기울기 지정
+skew = SkewT(fig, rotation=45)
+
+skew.ax.set_title(&#x27;Skew T Adiabatic Diagram\n&#x27;, fontsize=10) 
+skew.ax.set_xlabel(r&#x27;temperature (${\degree \mathrm{C}}$)&#x27;, fontsize=9)
+skew.ax.set_ylabel(r&#x27;pressure (${\mathrm{hPa}}$)&#x27;, fontsize=9)
+
+# 등온선(isotherm) 그리는 함수 정의
+def add_isothermal(skew) :
+ # 등온선의 녹색 영역 표시
+    for t in range(-160, 61, 40) :
+        skew.ax.axvspan(t, t + 20, color=&#x27;green&#x27;, alpha=0.10, linewidth=0)
+
+ # 갈색 등온선 그리기
+    for t in range(-160, 61, 2) :
+        if t % 10 :
+            skew.ax.axvline(t, color=&#x27;brown&#x27;, linestyle=&#x27;-&#x27;, linewidth=0.25,
+                            alpha=0.35)
+    for t in range(-160, 61, 10) :
+        skew.ax.axvline(t, color=&#x27;brown&#x27;, linestyle=&#x27;-&#x27;, linewidth=1.0,
+                        alpha=0.85)
+    skew.ax.axvline(0, color=&#x27;brown&#x27;, linestyle=&#x27;-&#x27;, linewidth=1.8,
+                    label=&#x27;isothermal&#x27;)
+
+ # 가로(기온)축 표시하기
+    skew.ax.set_xlim(xxlim[0], xxlim[1])
+    skew.ax.tick_params(axis=&quot;x&quot;, labelsize=8, pad=6, rotation=45,
+                        labelcolor=&#x27;brown&#x27;)
+    skew.ax.tick_params(axis=&quot;y&quot;, labelsize=8, pad=0.5)
+
+ #등온선 글자
+    # 10 °C 간격으로 적기
+    for i in range(0, 36, 2):
+        if i &lt; 16:
+            plt.text(-i*5-10.5, 1050 / 10**(i/35), &#x27;{0}&#x27;.format(-i*5-10), 
+                horizontalalignment=&#x27;left&#x27;, verticalalignment=&#x27;center&#x27;, 
+                fontsize=7, rotation=45, color=&#x27;brown&#x27;, alpha=0.7)
+        if i &lt; 30:
+            plt.text(-i*5+29.5, 1050 / 10**(i/35), &#x27;{0}&#x27;.format(-i*5+30), 
+                horizontalalignment=&#x27;left&#x27;, verticalalignment=&#x27;center&#x27;, 
+                fontsize=7, rotation=45, color=&#x27;brown&#x27;, alpha=0.7)
+        if i &gt; 7 : 
+            plt.text(-i*5+69.5, 1050 / 10**(i/35), &#x27;{0}&#x27;.format(-i*5+70), 
+                horizontalalignment=&#x27;left&#x27;, verticalalignment=&#x27;center&#x27;, 
+                fontsize=7, rotation=45, color=&#x27;brown&#x27;, alpha=0.7)    
+
+#등온선 그리는 함수
+add_isothermal(skew)
+
+plt.show()</code></pre>
+<h2>code 427.</h2><pre><code>import numpy as np
+import matplotlib.pyplot as plt
+from metpy.plots import SkewT
+
+# 새 그림 만들기
+fig = plt.figure(figsize=(5.4, 4.6)) 
+
+# 온도축과 기압축 범위 지정
+xxlim = [-50, 50]       #온도축
+yylim = [1050.1, 99.9]  #기압축
+
+# 온도축 기울기 지정
+skew = SkewT(fig, rotation=45)
+
+skew.ax.set_title(&#x27;Skew T Adiabatic Diagram\n&#x27;, fontsize=10) 
+skew.ax.set_xlabel(r&#x27;temperature (${\degree \mathrm{C}}$)&#x27;, fontsize=9)
+skew.ax.set_ylabel(r&#x27;pressure (${\mathrm{hPa}}$)&#x27;, fontsize=9)
+skew.ax.tick_params(labelsize=8)
+
+# 등압선 그리는 함수 정의
+def add_isobar(skew):
+    skew.ax.set_ylim(yylim[0], yylim[1])
+    yts1 = list(np.arange(1050, 99, -10))  # 10 hPa 간격 (가는 선) 표시
+    skew.ax.set_yticks(yts1)
+
+ # 50 hPa 간격
+    yts2 = list(np.arange(1050, 99, -50))  # 50 hPa 간격 (굵은 선) 표시
+    yticklabels=[]
+    i=0
+    for ytick in yts2 : 
+        # 눈금 글자는 100 hPa 간격만 — 로그 눈금이라 아래쪽에서 50 hPa 간격 글자가 겹침
+        yticklabels.append(ytick if ytick % 100 == 0 else &#x27;&#x27;)
+        for j in range(4):
+            yticklabels.append(&#x27;&#x27;)
+        skew.plot([ytick, ytick], [-150,100], &#x27;k&#x27;, linewidth=0.6)
+    
+ #등압선 글자
+        if ytick &gt;= 200 : 
+            plt.text(-20-(np.log(1050)-np.log(1050-i*50))*35, ytick, &#x27;{0}&#x27;.format(ytick), 
+                horizontalalignment=&#x27;left&#x27;, verticalalignment=&#x27;center&#x27;, 
+                fontsize=7, color=&#x27;black&#x27;, alpha=.30)
+        if ytick &gt;= 500 : 
+            plt.text(20-(np.log(1050)-np.log(1050-i*50))*35, ytick, &#x27;{0}&#x27;.format(ytick), 
+                horizontalalignment=&#x27;left&#x27;, verticalalignment=&#x27;center&#x27;, 
+                fontsize=7, color=&#x27;black&#x27;, alpha=.30)
+
+ #print(&quot;yticklabels: {}&quot;.format(yticklabels))
+ #print(&quot;len(yticklabels): {}&quot;.format(len(yticklabels)))
+
+    skew.ax.set_yticklabels(yticklabels[:-4], minor=False)
+    
+    return skew
+
+#등압선 그리는 함수
+add_isobar(skew)
+ 
+plt.show()</code></pre>
+<h2>code 428.</h2><pre><code>import numpy as np
+import metpy.calc as mpcalc
+import matplotlib.pyplot as plt
+from metpy.plots import SkewT
+from metpy.units import units
+
+# 새 그림 만들기
+fig = plt.figure(figsize=(5.4, 4.6))
+
+# 온도축과 기압축 범위 지정
+xxlim = [-50, 50]       #온도축
+yylim = [1050.1, 99.9]  #기압축
+
+# 온도축 기울기 지정
+skew = SkewT(fig, rotation=45)
+
+skew.ax.set_title(&#x27;Dry Adiabats\n&#x27;, fontsize=10)
+skew.ax.set_xlabel(r&#x27;temperature (${\degree \mathrm{C}}$)&#x27;, fontsize=9)
+skew.ax.set_ylabel(r&#x27;pressure (${\mathrm{hPa}}$)&#x27;, fontsize=9)
+skew.ax.tick_params(labelsize=8)
+
+# 건조 단열선 그리는 함수 정의
+def add_dry_adiabats(skew, t0=np.arange(-30, 180, 10), label_p=530,
+                     label_every=1):
+    &quot;&quot;&quot;건조 단열선을 그리고, 선마다 1000 hPa 기준 온도(=온위)를 적는다.&quot;&quot;&quot;
+    t0 = np.asarray(t0)
+    skew.plot_dry_adiabats(t0=t0 * units.degC,
+                           colors=&#x27;orange&#x27;, linestyles=&#x27;-&#x27;, linewidths=1.0,
+                           alpha=1.0, label=&#x27;dry adiabat&#x27;)
+
+    # 글자 위치 계산
+    t_at_label = mpcalc.dry_lapse(label_p * units.hPa, t0 * units.degC,
+                                  reference_pressure=1000 * units.hPa).to(units.degC).magnitude
+
+    # label_every 개마다 글자 적기
+    for t_start, t_lab in list(zip(t0, np.atleast_1d(t_at_label)))[::label_every]:
+        skew.ax.text(t_lab, label_p, f&#x27;{t_start:g}&#x27;,
+                     ha=&#x27;center&#x27;, va=&#x27;center&#x27;, fontsize=7, color=&#x27;orange&#x27;, clip_on=True,
+                     bbox=dict(boxstyle=&#x27;round,pad=0.1&#x27;, fc=&#x27;white&#x27;, ec=&#x27;none&#x27;, alpha=0.85))
+    return skew
+
+# 건조 단열선 그리기
+add_dry_adiabats(skew)
+
+# 축 범위 지정
+skew.ax.set_xlim(xxlim[0], xxlim[1])
+skew.ax.set_ylim(yylim[0], yylim[1])
+
+plt.show()</code></pre>
+<h2>code 429.</h2><pre><code>import numpy as np
+import metpy.calc as mpcalc
+import matplotlib.pyplot as plt
+from metpy.plots import SkewT
+from metpy.units import units
+
+# 새 그림 만들기
+fig = plt.figure(figsize=(5.4, 4.6))
+
+# 온도축과 기압축 범위 지정
+xxlim = [-50, 50]       #온도축
+yylim = [1050.1, 99.9]  #기압축
+
+# 온도축 기울기 지정
+skew = SkewT(fig, rotation=45)
+
+skew.ax.set_title(&#x27;Saturation Adiabats\n&#x27;, fontsize=10)
+skew.ax.set_xlabel(r&#x27;temperature (${\degree \mathrm{C}}$)&#x27;, fontsize=9)
+skew.ax.set_ylabel(r&#x27;pressure (${\mathrm{hPa}}$)&#x27;, fontsize=9)
+skew.ax.tick_params(labelsize=8)
+
+# 습윤 단열선 그리는 함수 정의
+def add_moist_adiabats(skew, t0=np.arange(-30, 40, 2), label_p=530,
+                       label_every=1):
+    &quot;&quot;&quot;습윤 단열선을 그리고, 선마다 1000 hPa 기준 온도를 적는다.
+
+    t0 에 100 °C 가 넘는 값을 넣으면 포화수증기압이 대기압보다 커져
+    계산이 되지 않는다(MetPy 가 &#x27;ODE Integration failed&#x27; 오류를 낸다).
+    실제 대기에서 뜻이 있는 -30 ~ 40 °C 범위만 쓴다.
+    &quot;&quot;&quot;
+    t0 = np.asarray(t0)
+    skew.plot_moist_adiabats(t0=t0 * units.degC,
+                             colors=&#x27;green&#x27;, linestyles=&#x27;-&#x27;, linewidths=1.0,
+                             alpha=1.0, label=&#x27;saturation adiabat&#x27;)
+
+    # 글자 위치 계산
+    t_at_label = mpcalc.moist_lapse(np.array([1000., label_p]) * units.hPa,
+                                    t0 * units.degC,
+                                    reference_pressure=1000 * units.hPa)
+    t_at_label = np.atleast_2d(t_at_label.to(units.degC).magnitude)[:, -1]
+
+    # label_every 개마다 글자 적기
+    for t_start, t_lab in list(zip(t0, t_at_label))[::label_every]:
+        if np.isnan(t_lab):
+            continue
+        skew.ax.text(t_lab, label_p, f&#x27;{t_start:g}&#x27;,
+                     ha=&#x27;center&#x27;, va=&#x27;center&#x27;, fontsize=7, color=&#x27;green&#x27;, clip_on=True,
+                     bbox=dict(boxstyle=&#x27;round,pad=0.1&#x27;, fc=&#x27;white&#x27;, ec=&#x27;none&#x27;, alpha=0.85))
+    return skew
+
+# 습윤 단열선 그리기
+add_moist_adiabats(skew)
+
+# 축 범위 지정
+skew.ax.set_xlim(xxlim[0], xxlim[1])
+skew.ax.set_ylim(yylim[0], yylim[1])
+
+plt.show()</code></pre>
+<h2>code 430.</h2><pre><code>import numpy as np
+import metpy.calc as mpcalc
+import matplotlib.pyplot as plt
+from metpy.plots import SkewT
+from metpy.units import units
+
+# 새 그림 만들기
+fig = plt.figure(figsize=(5.4, 4.6))
+
+# 온도축과 기압축 범위 지정
+xxlim = [-50, 50]       #온도축
+yylim = [1050.1, 99.9]  #기압축
+
+# 온도축 기울기 지정
+skew = SkewT(fig, rotation=45)
+
+skew.ax.set_title(&#x27;Saturation Mixing Ratio\n&#x27;, fontsize=10)
+skew.ax.set_xlabel(r&#x27;temperature (${\degree \mathrm{C}}$)&#x27;, fontsize=9)
+skew.ax.set_ylabel(r&#x27;pressure (${\mathrm{hPa}}$)&#x27;, fontsize=9)
+skew.ax.tick_params(labelsize=8)
+
+# 포화 혼합비선 그리는 함수 정의
+def add_mixing_lines(skew, mixing_ratios=(0.1, 0.2, 0.4, 1, 2, 3, 5, 8, 12, 16, 20, 24),
+                     p_range=(1050, 400), label_p=850, label_every=1):
+    &quot;&quot;&quot;포화 혼합비선을 그리고, 선마다 혼합비 값(g/kg)을 적는다.&quot;&quot;&quot;
+    w = np.array(mixing_ratios) / 1000.          # g/kg -&gt; kg/kg
+    pressure = np.linspace(p_range[0], p_range[1], 40) * units.hPa
+
+    skew.plot_mixing_lines(mixing_ratio=w, pressure=pressure,
+                           colors=&#x27;blue&#x27;, linestyles=&#x27;--&#x27;, linewidths=1.0,
+                           alpha=1.0, label=&#x27;mixing ratio&#x27;)
+
+    # 글자 위치 = 그 지점의 이슬점
+    t_at_label = mpcalc.dewpoint(
+        mpcalc.vapor_pressure(label_p * units.hPa, w)).to(units.degC).magnitude
+
+    for value, t_lab in list(zip(mixing_ratios, np.atleast_1d(t_at_label)))[::label_every]:
+        skew.ax.text(t_lab, label_p, f&#x27;{value:g}&#x27;,
+                     ha=&#x27;center&#x27;, va=&#x27;center&#x27;, fontsize=7, color=&#x27;blue&#x27;, clip_on=True,
+                     bbox=dict(boxstyle=&#x27;round,pad=0.1&#x27;, fc=&#x27;white&#x27;, ec=&#x27;none&#x27;, alpha=0.85))
+    return skew
+
+# 포화 혼합비선 그리기
+add_mixing_lines(skew)
+
+# 축 범위 지정
+skew.ax.set_xlim(xxlim[0], xxlim[1])
+skew.ax.set_ylim(yylim[0], yylim[1])
+
+plt.show()</code></pre>
+<h2>code 431.</h2><pre><code>import numpy as np
+import metpy.calc as mpcalc
+import matplotlib.pyplot as plt
+from metpy.plots import SkewT
+from metpy.units import units
+
+# 새 그림 만들기
+fig = plt.figure(figsize=(5.4, 4.6)) 
+
+# 온도축과 기압축 범위 지정
+xxlim = [-50, 50]       #온도축
+yylim = [1050.1, 99.9]  #기압축
+
+# 온도축 기울기 지정
+skew = SkewT(fig, rotation=45)
+
+skew.ax.set_title(&#x27;Skew T Adiabatic Diagram\n&#x27;, fontsize=10) 
+skew.ax.set_xlabel(r&#x27;temperature (${\degree \mathrm{C}}$)&#x27;, fontsize=9)
+skew.ax.set_ylabel(r&#x27;pressure (${\mathrm{hPa}}$)&#x27;, fontsize=9)
+
+#등온선 그리는 함수
+add_isothermal(skew)
+
+#기압축 그리는 함수
+add_isobar(skew)
+
+# 건조 단열선 — 라벨은 300 hPa 높이에
+add_dry_adiabats(skew, label_p=300, label_every=2)
+
+# 습윤 단열선 — 라벨은 600 hPa 높이에
+add_moist_adiabats(skew, label_p=600, label_every=5)
+
+# 포화 혼합비선 — 라벨은 850 hPa 높이에
+add_mixing_lines(skew, label_p=850, label_every=2)
+
+#legend 추가
+plt.legend(loc=&#x27;upper left&#x27;, fontsize=7)
+
+plt.show()</code></pre>
+<h2>code 432.</h2><pre><code># 패키지 불러오기
+import pandas as pd
+
+# CSV 파일을 데이터프레임으로 읽기
+df = pd.read_csv(str(fpaths[0]),
+                 thousands = &#x27;,&#x27;,
+                 encoding= &#x27;euc-kr&#x27;)
+print(&quot;행 · 열 :&quot;, df.shape)
+df.head()</code></pre>
+<h2>code 433.</h2><pre><code># 기온·이슬점이 모두 NaN인 행 제거
+df = df.dropna(subset=(&#x27;기온(°C)&#x27;, &#x27;이슬점온도(°C)&#x27;), how=&#x27;all&#x27;).reset_index(drop=True)
+print(&quot;행 · 열 :&quot;, df.shape)
+df.head()</code></pre>
+<h2>code 434.</h2><pre><code>print(&quot;df[&#x27;일시(UTC)&#x27;].iloc[0]:{}&quot;.format(df[&#x27;일시(UTC)&#x27;].iloc[0]))
+print(&quot;type(df[&#x27;일시(UTC)&#x27;].iloc[0]):{}&quot;.format(type(df[&#x27;일시(UTC)&#x27;].iloc[0])))</code></pre>
+<h2>code 435.</h2><pre><code>df[&#x27;dt_YmdHM&#x27;] = pd.to_datetime(df[&#x27;일시(UTC)&#x27;])
+print(&quot;type(df[&#x27;dt_YmdHM&#x27;].iloc[0]):{}&quot;.format(type(df[&#x27;dt_YmdHM&#x27;].iloc[0])))
+
+df.index = df[&#x27;dt_YmdHM&#x27;]
+df.head(3)</code></pre>
+<h2>code 436.</h2><pre><code>from datetime import datetime
+
+# 원하는 관측시간을 입력
+target_date = datetime(2018, 1, 12, 12)
+target_date_strf = target_date.strftime(&#x27;%Y-%m-%d %H:%M&#x27;)
+target_date_strf</code></pre>
+<h2>code 437.</h2><pre><code>from datetime import datetime
+
+# 원하는 관측시간을 입력
+target_date = datetime(2018, 1, 12, 12)
+target_date_strf = target_date.strftime(&#x27;%Y-%m-%d %H:%M&#x27;)
+
+print(&quot;target_date_strf: {}&quot;.format(target_date_strf))
+print(&quot;type(target_date_strf): {}&quot;.format(type(target_date_strf)))
+
+df_selected_time = df[(df[&#x27;dt_YmdHM&#x27;] == target_date_strf)]
+
+df_selected_time = df_selected_time.sort_values(&#x27;기압(hPa)&#x27;, ascending=False)
+
+print(&quot;층 수 :&quot;, len(df_selected_time))
+df_selected_time.head()</code></pre>
+<h2>code 438.</h2><pre><code>f = lambda s: target_date_strf in s
+ids  = df[&#x27;일시(UTC)&#x27;].apply(f)
+
+df_selected_time = df[ids]
+df_selected_time = df_selected_time.sort_values(&#x27;기압(hPa)&#x27;, ascending=False)
+print(&quot;층 수 :&quot;, len(df_selected_time))   # 앞 셀과 같은 46개 층</code></pre>
+<h2>code 439.</h2><pre><code>import numpy as np
+import metpy.calc as mpcalc
+from metpy.units import units as u
+
+# MetPy로 단위가 붙은 물리량 만들기 — 46개 층을 다 찍으면 길어서 앞 5개 층만 출력
+for col, unit in [(&#x27;기압(hPa)&#x27;, u.hPa), (&#x27;기온(°C)&#x27;, u.degC), (&#x27;이슬점온도(°C)&#x27;, u.degC),
+                  (&#x27;풍속(knot)&#x27;, u.knots), (&#x27;풍향(deg)&#x27;, u.degrees)]:
+    q = df_selected_time[col].values * unit
+    print(f&quot;{col:12s}: {q[:5]}&quot;)
+
+# 뒤 셀에서 계산 결과를 볼 때는 대표 기압 층만 골라 본다
+levels = [1025, 1000, 925, 867, 850, 800, 700, 500, 300, 200]   # hPa
+
+def show_levels(cols):
+    &quot;&quot;&quot;정한 기압 층(levels)에서 cols 열만 보여 준다.&quot;&quot;&quot;
+    return df_selected_time.set_index(&#x27;기압(hPa)&#x27;).loc[levels, cols]</code></pre>
+<h2>code 440.</h2><pre><code>import numpy as np
+import metpy.calc as mpcalc
+from metpy.units import units as u
+
+# 바람 벡터 계산
+df_selected_time[&#x27;u_wind&#x27;], df_selected_time[&#x27;v_wind&#x27;] = mpcalc.wind_components(df_selected_time[&#x27;풍속(knot)&#x27;].values * u.knots, 
+                          np.deg2rad(df_selected_time[&#x27;풍향(deg)&#x27;].values * u.deg))
+
+show_levels([&#x27;u_wind&#x27;, &#x27;v_wind&#x27;])</code></pre>
+<h2>code 441.</h2><pre><code>import numpy as np
+import metpy.calc as mpcalc
+from metpy.units import units as u
+                   
+# 습구온도 계산
+df_selected_time[&#x27;wet_bulb_T&#x27;] = \
+        mpcalc.wet_bulb_temperature(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa, 
+                df_selected_time[&#x27;기온(°C)&#x27;].values * u.degC,
+                df_selected_time[&#x27;이슬점온도(°C)&#x27;].values * u.degC)</code></pre>
+<h2>code 442.</h2><pre><code>import numpy as np
+import metpy.calc as mpcalc
+from metpy.units import units as u
+                   
+# 온위 계산
+df_selected_time[&#x27;potential_T&#x27;] = \
+        mpcalc.potential_temperature(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa, 
+                df_selected_time[&#x27;기온(°C)&#x27;].values * u.degC)
+
+show_levels([&#x27;potential_T&#x27;])</code></pre>
+<h2>code 443.</h2><pre><code># 상대습도 계산
+df_selected_time[&#x27;relative_humidity_from_dewpoint&#x27;] = \
+        mpcalc.relative_humidity_from_dewpoint(df_selected_time[&#x27;기온(°C)&#x27;].values * u.degC,
+                df_selected_time[&#x27;이슬점온도(°C)&#x27;].values * u.degC)
+
+show_levels([&#x27;relative_humidity_from_dewpoint&#x27;])</code></pre>
+<h2>code 444.</h2><pre><code># 혼합비 계산 (단위 kg/kg)
+df_selected_time[&#x27;saturation_mixing_ratio&#x27;] = \
+        mpcalc.saturation_mixing_ratio(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa,
+                df_selected_time[&#x27;기온(°C)&#x27;].values * u.degC)
+df_selected_time[&#x27;mixing_ratio_from_relative_humidity&#x27;] = \
+        mpcalc.mixing_ratio_from_relative_humidity(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa,
+                df_selected_time[&#x27;기온(°C)&#x27;].values * u.degC,                                   
+                df_selected_time[&#x27;relative_humidity_from_dewpoint&#x27;].values * u.dimensionless)  # 0~1 비율
+        
+show_levels([&#x27;saturation_mixing_ratio&#x27;,
+             &#x27;mixing_ratio_from_relative_humidity&#x27;])</code></pre>
+<h2>code 445.</h2><pre><code># 수증기압 계산 — 두 값 모두 hPa로 맞춘 뒤 숫자만 저장
+df_selected_time[&#x27;saturation_vapor_pressure(hPa)&#x27;] = \
+        mpcalc.saturation_vapor_pressure(df_selected_time[&#x27;기온(°C)&#x27;].values * u.degC).to(&#x27;hPa&#x27;).m
+df_selected_time[&#x27;vapor_pressure(hPa)&#x27;] = \
+        mpcalc.vapor_pressure(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa, 
+                df_selected_time[&#x27;mixing_ratio_from_relative_humidity&#x27;].values * u.dimensionless).to(&#x27;hPa&#x27;).m
+
+show_levels([&#x27;saturation_vapor_pressure(hPa)&#x27;, &#x27;vapor_pressure(hPa)&#x27;])</code></pre>
+<h2>code 446.</h2><pre><code># 상대습도 계산 (결과는 0~1 비율, 100을 곱하면 %)
+df_selected_time[&#x27;relative_humidity_from_mixing_ratio&#x27;] =\
+        mpcalc.relative_humidity_from_mixing_ratio(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa,
+                df_selected_time[&#x27;기온(°C)&#x27;].values * u.degC,
+                df_selected_time[&#x27;mixing_ratio_from_relative_humidity&#x27;].values * u.dimensionless)
+
+show_levels([&#x27;relative_humidity_from_mixing_ratio&#x27;])</code></pre>
+<h2>code 447.</h2><pre><code>import numpy as np
+import metpy.calc as mpcalc
+from metpy.units import units as u
+                   
+# 가온도 계산
+df_selected_time[&#x27;virtual_temperature&#x27;] =\
+        mpcalc.virtual_temperature(df_selected_time[&#x27;기온(°C)&#x27;].values * u.degC,
+                df_selected_time[&#x27;mixing_ratio_from_relative_humidity&#x27;].values * u.dimensionless)
+    
+# 가온위 계산
+df_selected_time[&#x27;virtual_potential_temperature&#x27;] =\
+        mpcalc.virtual_potential_temperature(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa, 
+                df_selected_time[&#x27;기온(°C)&#x27;].values * u.degC,
+                df_selected_time[&#x27;mixing_ratio_from_relative_humidity&#x27;].values * u.dimensionless)
+
+show_levels([&#x27;virtual_temperature&#x27;, &#x27;virtual_potential_temperature&#x27;])</code></pre>
+<h2>code 448.</h2><pre><code>import numpy as np
+import metpy.calc as mpcalc
+import matplotlib.pyplot as plt
+from metpy.plots import SkewT
+from metpy.units import units as u
+
+# 새 그림 만들기
+fig = plt.figure(figsize=(5.8, 5.0)) 
+
+# 온도축과 기압축 범위 지정
+xxlim = [-50, 50]       #온도축
+yylim = [1050.1, 99.9]  #기압축
+
+# 온도축 기울기 지정
+skew = SkewT(fig, rotation=45)
+
+skew.ax.set_title(&#x27;Skew T Adiabatic Diagram\n&#x27;, fontsize=10) 
+skew.ax.set_xlabel(r&#x27;temperature (${\degree \mathrm{C}}$)&#x27;, fontsize=9)
+skew.ax.set_ylabel(r&#x27;pressure (${\mathrm{hPa}}$)&#x27;, fontsize=9)
+
+#등온선 그리는 함수
+add_isothermal(skew)
+
+#기압축 그리는 함수
+add_isobar(skew)
+
+# 건조 단열선 — 라벨은 300 hPa 높이에
+add_dry_adiabats(skew, label_p=300, label_every=2)
+
+# 습윤 단열선 — 라벨은 600 hPa 높이에
+add_moist_adiabats(skew, label_p=600, label_every=5)
+
+# 포화 혼합비선 — 라벨은 850 hPa 높이에
+add_mixing_lines(skew, label_p=850, label_every=2)
+
+
+# 기압에 따른 기온 값 찍기
+# 먼저 점을 찍고
+skew.plot(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa,     #기압
+          df_selected_time[&#x27;기온(°C)&#x27;].values * u.degC, #기온
+          &#x27;ro&#x27;, markersize = 8, fillstyle=&#x27;none&#x27;, label=&#x27;temperature&#x27;)
+# 실선 추가
+skew.plot(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa,     #기압
+          df_selected_time[&#x27;기온(°C)&#x27;].values * u.degC, #기온
+          &#x27;r&#x27;)
+
+# 기압에 따른 이슬점 값 찍기
+# 먼저 점을 찍고
+skew.plot(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa, #기압
+        df_selected_time[&#x27;이슬점온도(°C)&#x27;].values * u.degC, #이슬점
+        &#x27;g^&#x27;, markersize = 8, fillstyle=&#x27;none&#x27;, label=&#x27;dew point&#x27;)
+# 실선 추가
+skew.plot(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa, #기압
+        df_selected_time[&#x27;이슬점온도(°C)&#x27;].values * u.degC,  #이슬점
+        &#x27;g&#x27;, linestyle=&#x27;--&#x27;)
+
+# 기압에 따른 바람 표시
+skew.plot_barbs(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa, #기압
+        df_selected_time[&#x27;u_wind&#x27;], 
+        df_selected_time[&#x27;v_wind&#x27;])
+
+
+# 공기덩이(parcel) 상승 경로를 계산해 검은 선으로 그리기
+#prof_0 = mpcalc.parcel_profile(p, T[0], Td[0]).to(&#x27;degC&#x27;)
+skew.plot(\
+        df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa,  #기압
+        mpcalc.parcel_profile(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa,  #기압
+                                df_selected_time[&#x27;기온(°C)&#x27;].values[0] * u.degC, #초기 온도 
+                                df_selected_time[&#x27;이슬점온도(°C)&#x27;].values[0] * u.degC     #초기 이슬점
+                                ).to(u.degC), 
+        &#x27;k&#x27;, linewidth=1.5)
+
+
+# CAPE 와 CIN 영역 음영 표시
+&#x27;&#x27;&#x27;
+Calculate the convective available potential energy (CAPE) and convective inhibition (CIN) 
+of a given upper air profile and most unstable parcel path. 
+CIN is integrated between the surface and LFC, 
+CAPE is integrated between the LFC and EL (or top of sounding). 
+Intersection points of the measured temperature profile and parcel profile are linearly interpolated.
+&#x27;&#x27;&#x27;
+skew.shade_cin(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa,   #기압
+            df_selected_time[&#x27;기온(°C)&#x27;].values * u.degC,   #온도 
+            mpcalc.parcel_profile(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa,     #기압
+                                df_selected_time[&#x27;기온(°C)&#x27;].values[0]* u.degC, #초기 온도 
+                                df_selected_time[&#x27;이슬점온도(°C)&#x27;].values[0]* u.degC     #초기 이슬점
+                                ).to(u.degC))
+
+skew.shade_cape(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa,  #기압
+            df_selected_time[&#x27;기온(°C)&#x27;].values * u.degC,   #온도 
+            mpcalc.parcel_profile(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa,     #기압
+                                df_selected_time[&#x27;기온(°C)&#x27;].values[0]* u.degC, #초기 온도 
+                                df_selected_time[&#x27;이슬점온도(°C)&#x27;].values[0]* u.degC     #초기 이슬점
+                                ).to(u.degC))
+
+
+# 상승응결고도(LCL)·자유대류고도(LFC)·평형고도(EL) 계산
+# LCL 높이를 계산해 검은 점으로 표시
+lcl_pressure, lcl_temperature = mpcalc.lcl(df_selected_time[&#x27;기압(hPa)&#x27;].iloc[0] * u.hPa,    #기압
+                                df_selected_time[&#x27;기온(°C)&#x27;].values[0] * u.degC,         #초기 온도 
+                                df_selected_time[&#x27;이슬점온도(°C)&#x27;].values[0] * u.degC)         #초기 이슬점
+skew.plot(lcl_pressure, lcl_temperature, &#x27;ko&#x27;, 
+          markersize = 8, fillstyle=&#x27;none&#x27;, label=&#x27;LCL&#x27;)
+
+# LFC 높이를 계산해 빨간 x 표로 표시
+LFC_pressure, LFC_temperature = mpcalc.lfc(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa,    #기압
+                                df_selected_time[&#x27;기온(°C)&#x27;].values * u.degC,         #기온 
+                                df_selected_time[&#x27;이슬점온도(°C)&#x27;].values * u.degC,            #이슬점
+                                mpcalc.parcel_profile(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa,     #기압
+                                    df_selected_time[&#x27;기온(°C)&#x27;].values[0]* u.degC, #초기 온도 
+                                    df_selected_time[&#x27;이슬점온도(°C)&#x27;].values[0]* u.degC     #초기 이슬점
+                                    ).to(u.degC))
+skew.plot(LFC_pressure, LFC_temperature, &#x27;rx&#x27;, 
+          markersize = 8, fillstyle=&#x27;none&#x27;, label=&#x27;LFC&#x27;)
+
+# EL 높이를 계산해 파란 점으로 표시
+EL_pressure, EL_temperature = mpcalc.el(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa,    #기압
+                                df_selected_time[&#x27;기온(°C)&#x27;].values * u.degC,         #기온 
+                                df_selected_time[&#x27;이슬점온도(°C)&#x27;].values * u.degC,            #이슬점
+                                mpcalc.parcel_profile(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa,     #기압
+                                    df_selected_time[&#x27;기온(°C)&#x27;].values[0]* u.degC, #초기 온도 
+                                    df_selected_time[&#x27;이슬점온도(°C)&#x27;].values[0]* u.degC     #초기 이슬점
+                                    ).to(u.degC))
+skew.plot(EL_pressure, EL_temperature, &#x27;bo&#x27;, 
+          markersize = 8, fillstyle=&#x27;none&#x27;, label=&#x27;EL&#x27;)
+
+
+# 가장 불안정한 공기덩이와 가강수량 계산
+# 가장 불안정한 공기덩이 — 지면에서 300 hPa 두께 안에서 상당온위가 가장 높은 층
+mup_pressure, mup_temperature, mup_dewTemperature, mup_index = \
+        mpcalc.most_unstable_parcel(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa,    #기압
+                df_selected_time[&#x27;기온(°C)&#x27;].values * u.degC,        #온도 
+                df_selected_time[&#x27;이슬점온도(°C)&#x27;].values * u.degC)           #이슬점
+skew.plot(mup_pressure, mup_temperature, &#x27;bs&#x27;, markersize=8, fillstyle=&#x27;none&#x27;,
+        label=&#x27;the most unstable parcel&#x27;)
+
+# 가강수량 계산
+precipitable_water = mpcalc.precipitable_water(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa,   #기압
+                                               df_selected_time[&#x27;이슬점온도(°C)&#x27;].values * u.degC)  #이슬점
+
+# 지면 공기덩이의 CAPE·CIN 계산
+cape, cin = mpcalc.cape_cin(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa,
+                df_selected_time[&#x27;기온(°C)&#x27;].values * u.degC,
+                df_selected_time[&#x27;이슬점온도(°C)&#x27;].values * u.degC,
+                mpcalc.parcel_profile(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa,
+                    df_selected_time[&#x27;기온(°C)&#x27;].values[0] * u.degC,
+                    df_selected_time[&#x27;이슬점온도(°C)&#x27;].values[0] * u.degC).to(u.degC))
+print(f&#x27;CAPE : {cape.m:.1f} J/kg,  CIN : {cin.m:.1f} J/kg&#x27;)
+print(f&#x27;LCL : {lcl_pressure.m:.1f} hPa,  LFC : {LFC_pressure.m:.1f} hPa,  EL : {EL_pressure.m:.1f} hPa&#x27;)
+print(f&#x27;가장 불안정한 공기덩이 : {mup_pressure.m:.1f} hPa,  가강수량 : {precipitable_water.m:.1f} mm&#x27;)
+
+
+# 글자를 넣을 아래 여백 먼저 확보
+fig.subplots_adjust(bottom=0.27)
+
+# 그림 아래 설명글
+info_left = [
+    (f&#x27;LCL : {lcl_pressure.m:.1f} hPa, {lcl_temperature.m:.1f} °C&#x27;, &#x27;o&#x27;,
+     &#x27;black&#x27;),
+    (f&#x27;LFC : {LFC_pressure.m:.1f} hPa, {LFC_temperature.m:.1f} °C&#x27;, &#x27;x&#x27;,
+     &#x27;red&#x27;),
+    (f&#x27;EL  : {EL_pressure.m:.1f} hPa, {EL_temperature.m:.1f} °C&#x27;, &#x27;o&#x27;,
+     &#x27;blue&#x27;),
+    (f&#x27;precipitable water : {precipitable_water.m:.1f} mm&#x27;, &#x27;&#x27;, &#x27;&#x27;),
+    (f&#x27;most unstable parcel : {mup_pressure.m:.1f} hPa&#x27;, &#x27;□&#x27;, &#x27;blue&#x27;),
+]
+
+info_right = [
+    f&#x27;filename : {fpaths[0].name}&#x27;,
+    f&#x27;time : {target_date_strf} (UTC)&#x27;,
+    &#x27;Created using MetPy&#x27;,
+]
+
+# figure 좌표로 배치
+TOP, STEP, SIZE = 0.15, 0.027, 8
+
+for k, (text, mark, mcolor) in enumerate(info_left):
+    y = TOP - k * STEP
+    if mark:                       # 그림에서 쓰는 기호를 글 앞에 함께 보여 준다
+        fig.text(0.055, y, mark, fontsize=SIZE, color=mcolor, ha=&#x27;center&#x27;,
+                 va=&#x27;top&#x27;)
+    fig.text(0.075, y, text, fontsize=SIZE, ha=&#x27;left&#x27;, va=&#x27;top&#x27;)
+
+for k, text in enumerate(info_right):
+    fig.text(0.56, TOP - k * STEP, text, fontsize=SIZE, ha=&#x27;left&#x27;, va=&#x27;top&#x27;)
+
+# 범례(legend) 추가 — 저장하기 전에 넣어야 파일에도 들어감
+plt.legend(loc=&#x27;upper left&#x27;, fontsize=7)
+
+# 단열선도 저장하기
+plt.savefig(f&quot;{proj_dir}/{fpaths[0].stem}_{target_date.strftime(&#x27;%Y%m%d_%HUTC&#x27;)}.pdf&quot;)   # 파일 이름에 &#x27;:&#x27;를 쓰지 않음
+
+plt.show()</code></pre>
+<h2>code 449.</h2><pre><code>import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import metpy.calc as mpcalc
+from metpy.plots import SkewT
+from metpy.units import units as u
+
+
+def select_sounding(df, time_str):
+    &quot;&quot;&quot;시각(UTC 문자열) 하나의 관측만 골라 기압이 낮아지는 순서로 정렬&quot;&quot;&quot;
+    sel = df[df[&#x27;일시(UTC)&#x27;] == time_str]
+    return sel.sort_values(&#x27;기압(hPa)&#x27;, ascending=False)
+
+
+def sounding_indices(sel):
+    &quot;&quot;&quot;지면 공기덩이의 상승 경로와 CAPE · CIN · LCL · LFC · EL · 가강수량 계산&quot;&quot;&quot;
+    p = sel[&#x27;기압(hPa)&#x27;].values * u.hPa
+    T = sel[&#x27;기온(°C)&#x27;].values * u.degC
+    Td = sel[&#x27;이슬점온도(°C)&#x27;].values * u.degC
+    prof = mpcalc.parcel_profile(p, T[0], Td[0]).to(u.degC)     # 상승 경로
+    cape, cin = mpcalc.cape_cin(p, T, Td, prof)
+    lcl_p, lcl_t = mpcalc.lcl(p[0], T[0], Td[0])
+    lfc_p, lfc_t = mpcalc.lfc(p, T, Td, prof)
+    el_p, el_t = mpcalc.el(p, T, Td, prof)
+    pw = mpcalc.precipitable_water(p, Td)
+    return dict(p=p, T=T, Td=Td, prof=prof,
+                CAPE=cape.m, CIN=cin.m, LCL=lcl_p.m, LCL_T=lcl_t.to(&#x27;degC&#x27;).m,
+                LFC=lfc_p.m, LFC_T=lfc_t.to(&#x27;degC&#x27;).m,
+                EL=el_p.m, EL_T=el_t.to(&#x27;degC&#x27;).m, PW=pw.to(&#x27;mm&#x27;).m)
+
+
+summer_time = &#x27;2018-08-28 12:00&#x27;
+sel_s = select_sounding(df, summer_time)
+r_s = sounding_indices(sel_s)
+u_s, v_s = mpcalc.wind_components(sel_s[&#x27;풍속(knot)&#x27;].values * u.knots,
+                                  sel_s[&#x27;풍향(deg)&#x27;].values * u.deg)
+
+fig = plt.figure(figsize=(5.8, 5.0))
+xxlim = [-50, 50]       # 온도축 (기준선 함수가 이 값을 씀)
+yylim = [1050.1, 99.9]  # 기압축
+skew = SkewT(fig, rotation=45)
+skew.ax.set_title(&#x27;Skew T Adiabatic Diagram\n&#x27;, fontsize=10)
+skew.ax.set_xlabel(r&#x27;temperature (${\degree \mathrm{C}}$)&#x27;, fontsize=9)
+skew.ax.set_ylabel(r&#x27;pressure (${\mathrm{hPa}}$)&#x27;, fontsize=9)
+
+# 기준선
+add_isothermal(skew)
+add_isobar(skew)
+add_dry_adiabats(skew, label_p=300, label_every=2)
+add_moist_adiabats(skew, label_p=600, label_every=5)
+add_mixing_lines(skew, label_p=850, label_every=2)
+
+# 관측값 : 기온(빨강 원) · 이슬점(초록 삼각형) · 바람
+skew.plot(r_s[&#x27;p&#x27;], r_s[&#x27;T&#x27;], &#x27;ro&#x27;, markersize=8, fillstyle=&#x27;none&#x27;, label=&#x27;temperature&#x27;)
+skew.plot(r_s[&#x27;p&#x27;], r_s[&#x27;T&#x27;], &#x27;r&#x27;)
+skew.plot(r_s[&#x27;p&#x27;], r_s[&#x27;Td&#x27;], &#x27;g^&#x27;, markersize=8, fillstyle=&#x27;none&#x27;,
+          label=&#x27;dew point&#x27;)
+skew.plot(r_s[&#x27;p&#x27;], r_s[&#x27;Td&#x27;], &#x27;g&#x27;, linestyle=&#x27;--&#x27;)
+skew.plot_barbs(r_s[&#x27;p&#x27;], u_s, v_s)
+
+# 상승 경로와 CAPE · CIN 음영
+skew.plot(r_s[&#x27;p&#x27;], r_s[&#x27;prof&#x27;], &#x27;k&#x27;, linewidth=1.5)
+skew.shade_cin(r_s[&#x27;p&#x27;], r_s[&#x27;T&#x27;], r_s[&#x27;prof&#x27;])
+skew.shade_cape(r_s[&#x27;p&#x27;], r_s[&#x27;T&#x27;], r_s[&#x27;prof&#x27;])
+
+# LCL · LFC · EL
+skew.plot(r_s[&#x27;LCL&#x27;] * u.hPa, r_s[&#x27;LCL_T&#x27;] * u.degC, &#x27;ko&#x27;, markersize=8,
+          fillstyle=&#x27;none&#x27;, label=&#x27;LCL&#x27;)
+skew.plot(r_s[&#x27;LFC&#x27;] * u.hPa, r_s[&#x27;LFC_T&#x27;] * u.degC, &#x27;rx&#x27;, markersize=8,
+          label=&#x27;LFC&#x27;)
+skew.plot(r_s[&#x27;EL&#x27;] * u.hPa, r_s[&#x27;EL_T&#x27;] * u.degC, &#x27;bo&#x27;, markersize=8,
+          fillstyle=&#x27;none&#x27;, label=&#x27;EL&#x27;)
+
+print(f&quot;CAPE : {r_s[&#x27;CAPE&#x27;]:.1f} J/kg,  CIN : {r_s[&#x27;CIN&#x27;]:.1f} J/kg&quot;)
+print(f&quot;LCL : {r_s[&#x27;LCL&#x27;]:.1f} hPa,  LFC : {r_s[&#x27;LFC&#x27;]:.1f} hPa,  EL : {r_s[&#x27;EL&#x27;]:.1f} hPa&quot;)
+print(f&quot;가강수량 : {r_s[&#x27;PW&#x27;]:.1f} mm&quot;)
+
+# 그림 아래 설명글
+fig.subplots_adjust(bottom=0.27)
+info_left = [
+    (f&quot;LCL : {r_s[&#x27;LCL&#x27;]:.1f} hPa, {r_s[&#x27;LCL_T&#x27;]:.1f} °C&quot;, &#x27;o&#x27;, &#x27;black&#x27;),
+    (f&quot;LFC : {r_s[&#x27;LFC&#x27;]:.1f} hPa, {r_s[&#x27;LFC_T&#x27;]:.1f} °C&quot;, &#x27;x&#x27;, &#x27;red&#x27;),
+    (f&quot;EL  : {r_s[&#x27;EL&#x27;]:.1f} hPa, {r_s[&#x27;EL_T&#x27;]:.1f} °C&quot;, &#x27;o&#x27;, &#x27;blue&#x27;),
+    (f&quot;CAPE : {r_s[&#x27;CAPE&#x27;]:.0f} J/kg,  CIN : {r_s[&#x27;CIN&#x27;]:.0f} J/kg&quot;, &#x27;&#x27;, &#x27;&#x27;),
+    (f&quot;precipitable water : {r_s[&#x27;PW&#x27;]:.1f} mm&quot;, &#x27;&#x27;, &#x27;&#x27;),
+]
+info_right = [
+    f&#x27;filename : {fpaths[0].name}&#x27;,
+    f&#x27;time : {summer_time} (UTC)&#x27;,
+    &#x27;Created using MetPy&#x27;,
+]
+TOP, STEP, SIZE = 0.15, 0.027, 8
+for k, (text, mark, mcolor) in enumerate(info_left):
+    y = TOP - k * STEP
+    if mark:
+        fig.text(0.055, y, mark, fontsize=SIZE, color=mcolor, ha=&#x27;center&#x27;, va=&#x27;top&#x27;)
+    fig.text(0.075, y, text, fontsize=SIZE, ha=&#x27;left&#x27;, va=&#x27;top&#x27;)
+for k, text in enumerate(info_right):
+    fig.text(0.56, TOP - k * STEP, text, fontsize=SIZE, ha=&#x27;left&#x27;, va=&#x27;top&#x27;)
+
+plt.legend(loc=&#x27;upper left&#x27;, fontsize=7)
+stamp = pd.Timestamp(summer_time).strftime(&#x27;%Y%m%d_%HUTC&#x27;)    # 파일 이름에 쓸 수 있는 꼴
+plt.savefig(f&#x27;{proj_dir}/{fpaths[0].stem}_{stamp}.pdf&#x27;)
+plt.savefig(f&#x27;{proj_dir}/{fpaths[0].stem}_{stamp}.png&#x27;, dpi=150)
+plt.show()</code></pre>
+<h2>code 450.</h2><pre><code>rows = {}
+for label, t in [(&#x27;겨울 2018-01-12 12 UTC&#x27;, &#x27;2018-01-12 12:00&#x27;),
+                 (&#x27;여름 2018-08-28 12 UTC&#x27;, &#x27;2018-08-28 12:00&#x27;)]:
+    r = sounding_indices(select_sounding(df, t))
+    rows[label] = {&#x27;지면 기온(°C)&#x27;: r[&#x27;T&#x27;][0].m, &#x27;지면 이슬점(°C)&#x27;: r[&#x27;Td&#x27;][0].m,
+                   &#x27;CAPE(J/kg)&#x27;: r[&#x27;CAPE&#x27;], &#x27;CIN(J/kg)&#x27;: r[&#x27;CIN&#x27;],
+                   &#x27;LCL(hPa)&#x27;: r[&#x27;LCL&#x27;], &#x27;LFC(hPa)&#x27;: r[&#x27;LFC&#x27;], &#x27;EL(hPa)&#x27;: r[&#x27;EL&#x27;],
+                   &#x27;가강수량(mm)&#x27;: r[&#x27;PW&#x27;]}
+
+compare = pd.DataFrame(rows).round(1)
+compare</code></pre>
+</body></html>

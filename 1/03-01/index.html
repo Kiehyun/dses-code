@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>III-01. 천문학에서의 시간과 좌표계</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
+<h1>III-01. 천문학에서의 시간과 좌표계</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/03-01/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 1.</h2><pre><code>import datetime
+
+dt = datetime.datetime(2023, 4, 15, 12, 30, 0)
+
+print(&quot;Specific date and time:&quot;, dt)
+print(&quot;Year:&quot;, dt.year)
+print(&quot;Month:&quot;, dt.month)
+print(&quot;Day:&quot;, dt.day)
+print(&quot;Hour:&quot;, dt.hour)
+print(&quot;Minute:&quot;, dt.minute)
+print(&quot;Second:&quot;, dt.second)</code></pre>
+<h2>code 2.</h2><pre><code>from datetime import datetime
+
+dt = datetime(2023, 4, 15, 12, 30, 0)
+
+print(&quot;Specific date and time:&quot;, dt)
+print(&quot;Year:&quot;, dt.year)
+print(&quot;Month:&quot;, dt.month)
+print(&quot;Day:&quot;, dt.day)</code></pre>
+<h2>code 3.</h2><pre><code>print(&quot;Specific date and time:&quot;, dt.strftime(&quot;%Y-%m-%d %H:%M:%S&quot;))
+dt2 = datetime.strptime(&quot;2017-01-02 14:44&quot;, &quot;%Y-%m-%d %H:%M&quot;)
+print(&quot;Specific date and time:&quot;, dt2.strftime(&quot;%Y-%m-%d %H:%M:%S&quot;))</code></pre>
+<h2>code 4.</h2><pre><code># 현재 날짜와 시각
+now = datetime.now()
+print(&quot;type(now)&quot;, type(now))
+print(f&quot;Current date and time: {now.strftime(&#x27;%Y-%m-%d %H:%M:%S&#x27;)}&quot;)
+
+import datetime
+today = datetime.date.today()
+print(&quot;Today&#x27;s date:&quot;, today)</code></pre>
+<h2>code 5.</h2><pre><code>diff_days = datetime.timedelta(days=5)
+print(&quot;Difference in days:&quot;, diff_days.days)
+print(&quot;Date after adding 5 days:&quot;, today + diff_days)</code></pre>
+<h2>code 6.</h2><pre><code>from datetime import datetime, timedelta
+import pytz
+
+# 토성의 2023년 충
+saturn_conjunction_2023 = datetime(2023, 8, 27, 8, 0, 0, tzinfo=pytz.utc)
+
+# 토성의 회합 주기
+saturn_synodic_period = timedelta(days=378.10)
+
+# 2024년 토성의 충 (UTC)
+saturn_conjunction_2024_utc = saturn_conjunction_2023 + saturn_synodic_period
+
+# 한국 표준시(KST)로 변환
+KST = pytz.timezone(&#x27;Asia/Seoul&#x27;)
+saturn_conjunction_2024_kst = saturn_conjunction_2024_utc.astimezone(KST)
+
+print(&quot;2024년 토성의 충 (KST):&quot;, 
+      saturn_conjunction_2024_kst.strftime(&quot;%Y-%m-%d %H:%M:%S %Z%z&quot;))</code></pre>
+<h2>code 7.</h2><pre><code>from datetime import datetime, timedelta  # 날짜와 시간, 시간 간격 처리
+from dateutil import relativedelta        # 유연한 시간 간격(상대적 델타) 처리
+
+def create_datetime_list(
+        start_time,
+        end_time,
+        tdelta=relativedelta.relativedelta(minutes=15),  # 기본 간격: 15분
+        **kwargs
+        ):
+    &#x27;&#x27;&#x27;
+    일정한 시간 간격의 datetime 리스트 생성 함수
+    Parameters
+    ----------
+    start_time : datetime.datetime, 시작 시각
+    end_time : datetime.datetime, 끝 시각
+    tdelta : 시간 간격 (timedelta 또는 relativedelta)
+    Returns : 지정한 간격으로 생성된 datetime 객체 리스트
+    &#x27;&#x27;&#x27;
+    time_list = []
+    current_time = start_time
+    while current_time &lt;= end_time:
+        time_list.append(current_time)  # 리스트에 현재 시각 추가
+        current_time += tdelta          # 시간 간격만큼 증가
+    return time_list
+
+start_time = datetime(2022, 1, 5, 0, 0)  # 시작 시각: 2022년 1월 5일 0시 0분
+end_time = datetime(2022, 1, 5, 23, 59)  # 끝 시각: 2022년 1월 5일 23시 59분
+dt_list = create_datetime_list(start_time, end_time, 
+                        tdelta=timedelta(minutes=30))  # 30분 간격 리스트 생성
+
+print(&quot;dt_list : \n&quot;, dt_list)  # 결과 출력</code></pre>
+<h2>code 8.</h2><pre><code>import numpy as np
+from astropy.time import Time  # astropy의 Time 클래스 임포트
+
+t1 = Time(&#x27;1999-01-01T00:00:00.123456789&#x27;)  # 문자열로부터 Time 객체 생성
+print(&quot;Time in UTC:&quot;, t1.utc.iso)           # UTC 기준 ISO 포맷으로 출력
+
+times = [&#x27;1999-01-01T00:00:00.123456789&#x27;, &#x27;2010-01-01T00:00:00&#x27;]  # 여러 시각을 리스트로 준비
+t2 = Time(times, scale=&#x27;utc&#x27;)      # 리스트로부터 Time 객체 생성 (UTC 스케일 지정)
+print(&quot;Time in UTC:&quot;, t2.utc.iso)  # 각각의 시각을 UTC 기준 ISO 포맷으로 출력</code></pre>
+<h2>code 9.</h2><pre><code>t3_string = &#x27;1999-01-01T00:00:00.123456789&#x27;
+t3 = Time(t3_string, format=&#x27;isot&#x27;)  # ISO 형식 문자열로부터 Time 객체 생성
+print(&quot;t3 :&quot;, t3)                    # Time 객체 출력
+print(&quot;t3.format: &quot;, t3.format)      # 현재 포맷 확인
+
+t3_jd = t3.jd  # 줄리안 데이(Julian Date)로 변환
+print(&quot;t3_jd :&quot;, t3_jd)
+print(&quot;type(t3_jd): &quot;, type(t3_jd))  # 타입 확인
+
+t3_mjd = t3.mjd  # 수정 줄리안 데이(Modified Julian Date)로 변환
+print(&quot;t3_mjd :&quot;, t3_mjd)
+print(&quot;type(t3_mjd): &quot;, type(t3_mjd))  # 타입 확인
+
+t3.format = &#x27;fits&#x27;  # 출력 포맷을 FITS 형식으로 변경
+print(&quot;t3 :&quot;, t3)   # 변경된 포맷으로 출력</code></pre>
+<h2>code 10.</h2><pre><code>from astropy import units as u
+from astropy.timeseries import TimeSeries
+
+# 2016-03-22T12:30:31부터 시작하여 3초 간격으로 5개의 시각 생성
+ts1 = TimeSeries(
+    time_start=&#x27;2016-03-22T12:30:31&#x27;,  # 시작 시각
+    time_delta=3 * u.s,                # 시간 간격: 3초
+    n_samples=5                        # 샘플 개수: 5개
+)
+
+print(&quot;type(ts1): &quot;, type(ts1))  # TimeSeries 객체의 타입 출력
+print(&quot;ts1: \n&quot;, ts1)            # 생성된 TimeSeries 객체 출력</code></pre>
+<h2>code 11.</h2><pre><code>ts2 = TimeSeries(time=[&#x27;2016-03-22T12:30:31&#x27;,
+                        &#x27;2016-03-22T12:30:38&#x27;,
+                        &#x27;2016-03-22T12:34:40&#x27;])
+print(&quot;type(ts2): &quot;, type(ts2))  # TimeSeries 객체의 타입 출력
+print(&quot;ts2: \n&quot;, ts2)            # 생성된 TimeSeries 객체 출력
+print(&quot;ts2.time: \n&quot;, ts2.time)  # TimeSeries 객체의 시간 정보 출력
+
+ts3 = TimeSeries(time_start=&quot;2011-01-01T00:00:00&quot;,
+            time_delta=[0.1, 0.2, 0.1, 0.3, 0.2]*u.s)
+print(&quot;type(ts3.time): &quot;, type(ts3.time))  # ts3.time의 타입 출력
+print(&quot;ts3.time.jd: \n&quot;, ts3.time.jd)      # 줄리안 데이(Julian Date)로 변환된 시간 정보 출력   
+ts3.time.jd = ts3.time.mjd                 # 수정 줄리안 데이(Modified Julian Date)로 변환
+print(&quot;ts3.time.mjd: \n&quot;, ts3.time.mjd)    # 수정 줄리안 데이로 변환된 시간 정보 출력
+print(&quot;ts3.time.isot: \n&quot;, ts3.time.isot)  # ISO 형식으로 변환된 시간 정보 출력 </code></pre>
+<h2>code 12.</h2><pre><code>from astropy.time import Time
+import astropy.units as u
+
+def create_time_list(
+        start_time,
+        end_time,
+        time_delta=30*u.min,
+        **kwargs
+        ):
+    &#x27;&#x27;&#x27;
+    일정한 시간 간격의 astropy Time 객체 리스트 생성 함수
+    Parameters
+    ----------
+    start_time : astropy.time.Time, 시작 시각
+    end_time : astropy.time.Time, 끝 시각
+    time_delta : 시간 간격 (기본값 30분, astropy.units 사용)
+    Returns : 지정한 간격으로 생성된 astropy Time 객체 리스트
+    &#x27;&#x27;&#x27;
+    t_list = []
+    current_time = start_time
+    while current_time &lt;= end_time:
+        t_list.append(current_time)  # 리스트에 현재 시각 추가
+        current_time += time_delta   # 시간 간격만큼 증가
+    return t_list
+
+start_time = Time(&#x27;2022-01-05T00:00:00&#x27;, scale=&#x27;utc&#x27;)  # 시작 시각: 2022년 1월 5일 0시 0분(UTC)
+end_time = Time(&#x27;2022-01-05T23:59:00&#x27;, scale=&#x27;utc&#x27;)  # 끝 시각: 2022년 1월 5일 23시 59분(UTC)
+t_list = create_time_list(start_time, end_time, time_delta=30*u.min)  # 30분 간격 리스트 생성
+
+print(&quot;len(t_list) : \n&quot;, len(t_list))  # 리스트 길이(시각 개수) 출력
+print(&quot;t_list : \n&quot;, t_list)            # 생성된 시각 리스트 출력</code></pre>
+<h2>code 13.</h2><pre><code>from astropy.coordinates import SkyCoord
+
+# 문자열로 적경(RA), 적위(Dec)를 입력하여 SkyCoord 객체 생성
+c = SkyCoord(ra=&#x27;20h41m25.9s&#x27;, dec=&#x27;+45d16m49s&#x27;)
+print(&quot;type(c):&quot;, type(c))  # SkyCoord 객체의 타입 출력
+print(&quot;c :&quot;, c)             # SkyCoord 객체 정보 출력
+
+# 시, 분, 초/도, 분, 초 형식의 문자열을 분리하여 새로운 형식으로 변환
+ra_str = &#x27;20:41:25.9&#x27;
+dec_str = &#x27;45:16:49&#x27;
+
+ra_h, ra_m, ra_s = ra_str.split(&#x27;:&#x27;)      # RA 문자열 분리
+dec_d, dec_m, dec_s = dec_str.split(&#x27;:&#x27;)  # Dec 문자열 분리
+
+# SkyCoord에서 사용하는 형식으로 변환
+ra_new = f&quot;{ra_h}h{ra_m}m{ra_s}s&quot;
+dec_new = f&quot;+{dec_d}d{dec_m}m{dec_s}s&quot;
+
+print(f&quot;ra=&#x27;{ra_new}&#x27;, dec=&#x27;{dec_new}&#x27;&quot;)  # 변환된 문자열 출력
+
+from astropy import units as u
+# 도 단위로 적경(RA), 적위(Dec)를 입력하여 SkyCoord 객체 생성 (ICRS 프레임)
+c = SkyCoord(ra=10.625*u.degree, dec=41.2*u.degree, frame=&#x27;icrs&#x27;)</code></pre>
+<h2>code 14.</h2><pre><code>print(&quot;c :&quot;, c)                  # SkyCoord 객체 전체 정보 출력
+print(&quot;c.ra :&quot;, c.ra)            # 적경(Right Ascension, RA) 값 (단위 포함)
+print(&quot;c.dec :&quot;, c.dec)          # 적위(Declination, Dec) 값 (단위 포함)
+print(&quot;c.ra.deg :&quot;, c.ra.deg)    # 적경(RA)을 도(degree) 단위로 출력
+print(&quot;c.dec.deg :&quot;, c.dec.deg)  # 적위(Dec)를 도(degree) 단위로 출력
+print(&quot;c.icrs :&quot;, c.icrs)        # ICRS(국제 천체 기준 좌표계)로 변환된 좌표 출력
+print(&quot;c.fk5 :&quot;, c.fk5)          # FK5(J2000.0 기준) 좌표계로 변환된 좌표 출력
+print(&quot;c.fk4 :&quot;, c.fk4)          # FK4(B1950.0 기준) 좌표계로 변환된 좌표 출력</code></pre>
+<h2>code 15.</h2><pre><code>from astropy.coordinates import get_constellation
+print(&quot;get_constellation(c) :&quot;, get_constellation(c))</code></pre>
+<h2>code 16.</h2><pre><code>print(&quot;c.galactic :&quot;, c.galactic)      # 은하 좌표계(Galactic)로 변환된 전체 좌표 출력
+print(&quot;c.galactic.l :&quot;, c.galactic.l)  # 은하 경도(Galactic Longitude, l) 값 출력
+print(&quot;c.galactic.b :&quot;, c.galactic.b)  # 은하 위도(Galactic Latitude, b) 값 출력</code></pre>
+<h2>code 17.</h2><pre><code>c_ecl = c.transform_to(&#x27;geocentricmeanecliptic&#x27;)  # 적도좌표계에서 지심 황도좌표계로 변환
+print(&quot;c_ecl :&quot;, c_ecl)                           # 변환된 황도좌표계 전체 정보 출력
+print(&quot;c_ecl.lon :&quot;, c_ecl.lon)                   # 황도 경도(Longitude) 값 출력
+print(&quot;c_ecl.lat :&quot;, c_ecl.lat)                   # 황도 위도(Latitude) 값 출력</code></pre>
+<h2>code 18.</h2><pre><code>from astropy import units as u
+from astropy.coordinates import SkyCoord
+
+# 기존 SkyCoord 객체
+c = SkyCoord(ra=10.625*u.degree, dec=41.2*u.degree, frame=&#x27;icrs&#x27;)
+
+# 거리를 추가하여 새로운 SkyCoord 객체 생성
+c_with_distance = SkyCoord(ra=c.ra, dec=c.dec, distance=1*u.pc, frame=&#x27;icrs&#x27;)
+
+# 일심 황도 좌표계로 변환
+c_hcl = c_with_distance.transform_to(&#x27;heliocentricmeanecliptic&#x27;)
+
+# 결과 출력
+print(&quot;c_hcl :&quot;, c_hcl)
+print(&quot;c_hcl.lon :&quot;, c_hcl.lon)
+print(&quot;c_hcl.lat :&quot;, c_hcl.lat)</code></pre>
+<h2>code 19.</h2><pre><code>from astropy.coordinates import AltAz, EarthLocation, SkyCoord
+from astropy.time import Time
+import astropy.units as u
+
+# 관측 위치와 시간 설정
+P64 = EarthLocation(lat=37.308889*u.deg, lon=127.005*u.deg, height=101*u.m)
+time = Time(&#x27;2024-08-26 14:00:00&#x27;)
+
+# AltAz 프레임 생성
+altaz_frame = AltAz(obstime=time, location=P64)
+
+print(&quot;type(altaz_frame) :&quot;, type(altaz_frame))
+print(&quot;altaz_frame :&quot;, altaz_frame)</code></pre>
+<h2>code 20.</h2><pre><code># 관측 위치와 시각 정보를 함께 출력
+print(&quot;관측 위치 (위도, 경도, 고도):&quot;, P64.lat, P64.lon, P64.height)
+print(&quot;관측 시각:&quot;, time.iso)
+print(&quot;AltAz 프레임:&quot;, altaz_frame)
+
+# 천체의 좌표를 AltAz(지평 좌표계)로 변환
+print(&quot;c:&quot;, c)                         # 변환 전 SkyCoord 객체 정보 출력
+c_altaz = c.transform_to(altaz_frame)  # AltAz 프레임으로 좌표 변환
+
+# 변환된 좌표에서 고도(alt)와 방위각(az) 값을 소수점 2자리까지 출력
+print(f&quot;고도: {c_altaz.alt:.2f}, 방위각: {c_altaz.az:.2f}&quot;)</code></pre>
+<h2>code 21.</h2><pre><code>from datetime import datetime                      # 날짜와 시간 처리
+import matplotlib.pyplot as plt                    # 그래프 및 이미지 시각화
+from pytz import timezone                          # 타임존(시간대) 처리
+from starplot import MapPlot, Projection, Star, _  # starplot의 주요 클래스 및 헬퍼
+from starplot.styles import PlotStyle, extensions  # 스타일 및 확장 테마
+
+plt.rcParams.update({&#x27;figure.max_open_warning&#x27;: 0})  # matplotlib 경고 메시지 억제
+
+tz = timezone(&quot;Asia/Seoul&quot;)  # 한국 표준시(KST) 타임존 객체 생성
+
+print(f&quot;timezone : {tz}&quot;)  # 현재 타임존 출력
+
+dt = datetime(2023, 7, 13, 22, 0, tzinfo=tz)  # 2023년 7월 13일 22시(한국시간) datetime 객체 생성
+
+# MapPlot 객체 생성: 성도(별자리 지도) 설정
+p = MapPlot(
+    projection=Projection.ZENITH,  # 천정(Zenith) 투영법 사용
+    lat=37.363484,                 # 위도(관측 위치)
+    lon=127.836394,                # 경도(관측 위치)
+    dt=dt,                         # 관측 시각
+    style=PlotStyle().extend(
+        extensions.BLUE_MEDIUM,  # 파란색 계열 스타일 적용
+    ),
+    resolution=3600,  # 해상도(픽셀)
+    autoscale=True,   # 자동 스케일링
+)
+p.horizon()               # 지평선 표시
+p.constellations()        # 별자리 선 표시
+p.stars(where=[_.magnitude &lt; 4.6], where_labels=[_.magnitude &lt; 2.4])  # 밝은 별과 라벨 표시
+p.constellation_labels()  # 별자리 이름 라벨 표시
+
+# 성도 이미지를 파일로 저장
+# p.export(f&quot;star_chart_basic.png&quot;, transparent=True, padding=0.1)</code></pre>
+<h2>code 22.</h2><pre><code>p = MapPlot(
+    projection=Projection.ZENITH,  # 천정(Zenith) 투영법 사용
+    lat=33.363484,                 # 위도(관측 위치)
+    lon=-116.836394,               # 경도(관측 위치)
+    dt=dt,                         # 관측 시각
+    style=PlotStyle().extend(
+        extensions.BLUE_GOLD,      # 파란색-금색 계열 스타일 적용
+    ),
+    resolution=3600,  # 해상도(픽셀)
+    autoscale=True,   # 자동 스케일링
+)
+p.horizon()         # 지평선 표시
+p.constellations()  # 별자리 선 표시
+p.stars(where=[_.magnitude &lt; 4.6], where_labels=[_.magnitude &lt; 2.1])  # 밝은 별과 라벨 표시
+
+p.galaxies(where=[_.magnitude &lt; 9], true_size=False, labels=None)  # 밝은 은하 표시
+p.open_clusters(where=[_.magnitude &lt; 9], true_size=False, labels=None)  # 밝은 산개성단 표시
+
+p.constellation_borders()  # 별자리 경계선 표시
+p.ecliptic()               # 황도(태양의 경로) 표시
+p.celestial_equator()      # 천구 적도 표시
+p.milky_way()              # 은하수 표시
+
+# 특정 위치(예: Mel 111)에 마커와 라벨 추가
+p.marker(
+    ra=12.36 * 15,  # 적경(RA, 시간→도 단위 변환)
+    dec=25.85,      # 적위(Dec)
+    style={
+        &quot;marker&quot;: {
+            &quot;size&quot;: 60,
+            &quot;symbol&quot;: &quot;circle&quot;,
+            &quot;fill&quot;: &quot;none&quot;,
+            &quot;color&quot;: None,
+            &quot;edge_color&quot;: &quot;hsl(44, 70%, 73%)&quot;,
+            &quot;edge_width&quot;: 2,
+            &quot;line_style&quot;: [1, [2, 3]],
+            &quot;alpha&quot;: 1,
+            &quot;zorder&quot;: 100,
+        },
+        &quot;label&quot;: {
+            &quot;zorder&quot;: 200,
+            &quot;font_size&quot;: 22,
+            &quot;font_weight&quot;: &quot;bold&quot;,
+            &quot;font_color&quot;: &quot;hsl(44, 70%, 64%)&quot;,
+            &quot;font_alpha&quot;: 1,
+            &quot;offset_x&quot;: &quot;auto&quot;,
+            &quot;offset_y&quot;: &quot;auto&quot;,
+            &quot;anchor_point&quot;: &quot;top right&quot;,
+        },
+    },
+    label=&quot;Mel 111&quot;,  # 라벨 텍스트
+)
+p.constellation_labels()  # 별자리 이름 라벨 표시
+
+# 성도 이미지를 파일로 저장
+# p.export(f&quot;star_chart_detail.png&quot;, transparent=True, padding=0.1)</code></pre>
+</body></html>

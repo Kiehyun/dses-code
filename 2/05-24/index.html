@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>V-04. 방사성 동위원소 연대측정 기초</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
+<h1>V-04. 방사성 동위원소 연대측정 기초</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/05-24/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 565.</h2><pre><code>import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from pathlib import Path
+from io import StringIO
+import requests
+
+DATA_DIR = proj_dir
+DATA_DIR.mkdir(exist_ok=True)
+
+# 대표적인 방사성 연대측정 계의 반감기
+half_lives = pd.DataFrame([
+    {&quot;system&quot;: &quot;C-14&quot;, &quot;half_life_year&quot;: 5730,
+     &quot;typical_use&quot;: &quot;유기물, 고고학적 시료&quot;},
+    {&quot;system&quot;: &quot;K-40 (전체, Ar 분기 약 10.6%)&quot;, &quot;half_life_year&quot;: 1.269e9,
+     &quot;typical_use&quot;: &quot;화산암, 화성암 (K-Ar, Ar-Ar)&quot;},
+    {&quot;system&quot;: &quot;U-238 to Pb-206&quot;, &quot;half_life_year&quot;: 4.468e9,
+     &quot;typical_use&quot;: &quot;지르콘, 오래된 암석&quot;},
+    {&quot;system&quot;: &quot;U-235 to Pb-207&quot;, &quot;half_life_year&quot;: 7.04e8,
+     &quot;typical_use&quot;: &quot;지르콘, 오래된 암석&quot;},
+])
+half_lives</code></pre>
+<h2>code 566.</h2><pre><code>fig, ax = plt.subplots(figsize=(8.5, 4.4))
+
+for row in half_lives.itertuples(index=False):
+    # 각 동위원소마다 5번의 반감기가 지나는 구간까지 계산
+    t = np.linspace(0, row.half_life_year * 5, 300)
+    remaining = 0.5 ** (t / row.half_life_year)
+    ax.plot(t / row.half_life_year, remaining, label=row.system)
+
+ax.set_title(&quot;반감기 단위로 본 방사성 붕괴 곡선&quot;)
+ax.set_xlabel(&quot;경과 시간 / 반감기&quot;)
+ax.set_ylabel(&quot;남은 모원소 비율&quot;)
+ax.grid(alpha=0.3)
+ax.legend()
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_01&quot;))
+plt.show()</code></pre>
+<h2>code 567.</h2><pre><code>def age_from_remaining_fraction(remaining_fraction, half_life_year):
+    &quot;&quot;&quot;남은 모원소 비율과 반감기로 연대를 계산&quot;&quot;&quot;
+    remaining_fraction = np.asarray(remaining_fraction, dtype=float)
+    return -np.log2(remaining_fraction) * half_life_year
+
+# 예: U-238 → Pb-206 계
+remaining = np.array([0.95, 0.90, 0.75, 0.60, 0.50])
+u238_half_life = 4.468e9
+ages = age_from_remaining_fraction(remaining, u238_half_life)
+
+pd.DataFrame({
+    &quot;remaining_fraction&quot;: remaining,
+    &quot;age_year&quot;: ages,
+    &quot;age_Ma&quot;: ages / 1e6,
+})</code></pre>
+<h2>code 568.</h2><pre><code># 40K 붕괴 상수 (Min et al., 2000), 단위 1/년
+lambda_e = 0.580e-10     # 40K → 40Ar (전자포획)
+lambda_beta = 4.883e-10  # 40K → 40Ca (베타 붕괴)
+lambda_total = lambda_e + lambda_beta
+print(f&quot;전체 붕괴 상수: {lambda_total:.3e} /년, &quot;
+      f&quot;반감기: {np.log(2) / lambda_total / 1e9:.3f} Ga&quot;)
+print(f&quot;Ar 분기 비율 lambda_e / lambda: {lambda_e / lambda_total:.4f}&quot;)
+
+# 비교용: 옛 표준값 (Steiger &amp; Jäger, 1977)
+lambda_e_sj, lambda_beta_sj = 0.581e-10, 4.962e-10
+
+def age_k_ar(ar_k_ratio, lam_e=lambda_e, lam_b=lambda_beta):
+    &quot;&quot;&quot;방사성 40Ar*/40K 비율로 K-Ar 연대(년)를 계산&quot;&quot;&quot;
+    ar_k_ratio = np.asarray(ar_k_ratio, dtype=float)
+    lam = lam_e + lam_b
+    return np.log(1 + lam / lam_e * ar_k_ratio) / lam
+
+ar_k = np.array([0.0001, 0.001, 0.01, 0.05, 0.1])
+age_min = age_k_ar(ar_k)
+age_sj = age_k_ar(ar_k, lambda_e_sj, lambda_beta_sj)
+# 분기 비율을 무시한 잘못된 계산: N0 = K + Ar
+age_wrong = age_from_remaining_fraction(1 / (1 + ar_k), np.log(2) / lambda_total)
+
+pd.DataFrame({
+    &quot;Ar40_K40_ratio&quot;: ar_k,
+    &quot;age_Ma&quot;: age_min / 1e6,
+    &quot;age_Ma_SJ1977&quot;: age_sj / 1e6,
+    &quot;diff_percent&quot;: (age_sj / age_min - 1) * 100,
+    &quot;age_Ma_no_branching&quot;: age_wrong / 1e6,
+}).round({&quot;age_Ma&quot;: 2, &quot;age_Ma_SJ1977&quot;: 2, &quot;diff_percent&quot;: 2, &quot;age_Ma_no_branching&quot;: 2})</code></pre>
+<h2>code 569.</h2><pre><code>measurement_error = np.linspace(-0.03, 0.03, 61)
+rows = []
+
+fig, ax = plt.subplots(figsize=(8.6, 4.4))
+for true_remaining, color in [(0.75, &quot;tab:blue&quot;), (0.25, &quot;darkorange&quot;), (0.05, &quot;tab:red&quot;)]:
+    measured_remaining = true_remaining + measurement_error
+    # 연대를 반감기 단위로 (반감기 = 1)
+    age_hl = age_from_remaining_fraction(measured_remaining, 1.0)
+    ax.plot(measured_remaining, age_hl, color=color)
+    ax.axvline(true_remaining, color=color, ls=&quot;--&quot;, lw=1,
+               label=f&quot;참값 {true_remaining}&quot;)
+    rows.append({&quot;true_remaining&quot;: true_remaining,
+                 &quot;age_true_hl&quot;: age_from_remaining_fraction(true_remaining, 1.0),
+                 &quot;age_min_hl&quot;: age_hl.min(), &quot;age_max_hl&quot;: age_hl.max(),
+                 &quot;spread_hl&quot;: age_hl.max() - age_hl.min()})
+
+ax.set_title(&quot;모원소 비율 측정 오차(±0.03)와 계산 연대&quot;)
+ax.set_xlabel(&quot;측정된 남은 모원소 비율&quot;)
+ax.set_ylabel(&quot;계산 연대 (반감기 단위)&quot;)
+ax.grid(alpha=0.3)
+ax.legend()
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_02&quot;))
+plt.show()
+
+pd.DataFrame(rows).round(3)</code></pre>
+<h2>code 570.</h2><pre><code>url = &quot;https://data.goettingen-research-online.de/api/access/datafile/40582&quot;
+raw_file = DATA_DIR / &quot;Ball_2022_intraplate_volcanics.csv&quot;
+if not raw_file.exists():  # 이미 받아 둔 파일은 다시 받지 않음
+    response = requests.get(url, timeout=180)
+    response.raise_for_status()
+    raw_file.write_bytes(response.content)  # 받은 바이트 그대로 저장
+
+# 맨 위 세 줄(이용 허락 · 인용 문구)은 건너뜀
+ball = pd.read_csv(raw_file, skiprows=3, encoding=&quot;latin-1&quot;, low_memory=False)
+kor = ball[ball[&quot;Region&quot;] == &quot;Korea&quot;].copy()
+
+province_ko = {
+    &quot;Jeju Island&quot;: &quot;제주도&quot;, &quot;Jeju Island / Ilchulbong&quot;: &quot;제주도&quot;,
+    &quot;Udo&quot;: &quot;우도(제주)&quot;, &quot;Ulleung&quot;: &quot;울릉도&quot;, &quot;Baengnyeong&quot;: &quot;백령도&quot;,
+    &quot;Chongok&quot;: &quot;한탄강 일대&quot;, &quot;Chatan&quot;: &quot;한탄강 일대&quot;, &quot;Jeongok Basalt&quot;: &quot;한탄강 일대&quot;,
+    &quot;Gyeonggi&quot;: &quot;경기 지역&quot;,
+}
+kor[&quot;region&quot;] = kor[&quot;Province&quot;].map(province_ko)
+kor[&quot;Uncertainty&quot;] = pd.to_numeric(kor[&quot;Uncertainty&quot;], errors=&quot;coerce&quot;)
+kor[&quot;is_radiometric&quot;] = kor[&quot;Method&quot;].isin([&quot;Ar-Ar&quot;, &quot;K-Ar&quot;])
+
+print(f&quot;전체 시료 수: {len(ball):,}&quot;)
+print(f&quot;우리나라 시료 수: {len(kor):,}&quot;)
+pd.crosstab(kor[&quot;region&quot;], kor[&quot;Method&quot;], margins=True, margins_name=&quot;합계&quot;)</code></pre>
+<h2>code 571.</h2><pre><code>fig, ax = plt.subplots(figsize=(8.5, 4.2))
+bins = np.arange(0, 7.0, 0.25)
+ax.hist([kor.loc[kor[&quot;is_radiometric&quot;], &quot;Age&quot;], kor.loc[~kor[&quot;is_radiometric&quot;], &quot;Age&quot;]],
+        bins=bins, stacked=True, color=[&quot;crimson&quot;, &quot;lightgray&quot;],
+        label=[&quot;방사성 연대(Ar-Ar, K-Ar)&quot;, &quot;층서 연대(지층 연대를 붙임)&quot;])
+ax.set_title(&quot;우리나라 신생대 화산암 시료의 연대 분포&quot;)
+ax.set_xlabel(&quot;연대 (Ma)&quot;)
+ax.set_ylabel(&quot;시료 수&quot;)
+ax.legend()
+ax.grid(alpha=0.3)
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_03&quot;))
+plt.show()</code></pre>
+<h2>code 572.</h2><pre><code># 지역 · 방법 · 연대 · 오차가 같은 시료를 한 묶음으로
+age_groups = (kor.groupby([&quot;region&quot;, &quot;Method&quot;, &quot;Age&quot;, &quot;Uncertainty&quot;])
+              .size().reset_index(name=&quot;n_samples&quot;)
+              .sort_values(&quot;Age&quot;).reset_index(drop=True))
+
+fig, ax = plt.subplots(figsize=(6.8, 4.2))
+for is_radio, color in [(False, &quot;gray&quot;), (True, &quot;crimson&quot;)]:
+    part = age_groups[age_groups[&quot;Method&quot;].isin([&quot;Ar-Ar&quot;, &quot;K-Ar&quot;]) == is_radio]
+    ax.errorbar(part[&quot;Age&quot;], part.index, xerr=part[&quot;Uncertainty&quot;], fmt=&quot;o&quot;,
+                color=color, capsize=3,
+                label=&quot;방사성 연대&quot; if is_radio else &quot;층서 연대&quot;)
+ax.set_yticks(age_groups.index)
+ax.set_yticklabels(age_groups[&quot;region&quot;] + &quot; (&quot; + age_groups[&quot;Method&quot;] + &quot;, &quot;
+                   + age_groups[&quot;n_samples&quot;].astype(str) + &quot;개)&quot;, fontsize=9)
+ax.set_title(&quot;연대값과 오차 (같은 값끼리 묶음)&quot;)
+ax.set_xlabel(&quot;연대 (Ma)&quot;)
+ax.grid(alpha=0.3)
+ax.legend(loc=&quot;lower right&quot;)
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_04&quot;))
+plt.show()
+
+age_groups</code></pre>
+</body></html>

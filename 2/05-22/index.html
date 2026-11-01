@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>V-02. 마그마 조성과 화성암 분류</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
+<h1>V-02. 마그마 조성과 화성암 분류</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/05-22/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 554.</h2><pre><code>from pathlib import Path
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import requests
+
+DATA_DIR = proj_dir
+DATA_DIR.mkdir(exist_ok=True)
+
+# GEOROC Compilation: Intraplate Volcanic Rocks (V13, 2026-09)
+# 가운데 동아시아 신생대 화산암 파일
+files = {  # 부분 이름: (내려받을 주소, 저장할 파일 이름)
+    &quot;part1&quot;: (
+        &quot;https://data.goettingen-research-online.de/api/access/datafile/218829&quot;,
+        &quot;GEOROC_CENTRAL_ASIAN_FOLDBELT_CENOZOIC_QUATERNARY_part1.csv&quot;),
+    &quot;part2&quot;: (
+        &quot;https://data.goettingen-research-online.de/api/access/datafile/218822&quot;,
+        &quot;GEOROC_CENTRAL_ASIAN_FOLDBELT_CENOZOIC_QUATERNARY_part2.csv&quot;),
+}
+
+tables = []
+for part, (file_url, file_name) in files.items():
+    raw_file = DATA_DIR / file_name
+    if not raw_file.exists():  # 이미 받아 둔 파일은 다시 받지 않음
+        response = requests.get(file_url, timeout=180)
+        response.raise_for_status()
+        raw_file.write_bytes(response.content)  # 받은 바이트 그대로 저장
+    tables.append(pd.read_csv(raw_file, encoding=&quot;cp1252&quot;, low_memory=False))
+    print(f&quot;{part}: {raw_file}&quot;)
+
+georoc = pd.concat(tables, ignore_index=True)
+
+# 위치가 &#x27;한반도(KOREAN PENINSULA)&#x27;로 분류된 시료만
+is_korea = georoc[&quot;LOCATION&quot;].str.contains(&quot;KOREAN PENINSULA - CENOZOIC&quot;, regex=False,
+                                           na=False)
+geo = georoc[is_korea].copy()
+
+print(f&quot;전체 행 수(두 파일): {len(georoc):,}&quot;)
+print(f&quot;우리나라 시료 수: {len(geo):,}&quot;)
+geo[[&quot;LOCATION&quot;, &quot;ROCK NAME&quot;, &quot;ROCK TYPE&quot;, &quot;MATERIAL&quot;, &quot;SIO2(WT%)&quot;, &quot;NA2O(WT%)&quot;,
+     &quot;K2O(WT%)&quot;]].head()</code></pre>
+<h2>code 555.</h2><pre><code># 화산암(VOL)의 전암(WR) 분석만
+geo = geo[(geo[&quot;ROCK TYPE&quot;] == &quot;VOL&quot;)
+          &amp; geo[&quot;MATERIAL&quot;].str.startswith(&quot;WR&quot;, na=False)].copy()
+
+oxide_cols = {&quot;SIO2(WT%)&quot;: &quot;SiO2&quot;, &quot;TIO2(WT%)&quot;: &quot;TiO2&quot;, &quot;AL2O3(WT%)&quot;: &quot;Al2O3&quot;,
+              &quot;FEOT(WT%)&quot;: &quot;FeOT&quot;, &quot;FEO(WT%)&quot;: &quot;FeO&quot;, &quot;FE2O3(WT%)&quot;: &quot;Fe2O3&quot;,
+              &quot;MNO(WT%)&quot;: &quot;MnO&quot;, &quot;MGO(WT%)&quot;: &quot;MgO&quot;, &quot;CAO(WT%)&quot;: &quot;CaO&quot;,
+              &quot;NA2O(WT%)&quot;: &quot;Na2O&quot;, &quot;K2O(WT%)&quot;: &quot;K2O&quot;, &quot;P2O5(WT%)&quot;: &quot;P2O5&quot;}
+geo = geo.rename(columns=oxide_cols)
+for col in oxide_cols.values():
+    geo[col] = pd.to_numeric(geo[col], errors=&quot;coerce&quot;)
+
+# 전체 철을 FeO로 환산(FeOT가 없을 때 FeO + 0.8998 × Fe2O3)
+fe_calc = geo[&quot;FeO&quot;].fillna(0) + 0.8998 * geo[&quot;Fe2O3&quot;].fillna(0)
+geo[&quot;FeOT&quot;] = geo[&quot;FeOT&quot;].fillna(fe_calc.where(fe_calc &gt; 0))
+
+major = [&quot;SiO2&quot;, &quot;TiO2&quot;, &quot;Al2O3&quot;, &quot;FeOT&quot;, &quot;MnO&quot;, &quot;MgO&quot;, &quot;CaO&quot;, &quot;Na2O&quot;, &quot;K2O&quot;, &quot;P2O5&quot;]
+geo = geo.dropna(subset=[&quot;SiO2&quot;, &quot;Al2O3&quot;, &quot;FeOT&quot;, &quot;MgO&quot;, &quot;CaO&quot;, &quot;Na2O&quot;, &quot;K2O&quot;])
+geo[&quot;oxide_total&quot;] = geo[major].sum(axis=1)
+
+# 합이 94~102%인 분석만 남기고 휘발성분을 뺀 합 100%로 다시 맞춤
+n_before = len(geo)
+geo = geo[geo[&quot;oxide_total&quot;].between(94, 102)].copy()
+for col in major:
+    geo[col] = geo[col] / geo[&quot;oxide_total&quot;] * 100
+
+def region_of(location):
+    &quot;&quot;&quot;GEOROC 위치 문자열에서 지역 이름 정하기&quot;&quot;&quot;
+    if &quot;JEJU&quot; in location:
+        return &quot;제주도&quot;
+    if &quot;ULLEUNG&quot; in location:
+        return &quot;울릉도&quot;
+    if &quot;DOKDO&quot; in location or &quot;DOK ISLAND&quot; in location:
+        return &quot;독도&quot;
+    if &quot;CHANGBAISHAN&quot; in location or &quot;PAEKTU&quot; in location:
+        return &quot;백두산&quot;
+    return &quot;기타 한반도&quot;
+
+geo[&quot;region&quot;] = geo[&quot;LOCATION&quot;].apply(region_of)
+geo[&quot;total_alkali&quot;] = geo[&quot;Na2O&quot;] + geo[&quot;K2O&quot;]
+tas = geo
+
+region_order = [&quot;제주도&quot;, &quot;울릉도&quot;, &quot;독도&quot;, &quot;백두산&quot;, &quot;기타 한반도&quot;]
+print(f&quot;화산암 전암 분석(합 확인 전): {n_before:,}&quot;)
+print(f&quot;합 94~102%를 만족해 분석에 쓰는 시료: {len(tas):,}&quot;)
+print(tas[&quot;region&quot;].value_counts().reindex(region_order).to_string())</code></pre>
+<h2>code 556.</h2><pre><code>def silica_group(sio2):
+    &quot;&quot;&quot;SiO2 함량(wt.%)에 따른 전통적 화성암 조성 구분&quot;&quot;&quot;
+    if sio2 &lt; 45:
+        return &quot;초고철질&quot;
+    if sio2 &lt; 52:
+        return &quot;고철질&quot;
+    if sio2 &lt; 63:
+        return &quot;중성&quot;
+    return &quot;규장질&quot;
+
+group_order = [&quot;초고철질&quot;, &quot;고철질&quot;, &quot;중성&quot;, &quot;규장질&quot;]
+tas[&quot;silica_group&quot;] = tas[&quot;SiO2&quot;].apply(silica_group)
+pd.crosstab(tas[&quot;region&quot;], tas[&quot;silica_group&quot;], margins=True, margins_name=&quot;합계&quot;) \
+    .reindex(index=region_order + [&quot;합계&quot;], columns=group_order + [&quot;합계&quot;])</code></pre>
+<h2>code 557.</h2><pre><code>from matplotlib.patches import Polygon
+from matplotlib.path import Path as MplPath
+
+# Le Bas 등(1986) TAS 분류 영역의 꼭짓점 (SiO2, Na2O+K2O)
+# pyrolite(TAS config_lemaitre)에서 옮김
+tas_fields = {
+    &quot;피크로현무암&quot;: [(41, 0), (41, 3), (45, 3), (45, 0)],
+    &quot;현무암&quot;: [(45, 0), (45, 5), (52, 5), (52, 0)],
+    &quot;현무암질 안산암&quot;: [(52, 0), (52, 5), (57, 5.9), (57, 0)],
+    &quot;안산암&quot;: [(57, 0), (57, 5.9), (63, 7), (63, 0)],
+    &quot;데이사이트&quot;: [(63, 0), (63, 7), (69, 8), (77.3, 0)],
+    &quot;유문암&quot;: [(69, 8), (69, 13), (85.9, 6.8), (87.5, 4.7), (77.3, 0)],
+    &quot;조면현무암&quot;: [(45, 5), (49.4, 7.3), (52, 5)],
+    &quot;현무암질 조면안산암&quot;: [(49.4, 7.3), (53, 9.3), (57, 5.9), (52, 5)],
+    &quot;조면안산암&quot;: [(53, 9.3), (57.6, 11.7), (61, 8.6), (63, 7), (57, 5.9)],
+    &quot;조면암·조면데이사이트&quot;: [(57.6, 11.7), (61, 13.5), (63, 16.2), (69, 13), (69, 8),
+                      (63, 7), (61, 8.6)],
+    &quot;테프라이트·베이사나이트&quot;: [(41, 3), (41, 7), (45, 9.4), (49.4, 7.3), (45, 5), (45, 3)],
+    &quot;포노테프라이트&quot;: [(45, 9.4), (48.4, 11.5), (53, 9.3), (49.4, 7.3)],
+    &quot;테프리포놀라이트&quot;: [(48.4, 11.5), (52.5, 14), (57.6, 11.7), (53, 9.3)],
+    &quot;포놀라이트&quot;: [(52.5, 14), (52.5, 18), (57, 18), (63, 16.2), (61, 13.5), (57.6, 11.7)],
+    &quot;포이다이트&quot;: [(35, 9), (37, 14), (52.5, 18), (52.5, 14), (48.4, 11.5), (45, 9.4),
+              (41, 7), (41, 3), (37, 3)],
+}
+# 영역 이름을 적을 위치
+label_xy = {
+    &quot;피크로현무암&quot;: (43, 1.3), &quot;현무암&quot;: (48.5, 2.5), &quot;현무암질 안산암&quot;: (54.5, 2.5),
+    &quot;안산암&quot;: (60, 3.0), &quot;데이사이트&quot;: (66.5, 3.5), &quot;유문암&quot;: (74.5, 8.5),
+    &quot;조면현무암&quot;: (49, 5.8), &quot;현무암질 조면안산암&quot;: (53, 7.4), &quot;조면안산암&quot;: (57.8, 9.0),
+    &quot;조면암·조면데이사이트&quot;: (64.6, 14.2), &quot;테프라이트·베이사나이트&quot;: (43.5, 6.0),
+    &quot;포노테프라이트&quot;: (49, 9.4), &quot;테프리포놀라이트&quot;: (53, 11.6), &quot;포놀라이트&quot;: (57.5, 14.8),
+    &quot;포이다이트&quot;: (42, 10.5),
+}
+
+fig, ax = plt.subplots(figsize=(8.5, 6.8))
+sns.scatterplot(data=tas, x=&quot;SiO2&quot;, y=&quot;total_alkali&quot;, hue=&quot;region&quot;,
+                hue_order=region_order, s=14, alpha=0.7, edgecolor=&quot;none&quot;, ax=ax)
+
+# 경계선과 영역 이름은 점 위에 겹쳐 그림
+for name, verts in tas_fields.items():
+    ax.add_patch(Polygon(verts, closed=True, fill=False, edgecolor=&quot;gray&quot;, lw=0.8,
+                         zorder=4))
+    x, y = label_xy[name]
+    ax.text(x, y, name.replace(&quot; &quot;, &quot;\n&quot;).replace(&quot;·&quot;, &quot;·\n&quot;), ha=&quot;center&quot;,
+            va=&quot;center&quot;, fontsize=8, color=&quot;black&quot;, zorder=5,
+            bbox=dict(boxstyle=&quot;round,pad=0.15&quot;, fc=&quot;white&quot;, ec=&quot;none&quot;, alpha=0.75))
+
+ax.set_xlim(40, 78)
+ax.set_ylim(0, 16)
+ax.set_title(&quot;우리나라 신생대 화산암의 TAS 도표 (Le Bas 등, 1986 경계)&quot;)
+ax.set_xlabel(&quot;SiO2 (wt.%, 휘발성분 제외 100% 환산)&quot;)
+ax.set_ylabel(&quot;Na2O + K2O (wt.%)&quot;)
+ax.legend(title=&quot;지역&quot;, loc=&quot;upper left&quot;, fontsize=9)
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_01&quot;))
+plt.show()
+
+# 각 시료가 들어가는 TAS 영역 판정
+points = tas[[&quot;SiO2&quot;, &quot;total_alkali&quot;]].to_numpy()
+tas[&quot;tas_name&quot;] = &quot;분류 밖&quot;
+for name, verts in tas_fields.items():
+    inside = MplPath(verts).contains_points(points) &amp; (tas[&quot;tas_name&quot;] == &quot;분류 밖&quot;)
+    tas.loc[inside, &quot;tas_name&quot;] = name
+
+tas_counts = pd.crosstab(tas[&quot;tas_name&quot;], tas[&quot;region&quot;]).reindex(columns=region_order)
+tas_counts[&quot;합계&quot;] = tas_counts.sum(axis=1)
+tas_counts.sort_values(&quot;합계&quot;, ascending=False)</code></pre>
+<h2>code 558.</h2><pre><code>fig, ax = plt.subplots(figsize=(7.8, 4))
+sns.boxplot(data=tas, x=&quot;SiO2&quot;, y=&quot;region&quot;, order=region_order, ax=ax,
+            color=&quot;lightsteelblue&quot;)
+for x in [45, 52, 63]:
+    ax.axvline(x, color=&quot;gray&quot;, lw=0.8, ls=&quot;--&quot;, alpha=0.7)
+ax.set_title(&quot;지역별 SiO2 함량 분포&quot;)
+ax.set_xlabel(&quot;SiO2 (wt.%)&quot;)
+ax.set_ylabel(&quot;지역&quot;)
+ax.grid(axis=&quot;x&quot;, alpha=0.3)
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_02&quot;))
+plt.show()
+
+summary = tas.groupby(&quot;region&quot;).agg(
+    n=(&quot;SiO2&quot;, &quot;size&quot;),
+    SiO2_median=(&quot;SiO2&quot;, &quot;median&quot;), SiO2_min=(&quot;SiO2&quot;, &quot;min&quot;), SiO2_max=(&quot;SiO2&quot;, &quot;max&quot;),
+    alkali_median=(&quot;total_alkali&quot;, &quot;median&quot;),
+).reindex(region_order).round(1)
+summary</code></pre>
+</body></html>

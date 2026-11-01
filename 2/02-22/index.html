@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>II-02. 곡선 맞춤과 모형 평가</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
+<h1>II-02. 곡선 맞춤과 모형 평가</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/02-22/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 25.</h2><pre><code>import numpy as np
+import matplotlib.pyplot as plt
+
+rng = np.random.default_rng(1)
+
+TRUE_SLOPE, TRUE_INTERCEPT = 2.5, 1.0        # 참값(실제로는 모르는 값)
+x = np.linspace(0, 10, 25)
+y = TRUE_SLOPE * x + TRUE_INTERCEPT + rng.normal(0, 1.5, x.size)
+
+print(&quot;데이터 점 개수:&quot;, x.size)
+print(&quot;x 범위 :&quot;, x.min(), &quot;~&quot;, x.max())
+print(&quot;y 범위 :&quot;, round(y.min(), 2), &quot;~&quot;, round(y.max(), 2))</code></pre>
+<h2>code 26.</h2><pre><code>slope, intercept = np.polyfit(x, y, 1)  # 1차 = 직선 맞춤
+y_fit = slope * x + intercept           # 맞춘 직선의 예측값
+residual = y - y_fit                    # 잔차 = 실제값 - 예측값
+
+print(f&quot;맞춘 기울기 : {slope:.3f}  (참값 {TRUE_SLOPE})&quot;)
+print(f&quot;맞춘 절편   : {intercept:.3f}  (참값 {TRUE_INTERCEPT})&quot;)
+print(f&quot;잔차 제곱합 : {np.sum(residual**2):.2f}&quot;)
+print(f&quot;잔차 평균   : {residual.mean():.3e}  (최소제곱이면 거의 0)&quot;)</code></pre>
+<h2>code 27.</h2><pre><code>fig, axes = plt.subplots(2, 1, figsize=(8.5, 5.5), sharex=True,
+                         gridspec_kw={&quot;height_ratios&quot;: [2, 1]})
+
+axes[0].scatter(x, y, color=&quot;steelblue&quot;, label=&quot;관측값&quot;)
+axes[0].plot(x, y_fit, &quot;r-&quot;, lw=2,
+             label=f&quot;맞춘 직선 y={slope:.2f}x+{intercept:.2f}&quot;)
+axes[0].vlines(x, y_fit, y, color=&quot;gray&quot;, lw=0.8)   # 잔차를 선으로 표시
+axes[0].set_ylabel(&quot;y&quot;)
+axes[0].set_title(&quot;최소제곱 직선 맞춤과 잔차&quot;)
+axes[0].legend()
+
+axes[1].axhline(0, color=&quot;red&quot;, lw=1)
+axes[1].scatter(x, residual, color=&quot;darkorange&quot;)
+axes[1].set_xlabel(&quot;x&quot;)
+axes[1].set_ylabel(&quot;잔차&quot;)
+axes[1].grid(alpha=0.3)
+
+du.save_figure(fig, os.path.join(proj_dir, &quot;linear_fit&quot;))
+plt.show()</code></pre>
+<h2>code 28.</h2><pre><code>from scipy.optimize import curve_fit
+
+def decay(t, amplitude, tau, offset):
+    &quot;&quot;&quot;지수 감소 모형: 바닥값 위의 몫이 시간상수 tau마다 1/e(약 0.37)배로 줄어듦&quot;&quot;&quot;
+    return amplitude * np.exp(-t / tau) + offset
+
+
+t = np.linspace(0, 20, 40)
+true_params = (100.0, 5.0, 10.0)                       # 진폭, 시간상수, 바닥값
+signal = decay(t, *true_params) + rng.normal(0, 3.0, t.size)
+
+params, covariance = curve_fit(decay, t, signal, p0=(80, 3, 5))
+errors = np.sqrt(np.diag(covariance))                  # 대각성분의 제곱근 = 표준오차
+
+for name, fit, err, true in zip([&quot;진폭&quot;, &quot;시간상수&quot;, &quot;바닥값&quot;],
+                                params, errors, true_params):
+    pad = &quot; &quot; * (10 - 2 * len(name))                    # 한글 한 글자는 두 칸 너비
+    print(f&quot;{name}{pad}: {fit:7.2f} +/- {err:5.2f}   (참값 {true})&quot;)</code></pre>
+<h2>code 29.</h2><pre><code>fig, ax = plt.subplots(figsize=(8.5, 4.2))
+ax.scatter(t, signal, s=25, color=&quot;steelblue&quot;, label=&quot;관측값&quot;)
+t_smooth = np.linspace(t.min(), t.max(), 300)
+ax.plot(t_smooth, decay(t_smooth, *params), &quot;r-&quot;, lw=2, label=&quot;맞춘 곡선&quot;)
+ax.set_xlabel(&quot;시간&quot;)
+ax.set_ylabel(&quot;신호 세기&quot;)
+ax.set_title(f&quot;지수 감소 모형 맞춤 (시간상수 {params[1]:.2f})&quot;)
+ax.legend()
+ax.grid(alpha=0.3)
+du.save_figure(fig, os.path.join(proj_dir, &quot;curve_fit&quot;))
+plt.show()</code></pre>
+<h2>code 30.</h2><pre><code>def r_squared(observed, predicted):
+    &quot;&quot;&quot;결정계수: 1에 가까울수록 모형이 데이터의 변동을 잘 설명한 것.&quot;&quot;&quot;
+    ss_residual = np.sum((observed - predicted) ** 2)
+    ss_total = np.sum((observed - observed.mean()) ** 2)
+    return 1 - ss_residual / ss_total
+
+
+print(&quot;직선 맞춤 R^2      :&quot;, round(r_squared(y, y_fit), 4))
+print(&quot;지수 모형 R^2      :&quot;, round(r_squared(signal, decay(t, *params)), 4))
+
+print(&quot;\n다항식 차수별 R^2 (같은 데이터)&quot;)
+for degree in (1, 3, 7, 15):
+    coefficients = np.polyfit(x, y, degree)
+    print(f&quot;  {degree:2d}차 : {r_squared(y, np.polyval(coefficients, x)):.4f}&quot;)</code></pre>
+<h2>code 31.</h2><pre><code>x_dense = np.linspace(x.min() - 0.5, x.max() + 0.5, 400)   # 데이터 범위보다 조금 넓게
+
+fig, ax = plt.subplots(figsize=(8.5, 4.4))
+ax.scatter(x, y, color=&quot;steelblue&quot;, zorder=3, label=&quot;관측값&quot;)
+for degree, style in zip((1, 15), (&quot;r-&quot;, &quot;g--&quot;)):
+    coefficients = np.polyfit(x, y, degree)
+    ax.plot(x_dense, np.polyval(coefficients, x_dense), style, lw=1.8,
+            label=f&quot;{degree}차 다항식&quot;)
+ax.set_ylim(y.min() - 5, y.max() + 5)
+ax.set_xlabel(&quot;x&quot;)
+ax.set_ylabel(&quot;y&quot;)
+ax.set_title(&quot;차수를 올리면 잘 맞는 것처럼 보이지만&quot;)
+ax.legend()
+ax.grid(alpha=0.3)
+du.save_figure(fig, os.path.join(proj_dir, &quot;overfitting&quot;))
+plt.show()</code></pre>
+</body></html>

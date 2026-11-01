@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>V-01. 암석 데이터 분류하기</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
+<h1>V-01. 암석 데이터 분류하기</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/05-21/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 548.</h2><pre><code>from pathlib import Path
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import requests
+
+DATA_DIR = proj_dir
+DATA_DIR.mkdir(exist_ok=True)
+
+url = &quot;https://macrostrat.org/api/v2/defs/lithologies?format=json&quot;
+
+# 공개 API에서 암상 정의 데이터 내려받기
+response = requests.get(url, timeout=60)
+response.raise_for_status()
+data = response.json()
+
+# API 응답의 success.data 부분이 실제 표 데이터
+rocks = pd.DataFrame(data[&quot;success&quot;][&quot;data&quot;])
+
+# 나중에 인터넷 없이도 다시 볼 수 있도록 CSV로 저장
+csv_file = DATA_DIR / &quot;macrostrat_lithologies.csv&quot;
+rocks.to_csv(csv_file, index=False, encoding=&quot;utf-8-sig&quot;)
+
+print(response.url)
+print(f&quot;데이터 개수: {len(rocks):,}&quot;)
+print(f&quot;저장 위치: {csv_file}&quot;)
+rocks.head()</code></pre>
+<h2>code 549.</h2><pre><code># 분석에 사용할 핵심 열만 먼저 확인
+cols = [&quot;lith_id&quot;, &quot;name&quot;, &quot;class&quot;, &quot;type&quot;, &quot;group&quot;, &quot;color&quot;, &quot;t_units&quot;]
+rocks[cols].head(15)</code></pre>
+<h2>code 550.</h2><pre><code># 빈칸은 결측값이라기보다 상위 그룹이 지정되지 않은 경우가 많음
+rocks[&quot;group&quot;] = rocks[&quot;group&quot;].replace(&quot;&quot;, &quot;not specified&quot;)
+rocks[&quot;class&quot;] = rocks[&quot;class&quot;].replace(&quot;&quot;, &quot;not specified&quot;)
+
+class_counts = rocks[&quot;class&quot;].value_counts().rename_axis(&quot;class&quot;).reset_index(name=&quot;count&quot;)
+class_counts</code></pre>
+<h2>code 551.</h2><pre><code>fig, ax = plt.subplots(figsize=(7.7, 4.2))
+sns.barplot(data=class_counts, x=&quot;count&quot;, y=&quot;class&quot;, hue=&quot;class&quot;, legend=False,
+            ax=ax, palette=&quot;Set2&quot;)
+ax.set_title(&quot;Macrostrat 암상 정의의 대분류&quot;)
+ax.set_xlabel(&quot;암상 이름 개수&quot;)
+ax.set_ylabel(&quot;암석 대분류&quot;)
+ax.grid(axis=&quot;x&quot;, alpha=0.3)
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_01&quot;))
+plt.show()</code></pre>
+<h2>code 552.</h2><pre><code>def simple_rock_classifier(name):
+    &quot;&quot;&quot;암석 이름에 들어 있는 단어로 대략적인 암석 분류를 반환&quot;&quot;&quot;
+    text = str(name).lower()
+
+    # 화성암에서 자주 보이는 이름
+    igneous_words = [&quot;basalt&quot;, &quot;granite&quot;, &quot;andesite&quot;, &quot;rhyolite&quot;, &quot;dacite&quot;,
+                     &quot;gabbro&quot;, &quot;diorite&quot;, &quot;tuff&quot;]
+    # 퇴적암에서 자주 보이는 이름
+    sedimentary_words = [&quot;sand&quot;, &quot;shale&quot;, &quot;limestone&quot;, &quot;dolomite&quot;, &quot;mud&quot;,
+                         &quot;silt&quot;, &quot;conglomerate&quot;, &quot;coal&quot;]
+    # 변성암에서 자주 보이는 이름
+    metamorphic_words = [&quot;gneiss&quot;, &quot;schist&quot;, &quot;slate&quot;, &quot;marble&quot;, &quot;quartzite&quot;,
+                         &quot;amphibolite&quot;]
+
+    if any(word in text for word in igneous_words):
+        return &quot;igneous&quot;
+    if any(word in text for word in sedimentary_words):
+        return &quot;sedimentary&quot;
+    if any(word in text for word in metamorphic_words):
+        return &quot;metamorphic&quot;
+    return &quot;unknown&quot;
+
+rocks[&quot;rule_class&quot;] = rocks[&quot;name&quot;].apply(simple_rock_classifier)
+rocks[[&quot;name&quot;, &quot;class&quot;, &quot;rule_class&quot;]].head(20)</code></pre>
+<h2>code 553.</h2><pre><code># 규칙 기반 분류가 Macrostrat의 class와 얼마나 비슷한지 비교
+comparison = pd.crosstab(rocks[&quot;class&quot;], rocks[&quot;rule_class&quot;])
+
+# 대각선(실제 분류 = 규칙 분류) 개수로 정확도 계산
+n_correct = (rocks[&quot;class&quot;] == rocks[&quot;rule_class&quot;]).sum()
+n_unknown = (rocks[&quot;rule_class&quot;] == &quot;unknown&quot;).sum()
+print(f&quot;규칙이 맞힌 개수: {n_correct}/{len(rocks)} ({n_correct / len(rocks):.0%})&quot;)
+print(f&quot;unknown 개수: {n_unknown}&quot;)
+comparison</code></pre>
+</body></html>

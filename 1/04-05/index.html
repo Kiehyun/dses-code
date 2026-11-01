@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IV-05. 해수면의 높이 변동 그래프</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
+<h1>IV-05. 해수면의 높이 변동 그래프</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/04-05/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 83.</h2><pre><code># 파일 이름과 ID 정의
+from pathlib import Path
+
+files = [
+
+    {&quot;name&quot;: &quot;[1MinTide]202006_DT_0001.txt&quot;, &quot;id&quot;: &quot;1l_L631Y-pMMdIqzPpgYMuPBi4w6RNT9c&quot;},
+    {&quot;name&quot;: &quot;[10MinTide]202006_DT_0001.txt&quot;, &quot;id&quot;: &quot;1UPJrhqldAm0iAc-B0VghFe9Hv3SImaLs&quot;},
+    {&quot;name&quot;: &quot;[60MinTide]202006_DT_0001.txt&quot;, &quot;id&quot;: &quot;1MD_2mXr_2johjIiozdqnNOq1P1jXeOTd&quot;}
+]
+
+# 반복문으로 파일 내려받기
+for file in files:
+    du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={file[&#x27;id&#x27;]}&quot;, Path(proj_dir) / file[&#x27;name&#x27;])</code></pre>
+<h2>code 84.</h2><pre><code>fpaths = du.list_files(proj_dir, &quot;txt&quot;)</code></pre>
+<h2>code 85.</h2><pre><code>du.preview_text(fpaths[0], n=10)</code></pre>
+<h2>code 86.</h2><pre><code>import pandas as pd
+print(&quot;str(fpaths[2])&quot;, str(fpaths[2]))
+df_60min = pd.read_csv(str(fpaths[2]),
+                 skiprows=5,
+                 thousands = &#x27;,&#x27;,
+                 names = [&#x27;str_YmdHM&#x27;, &#x27;height(cm)&#x27;],
+                 encoding= &#x27;unicode_escape&#x27;,
+ #encoding= &#x27;utf8&#x27;,
+                 )
+print(&quot;df_60min :&quot;, df_60min )</code></pre>
+<h2>code 87.</h2><pre><code>print(&quot;df_60min.columns :&quot;, df_60min.columns )
+print(&quot;type(df_60min[&#x27;str_YmdHM&#x27;][0]): {}&quot;.format(type(df_60min[&#x27;str_YmdHM&#x27;][0])))
+print(&quot;type(df_60min[&#x27;height(cm)&#x27;]): {}&quot;.format(type(df_60min[&#x27;height(cm)&#x27;][0])))
+df_60min[&#x27;dt_YmdHM&#x27;] = pd.to_datetime(df_60min[&#x27;str_YmdHM&#x27;])
+df_60min.index = df_60min[&#x27;dt_YmdHM&#x27;]
+print(&quot;df_60min: &quot;, df_60min)</code></pre>
+<h2>code 88.</h2><pre><code># df_60min[&#x27;dt_YmdHM&#x27;] 컬럼이 오름차순으로 정렬되어 있는지 확인
+is_sorted = df_60min[&#x27;dt_YmdHM&#x27;].is_monotonic_increasing
+print(&quot;dt_YmdHM 오름차순 정렬 여부:&quot;, is_sorted)
+
+# df_60min[&#x27;height(cm)&#x27;]에 결측치가 있는지 확인
+num_missing = df_60min[&#x27;height(cm)&#x27;].isnull().sum()
+print(&quot;height(cm) 결측치 개수:&quot;, num_missing)
+
+# df_60min[&#x27;dt_YmdHM&#x27;] 컬럼이 인덱스와 컬럼에 모두 있을 때 정렬 오류 방지
+if &#x27;dt_YmdHM&#x27; in df_60min.index.names:
+ # 인덱스가 dt_YmdHM이면 인덱스 기준으로 정렬
+    df_60min = df_60min.sort_index()
+else:
+ # 아니면 컬럼 기준으로 정렬
+    df_60min = df_60min.sort_values(by=&#x27;dt_YmdHM&#x27;)
+
+# 결측치 보간 (선형 보간)
+df_60min = df_60min.interpolate(method=&#x27;linear&#x27;)
+
+# 결측치가 남아있는 경우(양 끝 등)는 앞/뒤 값으로 채움
+df_60min = df_60min.fillna(method=&#x27;bfill&#x27;).fillna(method=&#x27;ffill&#x27;)</code></pre>
+<h2>code 89.</h2><pre><code># 10분 간격 데이터 (fpaths[0]) DataFrame 생성 및 정렬/결측치 처리
+df_10min = pd.read_csv(
+    str(fpaths[0]),
+    skiprows=5,
+    thousands=&#x27;,&#x27;,
+    names=[&#x27;str_YmdHM&#x27;, &#x27;height(cm)&#x27;],
+    encoding=&#x27;unicode_escape&#x27;
+)
+df_10min[&#x27;dt_YmdHM&#x27;] = pd.to_datetime(df_10min[&#x27;str_YmdHM&#x27;])
+df_10min.index = df_10min[&#x27;dt_YmdHM&#x27;]
+# 정렬
+df_10min = df_10min.sort_index()
+# 결측치 보간 및 처리
+df_10min = df_10min.interpolate(method=&#x27;linear&#x27;)
+df_10min = df_10min.fillna(method=&#x27;bfill&#x27;).fillna(method=&#x27;ffill&#x27;)
+print(&quot;df_10min :&quot;, df_10min)
+
+# 1분 간격 데이터 (fpaths[1]) DataFrame 생성 및 정렬/결측치 처리
+df_1min = pd.read_csv(
+    str(fpaths[1]),
+    skiprows=5,
+    thousands=&#x27;,&#x27;,
+    names=[&#x27;str_YmdHM&#x27;, &#x27;height(cm)&#x27;],
+    encoding=&#x27;unicode_escape&#x27;
+)
+df_1min[&#x27;dt_YmdHM&#x27;] = pd.to_datetime(df_1min[&#x27;str_YmdHM&#x27;])
+df_1min.index = df_1min[&#x27;dt_YmdHM&#x27;]
+# 정렬
+df_1min = df_1min.sort_index()
+# 결측치 보간 및 처리
+df_1min = df_1min.interpolate(method=&#x27;linear&#x27;)
+df_1min = df_1min.fillna(method=&#x27;bfill&#x27;).fillna(method=&#x27;ffill&#x27;)
+print(&quot;df_1min :&quot;, df_1min)</code></pre>
+<h2>code 90.</h2><pre><code>import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
+from datetime import datetime, timedelta
+
+# 데이터프레임 df_60min 시각화
+fig, ax = plt.subplots(figsize=(15,5))
+ax.plot(df_60min[&#x27;dt_YmdHM&#x27;], df_60min[&#x27;height(cm)&#x27;], color=&#x27;royalblue&#x27;, label=&#x27;해수면 높이&#x27;)
+ax.set_title(&#x27;2020년 6월 인천 해수면 높이 변동(1시간 간격 자료)&#x27;, 
+           fontsize=18, fontweight=&#x27;bold&#x27;)
+ax.set_xlabel(&#x27;시간&#x27;, fontsize=14)
+ax.set_ylabel(&#x27;해수면 높이 (cm)&#x27;, fontsize=14)
+ax.legend(fontsize=12)
+ax.grid(True, linestyle=&#x27;:&#x27;, alpha=0.5)
+
+plt.tight_layout()
+plt.show()</code></pre>
+<h2>code 91.</h2><pre><code>import numpy as np
+from datetime import timedelta
+import matplotlib.pyplot as plt
+import matplotlib.dates as dates
+import matplotlib.ticker as ticker
+
+# 데이터프레임 리스트와 타이틀
+dfs = [df_60min, df_10min, df_1min]
+titles = [&#x27;1시간 간격 자료&#x27;, &#x27;10분 간격 자료&#x27;, &#x27;1분 간격 자료&#x27;]
+
+fig, axes = plt.subplots(3, 1, figsize=(16, 16), sharey=True)
+
+for i, (df, title) in enumerate(zip(dfs, titles)):
+    ax = axes[i]
+    ax.plot(df[&#x27;dt_YmdHM&#x27;], df[&#x27;height(cm)&#x27;], color=&#x27;royalblue&#x27;, label=&#x27;해수면 높이&#x27;)
+
+    ax.xaxis.set_major_locator(dates.DayLocator())
+    ax.xaxis.set_minor_locator(dates.DayLocator())
+    ax.xaxis.set_major_formatter(ticker.NullFormatter())
+    ax.xaxis.set_minor_formatter(dates.DateFormatter(&#x27;%d&#x27;))
+
+    ax.set_ylim(-200, 1000)
+    ax.set_yticks(np.arange(-200, 1001, 100), minor=True)
+    ax.set_xlim(min(df[&#x27;dt_YmdHM&#x27;]), max(df[&#x27;dt_YmdHM&#x27;]))
+    ax.set_xticks(np.arange(min(df[&#x27;dt_YmdHM&#x27;]), max(df[&#x27;dt_YmdHM&#x27;]), 
+        timedelta(days=0.5)), minor=True)
+
+    ax.tick_params(axis=&quot;x&quot;, direction=&quot;in&quot;, length=8, width=2, 
+        color=&quot;turquoise&quot;, which=&#x27;major&#x27;, labelsize=12)
+    ax.tick_params(axis=&quot;y&quot;, direction=&quot;in&quot;, length=6, width=2, 
+        color=&quot;orange&quot;, which=&#x27;major&#x27;, labelsize=10)
+    ax.tick_params(axis=&quot;x&quot;, direction=&quot;out&quot;, length=2, width=2, 
+        color=&quot;turquoise&quot;, which=&#x27;minor&#x27;, labelsize=12)
+    ax.tick_params(axis=&quot;y&quot;, direction=&quot;out&quot;, length=2, width=2, 
+        color=&quot;orange&quot;, which=&#x27;minor&#x27;, labelsize=10)
+
+    ax.grid(axis=&quot;x&quot;, color=&quot;green&quot;, alpha=.3, linewidth=.8, linestyle=&quot;:&quot;)
+    ax.grid(axis=&quot;y&quot;, color=&quot;black&quot;, alpha=.3, linewidth=.8, linestyle=&quot;:&quot;)
+
+    ax.set_xlabel(&#x27;time (day)&#x27;, fontsize=14)
+    if i == 0:
+        ax.set_ylabel(&#x27;height of sea level (cm)&#x27;, fontsize=14)
+    ax.set_title(title, fontsize=16, fontweight=&#x27;bold&#x27;, y=1.02)
+
+fig.suptitle(&#x27;2020년 6월 인천 해수면 높이 변동 (1시간/10분/1분)&#x27;, 
+            fontsize=20, fontweight=&#x27;bold&#x27;, y=0.98)
+fig.tight_layout(rect=[0, 0, 1, 0.97])
+plt.show()</code></pre>
+<h2>code 92.</h2><pre><code># df_1min에서 7일, 8일, 9일 자료만 슬라이싱
+start_date = df_1min[&#x27;dt_YmdHM&#x27;].dt.floor(&#x27;D&#x27;).min().replace(day=7)
+end_date = df_1min[&#x27;dt_YmdHM&#x27;].dt.floor(&#x27;D&#x27;).min().replace(day=10)
+df_1min_selected = df_1min[(df_1min[&#x27;dt_YmdHM&#x27;] &gt;= start_date) &amp; (df_1min[&#x27;dt_YmdHM&#x27;] &lt; end_date)]
+
+# 날짜별로 분리
+dfs = []
+titles = []
+for day in range(7, 10):
+    day_start = start_date.replace(day=day)
+    day_end = start_date.replace(day=day+1)
+    dfs.append(df_1min[(df_1min[&#x27;dt_YmdHM&#x27;] &gt;= day_start) &amp; (df_1min[&#x27;dt_YmdHM&#x27;] &lt; day_end)])
+    titles.append(f&#x27;2020년 6월 {day}일&#x27;)
+
+# 3행 1열로 시각화
+import matplotlib.pyplot as plt
+import matplotlib.dates as dates
+import matplotlib.ticker as ticker
+import numpy as np
+
+fig, axes = plt.subplots(3, 1, figsize=(12.0, 9.0), sharey=True)
+
+for i, (df, title) in enumerate(zip(dfs, titles)):
+    ax = axes[i]
+    ax.plot(df[&#x27;dt_YmdHM&#x27;], df[&#x27;height(cm)&#x27;], color=&#x27;royalblue&#x27;)
+    ax.xaxis.set_major_locator(dates.HourLocator(interval=2))
+    ax.xaxis.set_minor_locator(dates.HourLocator())
+    ax.xaxis.set_major_formatter(dates.DateFormatter(&#x27;%H시&#x27;))
+    ax.set_ylim(-200, 1000)
+    ax.set_yticks(np.arange(-200, 1001, 100), minor=True)
+    ax.set_xlim(df[&#x27;dt_YmdHM&#x27;].min(), df[&#x27;dt_YmdHM&#x27;].max())
+    ax.grid(axis=&quot;x&quot;, color=&quot;green&quot;, alpha=.3, linewidth=.8, linestyle=&quot;:&quot;)
+    ax.grid(axis=&quot;y&quot;, color=&quot;black&quot;, alpha=.3, linewidth=.8, linestyle=&quot;:&quot;)
+    ax.set_xlabel(&#x27;시간&#x27;, fontsize=14)
+    if i == 0:
+        ax.set_ylabel(&#x27;해수면 높이 (cm)&#x27;, fontsize=14)
+    ax.set_title(title, fontsize=16, fontweight=&#x27;bold&#x27;, y=1.02)
+
+fig.suptitle(&#x27;2020년 6월 7~9일 인천 해수면 높이 변동 (1분 간격)&#x27;, fontsize=20, fontweight=&#x27;bold&#x27;, y=0.985)
+fig.tight_layout(rect=[0, 0, 1, 0.97])
+plt.show()</code></pre>
+<h2>code 93.</h2><pre><code>import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# 하루치(1440분)씩 30일 분할
+days = []
+date_labels = []
+start_day = df_1min[&#x27;dt_YmdHM&#x27;].dt.floor(&#x27;D&#x27;).min()
+for i in range(30):
+    day_start = start_day + pd.Timedelta(days=i)
+    day_end = day_start + pd.Timedelta(days=1)
+    day_data = df_1min[(df_1min[&#x27;dt_YmdHM&#x27;] &gt;= day_start) &amp; (df_1min[&#x27;dt_YmdHM&#x27;] &lt; day_end)][&#x27;height(cm)&#x27;].values
+ # 길이가 1440이 아닐 경우 NaN으로 패딩
+    if len(day_data) &lt; 1440:
+        day_data = np.pad(day_data, (0, 1440 - len(day_data)), constant_values=np.nan)
+    days.append(day_data)
+    date_labels.append(day_start.strftime(&#x27;%d&#x27;))  # &#x27;06-01&#x27;, &#x27;06-02&#x27;, ...
+
+# 2D array (30일 x 1440분)
+height_matrix = np.array(days)
+
+plt.figure(figsize=(10, 10))
+xticks = np.arange(0, 1441, 60)
+xticklabels = [f&quot;{h:02d}&quot; for h in range(25)]  # 0~24시
+
+sns.heatmap(
+    height_matrix,
+    cmap=&#x27;viridis&#x27;,
+    cbar_kws={&#x27;label&#x27;: &#x27;해수면 높이 (cm)&#x27;},
+    xticklabels=False,
+    yticklabels=date_labels
+)
+plt.xticks(ticks=xticks, labels=xticklabels, rotation=0)
+plt.yticks(rotation=0)
+plt.xlabel(&#x27;시(hour)&#x27;)
+plt.ylabel(&#x27;날짜 (6월)&#x27;)
+plt.title(&#x27;2020년 6월 인천 해수면 높이(1분 간격) 히트맵&#x27;)
+plt.tight_layout()</code></pre>
+</body></html>

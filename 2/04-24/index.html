@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IV-04. 태풍의 진로와 세기</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
+<h1>IV-04. 태풍의 진로와 세기</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/04-24/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 460.</h2><pre><code>import zipfile
+from pathlib import Path
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
+import cartopy.feature as cfeature
+
+URL = &quot;https://www.jma.go.jp/jma/jma-eng/jma-center/rsmc-hp-pub-eg/Besttracks/bst_all.zip&quot;
+zip_file = Path(proj_dir) / &quot;bst_all.zip&quot;
+txt_file = Path(proj_dir) / &quot;bst_all.txt&quot;
+if not txt_file.exists():
+    du.download(URL, zip_file)
+    with zipfile.ZipFile(zip_file) as z:
+        z.extract(&quot;bst_all.txt&quot;, proj_dir)
+du.preview_text(txt_file, n=6)</code></pre>
+<h2>code 461.</h2><pre><code>rows = []
+for line in open(txt_file, encoding=&quot;ascii&quot;, errors=&quot;ignore&quot;):
+    if line.startswith(&quot;66666&quot;):
+        intl = line[6:10].strip()          # 국제 번호(yynn), 열대 폭풍이 되지 못한 것은 0000
+        name = line[30:50].strip()
+        sid = f&quot;{intl}_{name}&quot; if intl != &quot;0000&quot; else None
+        continue
+    if sid is None:
+        continue
+    yy = int(line[0:2])
+    year = 1900 + yy if yy &gt;= 51 else 2000 + yy
+    time = pd.Timestamp(year=year, month=int(line[2:4]), day=int(line[4:6]),
+                        hour=int(line[6:8]))
+    wind = line[33:36].strip()
+    rows.append({
+        &quot;sid&quot;: sid, &quot;name&quot;: name, &quot;time&quot;: time,
+        &quot;grade&quot;: int(line[13]),
+        &quot;lat&quot;: int(line[15:18]) / 10, &quot;lon&quot;: int(line[19:23]) / 10,
+        &quot;pres&quot;: int(line[24:28]),
+        &quot;wind_kt&quot;: int(wind) if wind and int(wind) &gt; 0 else np.nan,
+    })
+
+bt = pd.DataFrame(rows)
+bt[&quot;wind_ms&quot;] = bt[&quot;wind_kt&quot;] * 0.514          # kt → m/s
+bt[&quot;year&quot;] = bt[&quot;time&quot;].dt.year
+print(f&quot;관측 기록 {len(bt):,}줄, 태풍 {bt[&#x27;sid&#x27;].nunique():,}개 ({bt[&#x27;year&#x27;].min()}~{bt[&#x27;year&#x27;].max()})&quot;)
+bt.head()</code></pre>
+<h2>code 462.</h2><pre><code>this_year = pd.Timestamp.now().year
+count = bt.groupby(&quot;year&quot;)[&quot;sid&quot;].nunique()
+count = count[count.index &lt; this_year]
+
+fig, ax = plt.subplots(figsize=(8.4, 3.0))
+ax.bar(count.index, count.values, color=&quot;lightsteelblue&quot;,
+       label=&quot;해마다 발생 수&quot;)
+ax.plot(count.index, count.rolling(10, center=True).mean(), color=&quot;navy&quot;,
+        lw=2, label=&quot;10년 이동평균&quot;)
+ax.axhline(count.mean(), color=&quot;gray&quot;, ls=&quot;--&quot;, lw=1)
+ax.set_xlabel(&quot;연도&quot;)
+ax.set_ylabel(&quot;태풍 수 (개)&quot;)
+ax.set_title(f&quot;북서태평양 태풍 발생 수 (평균 {count.mean():.1f}개/년)&quot;)
+ax.legend()
+ax.grid(axis=&quot;y&quot;, alpha=0.3)
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_01&quot;))
+plt.show()</code></pre>
+<h2>code 463.</h2><pre><code>ts = bt[bt[&quot;grade&quot;].isin([3, 4, 5, 9])]
+genesis = ts.sort_values(&quot;time&quot;).groupby(&quot;sid&quot;).first()
+
+fig = plt.figure(figsize=(7.5, 2.9))
+ax = fig.add_subplot(1, 2, 1,
+                     projection=ccrs.PlateCarree(central_longitude=150))
+ax.set_extent([100, 190, -5, 45], crs=ccrs.PlateCarree())
+ax.add_feature(cfeature.LAND, facecolor=&quot;lightgray&quot;)
+ax.coastlines(linewidth=0.5)
+sc = ax.scatter(genesis[&quot;lon&quot;], genesis[&quot;lat&quot;], c=genesis[&quot;time&quot;].dt.month, cmap=&quot;twilight&quot;, vmin=1, vmax=12,
+                s=6, transform=ccrs.PlateCarree())
+plt.colorbar(sc, ax=ax, shrink=0.8, label=&quot;발생한 달&quot;)
+gl = ax.gridlines(draw_labels=True, linewidth=0.3)
+gl.top_labels = gl.right_labels = False
+ax.set_title(&quot;태풍 발생 위치 (1951~)&quot;)
+
+ax2 = fig.add_subplot(1, 2, 2)
+ax2.hist(genesis[&quot;lat&quot;], bins=np.arange(0, 41, 2), orientation=&quot;horizontal&quot;,
+         color=&quot;teal&quot;)
+ax2.set_ylabel(&quot;발생 위도 (°N)&quot;)
+ax2.set_xlabel(&quot;태풍 수&quot;)
+ax2.set_title(&quot;발생 위도 분포&quot;)
+ax2.grid(alpha=0.3)
+plt.tight_layout()
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_02&quot;))
+plt.show()
+
+print(f&quot;위도 5° 미만에서 발생한 태풍: {(genesis[&#x27;lat&#x27;] &lt; 5).mean() * 100:.1f}%&quot;)</code></pre>
+<h2>code 464.</h2><pre><code>recent = bt[bt[&quot;year&quot;] &gt;= 2000]
+gen_month = genesis[&quot;time&quot;].dt.month
+
+fig, axes = plt.subplots(1, 4, figsize=(7.5, 2.3),
+                         subplot_kw={&quot;projection&quot;: ccrs.PlateCarree()})
+for ax, month in zip(axes, [7, 8, 9, 10]):
+    ax.set_extent([105, 160, 5, 50], crs=ccrs.PlateCarree())
+    ax.add_feature(cfeature.LAND, facecolor=&quot;lightgray&quot;)
+    ax.coastlines(linewidth=0.4)
+    sids = gen_month[gen_month == month].index
+    for sid, g in recent[recent[&quot;sid&quot;].isin(sids)].groupby(&quot;sid&quot;):
+        ax.plot(g[&quot;lon&quot;], g[&quot;lat&quot;], lw=0.6, alpha=0.5, color=&quot;crimson&quot;,
+                transform=ccrs.PlateCarree())
+    ax.plot(127.0, 37.5, &quot;k*&quot;, ms=10, transform=ccrs.PlateCarree())   # 서울
+    ax.set_title(f&quot;{month}월에 발생한 태풍\n({len(set(sids) &amp; set(recent[&#x27;sid&#x27;]))}개)&quot;, fontsize=10)
+plt.tight_layout()
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_03&quot;))
+plt.show()</code></pre>
+<h2>code 465.</h2><pre><code>GRADE = {2: &quot;열대 저압부&quot;, 3: &quot;열대 폭풍&quot;, 4: &quot;강한 열대 폭풍&quot;, 5: &quot;태풍(TY)&quot;,
+         6: &quot;온대 저기압&quot;}
+h = bt[bt[&quot;sid&quot;] == &quot;2211_HINNAMNOR&quot;].copy()
+h[&quot;kst&quot;] = h[&quot;time&quot;] + pd.Timedelta(&quot;9h&quot;)
+
+fig = plt.figure(figsize=(6.0, 4.8))
+ax = plt.axes(projection=ccrs.PlateCarree())
+ax.set_extent([118, 156, 15, 50], crs=ccrs.PlateCarree())
+ax.add_feature(cfeature.LAND, facecolor=&quot;lightgray&quot;)
+ax.coastlines(linewidth=0.5)
+ax.plot(h[&quot;lon&quot;], h[&quot;lat&quot;], color=&quot;k&quot;, lw=0.8, transform=ccrs.PlateCarree())
+sc = ax.scatter(h[&quot;lon&quot;], h[&quot;lat&quot;], c=h[&quot;pres&quot;], cmap=&quot;magma&quot;, s=25, zorder=3,
+                transform=ccrs.PlateCarree())
+cb = plt.colorbar(sc, ax=ax, shrink=0.8)
+cb.set_label(&quot;중심 기압 (hPa)&quot;, fontsize=9)
+cb.ax.tick_params(labelsize=8)
+# 일생의 주요 순간 네 곳에만 이름표를 단다
+events = {
+    &quot;발생(열대 폭풍)&quot;: h[h[&quot;grade&quot;] &gt;= 3].index[0],
+    &quot;최성기(최저 기압)&quot;: h[&quot;pres&quot;].idxmin(),
+    &quot;상륙 직전&quot;: h[h[&quot;kst&quot;] &lt;= &quot;2022-09-06 04:50&quot;].index[-1],
+    &quot;온대 저기압으로 변질&quot;: h[h[&quot;grade&quot;] == 6].index[0],
+}
+offsets = [(-96, 20), (-96, -4), (8, -14), (8, 0)]
+for (label, i), off in zip(events.items(), offsets):
+    r = h.loc[i]
+    ax.annotate(f&quot;{label}\n{r.kst:%m/%d %H시} · {r.pres} hPa&quot;, (r.lon, r.lat), xytext=off,
+                textcoords=&quot;offset points&quot;, fontsize=7, arrowprops=dict(arrowstyle=&quot;-&quot;,
+                                                                        lw=0.6),
+                bbox=dict(boxstyle=&quot;round&quot;, fc=&quot;w&quot;, alpha=0.85), transform=ccrs.PlateCarree())
+gl = ax.gridlines(draw_labels=True, linewidth=0.3)
+gl.top_labels = gl.right_labels = False
+gl.xlabel_style = gl.ylabel_style = {&quot;size&quot;: 8}
+ax.set_title(&quot;태풍 힌남노(2022)의 진로와 중심 기압&quot;, fontsize=10)
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_04&quot;))
+plt.show()</code></pre>
+<h2>code 466.</h2><pre><code>landfall = pd.Timestamp(&quot;2022-09-06 04:50&quot;)
+
+fig, ax = plt.subplots(2, 1, figsize=(7.5, 4.1), sharex=True)
+ax[0].plot(h[&quot;kst&quot;], h[&quot;pres&quot;], &quot;o-&quot;, color=&quot;purple&quot;, ms=3)
+ax[0].set_ylabel(&quot;중심 기압 (hPa)&quot;)
+ax[0].invert_yaxis()
+ax[1].plot(h[&quot;kst&quot;], h[&quot;wind_ms&quot;], &quot;o-&quot;, color=&quot;darkorange&quot;, ms=3)
+ax[1].axhline(17, color=&quot;gray&quot;, ls=&quot;:&quot;, lw=1)
+ax[1].text(h[&quot;kst&quot;].iloc[-1], 18, &quot;17 m/s (태풍 기준)&quot;, fontsize=9, ha=&quot;right&quot;,
+           color=&quot;gray&quot;)
+ax[1].set_ylabel(&quot;최대 풍속 (m/s)&quot;)
+for a in ax:
+    a.axvline(landfall, color=&quot;crimson&quot;, ls=&quot;--&quot;)
+    a.grid(alpha=0.3)
+ax[0].set_title(&quot;힌남노의 중심 기압과 최대 풍속 (빨간 선: 거제 상륙)&quot;)
+fig.autofmt_xdate()
+plt.tight_layout()
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_05&quot;))
+plt.show()
+
+print(f&quot;가장 낮은 중심 기압: {h[&#x27;pres&#x27;].min()} hPa ({h.loc[h[&#x27;pres&#x27;].idxmin(), &#x27;kst&#x27;]:%m월 %d일 %H시})&quot;)
+print(f&quot;가장 센 최대 풍속: {h[&#x27;wind_ms&#x27;].max():.0f} m/s&quot;)
+
+# 급격한 발달: 열대 폭풍이 된 때부터 최저 기압까지
+ts0, pmin = h[h[&quot;grade&quot;] &gt;= 3].iloc[0], h.loc[h[&quot;pres&quot;].idxmin()]
+hours = (pmin[&quot;kst&quot;] - ts0[&quot;kst&quot;]).total_seconds() / 3600
+print(f&quot;열대 폭풍이 된 때({ts0[&#x27;kst&#x27;]:%m월 %d일 %H시}, {ts0[&#x27;pres&#x27;]} hPa)부터 &quot;
+      f&quot;{hours:.0f}시간 동안 {ts0[&#x27;pres&#x27;] - pmin[&#x27;pres&#x27;]} hPa 떨어짐&quot;)
+
+# 다시 발달: 9월 2~5일 사이 가장 약할 때와 그 뒤 가장 강할 때
+mid = h[(h[&quot;kst&quot;] &gt;= &quot;2022-09-02&quot;) &amp; (h[&quot;kst&quot;] &lt; &quot;2022-09-06&quot;)]
+weak = mid.loc[mid[&quot;pres&quot;].idxmax()]
+strong = mid[mid[&quot;kst&quot;] &gt; weak[&quot;kst&quot;]].loc[lambda d: d[&quot;pres&quot;].idxmin()]
+print(f&quot;다시 발달: {weak[&#x27;kst&#x27;]:%m월 %d일 %H시} {weak[&#x27;pres&#x27;]} hPa → &quot;
+      f&quot;{strong[&#x27;kst&#x27;]:%m월 %d일 %H시} {strong[&#x27;pres&#x27;]} hPa&quot;)</code></pre>
+<h2>code 467.</h2><pre><code>sel = bt[(bt[&quot;year&quot;] &gt;= 1977) &amp; bt[&quot;grade&quot;].isin([3, 4, 5])].copy()
+bins = np.arange(5, 47, 2)
+sel[&quot;lat_bin&quot;] = pd.cut(sel[&quot;lat&quot;], bins)
+groups = [g[&quot;pres&quot;].values for _, g in sel.groupby(&quot;lat_bin&quot;, observed=False)]
+
+fig, ax = plt.subplots(figsize=(8.3, 3.2))
+ax.boxplot(groups, positions=bins[:-1] + 1, widths=1.4, showfliers=False)
+ax.set_xticks(bins[:-1] + 1)
+ax.set_xticklabels([f&quot;{b + 1}&quot; for b in bins[:-1]], fontsize=9)
+ax.invert_yaxis()
+ax.set_xlabel(&quot;위도 (°N, 구간 가운데 값)&quot;)
+ax.set_ylabel(&quot;중심 기압 (hPa)&quot;)
+ax.set_title(&quot;위도별 태풍 중심 기압 분포 (1977~, 위쪽일수록 강함)&quot;)
+ax.grid(alpha=0.3)
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_06&quot;))
+plt.show()</code></pre>
+<h2>code 468.</h2><pre><code># 힌남노의 이동 속도: 거제 상륙(6일 04:50 KST) 직전 6시간
+# 9월 5일 12시~18시(UTC) = 5일 21시~6일 3시(KST) 사이 이동 거리 / 시간
+a, b = h.set_index(&quot;time&quot;).loc[&quot;2022-09-05 12:00&quot;], h.set_index(&quot;time&quot;).loc[&quot;2022-09-05 18:00&quot;]
+dy = (b[&quot;lat&quot;] - a[&quot;lat&quot;]) * 111e3
+dx = (b[&quot;lon&quot;] - a[&quot;lon&quot;]) * 111e3 * np.cos(np.deg2rad((a[&quot;lat&quot;] + b[&quot;lat&quot;]) / 2))
+move_u, move_v = dx / 6 / 3600, dy / 6 / 3600
+print(f&quot;이동 속도: {np.hypot(move_u, move_v):.1f} m/s, 방향: 북쪽에서 시계 방향 {np.rad2deg(np.arctan2(move_u, move_v)):.0f}°&quot;)
+
+VMAX, RMAX = 35.0, 50e3          # 최대 회전 풍속(m/s), 최대 풍속 반경(m) — 모형 값
+x = np.linspace(-300e3, 300e3, 121)
+X, Y = np.meshgrid(x, x)
+R = np.hypot(X, Y) + 1
+vt = np.where(R &lt; RMAX, VMAX * R / RMAX, VMAX * RMAX / R)   # 회전 풍속
+u_rot, v_rot = -vt * Y / R, vt * X / R                     # 시계 반대 방향
+U, V = u_rot + move_u, v_rot + move_v
+speed = np.hypot(U, V)
+
+fig, ax = plt.subplots(figsize=(5.6, 4.6))
+cf = ax.contourf(X / 1e3, Y / 1e3, speed, levels=np.arange(0, 56, 5),
+                 cmap=&quot;YlOrRd&quot;)
+step = 10
+ax.quiver(X[::step, ::step] / 1e3, Y[::step, ::step] / 1e3, U[::step, ::step],
+          V[::step, ::step], scale=600)
+ax.annotate(&quot;&quot;, xy=(move_u * 4, move_v * 4), xytext=(0, 0),
+            arrowprops=dict(arrowstyle=&quot;-|&gt;&quot;, lw=3, color=&quot;blue&quot;))
+ax.text(150, -250, &quot;위험 반원\n(오른쪽)&quot;, fontsize=9, ha=&quot;center&quot;,
+        color=&quot;darkred&quot;, weight=&quot;bold&quot;)
+ax.text(-150, -250, &quot;가항 반원\n(왼쪽)&quot;, fontsize=9, ha=&quot;center&quot;,
+        color=&quot;navy&quot;, weight=&quot;bold&quot;)
+cb = plt.colorbar(cf)
+cb.set_label(&quot;풍속 (m/s)&quot;, fontsize=9)
+cb.ax.tick_params(labelsize=8)
+ax.set_xlabel(&quot;동서 거리 (km)&quot;, fontsize=9)
+ax.set_ylabel(&quot;남북 거리 (km)&quot;, fontsize=9)
+ax.tick_params(labelsize=8)
+ax.set_aspect(&quot;equal&quot;)
+ax.set_title(&quot;움직이는 태풍 모형의 바람 (파란 화살표: 이동 방향)&quot;, fontsize=10)
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_07&quot;))
+plt.show()</code></pre>
+<h2>code 469.</h2><pre><code>cols = [&quot;date&quot;, &quot;hour&quot;, &quot;temp&quot;, &quot;dwpt&quot;, &quot;rhum&quot;, &quot;prcp&quot;, &quot;snow&quot;, &quot;wdir&quot;,
+        &quot;wspd&quot;, &quot;wpgt&quot;, &quot;pres&quot;, &quot;tsun&quot;, &quot;coco&quot;]
+st_file = Path(proj_dir) / &quot;meteostat_47153.csv.gz&quot;
+if not st_file.exists():
+    du.download(&quot;https://bulk.meteostat.net/v2/hourly/47153.csv.gz&quot;, st_file)
+obs = pd.read_csv(st_file, names=cols)
+obs[&quot;kst&quot;] = pd.to_datetime(obs[&quot;date&quot;]) + pd.to_timedelta(obs[&quot;hour&quot;],
+                                                           unit=&quot;h&quot;) + pd.Timedelta(&quot;9h&quot;)
+w = obs[(obs[&quot;kst&quot;] &gt;= &quot;2022-09-05 09:00&quot;) &amp; (obs[&quot;kst&quot;] &lt;= &quot;2022-09-06 18:00&quot;)].set_index(&quot;kst&quot;)
+
+fig, ax = plt.subplots(4, 1, figsize=(7.5, 5.4), sharex=True)
+ax[0].plot(w.index, w[&quot;pres&quot;], color=&quot;purple&quot;); ax[0].set_ylabel(&quot;기압 (hPa)&quot;)
+ax[1].plot(w.index, w[&quot;wspd&quot;] / 3.6, color=&quot;darkorange&quot;); ax[1].set_ylabel(&quot;풍속 (m/s)&quot;)
+ax[2].scatter(w.index, w[&quot;wdir&quot;], c=&quot;teal&quot;, s=12); ax[2].set_ylabel(&quot;풍향 (°)&quot;)
+ax[2].set_yticks([0, 90, 180, 270, 360]); ax[2].set_yticklabels([&quot;북&quot;, &quot;동&quot;,
+                                                                 &quot;남&quot;, &quot;서&quot;,
+                                                                 &quot;북&quot;])
+ax[3].bar(w.index, w[&quot;prcp&quot;].fillna(0), width=0.035, color=&quot;royalblue&quot;); ax[3].set_ylabel(&quot;강수량 (mm)&quot;)
+t_min = w[&quot;pres&quot;].idxmin()
+for a in ax:
+    a.axvline(t_min, color=&quot;crimson&quot;, ls=&quot;--&quot;)
+    a.grid(alpha=0.3)
+ax[0].set_title(f&quot;힌남노가 지날 때 김해의 기록 (빨간 선: 기압 최저 {w[&#x27;pres&#x27;].min():.0f} hPa, {t_min:%d일 %H시})&quot;)
+fig.autofmt_xdate()
+plt.tight_layout()
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_08&quot;))
+plt.show()</code></pre>
+</body></html>

@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IV-09. 수괴와 T-S도</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
+<h1>IV-09. 수괴와 T-S도</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/04-29/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 540.</h2><pre><code>from pathlib import Path
+import numpy as np
+import xarray as xr
+import matplotlib.pyplot as plt
+import gsw
+
+SERVER = &quot;https://www.ncei.noaa.gov/data/oceans/woa/WOA23/DATA&quot;
+PATHS = {
+    &quot;t&quot;: &quot;temperature/netcdf/decav/1.00/woa23_decav_t00_01.nc&quot;,
+    &quot;s&quot;: &quot;salinity/netcdf/decav/1.00/woa23_decav_s00_01.nc&quot;,
+    &quot;o&quot;: &quot;oxygen/netcdf/all/1.00/woa23_all_o00_01.nc&quot;,
+}
+VARS = {&quot;t&quot;: &quot;t_an&quot;, &quot;s&quot;: &quot;s_an&quot;, &quot;o&quot;: &quot;o_an&quot;}
+
+
+def open_woa(key):
+    &quot;&quot;&quot;WOA23 파일(약 80 MB)을 처음 한 번 내려받아 두고 열기&quot;&quot;&quot;
+    local = Path(proj_dir) / Path(PATHS[key]).name
+    if not local.exists():
+        du.download(f&quot;{SERVER}/{PATHS[key]}&quot;, local)
+    return xr.open_dataset(local, decode_times=False)
+
+
+def get_section(lon):
+    &quot;&quot;&quot;경도 lon(°E, 서경은 음수)의 남북 단면(수온 · 염분 · 용존 산소) 받기&quot;&quot;&quot;
+    nc_file = Path(proj_dir) / f&quot;woa23_section_{lon:+.1f}.nc&quot;
+    if nc_file.exists():
+        return xr.open_dataset(nc_file)
+    data = {}
+    for key in PATHS:
+        ds = open_woa(key)
+        da = ds[VARS[key]].isel(time=0).sel(lon=lon, method=&quot;nearest&quot;)
+        data[key] = da.drop_vars(&quot;time&quot;).load()
+    sec = xr.Dataset(data)
+    sec.to_netcdf(nc_file)
+    return sec
+
+
+atl = get_section(-25.5)   # 대서양 25.5°W
+print(atl)</code></pre>
+<h2>code 541.</h2><pre><code>panels = [
+    (&quot;t&quot;, &quot;수온 (°C)&quot;, &quot;RdYlBu_r&quot;, np.arange(-2, 29, 1), [0, 2, 4, 10]),
+    (&quot;s&quot;, &quot;염분 (psu)&quot;, &quot;viridis&quot;, np.arange(33.8, 37.01, 0.1),
+     [34.3, 34.7, 34.9, 35.5]),
+    (&quot;o&quot;, &quot;용존 산소 (µmol/kg)&quot;, &quot;YlGnBu&quot;, np.arange(140, 361, 10),
+     [200, 250, 280]),
+]
+
+fig, axes = plt.subplots(3, 1, figsize=(7.5, 5.4), sharex=True)
+for ax, (key, label, cmap, levels, lines) in zip(axes, panels):
+    da = atl[key]
+    cf = ax.contourf(da.lat, da.depth, da, levels=levels, cmap=cmap,
+                     extend=&quot;both&quot;)
+    cs = ax.contour(da.lat, da.depth, da, levels=lines, colors=&quot;k&quot;,
+                    linewidths=0.7)
+    ax.clabel(cs, fmt=&quot;%g&quot;, fontsize=8)
+    ax.set_ylim(5500, 0)
+    ax.set_ylabel(&quot;깊이 (m)&quot;)
+    ax.set_title(f&quot;대서양 25.5°W 단면 — {label}&quot;)
+    fig.colorbar(cf, ax=ax, pad=0.01)
+axes[-1].set_xlim(-70, 65)
+axes[-1].set_xlabel(&quot;위도 (°N, 남위는 음수)&quot;)
+plt.tight_layout()
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_01&quot;))
+plt.show()</code></pre>
+<h2>code 542.</h2><pre><code>def add_density(sec, lon):
+    depth2d, lat2d = np.meshgrid(sec.depth.values, sec.lat.values,
+                                 indexing=&quot;ij&quot;)
+    p = gsw.p_from_z(-depth2d, lat2d)                       # 깊이(m) → 압력(dbar)
+    SA = gsw.SA_from_SP(sec[&quot;s&quot;].values, p, lon, lat2d)    # 절대 염분 (g/kg)
+    CT = gsw.CT_from_t(SA, sec[&quot;t&quot;].values, p)             # 보존 수온 (°C)
+    sec[&quot;sigma0&quot;] = ((&quot;depth&quot;, &quot;lat&quot;), gsw.sigma0(SA, CT))  # 포텐셜 밀도 - 1000
+    sec[&quot;theta&quot;] = ((&quot;depth&quot;, &quot;lat&quot;), gsw.pt_from_CT(SA, CT))  # 포텐셜 수온
+    return sec
+
+
+atl = add_density(atl, -25.5)
+print(f&quot;σθ 범위: {float(atl.sigma0.min()):.2f} ~ {float(atl.sigma0.max()):.2f}&quot;)</code></pre>
+<h2>code 543.</h2><pre><code>fig, ax = plt.subplots(figsize=(7.5, 3.4))
+cf = ax.contourf(atl.lat, atl.depth, atl[&quot;s&quot;],
+                 levels=np.arange(33.8, 37.01, 0.1), cmap=&quot;viridis&quot;,
+                 extend=&quot;both&quot;)
+cs = ax.contour(atl.lat, atl.depth, atl[&quot;sigma0&quot;],
+                levels=[26.8, 27.2, 27.5, 27.7, 27.8, 27.85, 27.9],
+                colors=&quot;w&quot;, linewidths=0.8)
+ax.clabel(cs, fmt=&quot;%.2f&quot;, fontsize=8)
+ax.set_ylim(5500, 0)
+ax.set_xlim(-70, 65)
+ax.set_xlabel(&quot;위도 (°N)&quot;)
+ax.set_ylabel(&quot;깊이 (m)&quot;)
+ax.set_title(&quot;대서양 25.5°W — 염분(색)과 포텐셜 밀도 σθ(흰 선)&quot;)
+fig.colorbar(cf, ax=ax, pad=0.01, label=&quot;염분 (psu)&quot;)
+plt.tight_layout()
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_02&quot;))
+plt.show()</code></pre>
+<h2>code 544.</h2><pre><code>S = atl[&quot;s&quot;].values.ravel()
+TH = atl[&quot;theta&quot;].values.ravel()
+D = np.broadcast_to(atl.depth.values[:, None], atl[&quot;s&quot;].shape).ravel()
+ok = np.isfinite(S) &amp; np.isfinite(TH)
+
+# 등밀도선(포텐셜 밀도) 격자
+s_grid, t_grid = np.meshgrid(np.linspace(33.6, 37.2, 200),
+                             np.linspace(-2.5, 28, 200))
+sig_grid = gsw.sigma0(s_grid, t_grid)   # 표층 근사(SA≈SP, CT≈θ)로 그린 등밀도선
+
+fig, ax = plt.subplots(figsize=(8.6, 4.6))
+cs = ax.contour(s_grid, t_grid, sig_grid, levels=np.arange(23, 28.6, 0.5),
+                colors=&quot;gray&quot;, linewidths=0.6)
+ax.clabel(cs, fmt=&quot;%.1f&quot;, fontsize=8)
+sc = ax.scatter(S[ok], TH[ok], c=D[ok], s=4, cmap=&quot;viridis_r&quot;, vmin=0,
+                vmax=5000)
+fig.colorbar(sc, ax=ax, label=&quot;깊이 (m)&quot;)
+
+# 수괴별 조건(교육용 근사)에 맞는 점들의 평균 위치에 이름표 달기
+LAT = np.broadcast_to(atl.lat.values[None, :], atl[&quot;s&quot;].shape).ravel()
+masks = {
+    &quot;남극 저층수\n(AABW)&quot;: ((TH &lt; 1.0) &amp; (D &gt;= 3000), (0.55, -1.2)),
+    &quot;북대서양 심층수\n(NADW)&quot;: ((TH &gt;= 1.5) &amp; (TH &lt;= 4.0) &amp; (S &gt;= 34.88) &amp; (D &gt;= 1200),
+                                (0.55, -0.3)),
+    &quot;남극 중층수\n(AAIW)&quot;: ((S &lt;= 34.45) &amp; (D &gt;= 400) &amp; (D &lt;= 1500),
+                            (-0.25, 3.5)),
+    &quot;지중해 유출수\n(MOW)&quot;: ((S &gt;= 35.3) &amp; (D &gt;= 800) &amp; (D &lt;= 1300)
+                             &amp; (LAT &gt;= 25) &amp; (LAT &lt;= 45), (0.6, -1.5)),
+}
+for name, (m, (dx, dy)) in masks.items():
+    s0, t0 = np.nanmean(S[m]), np.nanmean(TH[m])
+    ax.annotate(name, (s0, t0), xytext=(s0 + dx, t0 + dy), fontsize=9, ha=&quot;center&quot;,
+                arrowprops=dict(arrowstyle=&quot;-&gt;&quot;, color=&quot;crimson&quot;),
+                bbox=dict(boxstyle=&quot;round&quot;, fc=&quot;w&quot;, ec=&quot;crimson&quot;, alpha=0.9))
+ax.set_xlim(33.8, 37.0)
+ax.set_ylim(-2, 28)
+ax.set_xlabel(&quot;염분 (psu)&quot;)
+ax.set_ylabel(&quot;포텐셜 수온 θ (°C)&quot;)
+ax.set_title(&quot;대서양 25.5°W 단면의 T-S도 (회색 선: σθ)&quot;)
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_03&quot;))
+plt.show()</code></pre>
+<h2>code 545.</h2><pre><code>from matplotlib.colors import ListedColormap
+
+th, s = atl[&quot;theta&quot;].values, atl[&quot;s&quot;].values
+depth2d = np.broadcast_to(atl.depth.values[:, None], th.shape)
+wm = np.full(th.shape, np.nan)
+wm[(th &lt; 1.0) &amp; (depth2d &gt;= 3000)] = 1                                    # AABW
+wm[(th &gt;= 1.5) &amp; (th &lt;= 4.0) &amp; (s &gt;= 34.88) &amp; (depth2d &gt;= 1200)] = 2      # NADW
+wm[(s &lt;= 34.45) &amp; (depth2d &gt;= 400) &amp; (depth2d &lt;= 1500)] = 3               # AAIW
+
+cmap = ListedColormap([&quot;#3b4cc0&quot;, &quot;#e7a33e&quot;, &quot;#5bb15b&quot;])
+fig, ax = plt.subplots(figsize=(7.5, 3.4))
+ax.pcolormesh(atl.lat, atl.depth, wm, cmap=cmap, vmin=0.5, vmax=3.5,
+              shading=&quot;nearest&quot;)
+ax.contour(atl.lat, atl.depth, atl[&quot;sigma0&quot;], levels=[27.2, 27.7, 27.85],
+           colors=&quot;k&quot;, linewidths=0.5)
+for name, (x, y), c in [(&quot;남극 저층수&quot;, (-40, 4800), &quot;#3b4cc0&quot;),
+                        (&quot;북대서양 심층수&quot;, (20, 2600), &quot;#e7a33e&quot;),
+                        (&quot;남극 중층수&quot;, (-30, 900), &quot;#5bb15b&quot;)]:
+    ax.text(x, y, name, color=&quot;w&quot;, fontsize=11, weight=&quot;bold&quot;, ha=&quot;center&quot;,
+            bbox=dict(fc=c, ec=&quot;none&quot;, alpha=0.9))
+ax.set_ylim(5500, 0)
+ax.set_xlim(-70, 65)
+ax.set_xlabel(&quot;위도 (°N)&quot;)
+ax.set_ylabel(&quot;깊이 (m)&quot;)
+ax.set_title(&quot;대서양 25.5°W — 수온 · 염분 기준으로 나눈 수괴&quot;)
+plt.tight_layout()
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_04&quot;))
+plt.show()</code></pre>
+<h2>code 546.</h2><pre><code>pac = get_section(-165.5)   # 태평양 165.5°W
+
+layer = slice(2500, 4000)
+o_atl = atl[&quot;o&quot;].sel(depth=layer).mean(&quot;depth&quot;)
+o_pac = pac[&quot;o&quot;].sel(depth=layer).mean(&quot;depth&quot;)
+
+fig, ax = plt.subplots(figsize=(8.3, 3.3))
+ax.plot(o_atl.lat, o_atl, color=&quot;tab:blue&quot;, label=&quot;대서양 25.5°W&quot;)
+ax.plot(o_pac.lat, o_pac, color=&quot;tab:red&quot;, label=&quot;태평양 165.5°W&quot;)
+ax.set_xlim(-70, 65)
+ax.set_xlabel(&quot;위도 (°N)&quot;)
+ax.set_ylabel(&quot;용존 산소 (µmol/kg)&quot;)
+ax.set_title(&quot;수심 2,500~4,000 m 평균 용존 산소&quot;)
+ax.grid(alpha=0.3)
+ax.legend()
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_05&quot;))
+plt.show()
+
+print(f&quot;대서양 평균: {float(o_atl.mean()):.0f} µmol/kg, &quot;
+      f&quot;태평양 평균: {float(o_pac.mean()):.0f} µmol/kg&quot;)</code></pre>
+<h2>code 547.</h2><pre><code>import cartopy.crs as ccrs
+import cartopy.feature as cfeature
+
+sfc_file = Path(proj_dir) / &quot;woa23_surface_ts.nc&quot;
+if sfc_file.exists():
+    sfc = xr.open_dataset(sfc_file)
+else:
+    sfc = xr.Dataset({k: open_woa(k)[VARS[k]].isel(time=0, depth=0)
+                         .drop_vars([&quot;time&quot;, &quot;depth&quot;]).load()
+                      for k in (&quot;t&quot;, &quot;s&quot;)})
+    sfc.to_netcdf(sfc_file)
+
+from cartopy.util import add_cyclic_point
+
+lon2d, lat2d = np.meshgrid(sfc.lon, sfc.lat)
+SA0 = gsw.SA_from_SP(sfc[&quot;s&quot;].values, 0, lon2d, lat2d)
+sig0 = gsw.sigma0(SA0, gsw.CT_from_t(SA0, sfc[&quot;t&quot;].values, 0))
+
+sig0c, lonc = add_cyclic_point(sig0, coord=sfc.lon.values)   # 날짜 변경선의 이음매 없애기
+
+fig = plt.figure(figsize=(7.5, 3.7))
+ax = plt.axes(projection=ccrs.Robinson(central_longitude=-30))
+cf = ax.contourf(lonc, sfc.lat, sig0c, levels=np.arange(22, 28.21, 0.2), cmap=&quot;cividis&quot;,
+                 extend=&quot;both&quot;, transform=ccrs.PlateCarree())
+cs = ax.contour(lonc, sfc.lat, sig0c, levels=[27.6], colors=&quot;red&quot;,
+                linewidths=1.2, transform=ccrs.PlateCarree())
+ax.add_feature(cfeature.LAND, facecolor=&quot;lightgray&quot;, zorder=2)
+ax.coastlines(linewidth=0.5, zorder=3)
+ax.set_global()
+cb = fig.colorbar(cf, ax=ax, orientation=&quot;horizontal&quot;, pad=0.04, shrink=0.7)
+cb.set_label(&quot;해수면 포텐셜 밀도 σθ&quot;, fontsize=9)
+cb.ax.tick_params(labelsize=8)
+ax.set_title(&quot;연평균 해수면 밀도 — 빨간 선: σθ = 27.6&quot;, fontsize=10)
+
+# 고위도 해역별 해수면 σθ 최댓값
+bands = {&quot;남극 주변(65°S 남쪽)&quot;: (-80, -65), &quot;북대서양 고위도(60~80°N)&quot;: (60, 80),
+         &quot;북태평양 고위도(45~60°N)&quot;: (45, 60)}
+for name, (la0, la1) in bands.items():
+    band = (sfc.lat.values &gt;= la0) &amp; (sfc.lat.values &lt;= la1)
+    print(f&quot;{name}: σθ 최댓값 {np.nanmax(sig0[band, :]):.2f}&quot;)
+du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_06&quot;))
+plt.show()</code></pre>
+</body></html>

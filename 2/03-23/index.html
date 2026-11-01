@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>III-03. 우주론</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
+<h1>III-03. 우주론</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/03-23/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 76.</h2><pre><code>import numpy as np
+import pandas as pd
+import astropy.units as u
+from astropy.cosmology import Planck18
+
+z_list = np.array([0, 0.5, 1, 2, 5, 10, 1100])
+table = pd.DataFrame({
+    &quot;z&quot;: z_list,
+    &quot;척도인자 a&quot;: Planck18.scale_factor(z_list),
+    &quot;우주 나이 (Gyr)&quot;: Planck18.age(z_list).to(u.Gyr).value,
+    &quot;H(z) (km/s/Mpc)&quot;: Planck18.H(z_list).value,
+})
+display(table.round({&quot;척도인자 a&quot;: 4, &quot;우주 나이 (Gyr)&quot;: 4,
+                     &quot;H(z) (km/s/Mpc)&quot;: 1}))</code></pre>
+<h2>code 77.</h2><pre><code>import astropy.constants as const
+
+H0 = Planck18.H0
+rho_c = (3 * H0**2 / (8 * np.pi * const.G)).to(u.kg / u.m**3)
+print(f&quot;직접 계산한 임계 밀도 : {rho_c:.3e}&quot;)
+print(f&quot;astropy 값            : {Planck18.critical_density0.to(u.kg / u.m**3):.3e}&quot;)
+print(f&quot;양성자로 치면 1 m³마다 약 {(rho_c / const.m_p).to(u.m**-3).value:.1f}개&quot;)</code></pre>
+<h2>code 78.</h2><pre><code>from astropy.cosmology import LambdaCDM
+
+curvature = pd.DataFrame([
+    {&quot;모형&quot;: &quot;가속 팽창 평탄 우주&quot;, &quot;Omega_m&quot;: 0.3, &quot;Omega_Lambda&quot;: 0.7},
+    {&quot;모형&quot;: &quot;물질만 있는 열린 우주&quot;, &quot;Omega_m&quot;: 0.3, &quot;Omega_Lambda&quot;: 0.0},
+    {&quot;모형&quot;: &quot;물질만 있는 평탄 우주&quot;, &quot;Omega_m&quot;: 1.0, &quot;Omega_Lambda&quot;: 0.0},
+    {&quot;모형&quot;: &quot;물질만 있는 닫힌 우주&quot;, &quot;Omega_m&quot;: 6.0, &quot;Omega_Lambda&quot;: 0.0},
+])
+curvature[&quot;Omega_k (식)&quot;] = 1 - curvature[&quot;Omega_m&quot;] - curvature[&quot;Omega_Lambda&quot;]
+curvature[&quot;Omega_k (astropy)&quot;] = [
+    LambdaCDM(H0=70, Om0=om, Ode0=ol).Ok0
+    for om, ol in zip(curvature[&quot;Omega_m&quot;], curvature[&quot;Omega_Lambda&quot;])
+]
+curvature[&quot;곡률&quot;] = curvature[&quot;Omega_k (식)&quot;].map(
+    lambda ok: &quot;평탄&quot; if abs(ok) &lt; 1e-12 else (&quot;열린&quot; if ok &gt; 0 else &quot;닫힌&quot;))
+display(curvature)</code></pre>
+<h2>code 79.</h2><pre><code>import matplotlib.pyplot as plt
+from astropy.cosmology import FlatLambdaCDM
+
+Hubble_const = 67.8 * u.km / u.s / u.Mpc   # 허블 상수
+Omega_m = 0.3                               # 물질 밀도 계수(보통 물질 + 암흑 물질)
+Omega_Lambda = 0.7                          # 암흑 에너지 밀도 계수
+
+cosmo_flat = FlatLambdaCDM(H0=Hubble_const, Om0=Omega_m, Tcmb0=2.725,
+                           Neff=3.046)
+cosmo_lambda = LambdaCDM(H0=Hubble_const, Om0=Omega_m, Ode0=Omega_Lambda,
+                         Tcmb0=2.725, Neff=3.046)
+
+z = 10**np.arange(3, -2, -0.01)             # z = 1000 ~ 0.01
+
+fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.1), sharey=True)
+for ax, cosmo, title, label in [
+        (axs[0], cosmo_flat, &quot;FlatLambdaCDM&quot;, rf&quot;$\Omega_m = {Omega_m}$&quot;),
+        (axs[1], cosmo_lambda, &quot;LambdaCDM&quot;, rf&quot;$\Omega_m = {Omega_m},~\Omega_\Lambda = {Omega_Lambda}$&quot;)]:
+    ax.plot(cosmo.age(z), cosmo.scale_factor(z), label=label)
+    ax.set(xlabel=&quot;우주의 나이 (Gyr)&quot;, title=title)
+    ax.text(0.96, 0.04, f&quot;$H_0$ = {Hubble_const.value} km/s/Mpc\n지금 나이 = {cosmo.age(0):.2f}&quot;,
+            ha=&quot;right&quot;, va=&quot;bottom&quot;, fontsize=10, transform=ax.transAxes,
+            bbox=dict(boxstyle=&quot;round,pad=0.5&quot;, fc=&quot;wheat&quot;, alpha=0.5))
+    ax.grid(True)
+    ax.legend(loc=&quot;upper left&quot;)
+axs[0].set_ylabel(&quot;척도인자 $a$&quot;)
+plt.tight_layout()
+du.save_figure(fig, proj_dir / &quot;flat_vs_lambdacdm&quot;)
+plt.show()
+print(f&quot;FlatLambdaCDM의 Ode0 = {cosmo_flat.Ode0:.5f}, LambdaCDM의 Ok0 = {cosmo_lambda.Ok0:.5f}&quot;)</code></pre>
+<h2>code 80.</h2><pre><code>from astropy.cosmology import WMAP9
+
+for name, cosmo in [(&quot;WMAP9&quot;, WMAP9), (&quot;Planck18&quot;, Planck18)]:
+    hubble_len = cosmo.hubble_distance
+    print(f&quot;[{name}]&quot;)
+    print(f&quot;  허블 상수 H0      : {cosmo.H0:.2f}&quot;)
+    print(f&quot;  우주의 나이       : {cosmo.age(0):.3f}&quot;)
+    print(f&quot;  허블 시간 1/H0    : {cosmo.hubble_time.to(u.Gyr):.3f}&quot;)
+    print(f&quot;  허블 길이 c/H0    : {hubble_len:.1f} = {hubble_len.to(u.lyr).value / 1e9:.2f} Gly&quot;)</code></pre>
+<h2>code 81.</h2><pre><code>cosmo = LambdaCDM(H0=Hubble_const, Om0=Omega_m, Ode0=Omega_Lambda,
+                  Tcmb0=2.725, Neff=3.046)
+age = cosmo.age(z)
+scale = cosmo.scale_factor(z)
+
+t_hubble = cosmo.hubble_time.to(u.Gyr)      # 허블 시간 = 등속 팽창 우주의 나이
+age_now = cosmo.age(0).to(u.Gyr)            # ΛCDM 우주의 나이
+
+t_const = np.linspace(0, t_hubble.value, 100)
+a_const = t_const / t_hubble.value          # 등속 팽창: a = t / t_H
+
+fig, ax = plt.subplots(figsize=(7.5, 4.4))
+ax.plot(t_const, a_const, label=&quot;등속 팽창(텅 빈) 우주: $a = t/t_H$&quot;)
+ax.plot(age, scale,
+        label=rf&quot;$\Lambda$CDM ($\Omega_m = {Omega_m},~\Omega_\Lambda = {Omega_Lambda}$)&quot;)
+ax.axvline(t_hubble.value, color=&quot;r&quot;, ls=&quot;--&quot;,
+           label=f&quot;허블 시간 ({t_hubble:.2f})&quot;)
+ax.axvline(age_now.value, color=&quot;g&quot;, ls=&quot;--&quot;,
+           label=f&quot;우주의 나이 ({age_now:.2f})&quot;)
+ax.set(xlabel=&quot;빅뱅 뒤로 흐른 시간 (Gyr)&quot;, ylabel=&quot;척도인자 $a$&quot;,
+       title=&quot;시간에 따른 척도인자&quot;, xlim=(0, t_hubble.value * 1.2), ylim=(0, 1.1))
+ax.grid(True)
+ax.legend(loc=&quot;upper left&quot;)
+plt.tight_layout()
+du.save_figure(fig, proj_dir / &quot;hubble_time_vs_age&quot;)
+plt.show()
+print(f&quot;허블 시간 {t_hubble:.2f}, ΛCDM 우주의 나이 {age_now:.2f}, 차이 {t_hubble - age_now:.2f}&quot;)</code></pre>
+<h2>code 82.</h2><pre><code>fig, ax = plt.subplots(figsize=(7.5, 4.4))
+ax.plot(t_const - t_hubble.value, a_const, label=&quot;등속 팽창(텅 빈) 우주&quot;)
+ax.plot((age - age_now).value, scale,
+        label=rf&quot;$\Lambda$CDM ($\Omega_m = {Omega_m},~\Omega_\Lambda = {Omega_Lambda}$)&quot;)
+ax.axvline(-t_hubble.value, color=&quot;tab:blue&quot;, ls=&quot;--&quot;)
+ax.text(-t_hubble.value - 0.2, 0.45, &quot;허블 시간&quot;, rotation=90, va=&quot;bottom&quot;, ha=&quot;right&quot;,
+        color=&quot;tab:blue&quot;)
+ax.axvline(-age_now.value, color=&quot;tab:orange&quot;, ls=&quot;--&quot;)
+ax.text(-age_now.value + 0.2, 0.45, &quot;우주의 나이&quot;, rotation=90, ha=&quot;left&quot;,
+        va=&quot;bottom&quot;, color=&quot;tab:orange&quot;)
+ax.axvline(0, color=&quot;g&quot;, ls=&quot;--&quot;)
+ax.text(-0.2, 0.2, &quot;현재&quot;, rotation=90, va=&quot;bottom&quot;, ha=&quot;right&quot;, color=&quot;g&quot;)
+ax.set(xlabel=r&quot;현재로부터의 시간 (Gyr)  (과거 $\leftarrow$ 0)&quot;, ylabel=&quot;척도인자 $a$&quot;,
+       title=&quot;현재를 0으로 둔 척도인자&quot;, xlim=(-t_hubble.value - 1.5, 1), ylim=(0, 1.1))
+ax.grid(True)
+ax.legend(loc=&quot;upper left&quot;)
+plt.tight_layout()
+du.save_figure(fig, proj_dir / &quot;hubble_time_vs_age_centered&quot;)
+plt.show()</code></pre>
+<h2>code 83.</h2><pre><code>z_t = np.concatenate([np.logspace(4, -3, 400), -np.linspace(0.001, 0.09, 40)])  # 과거 → 미래
+t_now = cosmo.age(0).to(u.Gyr).value
+t = cosmo.age(z_t).to(u.Gyr).value - t_now                       # 현재로부터의 시간
+
+D_horizon = ((cosmo.comoving_distance(1e5) - cosmo.comoving_distance(z_t)) / (1 + z_t)).to(u.Gpc)
+D_hubble = (const.c / cosmo.H(z_t)).to(u.Gpc)                    # 그 시각의 허블 길이
+D_coast = (const.c * (t + t_now) * u.Gyr).to(u.Gpc)              # 등속 팽창 우주의 c·t
+
+fig, ax = plt.subplots(figsize=(7.5, 4.5))
+ax.plot(t, D_horizon, color=&quot;tab:green&quot;,
+        label=r&quot;우주의 지평선 ($\Lambda$CDM, 고유 거리)&quot;)
+ax.plot(t, D_hubble, color=&quot;tab:blue&quot;,
+        label=r&quot;허블 길이 $c/H(t)$ ($\Lambda$CDM)&quot;)
+ax.plot(t, D_coast, &quot;--&quot;, color=&quot;tab:gray&quot;, label=r&quot;등속 팽창 우주: $c\,t$&quot;)
+ax.axvline(0, color=&quot;k&quot;, ls=&quot;:&quot;)
+ax.set(xlabel=&quot;현재로부터의 시간 (Gyr)&quot;, ylabel=&quot;거리 (Gpc)&quot;,
+       title=&quot;허블 길이와 관측 가능한 우주의 크기&quot;)
+ax.grid(True, alpha=0.5)
+ax.legend(loc=&quot;upper left&quot;)
+plt.tight_layout()
+du.save_figure(fig, proj_dir / &quot;horizon_and_hubble_length&quot;)
+plt.show()
+
+gly = lambda d: d.to(u.lyr).value / 1e9
+D_h0 = (const.c / cosmo.H0).to(u.Gpc)
+D_p0 = cosmo.comoving_distance(1e5).to(u.Gpc)
+print(f&quot;지금의 허블 길이      : {D_h0:.2f} = {gly(D_h0):.1f} Gly&quot;)
+print(f&quot;지금의 우주의 지평선  : {D_p0:.2f} = {gly(D_p0):.1f} Gly&quot;)
+print(f&quot;빛의 속력 × 우주 나이 : {gly(const.c * cosmo.age(0)):.1f} Gly&quot;)</code></pre>
+<h2>code 84.</h2><pre><code>H0_values = [67.4, 73.0] * u.km / u.s / u.Mpc
+
+fig, axs = plt.subplots(1, 2, figsize=(7.5, 2.8), sharey=True)
+for H0_i in H0_values:
+    cosmo_i = LambdaCDM(H0=H0_i, Om0=Omega_m, Ode0=Omega_Lambda, Tcmb0=2.725,
+                        Neff=3.046)
+    age_i = cosmo_i.age(z)
+    a_i = cosmo_i.scale_factor(z)
+    label = f&quot;$H_0$ = {H0_i.value} km/s/Mpc&quot;
+    axs[0].plot(age_i, a_i, label=label)
+    axs[1].plot(age_i - cosmo_i.age(0), a_i, label=label)
+    print(f&quot;H0 = {H0_i.value}: 허블 시간 {cosmo_i.hubble_time.to(u.Gyr):.2f}, 우주의 나이 {cosmo_i.age(0):.2f}&quot;)
+
+axs[0].set(xlabel=&quot;빅뱅 뒤로 흐른 시간 (Gyr)&quot;, ylabel=&quot;척도인자 $a$&quot;,
+           title=&quot;빅뱅부터 잰 시간&quot;)
+axs[1].set(xlabel=&quot;현재로부터의 시간 (Gyr)&quot;, title=&quot;현재를 0으로 둔 시간&quot;)
+for ax in axs:
+    ax.grid(True)
+    ax.legend(loc=&quot;upper left&quot;)
+plt.tight_layout()
+du.save_figure(fig, proj_dir / &quot;hubble_tension_scale_factor&quot;)
+plt.show()</code></pre>
+<h2>code 85.</h2><pre><code>fname = &quot;SCPUnion2.1_mu_vs_z.txt&quot;
+sn_path = du.download(&quot;https://supernova.lbl.gov/union/figures/&quot; + fname,
+                      proj_dir / fname)
+
+with open(sn_path, encoding=&quot;utf-8&quot;) as f:
+    for i, line in enumerate(f):
+        if i &gt;= 7:
+            break
+        print(line.rstrip())
+
+sn = pd.read_csv(sn_path, sep=&quot;\t&quot;, comment=&quot;#&quot;, header=None,
+                 names=[&quot;name&quot;, &quot;z&quot;, &quot;mu&quot;, &quot;mu_err&quot;, &quot;p_lowmass&quot;])
+print(f&quot;\n초신성 {len(sn)}개, 적색편이 {sn[&#x27;z&#x27;].min():.3f} ~ {sn[&#x27;z&#x27;].max():.3f}, &quot;
+      f&quot;거리지수 {sn[&#x27;mu&#x27;].min():.2f} ~ {sn[&#x27;mu&#x27;].max():.2f}&quot;)
+display(sn.head())</code></pre>
+<h2>code 86.</h2><pre><code>checks = {
+    &quot;값이 모두 있음&quot;: sn[[&quot;name&quot;, &quot;z&quot;, &quot;mu&quot;, &quot;mu_err&quot;]].notna().all(axis=1),
+    &quot;물리적으로 가능한 값&quot;: (sn[&quot;z&quot;] &gt; 0) &amp; (sn[&quot;mu&quot;] &gt; 0) &amp; (sn[&quot;mu_err&quot;] &gt; 0),
+    &quot;0.01 &lt;= z &lt;= 1.4&quot;: sn[&quot;z&quot;].between(0.01, 1.4),
+    &quot;오차 &lt;= 0.40등급&quot;: sn[&quot;mu_err&quot;] &lt;= 0.40,
+    &quot;이름이 겹치지 않음&quot;: ~sn[&quot;name&quot;].duplicated(keep=False),
+}
+summary = pd.DataFrame({&quot;통과&quot;: [int(m.sum()) for m in checks.values()],
+                        &quot;걸림&quot;: [int((~m).sum()) for m in checks.values()]},
+                       index=list(checks.keys()))
+display(summary)
+
+ok = np.logical_and.reduce(list(checks.values()))
+sn_ok = sn[ok].copy()
+print(f&quot;점검 전 {len(sn)}개 → 점검 후 {len(sn_ok)}개 ({len(sn_ok) / len(sn):.1%})&quot;)
+print(f&quot;점검 후 평균 거리지수 오차: {sn_ok[&#x27;mu_err&#x27;].mean():.3f}등급&quot;)</code></pre>
+<h2>code 87.</h2><pre><code>import matplotlib.ticker as mticker
+
+H0_union = 70 * u.km / u.s / u.Mpc
+models = [
+    {&quot;label&quot;: &quot;가속 팽창 평탄 우주&quot;, &quot;Om0&quot;: 0.3, &quot;Ode0&quot;: 0.7, &quot;ls&quot;: &quot;-&quot;,
+     &quot;color&quot;: &quot;tab:blue&quot;},
+    {&quot;label&quot;: &quot;물질만 있는 열린 우주&quot;, &quot;Om0&quot;: 0.3, &quot;Ode0&quot;: 0.0,
+     &quot;ls&quot;: &quot;--&quot;, &quot;color&quot;: &quot;tab:orange&quot;},
+    {&quot;label&quot;: &quot;물질만 있는 평탄 우주&quot;, &quot;Om0&quot;: 1.0, &quot;Ode0&quot;: 0.0, &quot;ls&quot;: &quot;:&quot;,
+     &quot;color&quot;: &quot;tab:green&quot;},
+]
+ref = LambdaCDM(H0=H0_union, Om0=0.3, Ode0=0.0, Tcmb0=2.725, Neff=3.046)   # 잔차의 기준: 물질만 있는 열린 우주
+
+def plot_sn_models(data, xscale=&quot;linear&quot;, fig_name=None):
+    z_grid = np.geomspace(0.01, 1.45, 200)
+    resid = data[&quot;mu&quot;].to_numpy() - ref.distmod(data[&quot;z&quot;].to_numpy()).value
+
+    fig, axs = plt.subplots(2, 1, figsize=(7.5, 6.4), sharex=True,
+                            gridspec_kw={&quot;height_ratios&quot;: [2, 1]})
+    axs[0].errorbar(data[&quot;z&quot;], data[&quot;mu&quot;], yerr=data[&quot;mu_err&quot;], fmt=&quot;o&quot;, ms=2, color=&quot;0.25&quot;,
+                    ecolor=&quot;0.75&quot;, capsize=0, alpha=0.6, label=&quot;Union2.1 Ia형 초신성&quot;)
+    axs[1].errorbar(data[&quot;z&quot;], resid, yerr=data[&quot;mu_err&quot;], fmt=&quot;o&quot;, ms=2, color=&quot;0.25&quot;,
+                    ecolor=&quot;0.75&quot;, capsize=0, alpha=0.6, label=&quot;Union2.1 Ia형 초신성&quot;)
+    for m in models:
+        cosmo_m = LambdaCDM(H0=H0_union, Om0=m[&quot;Om0&quot;], Ode0=m[&quot;Ode0&quot;],
+                            Tcmb0=2.725, Neff=3.046)
+        mu_m = cosmo_m.distmod(z_grid).value
+        label = rf&#x27;{m[&quot;label&quot;]} ($\Omega_m={m[&quot;Om0&quot;]},~\Omega_\Lambda={m[&quot;Ode0&quot;]}$)&#x27;
+        axs[0].plot(z_grid, mu_m, ls=m[&quot;ls&quot;], color=m[&quot;color&quot;], lw=1.8,
+                    label=label)
+        axs[1].plot(z_grid, mu_m - ref.distmod(z_grid).value, ls=m[&quot;ls&quot;],
+                    color=m[&quot;color&quot;], lw=1.8)
+
+    # 적색편이 구간별 잔차의 가중 평균(가중치 = 1/오차²)
+    edges = np.geomspace(0.01, 1.4, 9) if xscale == &quot;log&quot; else np.linspace(0.01,
+                                                                           1.4,
+                                                                           9)
+    idx = np.digitize(data[&quot;z&quot;], edges)
+    w = 1 / data[&quot;mu_err&quot;].to_numpy()**2
+    zc, rc, ec = [], [], []
+    for k in range(1, len(edges)):
+        s = idx == k
+        if s.sum() &gt;= 5:
+            zc.append(np.average(data[&quot;z&quot;][s], weights=w[s]))
+            rc.append(np.average(resid[s], weights=w[s]))
+            ec.append(1 / np.sqrt(w[s].sum()))
+    axs[1].errorbar(zc, rc, yerr=ec, fmt=&quot;s&quot;, color=&quot;crimson&quot;, ms=6, capsize=3,
+                    label=&quot;구간 가중 평균&quot;, zorder=5)
+
+    axs[0].set(ylabel=&quot;거리지수 $\\mu = m - M$&quot;,
+               title=&quot;Ia형 초신성과 세 팽창 모형&quot;)
+    axs[1].set(xlabel=&quot;적색편이 $z$&quot;,
+               ylabel=r&quot;$\Delta\mu$ (물질만 있는 열린 우주 기준)&quot;, ylim=(-1.0, 1.0))
+    axs[1].axhline(0, color=&quot;k&quot;, lw=0.8)
+    for ax in axs:
+        ax.set_xscale(xscale)
+        if xscale == &quot;log&quot;:   # 눈금을 0.01, 0.1, 1처럼 소수로 표기(지수 표기의 빼기 기호 글꼴 문제 방지)
+            ax.xaxis.set_major_formatter(mticker.FuncFormatter(lambda x,
+                                                               _: f&quot;{x:g}&quot;))
+            ax.xaxis.set_minor_formatter(mticker.NullFormatter())
+        ax.grid(True, alpha=0.4)
+        ax.legend(loc=&quot;upper left&quot; if ax is axs[0] else &quot;lower left&quot;,
+                  fontsize=9)
+    plt.tight_layout()
+    if fig_name:
+        du.save_figure(fig, proj_dir / fig_name)
+    plt.show()
+    return pd.DataFrame({&quot;z&quot;: zc, &quot;평균 잔차&quot;: rc, &quot;오차&quot;: ec})
+
+binned = plot_sn_models(sn_ok, xscale=&quot;linear&quot;, fig_name=&quot;sn_models_linear&quot;)
+display(binned.round(3))</code></pre>
+<h2>code 88.</h2><pre><code>binned_log = plot_sn_models(sn_ok, xscale=&quot;log&quot;, fig_name=&quot;sn_models_log&quot;)
+display(binned_log.round(3))</code></pre>
+<h2>code 89.</h2><pre><code>import warnings
+
+scale_models = [
+    (&quot;물질만 있는 닫힌 우주&quot;, 6.0, 0.0),
+    (&quot;물질만 있는 평탄 우주&quot;, 1.0, 0.0),
+    (&quot;물질만 있는 열린 우주&quot;, 0.3, 0.0),
+    (&quot;텅 빈 우주(등속 팽창)&quot;, 0.0, 0.0),
+    (&quot;가속 팽창 평탄 우주&quot;,   0.3, 0.7),
+]
+line_styles = [&quot;-&quot;, &quot;--&quot;, &quot;-.&quot;, &quot;:&quot;, (0, (3, 1, 1, 1))]
+a_grid = np.linspace(0.01, 4, 600)
+z_grid = 1 / a_grid - 1
+
+rows = []
+fig, ax = plt.subplots(figsize=(7.5, 3.8))
+with warnings.catch_warnings():
+    warnings.simplefilter(&quot;ignore&quot;)
+    for (label, om, ol), ls in zip(scale_models, line_styles):
+        cosmo_m = LambdaCDM(H0=Hubble_const, Om0=om, Ode0=ol, Tcmb0=2.725,
+                            Neff=3.046)
+        t_m = cosmo_m.age(z_grid).to(u.Gyr).value
+        age_m = cosmo_m.age(0).to(u.Gyr).value
+        ax.plot(t_m - age_m, a_grid, ls=ls, lw=1.8,
+                label=rf&quot;{label} ($\Omega_m = {om},~\Omega_\Lambda = {ol}$)&quot;)
+        rows.append({&quot;모형&quot;: label, &quot;Omega_m&quot;: om, &quot;Omega_Lambda&quot;: ol,
+                     &quot;Omega_k&quot;: round(1 - om - ol, 3), &quot;나이 (Gyr)&quot;: round(age_m, 2)})
+
+ax.axvline(0, color=&quot;tab:red&quot;, ls=&quot;--&quot;)
+ax.text(1, 0.15, &quot;현재&quot;, color=&quot;tab:red&quot;, fontsize=12)
+ax.set(xlabel=&quot;현재로부터의 시간 (Gyr)&quot;, ylabel=&quot;척도인자 $a$&quot;,
+       title=&quot;여러 우주 모형의 척도인자 시간 변화&quot;, xlim=(-18, 50), ylim=(0, 4))
+ax.grid(True)
+ax.legend(loc=&quot;upper left&quot;)
+plt.tight_layout()
+du.save_figure(fig, proj_dir / &quot;scale_factor_models&quot;)
+plt.show()
+display(pd.DataFrame(rows))</code></pre>
+</body></html>

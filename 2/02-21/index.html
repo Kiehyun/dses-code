@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>II-01. 측정과 오차 다루기</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
+<h1>II-01. 측정과 오차 다루기</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/02-21/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 19.</h2><pre><code>import numpy as np
+
+rng = np.random.default_rng(0)          # 결과를 재현할 수 있게 씨앗 고정
+
+TRUE_PERIOD = 2.000  # 참값(초) — 실제 실험에서는 알 수 없다
+SIGMA = 0.05         # 한 번 잴 때의 우연오차 크기(초)
+
+measurements = rng.normal(TRUE_PERIOD, SIGMA, size=20)   # 20번 측정
+print(&quot;측정값 (앞 5개):&quot;, np.round(measurements[:5], 3))
+print(f&quot;측정 횟수 : {measurements.size}회&quot;)</code></pre>
+<h2>code 20.</h2><pre><code>mean = measurements.mean()              # 평균
+std = measurements.std(ddof=1)          # 표준편차(표본)
+sem = std / np.sqrt(measurements.size)  # 표준오차
+
+print(f&quot;평균     : {mean:.4f} 초&quot;)
+print(f&quot;표준편차 : {std:.4f} 초   (측정 하나의 흩어짐)&quot;)
+print(f&quot;표준오차 : {sem:.4f} 초   (평균의 오차)&quot;)
+print(f&quot;결과     : {mean:.3f} +/- {sem:.3f} 초&quot;)
+print(f&quot;참값과의 차이: {abs(mean - TRUE_PERIOD):.4f} 초&quot;)</code></pre>
+<h2>code 21.</h2><pre><code>import matplotlib.pyplot as plt
+
+counts = np.arange(2, 201)                          # 측정 횟수 2회부터 200회까지
+big_sample = rng.normal(TRUE_PERIOD, SIGMA, size=counts.max())
+running_sem = [big_sample[:n].std(ddof=1) / np.sqrt(n) for n in counts]
+
+fig, ax = plt.subplots(figsize=(8.4, 4.2))
+ax.plot(counts, running_sem, label=&quot;표본으로 추정한 표준오차&quot;)
+ax.plot(counts, SIGMA / np.sqrt(counts), &quot;--&quot;,
+        label=r&quot;이론값 $\sigma/\sqrt{N}$&quot;)
+ax.set_xlabel(&quot;측정 횟수 N&quot;)
+ax.set_ylabel(&quot;평균의 표준오차 (초)&quot;)
+ax.set_title(&quot;측정을 늘릴수록 평균은 얼마나 정확해지는가&quot;)
+ax.legend()
+ax.grid(alpha=0.3)
+du.save_figure(fig, os.path.join(proj_dir, &quot;standard_error&quot;))
+plt.show()</code></pre>
+<h2>code 22.</h2><pre><code>L, L_err = 1.000, 0.002  # 진자 길이 (m)
+T, T_err = 2.000, 0.011  # 주기 (초)
+
+g = 4 * np.pi**2 * L / T**2        # 중력가속도
+
+rel_L = L_err / L
+rel_T = T_err / T
+rel_g = np.sqrt(rel_L**2 + (2 * rel_T)**2)
+g_err = g * rel_g
+
+print(f&quot;길이 상대오차 : {rel_L*100:.2f}%&quot;)
+print(f&quot;주기 상대오차 : {rel_T*100:.2f}%  (제곱이라 {2*rel_T*100:.2f}%로 반영)&quot;)
+print(f&quot;g = {g:.2f} +/- {g_err:.2f} m/s^2  (상대오차 {rel_g*100:.2f}%)&quot;)</code></pre>
+<h2>code 23.</h2><pre><code>N = 100_000
+L_samples = rng.normal(L, L_err, N)                  # 길이를 N번 뽑고
+T_samples = rng.normal(T, T_err, N)                  # 주기도 N번 뽑아
+g_samples = 4 * np.pi**2 * L_samples / T_samples**2  # 그때마다 g 계산
+
+print(f&quot;공식으로 구한 오차    : {g_err:.4f} m/s^2&quot;)
+print(f&quot;모의실험으로 구한 오차: {g_samples.std(ddof=1):.4f} m/s^2&quot;)
+
+fig, ax = plt.subplots(figsize=(8.4, 4.2))
+ax.hist(g_samples, bins=80, color=&quot;steelblue&quot;, alpha=0.8)
+ax.axvline(g, color=&quot;red&quot;, lw=2, label=f&quot;공식값 {g:.3f}&quot;)
+ax.axvline(g - g_err, color=&quot;red&quot;, ls=&quot;--&quot;, lw=1)
+ax.axvline(g + g_err, color=&quot;red&quot;, ls=&quot;--&quot;, lw=1, label=&quot;공식 오차 범위&quot;)
+ax.set_xlabel(&quot;중력가속도 (m/s$^2$)&quot;)
+ax.set_ylabel(&quot;빈도&quot;)
+ax.set_title(&quot;오차 전파 공식과 모의실험 비교&quot;)
+ax.legend()
+du.save_figure(fig, os.path.join(proj_dir, &quot;error_propagation&quot;))
+plt.show()</code></pre>
+<h2>code 24.</h2><pre><code>def format_result(value, error, sig=1):
+    &quot;&quot;&quot;측정값과 오차를 자릿수를 맞춰 보기 좋게 적는다.&quot;&quot;&quot;
+    if error &lt;= 0:
+        return f&quot;{value:g}&quot;
+    # 오차의 첫 유효숫자가 있는 자릿수를 찾는다
+    exponent = int(np.floor(np.log10(abs(error))))
+    digits = -(exponent - (sig - 1))
+    error_r = round(error, digits)
+    # 반올림으로 자리가 올라가면(예: 0.0098 -&gt; 0.010) 자릿수를 다시 계산
+    exponent = int(np.floor(np.log10(abs(error_r))))
+    digits = -(exponent - (sig - 1))
+    error_r = round(error_r, digits)
+    value_r = round(value, digits)
+    if digits &lt;= 0:
+        return f&quot;{value_r:.0f} +/- {error_r:.0f}&quot;
+    return f&quot;{value_r:.{digits}f} +/- {error_r:.{digits}f}&quot;
+
+
+print(&quot;g       :&quot;, format_result(g, g_err))
+print(&quot;주기    :&quot;, format_result(mean, sem))
+print(&quot;예시 1  :&quot;, format_result(1234.5678, 12.3))
+print(&quot;예시 2  :&quot;, format_result(0.0043219, 0.00007))</code></pre>
+</body></html>

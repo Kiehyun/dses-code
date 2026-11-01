@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IV-02. 킬링 곡선 그리기</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
+<h1>IV-02. 킬링 곡선 그리기</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/04-02/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 24.</h2><pre><code>import matplotlib.pyplot as plt
+
+
+# 대기 구성 성분과 비율
+labels = [
+    &#x27;질소 (N₂)&#x27;, 
+    &#x27;산소 (O₂)&#x27;, 
+    &#x27;아르곤 (Ar)&#x27;, 
+    &#x27;이산화탄소 (CO₂)&#x27;, 
+    &#x27;기타&#x27;
+]
+sizes = [
+    78.084,  # N2
+    20.946,  # O2
+    0.934,   # 아르곤
+    0.040,   # 이산화탄소
+    0.001    # All others (대략 나머지 합산)
+]
+colors = [&#x27;mediumpurple&#x27;, &#x27;skyblue&#x27;, &#x27;gold&#x27;, &#x27;tomato&#x27;, &#x27;lightgrey&#x27;]
+
+# 파이 차트 그리기
+plt.figure(figsize=(6, 4))
+patches, texts, autotexts = plt.pie(
+    sizes, 
+    labels=labels, 
+    colors=colors, 
+    autopct=&#x27;%1.3f%%&#x27;, 
+    startangle=140,
+    wedgeprops={&#x27;edgecolor&#x27;: &#x27;black&#x27;},
+    textprops={&#x27;fontsize&#x27;: 10},
+    pctdistance=0.8,   # % 텍스트 위치 (중심에서 조금 바깥으로)
+    labeldistance=1.2  # 라벨 위치 (조금 더 바깥으로)
+)
+
+# All others 구성 성분
+others_text = (
+    &quot;기타 성분 (ppm 기준):\n&quot; &quot;- 네온 (Ne): 18.2\n&quot; &quot;- 헬륨 (He): 5.24\n&quot; &quot;- 메탄 (CH₄): 1.5\n&quot; &quot;- 크립톤 (Kr): 1.14\n&quot; &quot;- 수소 (H₂): 0.5&quot; )
+
+# All others 성분 설명 추가 (차트 오른쪽 바깥에 표시)
+plt.text(1.3, 0.6, others_text, fontsize=10, va=&#x27;top&#x27;, ha=&#x27;left&#x27;,
+         bbox=dict(facecolor=&#x27;white&#x27;, alpha=0.8, edgecolor=&#x27;gray&#x27;))
+
+plt.title(&#x27;대기의 구성 성분 (건조 공기)&#x27;, fontsize=14)
+plt.axis(&#x27;equal&#x27;)  # 원형 비율 유지
+plt.tight_layout()
+plt.show()</code></pre>
+<h2>code 25.</h2><pre><code># 프로젝트(자료 저장) 폴더 생성 — 공통 함수 사용
+proj_dir = du.make_project_dir(du.current_notebook_name() or &quot;04_02_Plotting_the_Keeling_Curve&quot;)
+from pathlib import Path</code></pre>
+<h2>code 26.</h2><pre><code>import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
+import cartopy.feature as cfeature
+from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
+import matplotlib.ticker as mticker
+
+# 관측소 위치 데이터 (경도, 위도, 이름)
+stations = [
+    (-155.58, 19.54, &#x27;MAUNA LOA&#x27;),
+    (-117.25, 32.87, &#x27;LA JOLLA PIER&#x27;),
+    (-155.45, 19.50, &#x27;CAPE KUMUKAHI&#x27;),
+    (-158.00, 4.00, &#x27;FANNING ISLAND&#x27;),
+    (-157.42, 1.87, &#x27;CHRISTMAS ISLAND&#x27;),
+    (-170.72, -14.27, &#x27;AMERICAN SAMOA&#x27;),
+    (179.42, -29.25, &#x27;KERMADEC ISLANDS&#x27;),
+    (174.78, -41.28, &#x27;NEW ZEALAND&#x27;),
+    (0.0, -90.00, &#x27;SOUTH POLE&#x27;),
+    (-70.78, -64.77, &#x27;PALMER STATION&#x27;),
+    (-110.00, 30.00, &#x27;BAJA CALIFORNIA SUR&#x27;),
+    (-145.00, 50.00, &#x27;STATION P&#x27;),
+    (-157.39, 71.32, &#x27;POINT BARROW&#x27;),
+    (-62.33, 82.50, &#x27;ALERT&#x27;)
+]
+
+# 태평양 중심 지도
+plt.figure(figsize=(12, 6))
+ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
+ax.set_global()
+
+# 지도 배경
+ax.add_feature(cfeature.LAND, color=&#x27;lightgray&#x27;)
+ax.add_feature(cfeature.OCEAN, color=&#x27;lightblue&#x27;)
+ax.add_feature(cfeature.COASTLINE)
+
+# 경위도 격자선 추가
+gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True,
+                  linewidth=1, color=&#x27;gray&#x27;, alpha=0.5, linestyle=&#x27;--&#x27;)
+
+# 격자선 라벨 설정
+gl.top_labels = False
+gl.right_labels = False
+gl.xlines = True
+gl.ylines = True
+
+# 경도와 위도 간격 설정
+gl.xlocator = mticker.FixedLocator(range(-180, 181, 30))  # 60도 간격
+gl.ylocator = mticker.FixedLocator(range(-90, 91, 30))    # 30도 간격
+
+# 경위도 포맷터 설정
+gl.xformatter = LongitudeFormatter()
+gl.yformatter = LatitudeFormatter()
+
+# 라벨 폰트 크기 설정
+gl.xlabel_style = {&#x27;size&#x27;: 8}
+gl.ylabel_style = {&#x27;size&#x27;: 8}
+
+# 특별히 왼쪽에 표시할 기지
+left_label_stations = [&#x27;MAUNA LOA&#x27;, &#x27;FANNING ISLAND&#x27;, &#x27;LA JOLLA PIER&#x27;]
+
+# 점과 라벨 표시
+for lon, lat, name in stations:
+    if name == &#x27;MAUNA LOA&#x27;:
+        continue  # Mauna Loa는 아래에서 따로 그림
+    ax.plot(lon, lat, &#x27;ko&#x27;, markersize=5, transform=ccrs.PlateCarree())
+    if name in left_label_stations:
+        ax.text(lon - 5, lat, name, fontsize=8, ha=&#x27;right&#x27;, transform=ccrs.PlateCarree())
+    else:
+        ax.text(lon + 3, lat, name, fontsize=8, ha=&#x27;left&#x27;, transform=ccrs.PlateCarree())
+
+# Mauna Loa는 빨간 점 + 빨간 글씨 (검은 점/글씨 없음)
+ax.plot(-155.58, 19.54, &#x27;ro&#x27;, markersize=6, transform=ccrs.PlateCarree())
+ax.text(-155.58 - 5, 19.54, &#x27;MAUNA LOA&#x27;, color=&#x27;red&#x27;, fontsize=9, fontweight=&#x27;bold&#x27;,
+        ha=&#x27;right&#x27;, transform=ccrs.PlateCarree())
+
+plt.title(&#x27;대기 관측소 분포 (태평양 중심 지도)&#x27;, fontsize=12)
+plt.tight_layout()
+plt.show()</code></pre>
+<h2>code 27.</h2><pre><code>import requests
+import os
+
+fname = &quot;monthly_in_situ_co2_mlo.csv&quot;
+fid = &quot;1eDpIDHluYJsYv3D5mvOnpLLv93RJk6T8&quot;
+
+# requests 라이브러리를 이용(구글드라이브에서 공유한 파일을 다운로드할 경우)
+# url = f&quot;https://docs.google.com/uc?export=download&amp;id={fid}&quot;
+# Scripps에서 직접 받을 경우
+url = &quot;https://keelinglabsites.ucsd.edu/websitedataco2/monthly_in_situ_co2_mlo.csv&quot;
+
+# 디렉토리가 없으면 생성
+os.makedirs(proj_dir, exist_ok=True)
+
+# 파일 다운로드
+response = requests.get(url, verify=False)  # verify=False
+response.raise_for_status()                 # HTTP 에러 체크
+file_path = os.path.join(proj_dir, fname)   # 파일 저장
+with open(file_path, &#x27;wb&#x27;) as f:
+    f.write(response.content)
+print(f&quot;파일이 성공적으로 다운로드되었습니다: {file_path}&quot;)</code></pre>
+<h2>code 28.</h2><pre><code>fpaths = du.list_files(proj_dir, &quot;csv&quot;)</code></pre>
+<h2>code 29.</h2><pre><code>n_lines = 70  # 출력할 줄 수
+
+print(f&quot;파일 내용 출력 (처음 {n_lines}줄):&quot;)
+print(&quot;=&quot;*40)
+
+# 순수 파이썬으로 구현 (운영체제 무관)
+try:
+    with open(fpaths[0], encoding=&#x27;utf-8&#x27;) as f:
+        for i, line in enumerate(f):
+            if i &gt;= n_lines:
+                break
+            print(f&quot;{i+1:3d}: {line.rstrip()}&quot;)
+except UnicodeDecodeError:
+ # UTF-8로 읽기 실패시 다른 인코딩 시도
+    try:
+        with open(fpaths[0], encoding=&#x27;cp949&#x27;) as f:
+            for i, line in enumerate(f):
+                if i &gt;= n_lines:
+                    break
+                print(f&quot;{i+1:3d}: {line.rstrip()}&quot;)
+    except Exception as e2:
+        print(f&quot;파일 읽기 실패 (UTF-8, CP949 모두 실패): {e2}&quot;)
+except Exception as e:
+    print(f&quot;파일 읽기 실패: {e}&quot;)
+
+print(&quot;=&quot;*60)</code></pre>
+<h2>code 30.</h2><pre><code># # !head -n 70 {fpaths[0]} # list the first 50 lines of the file
+# print(f&quot;파일 {fpaths[0]}의 첫 70줄을 출력합니다:&quot;)
+# !powershell -Command &quot;Get-Content {fpaths[0]} -TotalCount 70&quot;</code></pre>
+<h2>code 31.</h2><pre><code>import pandas as pd
+
+# CSV 파일을 읽어서 DataFrame으로 변환
+df = pd.read_csv(str(fpaths[0]),           # 파일 경로 (문자열로 변환)
+                 thousands = &#x27;,&#x27;,  # 천 단위 구분자로 쉼표 사용
+                 skiprows=64,      # 처음 64행을 건너뛰고 읽기 시작
+                 names = [&#x27;Year&#x27;,  # 연도
+                          &#x27;Month&#x27;,                    # 월
+                          &#x27;Date Excel&#x27;,               # 엑셀 날짜 형식
+                          &#x27;Date&#x27;,                     # 날짜
+                          &#x27;CO2&#x27;,                      # CO2 농도 원본 데이터
+                          &#x27;seasonally adjusted&#x27;,      # 계절 조정된 CO2 데이터
+                          &#x27;fit&#x27;,                      # 피팅된 데이터
+                          &#x27;seasonally adjusted fit&#x27;,  # 계절 조정된 피팅 데이터
+                          &#x27;CO2 filled&#x27;,               # 결측값이 채워진 CO2 데이터
+                          &#x27;seasonally adjusted filled&#x27;,  # 계절 조정된 채워진 데이터
+                          &#x27;Station&#x27;],                 # 측정소 정보
+                 encoding= &#x27;unicode_escape&#x27;) # 유니코드 이스케이프 인코딩 사용
+
+df = df[df.CO2 != -99.99]
+print(&quot;df: &quot;, df)  # 읽어온 DataFrame 출력</code></pre>
+<h2>code 32.</h2><pre><code>df[&#x27;datetime&#x27;] = pd.to_datetime(df[&#x27;Date&#x27;], format=&#x27;%Y&#x27;) + pd.to_timedelta((df[&#x27;Date&#x27;] % 1) * 365.25, unit=&#x27;D&#x27;)
+
+# 방법 3: numpy를 사용한 벡터화된 방법
+import numpy as np
+
+def decimal_year_to_datetime_vectorized(decimal_years):
+    years = decimal_years.astype(int)
+    fractions = decimal_years - years
+    
+ # 각 연도의 시작일을 만들기
+    start_dates = pd.to_datetime(years, format=&#x27;%Y&#x27;)
+    
+ # 윤년 체크를 위한 벡터화된 함수
+    is_leap = ((years % 4 == 0) &amp; (years % 100 != 0)) | (years % 400 == 0)
+    days_in_year = np.where(is_leap, 366, 365)
+    
+ # 일수 계산 및 추가
+    days_to_add = (fractions * days_in_year).astype(int)
+    
+    return start_dates + pd.to_timedelta(days_to_add, unit=&#x27;D&#x27;)
+
+# 방법 3 적용 (대용량 데이터에 효율적)
+df[&#x27;datetime&#x27;] = decimal_year_to_datetime_vectorized(df[&#x27;Date&#x27;])
+
+# 결과 확인
+print(df[[&#x27;Date&#x27;, &#x27;datetime&#x27;]])</code></pre>
+<h2>code 33.</h2><pre><code>import matplotlib.pyplot as plt
+
+#차트 크기 설정
+fig, ax = plt.subplots(figsize=(10.5,8))
+
+ax.plot(df[&#x27;Date&#x27;], df[&#x27;CO2&#x27;])
+
+# X축 Y축 범위 설정
+ax.set_xlim(min(df[&#x27;Date&#x27;]), max(df[&#x27;Date&#x27;]))
+ax.set_ylim(min(df[&#x27;CO2&#x27;]), max(df[&#x27;CO2&#x27;]))
+
+# Y축 제목에 latex 수식 넣기
+ax.set_ylabel(r&#x27;$\rm{CO_2}$ Concentration ($\rm{ppm}$)&#x27;)
+ax.set_xlabel(r&#x27;Year&#x27;)
+
+# 차트 제목 폰트 크기 크게
+ax.set_title(&#x27;Mauna Loa Observatory, Hawaii \nMonthly Average Carbon Dioxide Concentration&#x27;,
+             fontdict={&#x27;fontsize&#x27;:16})
+plt.show()</code></pre>
+<h2>code 34.</h2><pre><code>import matplotlib.pyplot as plt
+
+#차트 크기 설정
+fig, ax = plt.subplots(figsize=(10.5,8))
+
+ax.plot(df[&#x27;datetime&#x27;], df[&#x27;CO2&#x27;])
+
+# X축 Y축 범위 설정
+ax.set_xlim(min(df[&#x27;datetime&#x27;]), max(df[&#x27;datetime&#x27;]))
+ax.set_ylim(min(df[&#x27;CO2&#x27;]), max(df[&#x27;CO2&#x27;]))
+
+# Y축 제목에 latex 수식 넣기
+ax.set_ylabel(r&#x27;$\rm{CO_2}$ Concentration ($\rm{ppm}$)&#x27;)
+ax.set_xlabel(r&#x27;Year&#x27;)
+
+# 차트 제목 폰트 크기 크게
+ax.set_title(&#x27;Mauna Loa Observatory, Hawaii \nMonthly Average Carbon Dioxide Concentration&#x27;,
+             fontdict={&#x27;fontsize&#x27;:16})
+plt.show()</code></pre>
+<h2>code 35.</h2><pre><code>import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(figsize=(10.5, 8))
+
+ax.plot(df[&#x27;Date&#x27;], df[&#x27;CO2&#x27;])
+ax.scatter(df[&#x27;Date&#x27;], df[&#x27;CO2&#x27;], marker=&#x27;o&#x27;, s=5)
+
+# X축 Y축 범위 설정
+ax.set_xlim(min(df[&#x27;Date&#x27;]), max(df[&#x27;Date&#x27;]))
+ax.set_ylim(min(df[&#x27;CO2&#x27;]), max(df[&#x27;CO2&#x27;]))
+
+# Y축 제목에 latex 수식 넣기
+# X, Y축 제목에 크기 조정 및 굵게
+ax.set_ylabel(r&#x27;$\rm{CO_2}$ Concentration ($\rm{ppm}$)&#x27;, fontdict={&#x27;fontsize&#x27;:16, &#x27;fontweight&#x27;:&#x27;bold&#x27;})
+ax.set_xlabel(r&#x27;Year&#x27;, fontdict={&#x27;fontsize&#x27;:16, &#x27;fontweight&#x27;:&#x27;bold&#x27;})
+
+#X축 틱 추가하기 (5년 간격, 1년 간격)
+ax.set_xticks([i for i in range(1960, 2026, 5)])
+ax.set_xticks([i for i in range(1960, 2026, 1)], minor=True)
+ax.set_xticklabels([i for i in range(1960, 2026, 5)], fontdict={&#x27;fontsize&#x27;:11, &#x27;fontweight&#x27;:&#x27;bold&#x27;})
+
+#Y축 틱 추가하기 (5 ppm 간격, 1 ppm 간격)
+ax.set_yticks([i for i in range(310, 421, 5)])
+ax.set_yticks([i for i in range(310, 421, 1)], minor=True)
+ax.set_yticklabels([i for i in range(310, 421, 5)], fontdict={&#x27;fontsize&#x27;:11, &#x27;fontweight&#x27;:&#x27;bold&#x27;})
+ax.set_yticklabels(sum([[i, &#x27;&#x27;] for i in [i for i in range(310, 421, 10)]], [])[:-1])
+
+#ax.tick_params(axis=&#x27;both&#x27;, minor=True, bottom=True, top=True, left=True, right=True)
+
+#틱 길이, 방향 설정
+ax.tick_params(direction=&#x27;in&#x27;, length=8, width=1, colors=&#x27;k&#x27;,
+               grid_color=&#x27;k&#x27;, grid_alpha=0.5, 
+               bottom=True, top=True, left=True, right=True)
+ax.tick_params(direction=&#x27;in&#x27;, length=3, width=1, colors=&#x27;k&#x27;,
+               grid_color=&#x27;k&#x27;, grid_alpha=0.5, which = &#x27;minor&#x27;, 
+               bottom=True, top=True, left=True, right=True)
+
+# 차트 제목 왼쪽 정렬
+ax.set_title(&#x27;Mauna Loa Observatory, Hawaii \nMonthly Average Carbon Dioxide Concentration&#x27;,
+             y=1.05,   # 제목 아래 여백
+             loc = &#x27;left&#x27;,
+             fontdict={&#x27;fontsize&#x27;:16, &#x27;fontweight&#x27;:&#x27;bold&#x27;, &#x27;horizontalalignment&#x27;: &#x27;left&#x27;})
+
+# 차트 위에 작은 글씨 추가
+ax.text(1958, 422, r&#x27;Data from Scripps $\rm{CO_2}$ Program&#x27;,
+             fontdict={&#x27;fontsize&#x27;:12})
+ax.text(1985, 422, r&#x27;Last updated June 2021&#x27;,
+             fontdict={&#x27;fontsize&#x27;:12})
+
+plt.show()</code></pre>
+<h2>code 36.</h2><pre><code>import matplotlib.pyplot as plt
+
+# 그래프 설정
+fig, ax = plt.subplots(figsize=(10.5, 8))
+ax.set_xlim(min(df[&#x27;Date&#x27;]), max(df[&#x27;Date&#x27;]))
+ax.set_ylim(min(df[&#x27;CO2&#x27;]), max(df[&#x27;CO2&#x27;]))
+
+# 축 라벨
+ax.set_xlabel(&#x27;Year&#x27;, fontsize=16, fontweight=&#x27;bold&#x27;)
+ax.set_ylabel(r&#x27;$\rm{CO_2}$ Concentration ($\rm{ppm}$)&#x27;, fontsize=16, fontweight=&#x27;bold&#x27;)
+
+# 눈금 설정
+ax.set_xticks(range(1960, 2026, 5))
+ax.set_xticks(range(1960, 2026, 1), minor=True)
+ax.set_yticks(range(310, 421, 5))
+ax.set_yticks(range(310, 421, 1), minor=True)
+
+# 눈금 스타일
+ax.tick_params(direction=&#x27;in&#x27;, length=8, width=1, colors=&#x27;k&#x27;, which=&#x27;major&#x27;)
+ax.tick_params(direction=&#x27;in&#x27;, length=3, width=1, colors=&#x27;k&#x27;, which=&#x27;minor&#x27;)
+
+# 제목 및 출처
+ax.set_title(&#x27;Mauna Loa Observatory, Hawaii\nMonthly Average CO₂ Concentration&#x27;,
+             loc=&#x27;left&#x27;, y=1.05, fontsize=16, fontweight=&#x27;bold&#x27;)
+ax.text(1958, 422, &#x27;Data from Scripps CO₂ Program&#x27;, fontsize=12)
+ax.text(1985, 422, &#x27;Last updated June 2021&#x27;, fontsize=12)
+
+# 초기 데이터 포인트
+line, = ax.plot(df[&#x27;Date&#x27;].iloc[0], df[&#x27;CO2&#x27;].iloc[0])
+point = ax.scatter(df[&#x27;Date&#x27;].iloc[0], df[&#x27;CO2&#x27;].iloc[0], s=5)</code></pre>
+<h2>code 37.</h2><pre><code># 애니메이션 함수 정의
+def animate(i):
+ # i번째까지의 데이터로 라인 업데이트
+    line.set_data(df[&#x27;Date&#x27;].iloc[:i], df[&#x27;CO2&#x27;].iloc[:i])
+ # 현재 점의 위치 업데이트
+    point.set_offsets([df[&#x27;Date&#x27;].iloc[i], df[&#x27;CO2&#x27;].iloc[i]])
+    return line, point
+
+from matplotlib.animation import FuncAnimation
+ani = FuncAnimation(fig, animate, 
+                     frames=len(df[&#x27;Date&#x27;]), 
+                     blit=True)
+
+from IPython.display import HTML
+# 애니메이션을 표시하는 여러 방법 시도
+
+# 방법 1: 자바스크립트 기반 HTML5 영상
+try:
+    HTML(ani.to_jshtml())
+except:
+ # 방법 2: matplotlib 의 HTML writer 사용
+    import matplotlib
+    matplotlib.rcParams[&#x27;animation.html&#x27;] = &#x27;html5&#x27;
+    try:
+        HTML(ani.to_html5_video())
+    except:
+ # 방법 3: 다른 표시 방법 사용
+        from matplotlib import rc
+        rc(&#x27;animation&#x27;, html=&#x27;jshtml&#x27;)
+        ani
+
+HTML(ani.to_jshtml())</code></pre>
+<h2>code 38.</h2><pre><code># 파일명 설정
+fname = &#x27;Keeling_curve_MLO&#x27;
+
+try:
+ # MP4 형식으로 저장
+    ani.save(f&#x27;{proj_dir}/{fname}.mp4&#x27;, 
+             fps=60, dpi=150, writer=&#x27;ffmpeg&#x27;)
+    print(f&quot;동영상이 저장되었습니다: {proj_dir}/{fname}.mp4&quot;)
+except Exception as e:
+    print(f&quot;MP4 저장 중 오류 발생: {e}&quot;)
+    
+ # 대안: GIF 형식으로 저장
+    try:
+        ani.save(f&#x27;{proj_dir}/{fname}.gif&#x27;, 
+                 fps=30, dpi=100, writer=&#x27;pillow&#x27;)
+        print(f&quot;GIF 파일이 저장되었습니다: {proj_dir}/{fname}.gif&quot;)
+    except Exception as e2:
+        print(f&quot;GIF 저장 중 오류 발생: {e2}&quot;)
+        
+ # 최종 대안: HTML 파일로 저장
+        try:
+            with open(f&#x27;{proj_dir}/{fname}.html&#x27;, &#x27;w&#x27;) as f:
+                f.write(ani.to_jshtml())
+            print(f&quot;HTML 파일이 저장되었습니다: {proj_dir}/{fname}.html&quot;)
+        except Exception as e3:
+            print(f&quot;HTML 저장 중 오류 발생: {e3}&quot;)</code></pre>
+<h2>code 39.</h2><pre><code>import re
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import requests
+from io import StringIO
+
+url = &quot;https://keelinglabsites.ucsd.edu/websitedataco2/monthly_in_situ_co2_mlo.csv&quot;
+
+# 새 Scripps CSV 직접 다운로드
+response = requests.get(url)
+response.raise_for_status()
+
+lines = response.text.splitlines()
+
+# 실제 데이터 시작 행 찾기
+data_lines = [line for line in lines if re.match(r&#x27;^\s*\d{4}\s*,&#x27;, line) ]
+
+if len(data_lines) == 0:
+    raise ValueError(&quot;CSV 안에서 데이터 행을 찾지 못했습니다. URL 또는 파일 내용을 확인하세요.&quot;)
+
+csv_text = &quot;\n&quot;.join(data_lines)
+
+df1 = pd.read_csv(
+    StringIO(csv_text),
+    names=[
+        &#x27;Year&#x27;, &#x27;Month&#x27;, &#x27;Date Excel&#x27;, &#x27;Date&#x27;,
+        &#x27;CO2&#x27;, &#x27;seasonally adjusted&#x27;,
+        &#x27;fit&#x27;, &#x27;seasonally adjusted fit&#x27;,
+        &#x27;CO2 filled&#x27;, &#x27;seasonally adjusted filled&#x27;,
+        &#x27;Sta&#x27;
+    ],
+    skipinitialspace=True
+)
+
+numeric_columns = [
+    &#x27;CO2&#x27;, &#x27;seasonally adjusted&#x27;,
+    &#x27;fit&#x27;, &#x27;seasonally adjusted fit&#x27;,
+    &#x27;CO2 filled&#x27;, &#x27;seasonally adjusted filled&#x27;
+]
+
+all_numeric_columns = [
+    &#x27;Year&#x27;, &#x27;Month&#x27;, &#x27;Date Excel&#x27;, &#x27;Date&#x27;
+] + numeric_columns
+
+for col in all_numeric_columns:
+    df1[col] = pd.to_numeric(df1[col], errors=&#x27;coerce&#x27;)
+
+df1 = df1.replace([-99.99, -999], np.nan)
+df1 = df1.dropna(subset=[&#x27;Date&#x27;]).copy()
+
+df1[&#x27;datetime&#x27;] = decimal_year_to_datetime_vectorized(df1[&#x27;Date&#x27;])
+
+print(&quot;처리 전 데이터 정보:&quot;)
+print(f&quot;DataFrame 크기: {df1.shape}&quot;)
+print(&quot;각 컬럼별 NaN 개수:&quot;)
+print(df1.isnull().sum())
+
+df1_time = df1.set_index(&#x27;datetime&#x27;).sort_index()
+
+for col in numeric_columns:
+    df1_time[col] = df1_time[col].interpolate(method=&#x27;time&#x27;, limit_area=&#x27;inside&#x27;)
+
+df1_final = df1_time.reset_index()
+df1_final = df1_final.dropna(subset=[&#x27;Date&#x27;, &#x27;seasonally adjusted filled&#x27;]).copy()
+
+print(&quot;시간 기반 인터폴레이션 완료!&quot;)
+print(&quot;처리 후 데이터 정보:&quot;)
+print(f&quot;DataFrame 크기: {df1_final.shape}&quot;)
+print(&quot;각 컬럼별 NaN 개수:&quot;)
+print(df1_final.isnull().sum())
+
+df1 = df1_final.copy()
+
+x_min = int(df1[&#x27;Date&#x27;].min() // 10 * 10)
+x_max = int(df1[&#x27;Date&#x27;].max() // 10 * 10)
+
+y_min = int(df1[&#x27;seasonally adjusted filled&#x27;].min() // 10 * 10)
+y_max = int(df1[&#x27;seasonally adjusted filled&#x27;].max() // 10 * 10)
+
+fig, ax = plt.subplots(figsize=(10.5, 8))
+
+ax.set_xlim(x_min, x_max)
+ax.set_ylim(y_min, y_max)
+
+ax.set_ylabel(
+    r&#x27;$\rm{CO_2}$ Concentration ($\rm{ppm}$)&#x27;,
+    fontdict={&#x27;fontsize&#x27;: 16, &#x27;fontweight&#x27;: &#x27;bold&#x27;}
+)
+
+ax.set_xlabel(
+    r&#x27;Year&#x27;,
+    fontdict={&#x27;fontsize&#x27;: 16, &#x27;fontweight&#x27;: &#x27;bold&#x27;}
+)
+
+ax.set_xticks([i for i in range(x_min, x_max + 1, 5)])
+ax.set_xticks([i for i in range(x_min, x_max + 1, 1)], minor=True)
+
+ax.set_xticklabels(
+    [i for i in range(x_min, x_max + 1, 5)],
+    fontdict={&#x27;fontsize&#x27;: 11, &#x27;fontweight&#x27;: &#x27;bold&#x27;}
+)
+
+ax.set_yticks([i for i in range(y_min, y_max + 1, 5)])
+ax.set_yticks([i for i in range(y_min, y_max + 1, 1)], minor=True)
+
+ax.set_yticklabels(
+    [i for i in range(y_min, y_max + 1, 5)],
+    fontdict={&#x27;fontsize&#x27;: 11, &#x27;fontweight&#x27;: &#x27;bold&#x27;}
+)
+
+ax.tick_params(
+    direction=&#x27;in&#x27;,
+    length=8,
+    width=1,
+    colors=&#x27;k&#x27;,
+    grid_color=&#x27;k&#x27;,
+    grid_alpha=0.5,
+    bottom=True,
+    top=True,
+    left=True,
+    right=True
+)
+
+ax.tick_params(
+    direction=&#x27;in&#x27;,
+    length=3,
+    width=1,
+    colors=&#x27;k&#x27;,
+    grid_color=&#x27;k&#x27;,
+    grid_alpha=0.5,
+    which=&#x27;minor&#x27;,
+    bottom=True,
+    top=True,
+    left=True,
+    right=True
+)
+
+ax.set_title(
+    &#x27;Mauna Loa Observatory, Hawaii\nMonthly Average Carbon Dioxide Concentration&#x27;,
+    y=1.05,
+    loc=&#x27;left&#x27;,
+    fontdict={
+        &#x27;fontsize&#x27;: 16,
+        &#x27;fontweight&#x27;: &#x27;bold&#x27;,
+        &#x27;horizontalalignment&#x27;: &#x27;left&#x27;
+    }
+)
+
+ax.text(
+    x_min,
+    y_max + 2,
+    r&#x27;Data from Scripps $\rm{CO_2}$ Program&#x27;,
+    fontdict={&#x27;fontsize&#x27;: 12}
+)
+
+ax.text(
+    x_min + 20,
+    y_max + 2,
+    f&#x27;Last updated {int(df1[&quot;Year&quot;].max())}&#x27;,
+    fontdict={&#x27;fontsize&#x27;: 12}
+)
+
+ax.plot(df1[&#x27;Date&#x27;], df1[&#x27;seasonally adjusted filled&#x27;])
+ax.scatter(df1[&#x27;Date&#x27;], df1[&#x27;seasonally adjusted filled&#x27;], marker=&#x27;o&#x27;, s=5)
+
+plt.show()</code></pre>
+</body></html>

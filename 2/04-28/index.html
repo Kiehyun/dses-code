@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IV-08. 우리 바다의 수온</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
+<h1>IV-08. 우리 바다의 수온</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/04-28/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 531.</h2><pre><code># 필요한 라이브러리 불러오기
+import io
+from zipfile import ZipFile
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+%matplotlib inline
+
+# 해역마다 쓸 색 정해 두기
+COLOR = {&quot;동해&quot;: &quot;#2b6cb0&quot;, &quot;남해&quot;: &quot;#38a169&quot;, &quot;서해&quot;: &quot;#e2553d&quot;}</code></pre>
+<h2>code 532.</h2><pre><code># 데이터를 저장할 폴더를 만들고 압축 파일 내려받기
+proj_dir = du.make_project_dir(du.current_notebook_name())
+
+url = &quot;https://www.nifs.go.kr/risa/cmmn/pastRisaInfoDown/total_2025.zip&quot;
+zip_path = os.path.join(proj_dir, &quot;total_2025.zip&quot;)
+
+if not os.path.exists(zip_path):                     # 이미 받아 두었으면 다시 받지 않음
+    print(&quot;내려받는 중입니다 …&quot;)
+    urllib.request.urlretrieve(url, zip_path)
+
+print(f&quot;파일 크기: {os.path.getsize(zip_path) / 1e6:.1f} MB&quot;)
+
+# 바깥 압축 풀기(해역별 압축 파일 세 개가 나옴)
+with ZipFile(zip_path) as z:
+    print(&quot;안에 들어 있는 파일:&quot;, z.namelist())
+    z.extractall(proj_dir)</code></pre>
+<h2>code 533.</h2><pre><code>SEA = {&quot;es_2025&quot;: &quot;동해&quot;, &quot;ss_2025&quot;: &quot;남해&quot;, &quot;ys_2025&quot;: &quot;서해&quot;}   # 파일 이름 : 해역 이름
+USE = [&quot;관측소&quot;, &quot;관측일시&quot;, &quot;표층수온(℃)&quot;, &quot;표층수심(m)&quot;, &quot;저층수온(℃)&quot;,
+       &quot;저층수심(m)&quot;]
+
+frames = []
+for key, sea in SEA.items():
+    # 바깥 압축을 푼 total_2025 폴더 안의 해역별 압축 파일
+    inner_zip = os.path.join(proj_dir, &quot;total_2025&quot;, f&quot;{key}.zip&quot;)
+    with ZipFile(inner_zip) as z:                       # 안쪽 압축은 풀지 않고 바로 읽기
+        for name in sorted(n for n in z.namelist() if n.endswith(&quot;.csv&quot;)):
+            data = pd.read_csv(io.BytesIO(z.read(name)), encoding=&quot;cp949&quot;,
+                               usecols=USE)
+            data[&quot;해역&quot;] = sea
+            frames.append(data)
+
+df = pd.concat(frames, ignore_index=True)               # 36개 표를 세로로 이어 붙이기
+
+# 열 이름을 짧게 바꾸고 날짜와 지점 이름 정리
+df = df.rename(columns={&quot;표층수온(℃)&quot;: &quot;표층수온&quot;, &quot;저층수온(℃)&quot;: &quot;저층수온&quot;,
+                        &quot;표층수심(m)&quot;: &quot;표층수심&quot;, &quot;저층수심(m)&quot;: &quot;저층수심&quot;})
+df[&quot;관측일시&quot;] = pd.to_datetime(df[&quot;관측일시&quot;])
+# 「강릉(bgna3)」에서 괄호 안 관측소 코드를 떼어 지점 이름만 남김
+df[&quot;지점&quot;] = df[&quot;관측소&quot;].str.replace(r&quot;\(.*\)$&quot;, &quot;&quot;, regex=True).str.strip()
+
+print(f&quot;데이터 크기 : {df.shape[0]:,} 행 × {df.shape[1]} 열&quot;)
+print(f&quot;기간      : {df[&#x27;관측일시&#x27;].min()} ~ {df[&#x27;관측일시&#x27;].max()}&quot;)
+df.head()</code></pre>
+<h2>code 534.</h2><pre><code>print(&quot;해역별 관측 지점 수&quot;)
+print(df.groupby(&quot;해역&quot;)[&quot;지점&quot;].nunique().to_string())
+
+print(&quot;\n해역별 데이터 수&quot;)
+print(df.groupby(&quot;해역&quot;).size().to_string())
+
+print(&quot;\n비어 있는 값의 비율 (%)&quot;)
+print((df[[&quot;표층수온&quot;, &quot;저층수온&quot;]].isna().mean() * 100).round(1).to_string())
+
+print(&quot;\n관측 수심의 중앙값 (m)&quot;)
+print(df.groupby(&quot;해역&quot;)[[&quot;표층수심&quot;, &quot;저층수심&quot;]].median().to_string())</code></pre>
+<h2>code 535.</h2><pre><code># 하루 단위로 묶어 해역별 평균 수온 구하기
+daily = (df.set_index(&quot;관측일시&quot;)
+           .groupby(&quot;해역&quot;)[&quot;표층수온&quot;]
+           .resample(&quot;D&quot;).mean()
+           .reset_index())
+
+fig, ax = plt.subplots(figsize=(7.5, 3.5))
+for sea in [&quot;동해&quot;, &quot;남해&quot;, &quot;서해&quot;]:
+    one = daily[daily[&quot;해역&quot;] == sea]
+    ax.plot(one[&quot;관측일시&quot;], one[&quot;표층수온&quot;], color=COLOR[sea], linewidth=1.8,
+            label=sea)
+
+ax.set_title(&quot;2025년 우리나라 연안 표층 수온 (해역 평균)&quot;, fontsize=12,
+             fontweight=&quot;bold&quot;)
+ax.set_xlabel(&quot;날짜&quot;)
+ax.set_ylabel(&quot;표층 수온 (°C)&quot;)
+ax.legend(fontsize=10)
+ax.grid(True, linestyle=&quot;:&quot;, alpha=0.5)
+
+plt.tight_layout()
+plt.show()</code></pre>
+<h2>code 536.</h2><pre><code>df[&quot;월&quot;] = df[&quot;관측일시&quot;].dt.month
+
+# 행은 월, 열은 해역인 표 만들기
+monthly = df.pivot_table(index=&quot;월&quot;, columns=&quot;해역&quot;, values=&quot;표층수온&quot;,
+                         aggfunc=&quot;mean&quot;)
+yearly_range = (monthly.max() - monthly.min()).reindex([&quot;동해&quot;, &quot;남해&quot;, &quot;서해&quot;])
+
+fig, axes = plt.subplots(1, 2, figsize=(7.5, 2.9))
+
+for sea in [&quot;동해&quot;, &quot;남해&quot;, &quot;서해&quot;]:
+    axes[0].plot(monthly.index, monthly[sea], marker=&quot;o&quot;, color=COLOR[sea],
+                 linewidth=2, label=sea)
+axes[0].set_title(&quot;해역별 월평균 표층 수온&quot;, fontsize=12, fontweight=&quot;bold&quot;)
+axes[0].set_xlabel(&quot;월&quot;)
+axes[0].set_ylabel(&quot;수온 (°C)&quot;)
+axes[0].set_xticks(range(1, 13))
+axes[0].legend()
+axes[0].grid(True, linestyle=&quot;:&quot;, alpha=0.5)
+
+axes[1].bar(yearly_range.index, yearly_range.values,
+            color=[COLOR[s] for s in yearly_range.index], alpha=0.85, edgecolor=&quot;black&quot;)
+for i, v in enumerate(yearly_range.values):
+    axes[1].text(i, v + 0.3, f&quot;{v:.1f} °C&quot;, ha=&quot;center&quot;, fontsize=10,
+                 fontweight=&quot;bold&quot;)
+axes[1].set_title(&quot;해역별 수온 연교차&quot;, fontsize=12, fontweight=&quot;bold&quot;)
+axes[1].set_ylabel(&quot;연교차 (°C)&quot;)
+axes[1].set_ylim(0, yearly_range.max() * 1.15)
+axes[1].grid(axis=&quot;y&quot;, linestyle=&quot;:&quot;, alpha=0.5)
+
+plt.tight_layout()
+plt.show()
+
+print(monthly.round(1).to_string())</code></pre>
+<h2>code 537.</h2><pre><code># 표층과 저층이 모두 기록된 데이터만 고르기
+both = df.dropna(subset=[&quot;표층수온&quot;, &quot;저층수온&quot;]).copy()
+both[&quot;수온차&quot;] = both[&quot;표층수온&quot;] - both[&quot;저층수온&quot;]
+
+# 동해 삼척 지점만 골라 하루 평균으로 정리
+samcheok = (both[(both[&quot;해역&quot;] == &quot;동해&quot;) &amp; (both[&quot;지점&quot;] == &quot;삼척&quot;)]
+            .set_index(&quot;관측일시&quot;).sort_index()
+            .resample(&quot;D&quot;)[[&quot;표층수온&quot;, &quot;저층수온&quot;, &quot;수온차&quot;]].mean())
+
+fig, axes = plt.subplots(2, 1, figsize=(7.5, 4.6), sharex=True)
+
+axes[0].plot(samcheok.index, samcheok[&quot;표층수온&quot;], color=&quot;#e2553d&quot;,
+             linewidth=1.6, label=&quot;표층 (5 m)&quot;)
+axes[0].plot(samcheok.index, samcheok[&quot;저층수온&quot;], color=&quot;#2b6cb0&quot;,
+             linewidth=1.6, label=&quot;저층 (25 m)&quot;)
+axes[0].fill_between(samcheok.index, samcheok[&quot;저층수온&quot;], samcheok[&quot;표층수온&quot;],
+                     where=samcheok[&quot;표층수온&quot;] &gt;= samcheok[&quot;저층수온&quot;],
+                     color=&quot;#f6ad55&quot;, alpha=0.4)
+axes[0].set_title(&quot;동해 삼척 — 표층과 저층의 수온 (2025년)&quot;, fontsize=12,
+                  fontweight=&quot;bold&quot;)
+axes[0].set_ylabel(&quot;수온 (°C)&quot;)
+axes[0].legend(fontsize=10)
+
+axes[1].plot(samcheok.index, samcheok[&quot;수온차&quot;], color=&quot;#6b46c1&quot;,
+             linewidth=1.6)
+axes[1].axhline(0, color=&quot;black&quot;, linewidth=0.8)
+axes[1].set_title(&quot;표층 − 저층 수온차&quot;, fontsize=12, fontweight=&quot;bold&quot;)
+axes[1].set_xlabel(&quot;날짜&quot;)
+axes[1].set_ylabel(&quot;수온차 (°C)&quot;)
+
+for ax in axes:
+    ax.grid(True, linestyle=&quot;:&quot;, alpha=0.5)
+
+plt.tight_layout()
+plt.show()
+
+print(&quot;월별 표층 − 저층 수온차 (°C)&quot;)
+print(samcheok[&quot;수온차&quot;].groupby(samcheok.index.month).mean().round(1).to_string())</code></pre>
+<h2>code 538.</h2><pre><code>df[&quot;날짜&quot;] = df[&quot;관측일시&quot;].dt.normalize()
+
+# 정시·30분 관측만 사용 (불규칙 시각은 표본이 한두 개뿐이라 제외)
+reg = df[df[&quot;관측일시&quot;].dt.minute.isin([0, 30])].copy()
+reg[&quot;시각&quot;] = reg[&quot;관측일시&quot;].dt.hour + reg[&quot;관측일시&quot;].dt.minute / 60
+print(f&quot;불규칙 시각 데이터 {len(df) - len(reg):,}개 제외, &quot;
+      f&quot;시각 칸 {reg[&#x27;시각&#x27;].nunique()}개&quot;)
+
+# 지점·날짜별 평균을 뺀 &#x27;그날 평균으로부터의 차이&#x27;
+reg[&quot;일평균&quot;] = reg.groupby([&quot;지점&quot;, &quot;날짜&quot;])[&quot;표층수온&quot;].transform(&quot;mean&quot;)
+reg[&quot;편차&quot;] = reg[&quot;표층수온&quot;] - reg[&quot;일평균&quot;]
+
+SEASONS = {&quot;겨울 (1~2월)&quot;: [1, 2], &quot;여름 (7~8월)&quot;: [7, 8]}
+
+fig, axes = plt.subplots(1, 2, figsize=(7.5, 2.7))
+for ax, (label, months) in zip(axes, SEASONS.items()):
+    sub = reg[reg[&quot;월&quot;].isin(months)]
+    for sea in [&quot;동해&quot;, &quot;남해&quot;, &quot;서해&quot;]:
+        curve = sub[sub[&quot;해역&quot;] == sea].groupby(&quot;시각&quot;)[&quot;편차&quot;].mean()
+        ax.plot(curve.index, curve.values, color=COLOR[sea], linewidth=2,
+                label=sea)
+    ax.axhline(0, color=&quot;black&quot;, linewidth=0.8)
+    ax.set_title(f&quot;{label} 하루 중 수온 변화&quot;, fontsize=12, fontweight=&quot;bold&quot;)
+    ax.set_xlabel(&quot;시각 (시)&quot;)
+    ax.set_ylabel(&quot;그날 평균과의 차 (°C)&quot;)
+    ax.set_xticks(range(0, 25, 3))
+    ax.grid(True, linestyle=&quot;:&quot;, alpha=0.5)
+    ax.legend(fontsize=10)
+
+plt.tight_layout()
+plt.show()
+
+for label, months in SEASONS.items():
+    sub = reg[reg[&quot;월&quot;].isin(months)]
+    curve = sub.groupby([&quot;해역&quot;, &quot;시각&quot;])[&quot;편차&quot;].mean()
+    # 시각 칸 하나에 들어간 가장 적은 표본 수
+    n_min = sub.groupby([&quot;해역&quot;, &quot;시각&quot;]).size().min()
+    print(f&quot;{label} (시각 칸 최소 표본 {n_min:,}개)&quot;)
+    for sea in [&quot;동해&quot;, &quot;남해&quot;, &quot;서해&quot;]:
+        c = curve[sea]
+        print(f&quot;  {sea} : 변화 폭 {c.max() - c.min():.2f} °C, &quot;
+              f&quot;가장 높은 시각 {c.idxmax():4.1f}시, 가장 낮은 시각 {c.idxmin():4.1f}시&quot;)</code></pre>
+<h2>code 539.</h2><pre><code>import matplotlib.dates as mdates
+
+THRESHOLD = 28.0     # 고수온 주의보 기준 (°C)
+
+# 지점별·날짜별 최고 수온
+daily_max = df.groupby([&quot;해역&quot;, &quot;지점&quot;, &quot;날짜&quot;])[&quot;표층수온&quot;].max().reset_index()
+hot = daily_max[daily_max[&quot;표층수온&quot;] &gt;= THRESHOLD]
+
+hot_by_day = hot.groupby([&quot;해역&quot;, &quot;날짜&quot;]).size().reset_index(name=&quot;지점수&quot;)
+hot_by_station = hot.groupby([&quot;해역&quot;, &quot;지점&quot;]).size().sort_values(ascending=False)
+
+fig, axes = plt.subplots(1, 2, figsize=(7.5, 2.7))
+
+for sea in [&quot;동해&quot;, &quot;남해&quot;, &quot;서해&quot;]:
+    one = hot_by_day[hot_by_day[&quot;해역&quot;] == sea]
+    axes[0].plot(one[&quot;날짜&quot;], one[&quot;지점수&quot;], marker=&quot;o&quot;, markersize=3,
+                 color=COLOR[sea], linewidth=1.4, label=sea)
+axes[0].set_title(f&quot;하루 최고 수온이 {THRESHOLD:.0f} °C 이상인 지점 수&quot;,
+                  fontsize=12, fontweight=&quot;bold&quot;)
+axes[0].set_xlabel(&quot;날짜 (월/일)&quot;)
+axes[0].xaxis.set_major_locator(mdates.MonthLocator())
+axes[0].xaxis.set_major_formatter(mdates.DateFormatter(&quot;%m/%d&quot;))
+axes[0].set_ylabel(&quot;지점 수&quot;)
+axes[0].legend()
+axes[0].grid(True, linestyle=&quot;:&quot;, alpha=0.5)
+
+top10 = hot_by_station.head(10)[::-1]
+labels = [f&quot;{name} ({sea})&quot; for sea, name in top10.index]
+axes[1].barh(labels, top10.values,
+             color=[COLOR[sea] for sea, name in top10.index], alpha=0.85, edgecolor=&quot;black&quot;)
+axes[1].set_title(f&quot;{THRESHOLD:.0f} °C 이상을 기록한 날이 많은 지점&quot;,
+                  fontsize=12, fontweight=&quot;bold&quot;)
+axes[1].set_xlabel(&quot;일수&quot;)
+axes[1].grid(axis=&quot;x&quot;, linestyle=&quot;:&quot;, alpha=0.5)
+
+plt.tight_layout()
+plt.show()
+
+print(f&quot;{THRESHOLD:.0f} °C 이상을 기록한 (지점, 날짜)의 수 : {len(hot):,}&quot;)
+print(hot[&quot;해역&quot;].value_counts().to_string())
+print(&quot;\n연중 가장 높았던 수온&quot;)
+top3 = df.nlargest(3, &quot;표층수온&quot;)[[&quot;해역&quot;, &quot;지점&quot;, &quot;관측일시&quot;, &quot;표층수온&quot;]]
+print(top3.to_string(index=False))</code></pre>
+</body></html>

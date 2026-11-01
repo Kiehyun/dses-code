@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>I-04. Python 모듈</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
+<h1>I-04. Python 모듈</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/01-04/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 36.</h2><pre><code>import math                               # math 모듈을 임포트
+help(math)                                # math 모듈의 도움말 정보를 출력
+print(f&quot;math.sin(0.5): {math.sin(0.5)}&quot;)  # 0.5 라디안의 사인 값을 계산하고 출력
+print(f&quot;math.e: {math.e}&quot;)                # 자연상수 e (약 2.718281828...)의 값을 출력
+
+from math import pi  # math 모듈에서 원주율(pi) 상수만을 직접 임포트
+print(f&quot;pi: {pi}&quot;)   # 원주율 파이 값 (약 3.141592653...)을 출력
+
+import datetime                 # datetime 모듈 전체를 임포트
+now1 = datetime.datetime.now()  # 모듈명.클래스명.메서드명 형태로 현재 날짜와 시간을 가져옴
+print(&quot;now1:&quot;, now1)            # 현재 날짜와 시간을 출력 (예: 2025-08-03 16:30:45.123456)
+
+from datetime import datetime  # datetime 모듈에서 datetime 클래스만을 직접 임포트
+now2 = datetime.now()          # 클래스명.메서드명 형태로 바로 사용 (모듈명 생략 가능)
+print(&quot;now2:&quot;, now2)           # 현재 날짜와 시간을 출력 (now1과 동일한 결과)</code></pre>
+<h2>code 37.</h2><pre><code>import numpy
+a = numpy.random.rand(6)
+print(&quot;a :&quot;, a)                                       # 0과 1 사이의 난수로 이루어진 배열 출력
+print(&quot;numpy.ndarray.max(a):&quot;, numpy.ndarray.max(a))  # 배열 a의 최대값을 출력
+
+import numpy as np                              # numpy 모듈을 np로 별칭하여 사용
+a = np.random.rand(6)
+print(&quot;a :&quot;, a)                                 # 0과 1 사이의 난수로 이루어진 배열 출력
+print(&quot;np.ndarray.max(a):&quot;, np.ndarray.max(a))  # 배열 a의 최댓값을 출력</code></pre>
+<h2>code 38.</h2><pre><code># 패키지 설치
+!pip install numpy
+
+# 특정 버전 패키지 설치
+!pip install pandas==1.5.3
+
+# 패키지 업그레이드
+!pip install --upgrade pandas 
+
+# 현재 설치된 패키지 목록 확인
+!pip list </code></pre>
+<h2>code 39.</h2><pre><code>from pathlib import Path                      # 객체 지향적 경로 처리를 위한 pathlib 모듈에서 Path 클래스 임포트
+cwd = Path.cwd()                              # cwd()는 current working directory의 줄임말로 현재 작업 중인 디렉토리의 경로를 반환
+print(f&quot;Current working directory: {cwd}&quot;)    # 현재 작업 디렉토리 경로를 출력
+home = Path.home()                            # 사용자의 홈 디렉토리 경로를 반환 (Windows: C:\Users\사용자명, Linux/Mac: /home/사용자명)
+print(f&quot;Home directory: {home}&quot;)              # 홈 디렉토리 경로를 출력
+file_path = Path(&#x27;/home/user/data.txt&#x27;)       # 문자열 경로를 Path 객체로 변환하여 생성
+print(f&quot;File path from string: {file_path}&quot;)  # 문자열에서 생성된 Path 객체를 출력
+relative = Path(&#x27;my_folder/my_file.txt&#x27;)      # 현재 디렉토리를 기준으로 하는 상대 경로로 Path 객체 생성
+print(f&quot;Relative path: {relative}&quot;)           # 상대 경로 Path 객체를 출력
+base = Path(&#x27;/home/user&#x27;)                     # 기본 경로를 Path 객체로 생성
+new_path = base / &#x27;data&#x27; / &#x27;file.csv&#x27;         # / 연산자를 사용하여 경로를 단계적으로 결합
+print(f&quot;New path: {new_path}&quot;)                # Windows는 \home\user\data\file.csv, Linux·macOS는 /home/user/data/file.csv(플랫폼에 맞는 경로 구분자로 자동 변환)</code></pre>
+<h2>code 40.</h2><pre><code>from pathlib import Path  # 객체 지향적 경로 처리를 위한 pathlib 모듈에서 Path 클래스 임포트
+p = Path(&#x27;.&#x27;)             # 현재 디렉토리(&#x27;.&#x27;)를 나타내는 Path 객체 생성
+
+dirs = [x for x in p.iterdir() if x.is_dir()]  # 현재 디렉토리의 모든 항목 중 디렉토리만 필터링
+print(&quot;Directories in current path:&quot;, dirs)  # 현재 경로에 있는 모든 디렉토리 목록을 출력
+
+ipynb_files = list(Path(&#x27;.&#x27;).glob(&#x27;*.ipynb&#x27;))  # 현재 디렉토리의 .ipynb 파일을 검색하여 리스트로 변환
+print(&quot;Jupyter Notebook files in current path:&quot;, ipynb_files)  # 현재 경로에 있는 모든 Jupyter Notebook 파일 목록 출력</code></pre>
+<h2>code 41.</h2><pre><code>from datetime import datetime, date, time  # datetime 모듈에서 날짜/시간 관련 클래스들을 임포트
+now = datetime.now()                       # 현재 시스템의 날짜와 시간을 포함하는 datetime 객체를 생성
+print(&quot;now :&quot;, now)                        # 현재 날짜와 시간을 출력 (예시: 2025-08-03 16:20:00.123456)
+print(&quot;type(now):&quot;, type(now))             # now 객체의 자료형을 출력 
+
+dt = datetime(2025, 4, 22, 16, 20, 0)  # 년, 월, 일, 시, 분, 초를 지정하여 datetime 객체 생성
+d = date(2025, 4, 22)                  # 년, 월, 일만 지정하여 date 객체 생성
+t = time(16, 20, 0)                    # 시, 분, 초만 지정하여 time 객체 생성
+print(&quot;dt:&quot;, dt)                       # datetime 객체 출력 (날짜와 시간 모두 포함)
+print(&quot;d:&quot;, d)                         # date 객체 출력 (날짜만 포함)
+print(&quot;t:&quot;, t)                         # time 객체 출력 (시간만 포함)
+print(&quot;type(d):&quot;, type(d))             # date 객체의 자료형 출력 
+print(&quot;type(t):&quot;, type(t))             # time 객체의 자료형 출력 </code></pre>
+<h2>code 42.</h2><pre><code>from datetime import datetime, timedelta
+now = datetime.now()
+str_date = now.strftime(&quot;%Y-%m-%d %H:%M:%S&quot;)
+print(&quot;Formatted date string:&quot;, str_date)  # &#x27;2025-04-22 16:20:00&#x27; 형식의 문자열로 변환된 날짜 출력
+dt = datetime.strptime(&quot;2025-04-22 16:20:00&quot;, &quot;%Y-%m-%d %H:%M:%S&quot;)
+print(&quot;Parsed datetime object:&quot;, dt)  # 문자열을 datetime 객체로 변환된 결과 출력
+now = datetime.now()
+tomorrow = now + timedelta(days=1)
+diff = tomorrow - now
+print(&quot;Time difference:&quot;, diff)   # 1 day, 0:00:00 형식으로 날짜 차이를 출력
+print(&quot;type(diff):&quot;, type(diff))  # timedelta 객체의 자료형 출력</code></pre>
+<h2>code 43.</h2><pre><code>list_1d = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]               # 1차원 리스트
+list_2d = [ [1, 2, 3, 4, 5, 6],
+            [7, 8, 9, 10, 11, 12] ]           # 2차원 리스트
+list_3d = [ [   [1, 2, 3], [4, 5, 6] ],
+            [   [7, 8, 9], [10, 11, 12] ] ]   # 3차원 리스트
+
+# 각 리스트의 길이 출력
+print(f&quot;len(list_1d): {len(list_1d)}&quot;)          # 1차원 리스트의 길이
+print(&quot;len(list_2d): {}&quot;.format(len(list_2d)))  # 2차원 리스트의 길이 (행의 개수)
+print(&quot;len(list_3d): &quot;, (len(list_3d)))         # 3차원 리스트의 길이 (최상위 요소의 개수)
+
+# 2차원 리스트의 첫 번째 행 접근
+print(&quot;list_2d[0]: {}&quot;.format(list_2d[0]))       # 첫 번째 행 출력
+print(&quot;type(list_2d[0]): &quot;, (type(list_2d[0])))  # 첫 번째 행의 자료형
+print(f&quot;len(list_2d[0]): {len(list_2d[0])}&quot;)     # 첫 번째 행의 길이
+print(&quot;list_2d[0][1]: &quot;, (list_2d[0][1]))        # 첫 번째 행의 두 번째 요소
+
+# 3차원 리스트의 첫 번째 요소 접근
+print(&quot;list_3d[0]:{}&quot;.format(list_3d[0]))            # 첫 번째 2차원 배열
+print(&quot;type(list_3d[0]):{}&quot;.format(type(list_3d[0])))  # 첫 번째 요소의 자료형
+print(&quot;len(list_3d[0]):{}&quot;.format(len(list_3d[0])))  # 첫 번째 2차원 배열의 길이
+print(&quot;len(list_3d[0][1]):{}&quot;.format(len(list_3d[0][1])))  # 첫 번째 2차원 배열의 두 번째 행 길이
+print(&quot;list_3d[0][1][0]:{}&quot;.format(list_3d[0][1][0]))  # 첫 번째 2차원 배열의 두 번째 행의 첫 번째 요소</code></pre>
+<h2>code 44.</h2><pre><code>import numpy as np
+arr1 = np.array([[1,2,3],[4,5,6],[7,8,9]])
+print(&quot;arr1: &quot;, arr1)              # 배열 출력
+print(&quot;arr1.dtype: &quot;, arr1.dtype)  # 배열의 자료형 출력
+print(&quot;arr1.ndim: &quot;, arr1.ndim)    # 배열의 차원 수 출력
+print(&quot;arr1.shape: &quot;, arr1.shape)  # 배열의 형태 출력</code></pre>
+<h2>code 45.</h2><pre><code>import numpy as np
+arr2 = np.zeros((3,2))
+print(&quot;arr2:&quot;, arr2)              # 배열 출력
+print(&quot;arr2.dtype:&quot;, arr2.dtype)  # 배열의 자료형 출력 
+
+arr3 = np.ones((3,2))
+print(&quot;arr3:&quot;, arr3)  # 배열 출력
+
+arr4 = np.eye(2)
+print(&quot;arr4:&quot;, arr4)  # 단위 행렬 출력
+
+arr5 = np.arange(0, 2,0.25)  # range 함수의 실수 버전으로 이해하자.
+print(&quot;arr5:&quot;, arr5)         # 배열 출력
+
+arr6 = np.linspace(1, 3, 5)  # 정해준 포인트 갯수로 나눔
+print(&quot;arr6:&quot;, arr6)         # 배열 출력</code></pre>
+<h2>code 46.</h2><pre><code>import numpy as np
+arr7 = np.arange(20)
+print(&quot;arr7:&quot;, arr7)  # 배열 출력
+
+re_arr7 = arr7.reshape((4,5))
+print(&quot;re_arr7:&quot;, re_arr7)  # 재구성된 배열 출력</code></pre>
+<h2>code 47.</h2><pre><code>float_re_arr7 = re_arr7.astype(np.float64)          # 자료형 변경
+print(&quot;float_re_arr7:&quot;, float_re_arr7)              # 자료형 변경된 배열 출력
+print(&quot;float_re_arr7.dtype:&quot;, float_re_arr7.dtype)  # 변경된 배열의 자료형 출력
+# 수정: 유니코드 문자열은 &#x27;U&#x27;, 바이트 길이는 &#x27;S&#x27; 로 지정
+string_arr8 = np.array([&#x27;1.25&#x27;, &#x27;0.99&#x27;, &#x27;44&#x27;, &#x27;11&#x27;], dtype=&#x27;U&#x27;)
+
+print(&quot;string_arr8:&quot;, string_arr8)             # 문자열 배열 출력
+print(&quot;string_arr8.dtype&quot;, string_arr8.dtype)  # 문자열 배열의 자료형 출력
+float_arr8 = string_arr8.astype(np.float32)
+print(&quot;dtype(float_arr8):&quot;, float_arr8.dtype)  # 문자열 배열을 float로 변환한 결과의 데이터 타입 출력</code></pre>
+<h2>code 48.</h2><pre><code>import numpy as np
+arr1 = np.array([[1,2,3],[4,5,6],[7,8,9]])           # 3x3 배열 arr1 생성 (1부터 9까지)
+arr2 = np.array([[11,12,13],[14,15,16],[17,18,19]])  # 3x3 배열 arr2 생성 (11부터 19까지)
+print(&quot;arr1:\n&quot;, arr1)                               # arr1 배열 출력
+print(&quot;arr2:\n&quot;, arr2)                               # arr2 배열 출력
+# 두 배열의 요소별 덧셈 연산 수행 및 결과 출력
+print(&quot;arr1 + arr2:\n&quot;, arr1 + arr2)
+print(&quot;arr1 - arr2:\n&quot;, arr1 - arr2)
+print(&quot;arr1 + 3:\n&quot;, arr1 + 3)    # 각 요소에 3을 더함
+print(&quot;arr1 - 3:\n&quot;, arr1 - 3)    # 각 요소에서 3을 뺌
+print(&quot;arr1 * 3:\n&quot;, arr1 * 3)    # 각 요소에 3을 곱함
+print(&quot;arr1 / 3:\n&quot;, arr1 / 3)    # 각 요소를 3으로 나눔
+print(&quot;arr1 ** 2:\n&quot;, arr1 ** 2)  # 각 요소를 제곱</code></pre>
+<h2>code 49.</h2><pre><code>import numpy as np
+# 2x3 배열 생성
+a = np.array([[-1,2,3],[3,4,8]])
+# 배열의 모든 원소의 합 계산
+s = np.sum(a)
+print(&#x27;sum=&#x27;, a.sum())
+# 행별/열별 연산 (axis=0: 열별, axis=1: 행별)
+print(&#x27;sum by column=&#x27;, a.sum(axis=0))  # 각 열의 합 (세로 방향으로 합계)
+print(&#x27;sum by row=&#x27;, a.sum(axis=1))     # 각 행의 합 (가로 방향으로 합계)
+print(&#x27;mean=&#x27;, a.mean())                # 전체 평균
+print(&#x27;sd=&#x27;, a.std())                   # 전체 표준편차</code></pre>
+<h2>code 50.</h2><pre><code>import numpy as np
+import pandas as pd
+np.random.seed(0)
+
+# 시리즈 생성
+s1 = pd.Series(np.random.randn(5), index=[&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;, &#x27;d&#x27;, &#x27;e&#x27;]) 
+print(&quot;-&quot;*20+&quot;\ns1:\n&quot;, s1)  
+print(&quot;-&quot;*20+&quot;\ns1.values:&quot;, s1.values)  # 값 출력
+print(&quot;-&quot;*20+&quot;\nindex:&quot;, s1.index)       # 인덱스 출력
+
+# 딕셔너리로 시리즈 생성
+d = {&#x27;b&#x27;: 1, &#x27;a&#x27;: 0, &#x27;c&#x27;: 2}
+s2 = pd.Series(d)
+print(&quot;-&quot;*20+&quot;\ns2:\n&quot;, s2)
+
+# 랜덤 값으로 시리즈 생성
+r = pd.Series(np.random.randn(5))
+s3 = pd.Series(r)
+print(&quot;-&quot;*20+&quot;\ns3:\n&quot;, s3)
+s3.index=[&#x27;d&#x27;, &#x27;b&#x27;, &#x27;a&#x27;, &#x27;c&#x27;, &#x27;e&#x27;]  # 인덱스 변경
+print(&quot;-&quot;*20+&quot;\ns3:\n&quot;, s3)</code></pre>
+<h2>code 51.</h2><pre><code>print(&quot;-&quot;*20+&quot;\ns1[:3]:&quot;, s1[:3])                # Series의 처음 3개 요소 출력
+print(&quot;-&quot;*20+&quot;\ns1[1:4]:&quot;, s1[1:4])              # Series의 1부터 3까지 요소 출력
+print(&quot;-&quot;*20+&quot;\ns1[s1 &gt; s1.median()]:&quot;, s1[s1 &gt; s1.median()])  # Series의 중앙값보다 큰 요소 출력
+print(&quot;-&quot;*20+&quot;\ns1.iloc[[4, 3, 1]]:&quot;, s1.iloc[[4, 3, 1]])  # 특정 위치의 요소 출력</code></pre>
+<h2>code 52.</h2><pre><code>np.exp(s2)
+print(&quot;s2.dtype:&quot;, s2.dtype)  # Series의 자료형 출력
+s2.dtype
+print(&quot;np.exp(s2):&quot;, np.exp(s2))  # Series의 각 요소에 지수 함수 적용
+
+s3_ar = s3.array
+print(&quot;-&quot;*20+&quot;\ns3_ar:&quot;, s3_ar)  # Series의 array 속성 출력
+s3_ndar = s3.to_numpy()
+print(&quot;s3_ndar:&quot;, s3_ndar)  # Series의 to_numpy() 결과 출력</code></pre>
+<h2>code 53.</h2><pre><code>print(&quot;s3[&#x27;a&#x27;]:&quot;, s3[&#x27;a&#x27;])  # Series의 &#x27;a&#x27; 인덱스 요소 출력
+s3[&#x27;e&#x27;] = 12.
+print(&quot;-&quot;*20+&quot;\ns3:\n&quot;, s3)  # 기존 &#x27;e&#x27; 요소의 값을 12로 변경 후 출력
+
+print(&quot;-&quot;*20+&quot;\n&#x27;e&#x27; in s3:&quot;, &#x27;e&#x27; in s3)  # Series에 &#x27;e&#x27; 인덱스가 있는지 확인
+print(&quot;&#x27;f&#x27; in s3:&quot;, &#x27;f&#x27; in s3)           # Series에 &#x27;f&#x27; 인덱스가 있는지 확인 (결과는 False)
+
+print(&quot;-&quot;*20+&quot;\ns3.get(&#x27;f&#x27;):&quot;, s3.get(&#x27;f&#x27;))         # Series의 &#x27;f&#x27; 인덱스 요소 가져오기 (없으면 None 반환)
+print(&quot;s3.get(&#x27;f&#x27;, np.nan):&quot;, s3.get(&#x27;f&#x27;, np.nan))  # Series의 &#x27;f&#x27; 인덱스 요소 가져오기 (없으면 None 반환)</code></pre>
+<h2>code 54.</h2><pre><code>print(&quot;s1 + s1:\n&quot;, s1 + s1)                 # Series의 요소를 더하기
+print(&quot;-&quot;*20+&quot;\ns1 * 2:\n&quot;, s1 * 2)          # Series의 요소를 2배하기
+print(&quot;-&quot;*20+&quot;\nnp.exp(s1):\n&quot;, np.exp(s1))  # Series의 각 요소에 지수 함수 적용
+
+print(&quot;s1[1:] + s1[:-1]:\n&quot;, s1[1:] + s1[:-1])  # Series의 슬라이싱 후 요소 더하기
+
+s = pd.Series(np.random.randn(5), name=&#x27;something&#x27;)
+print(&quot;-&quot;*20+&quot;\ns:\n&quot;, s)          # Series 전체 출력
+print(&quot;-&quot;*20+&quot;\ns.name:&quot;, s.name)  # Series의 name 속성 출력
+
+s = s.rename(&quot;different&quot;)
+print(&quot;s.name(after rename):&quot;, s.name)  # Series의 이름 변경 후 출력</code></pre>
+<h2>code 55.</h2><pre><code>import pandas as pd  # pandas 사용
+import numpy as np   # numpy 사용
+
+d = {&#x27;one&#x27;: pd.Series([1., 2., 3.], index=[&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;])}
+df1 = pd.DataFrame(d)
+print(&quot;df1:\n&quot;, df1)  # df1 출력
+
+d = {&#x27;one&#x27;: pd.Series([1., 2., 3.], index=[&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;]), &#x27;two&#x27;: pd.Series([1., 2., 3., 4.], index=[&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;, &#x27;d&#x27;])}
+df2 = pd.DataFrame(d)
+print(&quot;-&quot;*20+&quot;\ndf2:\n&quot;, df2)  # df2 출력
+
+df3 = pd.DataFrame(d, index=[&#x27;d&#x27;, &#x27;b&#x27;, &#x27;a&#x27;])
+print(&quot;-&quot;*20+&quot;\ndf3:\n&quot;, df3)  # df3 출력
+
+df4 = pd.DataFrame(d, index=[&#x27;d&#x27;, &#x27;b&#x27;, &#x27;a&#x27;], columns=[&#x27;two&#x27;, &#x27;three&#x27;])
+print(&quot;-&quot;*20+&quot;\ndf4:\n&quot;, df4)  # df4 출력 (없는 열은 NaN)</code></pre>
+<h2>code 56.</h2><pre><code>d = {&#x27;one&#x27;: [1., 2., 3., 4.], &#x27;two&#x27;: [4., 3., 2., 1.]}
+df5 = pd.DataFrame(d)
+print(&quot;df5:\n&quot;, df5)  # DataFrame 출력
+
+
+print(&quot;-&quot;*20+&quot;\ndf5.index:&quot;, df5.index)  # DataFrame의 인덱스 출력
+print(&quot;df5.columns:&quot;, df5.columns)       # DataFrame의 열 이름 출력
+
+df6 = pd.DataFrame(d, index=[&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;, &#x27;d&#x27;])
+print(&quot;-&quot;*20+&quot;\ndf6:\n&quot;, df6)  # DataFrame 출력 (인덱스 지정)</code></pre>
+<h2>code 57.</h2><pre><code>data = np.zeros((2,), dtype=[(&#x27;A&#x27;, &#x27;i4&#x27;), (&#x27;B&#x27;, &#x27;f4&#x27;), (&#x27;C&#x27;, &#x27;S10&#x27;)])
+print(&quot;data:&quot;, data)  # 구조화된 배열 출력
+df7 = pd.DataFrame(data)    
+print(&quot;-&quot;*20+&quot;\ndf7:\n&quot;, df7)  # DataFrame 출력 (구조화된 배열로부터 생성)
+
+data[:] = [(1, 2., &#x27;Hello&#x27;), (2, 3., &quot;World&quot;)]
+print(&quot;-&quot;*20+&quot;\ndata:&quot;, data)  # 구조화된 배열 출력
+df8 = pd.DataFrame(data)
+print(&quot;-&quot;*20+&quot;\ndf8:\n&quot;, df8)  # DataFrame 출력 (구조화된 배열로부터 생성)
+
+df9 = pd.DataFrame(data, index=[&#x27;first&#x27;, &#x27;second&#x27;])
+print(&quot;-&quot;*20+&quot;\ndf9:\n&quot;, df9)  # DataFrame 출력 (인덱스 지정)
+
+df10 = pd.DataFrame(data, columns=[&#x27;C&#x27;, &#x27;A&#x27;, &#x27;B&#x27;])
+print(&quot;-&quot;*20+&quot;\ndf10:\n&quot;, df10)  # DataFrame 출력 (열 순서 변경)
+
+data2 = [{&#x27;a&#x27;: 1, &#x27;b&#x27;: 2}, {&#x27;a&#x27;: 5, &#x27;b&#x27;: 10, &#x27;c&#x27;: 20}]
+df11 = pd.DataFrame(data2)
+print(&quot;-&quot;*20+&quot;\ndf11:\n&quot;, df11)  # DataFrame 출력 (딕셔너리 리스트로부터 생성)
+
+df12 = pd.DataFrame({(&#x27;a&#x27;, &#x27;b&#x27;): {(&#x27;A&#x27;, &#x27;B&#x27;): 1, (&#x27;A&#x27;, &#x27;C&#x27;): 2},
+              (&#x27;a&#x27;, &#x27;a&#x27;): {(&#x27;A&#x27;, &#x27;C&#x27;): 3, (&#x27;A&#x27;, &#x27;B&#x27;): 4},
+              (&#x27;a&#x27;, &#x27;c&#x27;): {(&#x27;A&#x27;, &#x27;B&#x27;): 5, (&#x27;A&#x27;, &#x27;C&#x27;): 6},
+              (&#x27;b&#x27;, &#x27;a&#x27;): {(&#x27;A&#x27;, &#x27;C&#x27;): 7, (&#x27;A&#x27;, &#x27;B&#x27;): 8},
+              (&#x27;b&#x27;, &#x27;b&#x27;): {(&#x27;A&#x27;, &#x27;D&#x27;): 9, (&#x27;A&#x27;, &#x27;B&#x27;): 10}})
+print(&quot;-&quot;*20+&quot;\ndf12:\n&quot;, df12)                      # DataFrame 출력 (딕셔너리로부터 생성, MultiIndex 사용)
+print(&quot;-&quot;*20+&quot;\ndf12[&#x27;a&#x27;][&#x27;b&#x27;]:\n&quot;, df12[&#x27;a&#x27;][&#x27;b&#x27;])  # DataFrame의 MultiIndex 열 접근
+print(&quot;-&quot;*20+&quot;\ndf12[&#x27;a&#x27;, &#x27;b&#x27;]:\n&quot;, df12[&#x27;a&#x27;, &#x27;b&#x27;])  # DataFrame의 MultiIndex 열 접근 (튜플 사용)</code></pre>
+<h2>code 58.</h2><pre><code>data = {&quot;names&quot;: [&quot;Kilho&quot;, &quot;Kilho&quot;, &quot;Kilho&quot;, &quot;Charles&quot;, &quot;Charles&quot;],
+           &quot;year&quot;: [2014, 2015, 2016, 2015, 2016],
+           &quot;points&quot;: [1.5, 1.7, 3.6, 2.4, 2.9]}
+df3 = pd.DataFrame(data, columns=[&quot;year&quot;, &quot;names&quot;, &quot;points&quot;, &quot;penalty&quot;],
+                          index=[&quot;one&quot;, &quot;two&quot;, &quot;three&quot;, &quot;four&quot;, &quot;five&quot;])
+print(&quot;df3:\n&quot;, df3)                                # df3 출력
+print(&quot;-&quot;*20+&quot;\ntype(df3[&#x27;year&#x27;]): {}&quot;.format(type(df3[&#x27;year&#x27;])))  # 단일 열 타입 출력
+print(&quot;type(df3[[&#x27;year&#x27;]]): {}&quot;.format(type(df3[[&#x27;year&#x27;]])))  # 단일 열을 DataFrame으로 타입 출력
+print(&quot;type(df3.year): {}&quot;.format(type(df3.year)))  # 점 표기법으로 열 타입 출력
+print(&quot;type(df3[[&#x27;year&#x27;, &#x27;points&#x27;]]): {}&quot;.format(type(df3[[&#x27;year&#x27;, &#x27;points&#x27;]])))  # 다중 열 타입 출력
+
+# names 열을 인덱스로 설정
+df3 = df3.set_index(&#x27;names&#x27;)
+print(&quot;-&quot;*20+&quot;\ndf3.describe() :\n&quot;, df3.describe())  # DataFrame 기술통계 출력
+
+print(&quot;-&quot;*20+&quot;\ndf3.iloc[1]:\n &quot;,  df3.iloc[1])  # iloc로 1번 위치(두 번째) 행 출력
+print(&quot;-&quot;*20+&quot;\ndf3.loc[&#x27;Kilho&#x27;]:\n&quot;, df3.loc[&quot;Kilho&quot;])  # loc로 &#x27;Kilho&#x27; 인덱스 행 출력
+
+df3 = df3.reset_index()
+print(&quot;-&quot;*20+&quot;\ndf3:\n&quot;, df3)  # 인덱스 초기화 후 df3 출력</code></pre>
+<h2>code 59.</h2><pre><code># DataFrame 생성
+data = {&#x27;names&#x27;: [&#x27;Kilho&#x27;, &#x27;Kilho&#x27;, &#x27;Kilho&#x27;, &#x27;Charles&#x27;, &#x27;Charles&#x27;],
+        &#x27;year&#x27;: [2014, 2015, 2016, 2015, 2016],
+        &#x27;points&#x27;: [1.5, 1.7, 3.6, 2.4, 2.9]}
+df = pd.DataFrame(data, columns=[&#x27;year&#x27;, &#x27;names&#x27;, &#x27;points&#x27;], index=[&#x27;one&#x27;, &#x27;two&#x27;, &#x27;three&#x27;, &#x27;four&#x27;, &#x27;five&#x27;])
+print(&quot;-&quot;*20+&quot;\ndf:\n&quot;, df)  # DataFrame 출력   
+df[&#x27;penalty&#x27;] = 0.5
+print(&quot;-&quot;*20+&quot;\ndf:\n&quot;, df)  # penalty 열 추가 후 출력
+
+# 새로운 열 추가
+df[&#x27;zeros&#x27;] = np.arange(5)
+print(&quot;-&quot;*20+&quot;\ndf:\n&quot;, df)  # zeros 열 추가 후 출력
+
+# Series로 열 추가
+val = pd.Series([-1.2, -1.5, -1.7, -2.5, -2.2], index=df.index)
+df[&#x27;debt&#x27;] = val
+print(&quot;-&quot;*20+&quot;\ndf:\n&quot;, df)  # debt 열 추가 후 출력
+
+# 계산 결과로 새 열 추가
+df[&#x27;net_points&#x27;] = df[&#x27;points&#x27;] - df[&#x27;penalty&#x27;]
+print(&quot;-&quot;*20+&quot;\ndf:\n&quot;, df)  # net_points 열 추가 후 출력
+
+# 조건식으로 불린 열 추가
+df[&#x27;high_points&#x27;] = df[&#x27;net_points&#x27;] &gt; 2.0
+print(&quot;-&quot;*20+&quot;\ndf:\n&quot;, df)  # high_points 열 추가 후 출력
+
+# 열 삭제
+del df[&#x27;high_points&#x27;]
+print(&quot;-&quot;*20+&quot;\ndf:\n&quot;, df)  # high_points 열 삭제 후 출력
+
+# 1번 위치 인덱스 삭제
+df = df.drop(df.index[1])
+print(&quot;-&quot;*20+&quot;\ndf:\n&quot;, df)  # 1번 인덱스 삭제 후 출력
+
+# 중복 제거 후 인덱스 설정
+df = df.drop_duplicates(subset=&#x27;names&#x27;, keep=&#x27;last&#x27;).set_index(&#x27;names&#x27;)
+print(&quot;-&quot;*20+&quot;\ndf:\n&quot;, df)  # 중복 제거 및 인덱스 설정 후 출력</code></pre>
+<h2>code 60.</h2><pre><code>d1 = {&#x27;one&#x27;: pd.Series([1., 2., 3.], index=[&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;])}
+df1 = pd.DataFrame(d1)
+print(&quot;df1:\n&quot;, df1)  # df1 출력
+
+d2 = {&#x27;one&#x27;: pd.Series([3., 4., 5.], index=[&#x27;c&#x27;, &#x27;d&#x27;, &#x27;e&#x27;])}
+df2 = pd.DataFrame(d2)
+print(&quot;-&quot;*20+&quot;\ndf2:\n&quot;, df2)  # df2 출력
+
+df1_df2 = pd.concat((df1, df2), ignore_index=True, axis=0)  # df1과 df2 합치기
+print(&quot;df1_df2:\n&quot;, df1_df2)                       # 합친 DataFrame 출력
+print(&quot;-&quot;*20+&quot;\ndf1_df2.index:\n&quot;, df1_df2.index)  # 인덱스 출력
+
+print(&quot;-&quot;*20+&quot;\ndf1_df2.duplicated():\n&quot;, df1_df2.duplicated())  # 중복 행 확인</code></pre>
+<h2>code 61.</h2><pre><code>import pandas as pd
+
+df = pd.DataFrame(
+    {&#x27;price&#x27;: [100, 200, 300],
+     &#x27;weight&#x27;: [20.3, 15.1, 25.9]},
+    index=[&#x27;idx_a&#x27;, &#x27;idx_b&#x27;, &#x27;idx_c&#x27;])
+print(&quot;df:\n&quot;, df)
+
+## DataFrame.iterrows() - 행별 반복
+for idx, row in df.iterrows():
+    print(&quot;** 인덱스 이름:&quot;, idx)
+    print(idx, row)
+    print(&quot;------&quot;*5)
+
+## DataFrame.items() - 열별 반복  
+for col, item in df.items():
+    print(&quot;** 열 이름:&quot;, col)
+    print(col, item) # = print(item, sep=&#x27;\n&#x27;)
+    print(&quot;-----&quot;*5)
+
+## DataFrame.itertuples() - 튜플 형태로 행 반복
+for row in df.itertuples():
+    print(row)</code></pre>
+<h2>code 62.</h2><pre><code>import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.ticker import AutoMinorLocator, MultipleLocator, FuncFormatter
+
+np.random.seed(19680801)
+
+X = np.linspace(0.5, 3.5, 100)
+Y1 = 3+np.cos(X)
+Y2 = 1+np.cos(1+X/0.75)/2
+Y3 = np.random.uniform(Y1, Y2, len(X))
+
+fig = plt.figure(figsize=(8, 8))
+ax = fig.add_subplot(1, 1, 1, aspect=1)
+
+
+def minor_tick(x, pos):
+    if not x % 1.0:
+        return &quot;&quot;
+    return &quot;%.2f&quot; % x
+
+ax.xaxis.set_major_locator(MultipleLocator(1.000))
+ax.xaxis.set_minor_locator(AutoMinorLocator(4))
+ax.yaxis.set_major_locator(MultipleLocator(1.000))
+ax.yaxis.set_minor_locator(AutoMinorLocator(4))
+ax.xaxis.set_minor_formatter(FuncFormatter(minor_tick))
+
+ax.set_xlim(0, 4)
+ax.set_ylim(0, 4)
+
+ax.tick_params(which=&#x27;major&#x27;, width=1.0)
+ax.tick_params(which=&#x27;major&#x27;, length=10)
+ax.tick_params(which=&#x27;minor&#x27;, width=1.0, labelsize=10)
+ax.tick_params(which=&#x27;minor&#x27;, length=5, labelsize=10, labelcolor=&#x27;0.25&#x27;)
+
+ax.grid(linestyle=&quot;--&quot;, linewidth=0.5, color=&#x27;.25&#x27;, zorder=-10)
+
+ax.plot(X, Y1, c=(0.25, 0.25, 1.00), lw=2, label=&quot;Blue signal&quot;, zorder=10)
+ax.plot(X, Y2, c=(1.00, 0.25, 0.25), lw=2, label=&quot;Red signal&quot;)
+ax.plot(X, Y3, linewidth=0,
+        marker=&#x27;o&#x27;, markerfacecolor=&#x27;w&#x27;, markeredgecolor=&#x27;k&#x27;)
+
+ax.set_title(&quot;Anatomy of a figure&quot;, fontsize=20, verticalalignment=&#x27;bottom&#x27;)
+ax.set_xlabel(&quot;X axis label&quot;)
+ax.set_ylabel(&quot;Y axis label&quot;)
+
+ax.legend()
+
+
+def circle(x, y, radius=0.15):
+    from matplotlib.patches import Circle
+    from matplotlib.patheffects import withStroke
+    circle = Circle((x, y), radius, clip_on=False, zorder=10, linewidth=1,
+                    edgecolor=&#x27;black&#x27;, facecolor=(0, 0, 0, .0125),
+                    path_effects=[withStroke(linewidth=5, foreground=&#x27;w&#x27;)])
+    ax.add_artist(circle)
+
+
+def text(x, y, text):
+    ax.text(x, y, text, backgroundcolor=&quot;white&quot;,
+            ha=&#x27;center&#x27;, va=&#x27;top&#x27;, weight=&#x27;bold&#x27;, color=&#x27;blue&#x27;)
+
+
+# 보조 눈금
+circle(0.50, -0.10)
+text(0.50, -0.32, &quot;Minor tick label&quot;)
+
+# 주 눈금
+circle(-0.03, 4.00)
+text(0.03, 3.80, &quot;Major tick&quot;)
+
+# 보조 눈금
+circle(0.00, 3.50)
+text(0.00, 3.30, &quot;Minor tick&quot;)
+
+# 주 눈금 label
+circle(-0.15, 3.00)
+text(-0.15, 2.80, &quot;Major tick label&quot;)
+
+# x축 이름
+circle(1.80, -0.27)
+text(1.80, -0.45, &quot;X axis label&quot;)
+
+# y축 이름
+circle(-0.27, 1.80)
+text(-0.27, 1.6, &quot;Y axis label&quot;)
+
+# 제목
+circle(1.60, 4.13)
+text(1.60, 3.93, &quot;Title&quot;)
+
+# 파란색 그래프
+circle(1.75, 2.80)
+text(1.75, 2.60, &quot;Line\n(line plot)&quot;)
+
+# 빨간색 그래프
+circle(1.20, 0.60)
+text(1.20, 0.40, &quot;Line\n(line plot)&quot;)
+
+# 산점도
+circle(3.20, 1.75)
+text(3.20, 1.55, &quot;Markers\n(scatter plot)&quot;)
+
+# 격자
+circle(3.00, 3.00)
+text(3.00, 2.80, &quot;Grid&quot;)
+
+# 범례
+circle(3.70, 3.80)
+text(3.70, 3.60, &quot;Legend&quot;)
+
+# 축 영역(Axes)
+circle(0.5, 0.5)
+text(0.5, 0.3, &quot;Axes&quot;)
+
+# 그림 전체(Figure)
+circle(-0.3, 0.65)
+text(-0.3, 0.45, &quot;Figure&quot;)
+
+color = &#x27;blue&#x27;
+ax.annotate(&#x27;Spines&#x27;, xy=(4.0, 0.35), xytext=(3.3, 0.5),
+            weight=&#x27;bold&#x27;, color=color,
+            arrowprops=dict(arrowstyle=&#x27;-&gt;&#x27;,
+                            connectionstyle=&quot;arc3&quot;,
+                            color=color))
+
+ax.annotate(&#x27;&#x27;, xy=(3.15, 0.0), xytext=(3.45, 0.45),
+            weight=&#x27;bold&#x27;, color=color,
+            arrowprops=dict(arrowstyle=&#x27;-&gt;&#x27;,
+                            connectionstyle=&quot;arc3&quot;,
+                            color=color))
+
+ax.text(4.0, -0.4, &quot;Made with http://matplotlib.org&quot;,
+        fontsize=10, ha=&quot;right&quot;, color=&#x27;.5&#x27;)
+
+plt.show()</code></pre>
+<h2>code 63.</h2><pre><code>import matplotlib.pyplot as plt
+# 한글 폰트 미설정 시 &#x27;축&#x27; 등 한글 미표시(code 68 참조)
+
+# 데이터 정의
+x = [1, 2, 3, 4, 5]   # x축 좌표값
+y = [2, 4, 6, 8, 10]  # y축 좌표값
+
+plt.plot(x, y)            # 선 그래프 그리기
+plt.title(&quot;Sample Plot&quot;)  # 그래프 제목 설정
+plt.xlabel(&quot;X축&quot;)          # X축 레이블 설정
+plt.ylabel(&quot;Y축&quot;)          # Y축 레이블 설정
+plt.grid(True)            # 격자 표시 활성화
+plt.show()                # 그래프 화면에 출력</code></pre>
+<h2>code 64.</h2><pre><code>import matplotlib.pyplot as plt
+
+# 2행 2열의 서브플롯 생성
+fig, axes = plt.subplots(2, 2, figsize=(10, 8))
+
+# 첫 번째 그래프 (0,0)
+axes[0, 0].plot([1, 2])
+axes[0, 0].set_title(&#x27;Graph 1: [1, 2]&#x27;)
+axes[0, 0].grid(True)
+
+# 두 번째 그래프 (0,1)
+axes[0, 1].plot([2, 3, 5, 10])
+axes[0, 1].set_title(&#x27;Graph 2: [2, 3, 5, 10]&#x27;)
+axes[0, 1].grid(True)
+
+# 세 번째 그래프 (1,0)
+axes[1, 0].plot([1, 2, 3, 4], [2, 3, 5, 10])
+axes[1, 0].set_title(&#x27;Graph 3: x=[1,2,3,4], y=[2,3,5,10]&#x27;)
+axes[1, 0].grid(True)
+
+# 네 번째 그래프 (1,1)
+data_dict = {&#x27;data_x&#x27;: [1, 2, 3, 4, 5], &#x27;data_y&#x27;: [2, 3, 5, 10, 8]}
+axes[1, 1].plot(&#x27;data_x&#x27;, &#x27;data_y&#x27;, data=data_dict)
+axes[1, 1].set_title(&#x27;Graph 4: Dictionary data&#x27;)
+axes[1, 1].grid(True)
+
+# 레이아웃 조정
+plt.tight_layout()
+plt.show()</code></pre>
+<h2>code 65.</h2><pre><code>import matplotlib.pyplot as plt
+
+fig, axes = plt.subplots(2, 3, figsize=(15, 10))
+
+# 첫 번째 플롯 (0,0) - 폰트 스타일링
+axes[0,0].plot([1, 2, 3, 4], [2, 3, 5, 10])
+axes[0,0].set_xlabel(&#x27;X-Axis&#x27;, labelpad=15, 
+    fontdict={&#x27;family&#x27;: &#x27;serif&#x27;, &#x27;color&#x27;: &#x27;b&#x27;, &#x27;weight&#x27;: &#x27;bold&#x27;, &#x27;size&#x27;: 14})
+axes[0,0].set_ylabel(&#x27;Y-Axis&#x27;, labelpad=20, 
+    fontdict={&#x27;family&#x27;: &#x27;fantasy&#x27;, &#x27;color&#x27;: &#x27;deeppink&#x27;, &#x27;weight&#x27;: &#x27;normal&#x27;, &#x27;size&#x27;: &#x27;xx-large&#x27;})
+axes[0,0].set_title(&#x27;Font Styling&#x27;)
+
+# 두 번째 플롯 (0,1) - 레이블 위치 조정
+axes[0,1].plot([1, 2, 3, 4], [2, 3, 5, 10])
+axes[0,1].set_xlabel(&#x27;X-Axis&#x27;, loc=&#x27;right&#x27;)
+axes[0,1].set_ylabel(&#x27;Y-Axis&#x27;, loc=&#x27;top&#x27;)
+axes[0,1].set_title(&#x27;Label Position&#x27;)
+
+# 세 번째 플롯 (0,2) - 기본 범례
+axes[0,2].plot([1, 2, 3, 4], [2, 3, 5, 10], label=&#x27;Price ($)&#x27;)
+axes[0,2].set_xlabel(&#x27;X-Axis&#x27;)
+axes[0,2].set_ylabel(&#x27;Y-Axis&#x27;)
+axes[0,2].legend()
+axes[0,2].set_title(&#x27;Basic Legend&#x27;)
+
+# 네 번째 플롯 (1,0) - 범례 위치 지정
+axes[1,0].plot([1, 2, 3, 4], [2, 3, 5, 10], label=&#x27;Price ($)&#x27;)
+axes[1,0].set_xlabel(&#x27;X-Axis&#x27;)
+axes[1,0].set_ylabel(&#x27;Y-Axis&#x27;)
+axes[1,0].legend(loc=&#x27;lower right&#x27;)
+axes[1,0].set_title(&#x27;Legend Position&#x27;)
+
+# 다섯 번째 플롯 (1,1) - 다중 라인과 범례 스타일링
+axes[1,1].plot([1, 2, 3, 4], [2, 3, 5, 10], label=&#x27;Price ($)&#x27;)
+axes[1,1].plot([1, 2, 3, 4], [3, 5, 9, 7], label=&#x27;Demand (#)&#x27;)
+axes[1,1].set_xlabel(&#x27;X-Axis&#x27;)
+axes[1,1].set_ylabel(&#x27;Y-Axis&#x27;)
+axes[1,1].legend(loc=&#x27;best&#x27;, ncol=2, fontsize=14)
+axes[1,1].set_title(&#x27;Multi-line with Legend Styling&#x27;)
+
+# 여섯 번째 플롯 (1,2) - 범례 프레임과 그림자
+axes[1,2].plot([1, 2, 3, 4], [2, 3, 5, 10], label=&#x27;Price ($)&#x27;)
+axes[1,2].plot([1, 2, 3, 4], [3, 5, 9, 7], label=&#x27;Demand (#)&#x27;)
+axes[1,2].set_xlabel(&#x27;X-Axis&#x27;)
+axes[1,2].set_ylabel(&#x27;Y-Axis&#x27;)
+axes[1,2].legend(loc=&#x27;best&#x27;, ncol=2, fontsize=14, frameon=True, shadow=True)
+axes[1,2].set_title(&#x27;Legend with Frame &amp; Shadow&#x27;)
+
+plt.tight_layout()
+plt.show()</code></pre>
+<h2>code 66.</h2><pre><code>import matplotlib.pyplot as plt
+
+# [0,1] 리스트로 간단한 선 그래프 그리기 (x축은 자동으로 [0,1]이 됨)
+plt.plot([0,1])
+# PNG 형식으로 그래프 저장
+plt.savefig(f&quot;{proj_dir}/pic.png&quot;)
+# PDF(벡터) 형식으로 저장(dpi는 래스터 요소에만 적용), 여백을 최소화하고 패딩 0.1 추가
+plt.savefig(f&quot;{proj_dir}/pic.pdf&quot;, dpi=300, bbox_inches=&#x27;tight&#x27;, pad_inches=0.1 )
+plt.show()</code></pre>
+<h2>code 67.</h2><pre><code>import matplotlib.pyplot as plt
+
+# 파일 경로 설정 (proj_dir 폴더 내의 pic.png 파일)
+fname = f&quot;{proj_dir}/pic.png&quot;
+
+# 이미지 파일을 읽어서 배열로 저장
+chart_png = plt.imread(fname)
+
+# 이미지를 화면에 표시 (보간법 없이 원본 픽셀 그대로 표시)
+plt.imshow(chart_png, interpolation=&#x27;none&#x27;)
+
+# 그래프를 화면에 출력
+plt.show()</code></pre>
+<h2>code 68.</h2><pre><code># 한글 폰트 설정 및 깨짐 문제 해결
+import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
+import platform
+
+# 운영체제별 한글 폰트 설정
+def setup_korean_font():
+    &quot;&quot;&quot;
+    운영체제에 따라 적절한 한글 폰트를 설정하는 함수
+    &quot;&quot;&quot;
+    system = platform.system()
+    
+    if system == &#x27;Windows&#x27;:
+        # Windows의 경우 맑은 고딕 또는 굴림 사용
+        font_candidates = [&#x27;Malgun Gothic&#x27;, &#x27;Gulim&#x27;, &#x27;Batang&#x27;]
+    elif system == &#x27;Darwin&#x27;:  # macOS
+        # macOS의 경우 애플 고딕 사용
+        font_candidates = [&#x27;AppleGothic&#x27;, &#x27;Arial Unicode MS&#x27;]
+    else:  # Linux
+        # Linux의 경우 나눔고딕 또는 Noto Sans CJK 사용
+        font_candidates = [&#x27;NanumGothic&#x27;, &#x27;Noto Sans CJK KR&#x27;, &#x27;DejaVu Sans&#x27;]
+    
+    # 사용 가능한 폰트 찾기
+    available_fonts = [f.name for f in fm.fontManager.ttflist]
+    
+    for font in font_candidates:
+        if font in available_fonts:
+            plt.rcParams[&#x27;font.family&#x27;] = font
+            print(f&quot;한글 폰트 설정 완료: {font}&quot;)
+            break
+    else:
+        # 대체 폰트 설정
+        plt.rcParams[&#x27;font.family&#x27;] = &#x27;DejaVu Sans&#x27;
+        print(&quot;기본 폰트로 설정됨 (한글이 깨질 수 있음)&quot;)
+    
+    # 마이너스 폰트 깨짐 방지
+    plt.rcParams[&#x27;axes.unicode_minus&#x27;] = False
+    
+    return plt.rcParams[&#x27;font.family&#x27;]
+
+# 한글 폰트 설정 실행
+current_font = setup_korean_font()
+
+# 폰트 테스트 
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.text(0.5, 0.7, &#x27;한글 폰트 테스트&#x27;, fontsize=20, ha=&#x27;center&#x27;, transform=ax.transAxes)
+ax.text(0.5, 0.5, f&#x27;현재 설정된 폰트: {current_font}&#x27;, fontsize=14, ha=&#x27;center&#x27;, transform=ax.transAxes)
+ax.text(0.5, 0.3, &#x27;위성의 궤도 분석&#x27;, fontsize=16, ha=&#x27;center&#x27;, transform=ax.transAxes)
+ax.set_xlim(0, 1)
+ax.set_ylim(0, 1)
+ax.set_title(&#x27;한글 표시 테스트&#x27;)
+plt.show()
+
+print(f&quot;\n현재 시스템: {platform.system()}&quot;)
+print(f&quot;설정된 폰트: {current_font}&quot;)
+print(&quot;한글이 정상적으로 표시되면 설정이 완료되었습니다.&quot;)</code></pre>
+</body></html>

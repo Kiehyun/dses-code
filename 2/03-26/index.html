@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>III-06. FITS 파일 천체 위치 보정</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 2</a></p>
+<h1>III-06. FITS 파일 천체 위치 보정</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/03-26/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 192.</h2><pre><code># 파일 ID와 저장 경로를 리스트로 정의
+files = [
+    (&quot;1qJQdbmdeHg23sPdLKRGfPq93Sfo1HT_3&quot;,
+     &quot;46P-WIRTANEN_LIGHT_R_2018-12-13-17-46-15_&quot;
+     &quot;60sec_FSQ106ED-x73_QSI683ws_-30c_2bin.fit&quot;),
+    (&quot;1mCX_QfgbyskObkF9I_IDRk2oYWHOQjxs&quot;,
+     &quot;IC434_Light_H_2019-10-08-09-38-54_&quot;
+     &quot;900sec_GSON300_QSI683ws_-15C_1bin.fit&quot;),
+    (&quot;1h15EMnhYb02KNhLkuqyUdR00fZV4xf3C&quot;,
+     &quot;M13_Light_L_2021-06-04-13-10-16_090sec_&quot;
+     &quot;TEC140x75_STL-11000M_-19C_1bin.fit&quot;)
+]
+
+# for 루프를 사용하여 파일 다운로드
+for file_id, output_path in files:
+    du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={file_id}&quot;,
+                PROJ / output_path)</code></pre>
+<h2>code 193.</h2><pre><code>fpaths = du.list_files(PROJ, &quot;fit*&quot;)</code></pre>
+<h2>code 194.</h2><pre><code>fpaths[0]</code></pre>
+<h2>code 195.</h2><pre><code>from pathlib import Path
+from astropy.io import fits
+
+fpath = Path(fpaths[0])
+print(&quot;fpath&quot;, (fpath))
+
+hdul = fits.open(fpath)
+
+print(&quot;type(hdul) :&quot;, type(hdul))
+print(&quot;hdul :&quot;, hdul)</code></pre>
+<h2>code 196.</h2><pre><code>import matplotlib.pyplot as plt
+
+from astropy.visualization import (MinMaxInterval, SqrtStretch,
+                                   ImageNormalize)
+
+# ImageNormalize 객체 만들기
+norm = ImageNormalize(hdul[0].data, interval=MinMaxInterval(),
+                      stretch=SqrtStretch())
+
+fig, axs = plt.subplots(1, 2, figsize=(7.5, 2.5),
+                       sharex=False, sharey=False, gridspec_kw=None)
+
+im1 = axs[0].imshow(hdul[0].data,
+                origin=&#x27;lower&#x27;,
+                )
+axs[0].set_title(&#x27;Original&#x27;, fontsize=8)
+
+im2 = axs[1].imshow(hdul[0].data,
+                origin=&#x27;lower&#x27;,
+                norm=norm,
+                )
+axs[1].set_title(&#x27;Normalization&#x27;, fontsize=8)
+
+fig.suptitle(f&#x27;{str(fpaths[0])}&#x27;, fontsize=8)
+fig.colorbar(im1, ax = axs[0], fraction=0.035, pad=0.04)
+fig.colorbar(im2, ax = axs[1], fraction=0.035, pad=0.04)
+plt.tight_layout()</code></pre>
+<h2>code 197.</h2><pre><code># 영상 표시 함수 znorm · zimshow · norm_imshow 는 Ⅲ-04 「FITS 파일 다루기」에서 설명했고 dses_utils 에 들어 있음</code></pre>
+<h2>code 198.</h2><pre><code>def checkPSolve(fpath,
+                    **kwargs,
+                    ):
+    &quot;&quot;&quot;
+    Parameters
+    ----------
+    fpath : path-like
+        The path to the original FITS file.
+
+    return
+    ----------
+    SOLVE, ASTAP, LOCAL :  bool, bool, bool
+
+    &quot;&quot;&quot;
+
+    fpath = Path(fpath)
+
+    hdul = fits.open(fpath)
+    PSKeys = [&quot;CRVAL1&quot;, &quot;CRVAL2&quot;, &quot;CRPIX1&quot;, &quot;CRPIX2&quot;,
+              &quot;CD1_1&quot;, &quot;CD1_2&quot;, &quot;CD2_1&quot;, &quot;CD2_2&quot;,
+              &quot;A_0_0&quot;, &quot;A_0_1&quot;, &quot;A_1_0&quot;,&quot;A_1_1&quot;,
+              &quot;PC1_1&quot;, &quot;PC1_2&quot;, &quot;PC2_1&quot;, &quot;PC2_2&quot;,
+              ]
+
+    chk = 0
+    SOLVE = False
+    ASTAP = False
+    LOCAL = False
+
+    for PSKey in PSKeys :
+        if PSKey in hdul[0].header :
+            chk += 1
+    if chk &gt; 5 :
+        SOLVE = True
+        LOCAL = False
+        ASTAP = False
+        try :
+            for comment in hdul[0].header[&quot;COMMENT&quot;]:
+                if &quot;scale:&quot; in comment :
+                    LOCAL = True
+        except :
+            LOCAL = False
+
+        if &quot;PLTSOLVD&quot; in hdul[0].header:
+            try :
+                ASTAP = hdul[0].header[&quot;PLTSOLVD&quot;]
+            except :
+                ASTAP = False
+    else :
+        SOLVE = False
+        ASTAP = False
+        LOCAL = False
+    hdul.close()
+
+    return SOLVE, ASTAP, LOCAL</code></pre>
+<h2>code 199.</h2><pre><code>SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[0]))
+print(&quot;SOLVE, ASTAP, LOCAL :&quot;, SOLVE, ASTAP, LOCAL)
+SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[1]))
+print(&quot;SOLVE, ASTAP, LOCAL :&quot;, SOLVE, ASTAP, LOCAL)
+SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[2]))
+print(&quot;SOLVE, ASTAP, LOCAL :&quot;, SOLVE, ASTAP, LOCAL)</code></pre>
+<h2>code 200.</h2><pre><code>import os
+from astroquery.astrometry_net import AstrometryNet
+
+ast = AstrometryNet()
+
+# API 키는 코드에 적지 않고 환경 변수에서 읽음(nova.astrometry.net 에서 발급)
+api_key = os.environ.get(&quot;ASTROMETRY_NET_API_KEY&quot;, &quot;&quot;)
+if api_key:
+    ast.api_key = api_key
+    print(&quot;환경 변수 ASTROMETRY_NET_API_KEY 에서 API 키를 읽었습니다.&quot;)
+else:
+    print(&quot;환경 변수 ASTROMETRY_NET_API_KEY 가 없습니다. 새 파일을 위치 보정하려면 키를 설정하세요.\n&quot;
+          &quot;(이미 위치 보정된 파일은 키 없이 다룰 수 있습니다)&quot;)</code></pre>
+<h2>code 201.</h2><pre><code>print(fpaths[0])
+SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[0]))
+print(&quot;SOLVE, ASTAP, LOCAL :&quot;, SOLVE, ASTAP, LOCAL)
+print(&quot;before solving :&quot;, &quot;헤더 카드&quot;, len(hdul[0].header), &quot;개&quot;)
+
+solve_timeout = 600
+if SOLVE:
+    print(&quot;이미 위치 보정된 파일이므로 다시 풀지 않습니다.&quot;)
+elif not ast.api_key:
+    print(&quot;API 키가 없어 위치 보정을 건너뜁니다.&quot;)
+else:
+    wcs_header = ast.solve_from_image(str(fpaths[0]),
+                            solve_timeout = solve_timeout,
+                            )
+    if wcs_header :
+        with fits.open(str(fpaths[0]), mode=&#x27;update&#x27;) as hdul:
+            for card in wcs_header :
+                if card in (&quot;COMMENT&quot;, &quot;HISTORY&quot;, &quot;&quot;):     # 설명 카드는 건너뜀
+                    continue
+                hdul[0].header.set(card, wcs_header[card],
+                                   wcs_header.comments[card])
+            hdul.flush()
+
+        print(str(fpaths[0])+&quot; is updated...&quot;)
+
+        SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[0]))
+        print(&quot;SOLVE, ASTAP, LOCAL :&quot;, SOLVE, ASTAP, LOCAL)</code></pre>
+<h2>code 202.</h2><pre><code>#########################################
+# 천체 위치 보정기(AstrometrySolver)
+#########################################
+def AstrometrySolver(fpath,
+                    ast = ast,
+                    submission_id = None,
+                    solve_timeout = 600,
+                    **kwargs,
+                    ):
+    &quot;&quot;&quot;
+    Parameters
+    ----------
+    fpath : path-like
+        The path to the original FITS file.
+
+    return
+    ----------
+    SOLVE, ASTAP, LOCAL :  bool, bool, bool
+    &quot;&quot;&quot;
+
+    fpath = Path(fpath)
+    hdul = fits.open(fpath)
+    print(f&quot;check plate solving : {fpath.name}&quot;)
+    SOLVE, ASTAP, LOCAL = checkPSolve(str(fpath))
+    print(&quot;SOLVE, ASTAP, LOCAL:&quot;, SOLVE, ASTAP, LOCAL)
+
+    if SOLVE :
+        print(f&quot;{fpath.name} is already solved...&quot;)
+    else :
+        if not os.environ.get(&quot;ASTROMETRY_NET_API_KEY&quot;):   # 키는 위치 보정이 필요할 때만 확인
+            print(&quot;API 키가 없어 위치 보정을 건너뜁니다.&quot;)
+            return SOLVE, ASTAP, LOCAL
+        try_again = True
+
+        try :
+            while try_again:
+                try:
+                    if not submission_id:
+                        wcs_header = ast.solve_from_image(str(fpath),
+                                            force_image_upload=True,
+                                            solve_timeout = solve_timeout,
+                                            submission_id=submission_id)
+                    else:
+                        wcs_header = ast.monitor_submission(submission_id,
+                                                            solve_timeout = solve_timeout)
+                except TimeoutError as e:
+                    submission_id = e.args[1]
+                else:
+                    # 결과를 받았으므로 종료
+                    try_again = False
+
+            if not wcs_header:
+                # 위치 보정에 실패했을 때 실행할 코드
+                print(&quot;fits file solving failure...&quot;)
+
+            else:
+                # 위치 보정에 성공했을 때 실행할 코드
+                print(&quot;fits file solved successfully...&quot;)
+
+                with fits.open(str(fpath), mode=&#x27;update&#x27;) as hdul:
+                    for card in wcs_header :
+                        if card in (&quot;COMMENT&quot;, &quot;HISTORY&quot;, &quot;&quot;):   # 설명 카드는 건너뜀
+                            continue
+                        hdul[0].header.set(card, wcs_header[card],
+                                           wcs_header.comments[card])
+                    hdul.flush()
+
+                print(str(fpath)+&quot; is updated...&quot;)
+
+        except Exception as err:
+            print(&quot;Err :&quot;, err)
+
+    return SOLVE, ASTAP, LOCAL</code></pre>
+<h2>code 203.</h2><pre><code>AstrometrySolver(fpaths[0])
+AstrometrySolver(fpaths[1])
+AstrometrySolver(fpaths[2])</code></pre>
+<h2>code 204.</h2><pre><code>SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[0]))
+print(&quot;SOLVE, ASTAP, LOCAL :&quot;, SOLVE, ASTAP, LOCAL)
+SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[1]))
+print(&quot;SOLVE, ASTAP, LOCAL :&quot;, SOLVE, ASTAP, LOCAL)
+SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[2]))
+print(&quot;SOLVE, ASTAP, LOCAL :&quot;, SOLVE, ASTAP, LOCAL)</code></pre>
+<h2>code 205.</h2><pre><code>def show_header(header, n_head=8):
+    &quot;&quot;&quot;헤더 앞부분과 WCS 관련 카드만 출력하고 나머지는 줄임&quot;&quot;&quot;
+    cards = list(header.cards)
+    for card in cards[:n_head]:
+        print(card)
+    print(f&quot;... (중략 — 전체 {len(cards)}장 중 앞 {n_head}장과 WCS 카드만 표시)&quot;)
+    wcs_keys = (&quot;CTYPE&quot;, &quot;CUNIT&quot;, &quot;CRVAL&quot;, &quot;CRPIX&quot;, &quot;CD1_&quot;, &quot;CD2_&quot;,
+                &quot;PC1_&quot;, &quot;PC2_&quot;, &quot;CDELT&quot;, &quot;EQUINOX&quot;, &quot;RADESYS&quot;)
+    for card in cards[n_head:]:
+        if card.keyword.startswith(wcs_keys):
+            print(card)
+
+
+print(&quot;fpaths[0] :&quot;, fpaths[0])
+hdul0 = fits.open(str(fpaths[0]))
+show_header(hdul0[0].header)</code></pre>
+<h2>code 206.</h2><pre><code>print(&quot;fpaths[1] :&quot;, fpaths[1])
+hdul1 = fits.open(str(fpaths[1]))
+show_header(hdul1[0].header)</code></pre>
+<h2>code 207.</h2><pre><code>print(&quot;fpaths[2] :&quot;, fpaths[2])
+hdul2 = fits.open(str(fpaths[2]))
+show_header(hdul2[0].header)</code></pre>
+<h2>code 208.</h2><pre><code>from astropy import units as u
+from astropy.time import Time
+from astropy.coordinates import SkyCoord
+from astropy.wcs import WCS
+
+wcs0 = WCS(hdul0[0].header)
+wcs1 = WCS(hdul1[0].header)
+wcs2 = WCS(hdul2[0].header)</code></pre>
+<h2>code 209.</h2><pre><code>print(&quot;wcs0 :&quot;, wcs0)
+print(&quot;wcs1 :&quot;, wcs1)
+print(&quot;wcs2 :&quot;, wcs2)
+print(&quot;wcs0.world_axis_physical_types :&quot;, wcs0.world_axis_physical_types)
+print(&quot;wcs1.world_axis_physical_types :&quot;, wcs1.world_axis_physical_types)</code></pre>
+<h2>code 210.</h2><pre><code>import numpy as np
+from astropy.wcs.utils import proj_plane_pixel_scales
+
+for name, w, h in [(&quot;hdul0&quot;, wcs0, hdul0[0].header),
+                   (&quot;hdul1&quot;, wcs1, hdul1[0].header),
+                   (&quot;hdul2&quot;, wcs2, hdul2[0].header)]:
+    scale = proj_plane_pixel_scales(w) * 3600          # 도 → 각초
+    fov_x = scale[0] * h[&quot;NAXIS1&quot;] / 60                 # 각초 → 각분
+    fov_y = scale[1] * h[&quot;NAXIS2&quot;] / 60
+    print(f&quot;{name}: CRVAL = ({w.wcs.crval[0]:.4f}, {w.wcs.crval[1]:.4f}) deg, &quot;
+          f&quot;CRPIX = ({w.wcs.crpix[0]:.1f}, {w.wcs.crpix[1]:.1f}), &quot;
+          f&quot;픽셀 축척 = {scale[0]:.3f}″/px, 시야 = {fov_x:.1f}′ × {fov_y:.1f}′&quot;)</code></pre>
+<h2>code 211.</h2><pre><code>fig = plt.figure()
+ax = fig.add_subplot(1, 1, 1, projection=wcs1)   # hdul1(IC434) 영상의 WCS
+im = plt.imshow(hdul1[0].data, origin=&#x27;lower&#x27;, cmap=&quot;viridis&quot;,)
+
+# ax.coords[&#x27;ra&#x27;].set_ticks(spacing=5. * u.arcmin)
+# ax.coords[&#x27;dec&#x27;].set_ticks(spacing=5. * u.arcmin)
+ax.coords[&#x27;ra&#x27;].set_auto_axislabel(True)
+ax.coords[&#x27;dec&#x27;].set_auto_axislabel(True)
+# ax.coords[&#x27;ra&#x27;].set_ticks_position(&#x27;lb&#x27;)
+# ax.coords[&#x27;dec&#x27;].set_ticks_position(&#x27;lb&#x27;)
+ax.coords[&#x27;ra&#x27;].set_ticklabel_visible(True)
+ax.coords[&#x27;ra&#x27;].set_ticklabel(size=8)
+ax.coords[&#x27;dec&#x27;].set_ticklabel(size=8)
+ax.coords[&#x27;ra&#x27;].set_major_formatter(&#x27;hh:mm:ss&#x27;)
+ax.coords[&#x27;dec&#x27;].set_major_formatter(&#x27;dd:mm:ss&#x27;)
+ax.coords[&#x27;ra&#x27;].set_ticklabel_position(&#x27;l&#x27;)    #왼쪽, 오른쪽, 아래, 위
+ax.coords[&#x27;dec&#x27;].set_ticklabel_position(&#x27;bt&#x27;)  #왼쪽, 오른쪽, 아래, 위
+
+ax.grid(color=&#x27;white&#x27;, ls=&#x27;dotted&#x27;)
+
+# overlay = ax.get_coords_overlay(&#x27;icrs&#x27;)
+# overlay.grid(color=&#x27;white&#x27;, ls=&#x27;dotted&#x27;)
+
+plt.title(&#x27;Image display using WCS&#x27;, fontsize=11, pad=35)
+fig.colorbar(im, fraction=0.035, pad=0.04)
+plt.tight_layout(pad=0.4, w_pad=1, h_pad=1.0)
+plt.show()</code></pre>
+<h2>code 212.</h2><pre><code>fig, axs = plt.subplots(1, 1,
+                        sharex=False, sharey=False, gridspec_kw=None,
+                        subplot_kw={&#x27;projection&#x27;: wcs0},
+                        )
+
+im = du.zimshow(axs, hdul0[0].data,
+                origin=&#x27;lower&#x27;,
+                cmap=&quot;viridis&quot;,
+             )
+
+axs.coords[&#x27;ra&#x27;].set_ticks(spacing=10 * u.arcmin, color=&#x27;green&#x27;)
+axs.coords[&#x27;dec&#x27;].set_ticks(spacing=10 * u.arcmin, color=&#x27;orange&#x27;)
+axs.coords[&#x27;ra&#x27;].display_minor_ticks(True)
+axs.coords[&#x27;dec&#x27;].display_minor_ticks(True)
+axs.coords[&#x27;ra&#x27;].set_ticklabel_visible(True)
+axs.coords[&#x27;dec&#x27;].set_ticklabel_visible(True)
+axs.coords[&#x27;ra&#x27;].set_ticklabel(size=8)
+axs.coords[&#x27;dec&#x27;].set_ticklabel(size=8)
+# axs.coords[&#x27;ra&#x27;].set_minor_frequency(10)
+# axs.coords[&#x27;dec&#x27;].set_minor_frequency(10)
+axs.coords[&#x27;ra&#x27;].set_ticklabel_position(&#x27;b&#x27;)   #왼쪽, 오른쪽, 아래, 위
+axs.coords[&#x27;dec&#x27;].set_ticklabel_position(&#x27;l&#x27;)  #왼쪽, 오른쪽, 아래, 위
+axs.coords[&#x27;ra&#x27;].set_major_formatter(&#x27;hh:mm:ss&#x27;)
+axs.coords[&#x27;dec&#x27;].set_major_formatter(&#x27;dd:mm:ss&#x27;)
+# axs.coords[&#x27;ra&#x27;].set_auto_axislabel(True)
+# axs.coords[&#x27;dec&#x27;].set_auto_axislabel(True)
+# axs.coords[&#x27;ra&#x27;].set_axislabel(&#x27;Right Ascension&#x27;)
+# axs.coords[&#x27;dec&#x27;].set_axislabel(&#x27;Declination&#x27;)
+axs.coords[&#x27;ra&#x27;].set_axislabel_position(&#x27;b&#x27;)   #왼쪽, 오른쪽, 아래, 위
+axs.coords[&#x27;dec&#x27;].set_axislabel_position(&#x27;l&#x27;)  #왼쪽, 오른쪽, 아래, 위
+
+axs.grid(color=&#x27;white&#x27;, ls=&#x27;dotted&#x27;)
+
+axs.set_title(&#x27;Image display using WCS&#x27;, fontsize=11, pad=30)
+
+fig.colorbar(im, fraction=0.035, pad=0.04)
+
+plt.tight_layout()
+plt.show()</code></pre>
+<h2>code 213.</h2><pre><code>fig, axs = plt.subplots(1, 2, figsize=(7.5, 2.5),
+                        sharex=False, sharey=False, gridspec_kw=None,
+                        subplot_kw={&#x27;projection&#x27;: wcs1},
+                        )
+
+im0 = du.zimshow(axs[0], hdul1[0].data,
+                origin=&#x27;lower&#x27;,
+                cmap=&quot;viridis&quot;,
+                )
+
+axs[0].set_title(&#x27;Image display using WCS&#x27;, fontsize=10 , pad=30)
+
+im1 = du.zimshow(axs[1], hdul1[0].data,
+                origin=&#x27;lower&#x27;,
+                cmap=&quot;viridis&quot;,
+                )
+
+axs[1].coords[&#x27;ra&#x27;].set_auto_axislabel(True)
+axs[1].coords[&#x27;dec&#x27;].set_auto_axislabel(True)
+axs[1].coords[&#x27;ra&#x27;].set_axislabel(&#x27;Right Ascension (J2000.0)&#x27;, minpad=2)
+axs[1].coords[&#x27;dec&#x27;].set_axislabel(&#x27;Declination (J2000.0)&#x27;, minpad=2)
+axs[1].coords[&#x27;ra&#x27;].set_axislabel_position(&#x27;b&#x27;)   #왼쪽, 오른쪽, 아래, 위
+axs[1].coords[&#x27;dec&#x27;].set_axislabel_position(&#x27;l&#x27;)  #왼쪽, 오른쪽, 아래, 위
+axs[1].coords[&#x27;ra&#x27;].set_ticklabel_position(&#x27;b&#x27;)   #왼쪽, 오른쪽, 아래, 위
+axs[1].coords[&#x27;dec&#x27;].set_ticklabel_position(&#x27;l&#x27;)  #왼쪽, 오른쪽, 아래, 위
+
+overlay1 = axs[1].get_coords_overlay(&#x27;fk5&#x27;)
+overlay1.grid(color=&#x27;white&#x27;, ls=&#x27;dotted&#x27;)
+# overlay1[0].set_axislabel(&#x27;Right Ascension (J2000.0)&#x27;, minpad=2)
+# overlay1[1].set_axislabel(&#x27;Declination (J2000.0)&#x27;, minpad=2)
+# overlay1[0].set_axislabel_position(&#x27;b&#x27;)
+# overlay1[1].set_axislabel_position(&#x27;l&#x27;)
+# overlay1[0].set_ticklabel_position(&#x27;b&#x27;) #left, right, bottom, top
+# overlay1[1].set_ticklabel_position(&#x27;l&#x27;) #left, right, bottom, top
+
+axs[1].set_title(&#x27;Image display using WCS&#x27;, fontsize=10 , pad=30)
+
+fig.colorbar(im0, ax = axs[0], fraction=0.0315, pad=0.04)
+fig.colorbar(im1, ax = axs[1], fraction=0.0315, pad=0.04)
+
+plt.tight_layout(pad=0.4, w_pad=1, h_pad=1.0)
+plt.show()</code></pre>
+<h2>code 214.</h2><pre><code>fig, axs = plt.subplots(2, 1, figsize=(5.3, 8),
+                        sharex=False, sharey=False, gridspec_kw=None,
+                        subplot_kw={&#x27;projection&#x27;: wcs2},
+                        )
+
+im0 = du.zimshow(axs[0], hdul2[0].data,
+                origin=&#x27;lower&#x27;,
+                cmap=&quot;viridis&quot;,
+                )
+
+axs[0].coords[&#x27;ra&#x27;].set_ticklabel_position(&#x27;b&#x27;)   #왼쪽, 오른쪽, 아래, 위
+axs[0].coords[&#x27;dec&#x27;].set_ticklabel_position(&#x27;l&#x27;)  #왼쪽, 오른쪽, 아래, 위
+axs[0].plot_coord(SkyCoord(249.5*u.deg, 36.5*u.deg, frame=&quot;icrs&quot;), &quot;rx&quot;)
+axs[0].plot_coord(SkyCoord(250*u.deg, 36*u.deg, frame=&quot;icrs&quot;), &quot;r+&quot;)
+
+overlay0 = axs[0].get_coords_overlay(&#x27;icrs&#x27;)
+overlay0.grid(color=&#x27;white&#x27;, ls=&#x27;dotted&#x27;)
+overlay0[0].set_axislabel(&#x27;Right Ascension&#x27;, minpad=2)
+overlay0[1].set_axislabel(&#x27;Declination&#x27;, minpad=2)
+overlay0[0].set_axislabel_position(&#x27;b&#x27;)
+overlay0[1].set_axislabel_position(&#x27;l&#x27;)
+overlay0[0].set_ticklabel_position(&#x27;b&#x27;)  #왼쪽, 오른쪽, 아래, 위
+overlay0[1].set_ticklabel_position(&#x27;l&#x27;)  #왼쪽, 오른쪽, 아래, 위
+axs[0].set_title(&#x27;Image display using WCS (ICRS)&#x27;, fontsize=12, pad=30)
+
+im1 = du.zimshow(axs[1], hdul2[0].data,
+                origin=&#x27;lower&#x27;,
+                cmap=&quot;viridis&quot;,
+                )
+
+# axs[1].coords[&#x27;ra&#x27;].set_axislabel(&#x27;Right Ascension (J2000.0)&#x27;)
+# axs[1].coords[&#x27;dec&#x27;].set_axislabel(&#x27;Declination (J2000.0)&#x27;)
+# axs[1].coords[&#x27;ra&#x27;].set_axislabel_position(&#x27;b&#x27;) #left, right, bottom, top
+# axs[1].coords[&#x27;dec&#x27;].set_axislabel_position(&#x27;l&#x27;) #left, right, bottom, top
+axs[1].coords[&#x27;ra&#x27;].set_ticklabel_position(&#x27;b&#x27;)   #왼쪽, 오른쪽, 아래, 위
+axs[1].coords[&#x27;dec&#x27;].set_ticklabel_position(&#x27;l&#x27;)  #왼쪽, 오른쪽, 아래, 위
+axs[1].grid(color=&#x27;white&#x27;, ls=&#x27;:&#x27;)
+
+axs[1].plot_coord(SkyCoord(249.5*u.deg, 36.5*u.deg, frame=&quot;fk5&quot;), &quot;rx&quot;,
+                  markersize=10)
+axs[1].plot_coord(SkyCoord(250*u.deg, 36*u.deg, frame=&quot;fk5&quot;), &quot;r+&quot;,
+                  markersize=10)
+
+overlay1 = axs[1].get_coords_overlay(&#x27;fk5&#x27;)
+overlay1.grid(color=&#x27;white&#x27;, ls=&#x27;dotted&#x27;)
+overlay1[0].set_axislabel(&#x27;Right Ascension (J2000.0)&#x27;, minpad=2)
+overlay1[1].set_axislabel(&#x27;Declination (J2000.0)&#x27;, minpad=2)
+overlay1[0].set_axislabel_position(&#x27;b&#x27;)
+overlay1[1].set_axislabel_position(&#x27;l&#x27;)
+overlay1[0].set_ticklabel_position(&#x27;b&#x27;)  #왼쪽, 오른쪽, 아래, 위
+overlay1[1].set_ticklabel_position(&#x27;l&#x27;)  #왼쪽, 오른쪽, 아래, 위
+
+axs[1].set_title(&#x27;Image display using WCS (FK5)&#x27;, fontsize=12, pad=30)
+
+fig.colorbar(im0, ax = axs[0], fraction=0.031, pad=0.04)
+fig.colorbar(im1, ax = axs[1], fraction=0.031, pad=0.04)
+
+plt.tight_layout(pad=1.0, w_pad=1.0, h_pad=1.0)
+plt.show()</code></pre>
+</body></html>

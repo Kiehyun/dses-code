@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>III-02. 행성의 물리량 계산</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
+overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
+.links a{margin-right:14px}.note{color:#666;font-size:13px}
+@media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
+<body>
+<p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
+<h1>III-02. 행성의 물리량 계산</h1>
+<p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/03-02/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
+<p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
+<h2>code 23.</h2><pre><code>import re
+from io import StringIO
+
+import numpy as np
+import pandas as pd
+import requests
+
+# 위키 요청 차단을 줄이기 위한 사용자 에이전트
+headers = {&quot;User-Agent&quot;: &quot;Mozilla/5.0&quot;}
+
+# 각주/특수 공백을 제거해 비교 가능한 문자열로 정리
+def clean_text(text):
+    s = re.sub(r&quot;\[[^\]]*\]&quot;, &quot;&quot;, str(text))
+    s = s.replace(&quot;\xa0&quot;, &quot; &quot;).replace(&quot;−&quot;, &quot;-&quot;).replace(&quot;–&quot;, &quot;-&quot;)
+    return &quot; &quot;.join(s.split())
+
+# 텍스트에서 첫 번째 수치를 추출(과학 표기 포함)
+def first_float(text):
+    s = clean_text(text).replace(&quot;,&quot;, &quot;&quot;)
+    m = re.search(r&quot;([-+]?\d*\.?\d+)\s*[x×*]\s*10(?:\^|\s*)\s*([-+]?\d+)&quot;, s, flags=re.I)
+    if m:
+        return float(m.group(1)) * (10 ** int(m.group(2)))
+    m = re.search(r&quot;-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?&quot;, s)
+    return float(m.group()) if m else np.nan
+
+def second_float(text):
+    s = clean_text(text).replace(&quot;,&quot;, &quot;&quot;)
+    nums = re.findall(r&quot;-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?&quot;, s)
+    return float(nums[1]) if len(nums) &gt;= 2 else np.nan
+
+# 1/298 형태의 편평도 표기도 수치로 변환
+def parse_flattening(text):
+    s = clean_text(text)
+    reciprocal = re.search(r&quot;1\s*/\s*(\d+(?:\.\d+)?)&quot;, s)
+    if reciprocal:
+        return 1.0 / float(reciprocal.group(1))
+    return first_float(s)
+
+
+def get_row_key(df, prefix):
+    return next(i for i in df.index if clean_text(i).startswith(prefix))
+
+# 행성 개별 문서의 infobox에서 원하는 항목 값을 읽음
+def get_infobox_value(page, aliases):
+    js = requests.get(
+        &quot;https://en.wikipedia.org/w/api.php&quot;,
+        params={&quot;action&quot;: &quot;parse&quot;, &quot;page&quot;: page, &quot;prop&quot;: &quot;text&quot;, &quot;format&quot;: &quot;json&quot;, &quot;redirects&quot;: 1},
+        headers=headers,
+        timeout=20,
+    ).json()
+    info = pd.read_html(StringIO(js[&quot;parse&quot;][&quot;text&quot;][&quot;*&quot;]))[0].fillna(&quot;&quot;)
+    kcol = info.columns[0]
+    for _, row in info.iterrows():
+        key = clean_text(row[kcol]).lower()
+        if any(alias in key for alias in aliases):
+            return clean_text(&quot; &quot;.join(str(x) for x in row.tolist()[1:]))
+    return &quot;&quot;
+
+# JSON 자료 1: 태양계 비교표를 주는 MediaWiki API
+js = requests.get(
+    &quot;https://en.wikipedia.org/w/api.php&quot;,
+    params={
+        &quot;action&quot;: &quot;parse&quot;,
+        &quot;page&quot;: &quot;List_of_gravitationally_rounded_objects_of_the_Solar_System&quot;,
+        &quot;prop&quot;: &quot;text&quot;,
+        &quot;format&quot;: &quot;json&quot;,
+        &quot;redirects&quot;: 1,
+    },
+    headers=headers,
+    timeout=20,
+).json()
+wiki_table = pd.read_html(StringIO(js[&quot;parse&quot;][&quot;text&quot;][&quot;*&quot;]))[2]
+
+# 8개 행성 열만 선택
+planet_cols = [
+    c
+    for c in wiki_table.columns
+    if any(
+        p in str(c)
+        for p in [&quot;Mercury&quot;, &quot;Venus&quot;, &quot;Earth&quot;, &quot;Mars&quot;, &quot;Jupiter&quot;, &quot;Saturn&quot;, &quot;Uranus&quot;, &quot;Neptune&quot;]
+    )
+]
+
+w = wiki_table[[&quot;Unnamed: 0&quot;, &quot;Unnamed: 1&quot;] + planet_cols].copy()
+w.columns = [
+    &quot;field&quot;, &quot;unit&quot;, &quot;Mercury&quot;, &quot;Venus&quot;,
+    &quot;Earth&quot;, &quot;Mars&quot;,  &quot;Jupiter&quot;, &quot;Saturn&quot;, &quot;Uranus&quot;,
+    &quot;Neptune&quot;, ]
+# 항목명(field)을 인덱스로 바꿔 이후 조회를 단순화
+w = w.dropna(subset=[&quot;field&quot;]).set_index(&quot;field&quot;)
+
+# JSON 자료 2: 행성별 정보상자 API(편평도, 반사율)
+planet_pages = {
+    &quot;Mercury&quot;: &quot;Mercury_(planet)&quot;,
+    &quot;Venus&quot;: &quot;Venus&quot;, &quot;Earth&quot;: &quot;Earth&quot;, &quot;Mars&quot;: &quot;Mars&quot;, 
+    &quot;Jupiter&quot;: &quot;Jupiter&quot;, &quot;Saturn&quot;: &quot;Saturn&quot;, &quot;Uranus&quot;: &quot;Uranus&quot;,
+    &quot;Neptune&quot;: &quot;Neptune&quot;,
+}
+
+ko_name = {
+    &quot;Mercury&quot;: &quot;수성&quot;, &quot;Venus&quot;: &quot;금성&quot;,
+    &quot;Earth&quot;: &quot;지구&quot;, &quot;Mars&quot;: &quot;화성&quot;,
+    &quot;Jupiter&quot;: &quot;목성&quot;, &quot;Saturn&quot;: &quot;토성&quot;,
+    &quot;Uranus&quot;: &quot;천왕성&quot;,
+    &quot;Neptune&quot;: &quot;해왕성&quot;,
+}
+
+planet_order = [&quot;Mercury&quot;, &quot;Venus&quot;, &quot;Earth&quot;, &quot;Mars&quot;, &quot;Jupiter&quot;, &quot;Saturn&quot;, &quot;Uranus&quot;, &quot;Neptune&quot;]
+
+# 비교표에서 필요한 행 이름(키) 미리 찾기
+distance_key = get_row_key(w, &quot;Mean distance from the Sun&quot;)
+inclination_key = get_row_key(w, &quot;Inclination&quot;)
+eccentricity_key = get_row_key(w, &quot;Eccentricity&quot;)
+rotation_key = get_row_key(w, &quot;Rotation period&quot;)
+moons_key = get_row_key(w, &quot;Number of known moons&quot;)
+axial_tilt_key = get_row_key(w, &quot;Axial tilt&quot;)
+atmosphere_key = get_row_key(w, &quot;Atmospheric composition&quot;)
+rings_key = get_row_key(w, &quot;Rings?&quot;)
+radius_key = get_row_key(w, &quot;Equatorial radius&quot;)
+mass_key = get_row_key(w, &quot;Mass&quot;)
+
+# 수집한 원본 데이터 확인
+preview_keys = [
+    radius_key,
+    mass_key,
+    distance_key,
+    inclination_key,
+    eccentricity_key,
+    rotation_key,
+    moons_key,
+]
+
+print(&quot;행성 순서:&quot;, planet_order)
+print(&quot;\n비교표 추출값 미리보기:&quot;)
+display(w.loc[preview_keys, planet_order])</code></pre>
+<h2>code 24.</h2><pre><code>import pandas as pd
+
+# JSON에서 바로 행성별 레코드를 만들고 DataFrame 생성
+rows = []
+for en in planet_order:
+    flattening_text = get_infobox_value(planet_pages[en], [&quot;flattening&quot;])
+    albedo_text = get_infobox_value(planet_pages[en], [&quot;albedo&quot;])
+
+    ring_text = clean_text(w.loc[rings_key, en]).lower()
+    has_ring = &quot;Yes&quot; if ring_text.startswith(&quot;yes&quot;) else &quot;No&quot;
+
+    rows.append(
+        {
+            &quot;행성&quot;: ko_name[en],
+            &quot;영어이름&quot;: en,
+            &quot;적도반지름(km)&quot;: first_float(w.loc[radius_key, en]),
+            &quot;편평도&quot;: parse_flattening(flattening_text),
+            &quot;질량(kg)&quot;: first_float(w.loc[mass_key, en]),
+            &quot;장반경(AU)&quot;: second_float(w.loc[distance_key, en]),
+            &quot;알베도&quot;: first_float(albedo_text),
+            &quot;태양 적도에 대한 경사각(도)&quot;: first_float(w.loc[inclination_key, en]),
+            &quot;궤도 이심률&quot;: first_float(w.loc[eccentricity_key, en]),
+            &quot;자전 주기(days)&quot;: first_float(w.loc[rotation_key, en]),
+            &quot;확인된 위성 수&quot;: int(first_float(w.loc[moons_key, en])),
+            &quot;축 경사각(도)&quot;: first_float(w.loc[axial_tilt_key, en]),
+            &quot;고리&quot;: has_ring,
+            &quot;대기&quot;: clean_text(w.loc[atmosphere_key, en]),
+        }
+    )
+
+columns = [
+    &quot;행성&quot;,
+    &quot;영어이름&quot;,
+    &quot;적도반지름(km)&quot;,
+    &quot;편평도&quot;,
+    &quot;질량(kg)&quot;,
+    &quot;장반경(AU)&quot;,
+    &quot;알베도&quot;,
+    &quot;태양 적도에 대한 경사각(도)&quot;,
+    &quot;궤도 이심률&quot;,
+    &quot;자전 주기(days)&quot;,
+    &quot;확인된 위성 수&quot;,
+    &quot;축 경사각(도)&quot;,
+    &quot;고리&quot;,
+    &quot;대기&quot;,
+]
+
+df = pd.DataFrame(rows, columns=columns)
+
+# 행성의 물리량 정보 csv 파일로 저장
+df.to_csv(&quot;planet_attributes.csv&quot;, index=False)
+
+df = df.set_index(&quot;행성&quot;)
+display(df)</code></pre>
+<h2>code 25.</h2><pre><code>print(&quot;df.index: {}&quot;.format(df.index))
+print(&quot;df.columns: {}&quot;.format(df.columns))
+
+print(&quot;type(df.loc[&#x27;수성&#x27;, &#x27;질량(kg)&#x27;]): &quot;, type(df.loc[&#x27;수성&#x27;, &#x27;질량(kg)&#x27;]))
+print(&quot;df.loc[&#x27;수성&#x27;, &#x27;질량(kg)&#x27;]: &quot;, df.loc[&#x27;수성&#x27;, &#x27;질량(kg)&#x27;])</code></pre>
+<h2>code 26.</h2><pre><code>df[&#x27;상대 질량&#x27;] = df[&quot;질량(kg)&quot;]/df.loc[&quot;지구&quot;, &quot;질량(kg)&quot;]
+df[&#x27;적도 반지름(상댓값)&#x27;] = df[&quot;적도반지름(km)&quot;]/df.loc[&quot;지구&quot;, &quot;적도반지름(km)&quot;]
+df[&#x27;부피(상댓값)&#x27;] = df[&#x27;적도 반지름(상댓값)&#x27;]**3
+print(&quot;df[&#x27;부피(상댓값)&#x27;]:\n&quot;, df[&#x27;부피(상댓값)&#x27;])
+# print(&quot;df:\n&quot;, df)</code></pre>
+<h2>code 27.</h2><pre><code>import astropy.units as u
+import astropy.constants as const
+import numpy as np
+
+# 공전주기 계산 (케플러 제3법칙)
+df[&#x27;공전주기(년)&#x27;] = (2 * np.pi * ((df[&quot;장반경(AU)&quot;].values * u.AU)**3 / const.GM_sun)**0.5).to(u.year).value
+
+# 평균 밀도 계산
+df[&#x27;평균 밀도 (g cm^-3)&#x27;] = (3 * (df[&quot;질량(kg)&quot;].values * u.kg) / (4 * np.pi * (df[&quot;적도반지름(km)&quot;].values * u.km)**3)).to(u.g / u.cm**3).value
+
+# 적도 중력 계산
+df[&#x27;적도 중력(m s^-2)&#x27;] = (const.G * (df[&quot;질량(kg)&quot;].values * u.kg) / (df[&quot;적도반지름(km)&quot;].values * u.km)**2).to(u.m / u.s**2).value
+
+# 평균반지름 계산 (편평도를 고려한 구의 반지름)
+df[&#x27;평균반지름(km)&#x27;] = df[&quot;적도반지름(km)&quot;] * (1 - df[&quot;편평도&quot;])**(1/3)
+
+print(&quot;df[[&#x27;공전주기(년)&#x27;, &#x27;평균 밀도 (g cm^-3)&#x27;, &#x27;적도 중력(m s^-2)&#x27;, &#x27;평균반지름(km)&#x27;]]:\n&quot;, df[[&#x27;공전주기(년)&#x27;, &#x27;평균 밀도 (g cm^-3)&#x27;, &#x27;적도 중력(m s^-2)&#x27;, &#x27;평균반지름(km)&#x27;]] )</code></pre>
+<h2>code 28.</h2><pre><code># 지구의 태양상수 (Solar constant)
+solar_constant0 = const.L_sun / (4 * np.pi * const.au**2)
+print(f&quot;Solar constant (Earth): {solar_constant0.value:.2f} {solar_constant0.unit}&quot;)
+
+df[&quot;태양상수(W m^-2)&quot;] = const.L_sun / (4 * np.pi * (df[&quot;장반경(AU)&quot;] *u.au.to(u.m))**2)
+df[&quot;태양상수(W m^-2)&quot;]</code></pre>
+<h2>code 29.</h2><pre><code>df[&quot;입사량(W)&quot;] = ((1 - df[&quot;알베도&quot;]) * np.pi * (df[&quot;평균반지름(km)&quot;] * u.km.to(u.m))**2 * df[&quot;태양상수(W m^-2)&quot;]).values
+# 복사평형온도 계산
+df[&quot;복사평형온도(K)&quot;] = ((((1 - df[&quot;알베도&quot;]) * (df[&quot;태양상수(W m^-2)&quot;]) * u.W/u.m**2) / (4 * const.sigma_sb))**(1/4))
+print(&quot;df[[&#x27;입사량(W)&#x27;, &#x27;복사평형온도(K)&#x27;]]:\n&quot;, df[[&#x27;입사량(W)&#x27;, &#x27;복사평형온도(K)&#x27;]] )</code></pre>
+<h2>code 30.</h2><pre><code>df.to_csv(&#x27;result_of_calculations.csv&#x27;)
+print(&quot;계산 결과가 &#x27;result_of_calculations.csv&#x27; 파일로 저장되었습니다.&quot;)</code></pre>
+</body></html>
