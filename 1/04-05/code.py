@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | IV-05. 해수면의 높이 변동 그래프
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 81.
+# %% code 78.
 # 스마트 조석예보 자료 내려받기 주소와 조건(지점 코드, 지점 이름, 연월)
 from pathlib import Path
 from urllib.parse import urlencode
@@ -15,13 +15,13 @@ for interval in [1, 10, 60]:  # 1분 · 10분 · 60분 간격
     fname = f"[{interval}MinTide]{YYYYMM}_{OBS_ID}.txt"
     du.download(f"{BASE_URL}?{params}", Path(proj_dir) / fname)
 
-# %% code 82.
+# %% code 79.
 fpaths = du.list_files(proj_dir, "txt")
 
-# %% code 83.
-du.preview_text(fpaths[0], n=10)
+# %% code 80.
+du.preview_text(fpaths[0], n=10);
 
-# %% code 84.
+# %% code 81.
 import pandas as pd
 # 이름순 정렬이라 fpaths[0]은 10분, [1]은 1분, [2]는 60분 간격
 print("str(fpaths[2])", str(fpaths[2]))
@@ -33,7 +33,7 @@ df_60min = pd.read_csv(str(fpaths[2]),
                  )
 print("df_60min :", df_60min )
 
-# %% code 85.
+# %% code 82.
 print("df_60min.columns :", df_60min.columns )
 print("type(df_60min['str_YmdHM'][0]): {}".format(type(df_60min['str_YmdHM'][0])))
 print("type(df_60min['height(cm)']): {}".format(type(df_60min['height(cm)'][0])))
@@ -41,7 +41,7 @@ df_60min['dt_YmdHM'] = pd.to_datetime(df_60min['str_YmdHM'])
 df_60min.index = df_60min['dt_YmdHM']
 print("df_60min: ", df_60min)
 
-# %% code 86.
+# %% code 83.
 # 시각이 오름차순인지 확인
 is_sorted = df_60min['dt_YmdHM'].is_monotonic_increasing
 print("dt_YmdHM 오름차순 정렬 여부:", is_sorted)
@@ -55,12 +55,10 @@ if 'dt_YmdHM' in df_60min.index.names:
 else:
     df_60min = df_60min.sort_values(by='dt_YmdHM')
 
-df_60min = df_60min.interpolate(method='linear')  # 결측은 선형 보간
+# 결측은 선형 보간, 양 끝처럼 보간이 안 되는 결측은 앞뒤 값으로(숫자 열만)
+df_60min['height(cm)'] = df_60min['height(cm)'].interpolate(method='linear').bfill().ffill()
 
-# 양 끝처럼 보간이 안 되는 결측은 앞뒤 값으로
-df_60min = df_60min.fillna(method='bfill').fillna(method='ffill')
-
-# %% code 87.
+# %% code 84.
 # 10분 간격 자료: 읽기 → 정렬 → 결측 처리
 df_10min = pd.read_csv(
     str(fpaths[0]), skiprows=5, thousands=',',
@@ -69,8 +67,7 @@ df_10min = pd.read_csv(
 df_10min['dt_YmdHM'] = pd.to_datetime(df_10min['str_YmdHM'])
 df_10min.index = df_10min['dt_YmdHM']
 df_10min = df_10min.sort_index()
-df_10min = df_10min.interpolate(method='linear')
-df_10min = df_10min.fillna(method='bfill').fillna(method='ffill')
+df_10min['height(cm)'] = df_10min['height(cm)'].interpolate(method='linear').bfill().ffill()
 print("df_10min :", df_10min)
 
 # 1분 간격 자료도 같은 방법으로
@@ -81,11 +78,10 @@ df_1min = pd.read_csv(
 df_1min['dt_YmdHM'] = pd.to_datetime(df_1min['str_YmdHM'])
 df_1min.index = df_1min['dt_YmdHM']
 df_1min = df_1min.sort_index()
-df_1min = df_1min.interpolate(method='linear')
-df_1min = df_1min.fillna(method='bfill').fillna(method='ffill')
+df_1min['height(cm)'] = df_1min['height(cm)'].interpolate(method='linear').bfill().ffill()
 print("df_1min :", df_1min)
 
-# %% code 88.
+# %% code 85.
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
@@ -103,7 +99,7 @@ ax.grid(True, linestyle=':', alpha=0.5)
 plt.tight_layout()
 plt.show()
 
-# %% code 89.
+# %% code 86.
 import numpy as np
 from datetime import timedelta
 import matplotlib.pyplot as plt
@@ -142,9 +138,9 @@ for i, (df, title) in enumerate(zip(dfs, titles)):
     ax.grid(axis="x", color="green", alpha=.3, linewidth=.8, linestyle=":")
     ax.grid(axis="y", color="black", alpha=.3, linewidth=.8, linestyle=":")
 
-    ax.set_xlabel('time (day)', fontsize=14)
+    ax.set_xlabel('날짜 (일)', fontsize=14)
     if i == 0:
-        ax.set_ylabel('height of sea level (cm)', fontsize=14)
+        ax.set_ylabel('해수면 높이 (cm)', fontsize=14)
     ax.set_title(title, fontsize=16, fontweight='bold', y=1.02)
 
 fig.suptitle('2020년 6월 인천 해수면 높이 변동 (1시간/10분/1분)',
@@ -152,7 +148,7 @@ fig.suptitle('2020년 6월 인천 해수면 높이 변동 (1시간/10분/1분)',
 fig.tight_layout(rect=[0, 0, 1, 0.97])
 plt.show()
 
-# %% code 90.
+# %% code 87.
 # 6월 7~9일 자료만
 start_date = df_1min['dt_YmdHM'].dt.floor('D').min().replace(day=7)
 end_date = df_1min['dt_YmdHM'].dt.floor('D').min().replace(day=10)
@@ -194,7 +190,7 @@ fig.suptitle('2020년 6월 7~9일 인천 해수면 높이 변동 (1분 간격)',
 fig.tight_layout(rect=[0, 0, 1, 0.97])
 plt.show()
 
-# %% code 91.
+# %% code 88.
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -231,7 +227,7 @@ plt.ylabel('날짜 (6월)')
 plt.title('2020년 6월 인천 해수면 높이(1분 간격) 히트맵')
 plt.tight_layout()
 
-# %% code 92.
+# %% code 89.
 # 2024년 1~12월 60분 간격 자료를 달마다 내려받기
 year_dir = Path(proj_dir) / "2024"
 for month in range(1, 13):
@@ -240,7 +236,7 @@ for month in range(1, 13):
                         "timeInterval": 60, "obsPostName": OBS_NAME})
     du.download(f"{BASE_URL}?{params}", year_dir / f"[60MinTide]{yyyymm}_{OBS_ID}.txt")
 
-# %% code 93.
+# %% code 90.
 # 12개 파일을 이어 붙이고 시간순 정렬, 결측 보간
 fpaths_2024 = du.list_files(year_dir, "txt", show=False)
 df_year = pd.concat([pd.read_csv(f, skiprows=5, thousands=',',
@@ -259,7 +255,7 @@ print(f"기간: {h.index[0]} ~ {h.index[-1]}")
 print(f"평균 {h.mean():.1f}cm, 최고 {h.max():.0f}cm({h.idxmax():%m월 %d일 %H시}), "
       f"최저 {h.min():.0f}cm({h.idxmin():%m월 %d일 %H시})")
 
-# %% code 94.
+# %% code 91.
 import matplotlib.dates as dates
 
 fig, ax = plt.subplots(figsize=(15, 5))
@@ -274,7 +270,7 @@ ax.grid(True, linestyle=':', alpha=0.5)
 plt.tight_layout()
 plt.show()
 
-# %% code 95.
+# %% code 92.
 # 월별 평균과 표준편차
 monthly = df_year.groupby(df_year.index.month)['height(cm)'].agg(['mean', 'std'])
 
@@ -296,7 +292,7 @@ monthly.columns = ['평균(cm)', '표준편차(cm)']
 monthly.index.name = '월'
 print(monthly.round(1).T.to_string())
 
-# %% code 96.
+# %% code 93.
 t_demo = np.arange(0, 24 * 30, 0.1)  # 30일, 0.1시간 간격
 m2 = 275 * np.cos(2 * np.pi * t_demo / 12.4206)
 s2 = 115 * np.cos(2 * np.pi * t_demo / 12.0)
@@ -319,7 +315,7 @@ axes[2].set_xticks(range(0, 31, 5))
 plt.tight_layout()
 plt.show()
 
-# %% code 97.
+# %% code 94.
 y = df_year['height(cm)'].to_numpy()
 y_dev = y - y.mean()  # 평균 해수면으로부터의 높이
 
@@ -348,7 +344,7 @@ ax.grid(True, linestyle=':', alpha=0.5)
 plt.tight_layout()
 plt.show()
 
-# %% code 98.
+# %% code 95.
 # 분석할 분조: 이름과 주기(시간), 기원
 PERIODS = {'M2': 12.4206012, 'S2': 12.0000000, 'N2': 12.6583475, 'K2': 11.9672348,
            'K1': 23.9344696, 'O1': 25.8193417, 'P1': 24.0658902, 'Q1': 26.8683567,
@@ -393,7 +389,7 @@ ax.grid(axis='y', linestyle=':', alpha=0.5)
 plt.tight_layout()
 plt.show()
 
-# %% code 99.
+# %% code 96.
 def synth(names):
     """고른 분조만 더해 되살린 파형"""
     out = np.zeros_like(t)
@@ -429,7 +425,7 @@ plt.show()
 print(f"달 성분 표준편차 {moon.std():.1f}cm, 태양 성분 표준편차 {sun.std():.1f}cm, "
       f"비 {moon.std() / sun.std():.1f}")
 
-# %% code 100.
+# %% code 97.
 fit = A @ coef      # 분조 10개로 되살린 조위
 resid = y - fit     # 잔차
 
@@ -453,7 +449,7 @@ plt.show()
 
 print(f"설명한 비율 {(1 - resid.var() / y.var()) * 100:.2f}%, 잔차 표준편차 {resid.std():.1f}cm")
 
-# %% code 101.
+# %% code 98.
 # Sa(1년) · Ssa(반년)를 더한 12개 분조로 다시 분석
 PERIODS_SA = {**PERIODS, 'Sa': 8766.15265, 'Ssa': 4383.07633}
 A2 = design_matrix(t, PERIODS_SA.values())

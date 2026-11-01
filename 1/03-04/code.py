@@ -36,48 +36,39 @@ print("earth: {}".format(earth))
 
 # %% code 44.
 import numpy as np
-from math import pi
+import matplotlib.pyplot as plt
 
-halfpi, pi, twopi = [f*np.pi for f in (0.5, 1, 2)]
-degs, rads = 180/pi, pi/180  # 도 ↔ 라디안 변환
+re = 6378.  # 지구 반지름(km)
 
-# 지구 반지름(km)
-re = 6378.
+def earth_graticule(re=6378., step=15):
+    """지구의 경선 · 위선 좌표 목록(원 하나가 x, y, z 배열 3줄)"""
+    theta = np.linspace(0, 2*np.pi, 201)
+    cth, sth, zth = np.cos(theta), np.sin(theta), np.zeros_like(theta)
+    # 경선: xz 평면의 원을 z축 둘레로 step°씩 돌림
+    lons = []
+    for phi in np.radians(np.arange(0, 180, step)):
+        cph, sph = np.cos(phi), np.sin(phi)
+        lons.append(re*np.vstack((cth*cph, cth*sph, sth)))
+    # 위선: 위도 phi에서 적도면과 나란한 원
+    lats = []
+    for phi in np.radians(np.arange(-75, 90, step)):
+        cph, sph = np.cos(phi), np.sin(phi)
+        lats.append(re*np.vstack((cth*cph, sth*cph, zth+sph)))
+    return lons, lats
 
-theta = np.linspace(0, twopi, 201)
-cth, sth, zth = [f(theta) for f in [np.cos, np.sin, np.zeros_like]]
+def plot_earth(ax, **kwargs):
+    """3D 축에 지구의 경선 · 위선 그리기(아래에서 만든 lons, lats 사용)"""
+    for x, y, z in lons + lats:
+        ax.plot(x, y, z, '-k', **kwargs)
 
-# 경선
-lon0 = re*np.vstack((cth, zth, sth))
-lons = []
-for phi in rads*np.arange(0, 180, 15):
-    cph, sph = [f(phi) for f in (np.cos, np.sin)]
-    lon = np.vstack((lon0[0]*cph - lon0[1]*sph,
-                     lon0[1]*cph + lon0[0]*sph,
-                     lon0[2]) )
-    lons.append(lon)
-
-# 위선
-lat0 = re*np.vstack((cth, sth, zth))
-lats = []
-for phi in rads*np.arange(-75, 90, 15):
-    cph, sph = [f(phi) for f in (np.cos, np.sin)]
-    lat = re*np.vstack((cth*cph, sth*cph, zth+sph))
-    lats.append(lat)
-
+lons, lats = earth_graticule(re)
 print("len(lons): {}".format(len(lons)))
 print("len(lats): {}".format(len(lats)))
 
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 fig = plt.figure(figsize=[10, 10])
-
 ax  = fig.add_subplot(1, 1, 1, projection='3d')
 
-for x, y, z in lons:
-    ax.plot(x, y, z, '-k')
-for x, y, z in lats:
-    ax.plot(x, y, z, '-k')
+plot_earth(ax)
 
 ax.set_aspect('equal')
 
@@ -87,11 +78,7 @@ plt.show()
 from skyfield.api import EarthSatellite, Loader
 import numpy as np
 
-# TLE 자료(뒤의 NOAA 14가 쓰임)
-TLE = """STARLINK-1007
-1 44713U 19074A 24142.62636216 .00014211 00000+0 97051-3 0 9998
-2 44713 53.0541 256.2864 0001579 91.4399 268.6771 15.06419455249719
-"""
+# NOAA 14 기상 위성의 TLE(기준 시각 1997-11-16)
 TLE = """NOAA 14
 1 23455U 94089A   97320.90946019  .00000140  00000-0  10191-3 0  2621
 2 23455  99.0090 272.6745 0008546 223.1686 136.8816 14.11711747148495
@@ -106,9 +93,11 @@ load = Loader('./')
 ts = load.timescale()
 
 satellite = EarthSatellite(L1, L2)
+print(f"TLE 기준 시각: {satellite.epoch.utc_jpl()}")
 
+# TLE 기준 시각 무렵(1997-11-16)부터 3시간, 0.01시간 간격
 hours = np.arange(0, 3, 0.01)
-time = ts.utc(2018, 2, 7, hours)
+time = ts.utc(1997, 11, 16, hours)
 
 # 위성 위치(km)
 Rpos = satellite.at(time).position.km                # 배열 모양: (3, N)
@@ -116,45 +105,11 @@ Rposecl = satellite.at(time).ecliptic_position().km
 print("Rpos.shape: {}".format(Rpos.shape))
 print("Rposecl.shape: {}".format(Rposecl.shape))
 
-hours = np.arange(0, 3, 0.01)
-time = ts.utc(2018, 2, 7, hours)
-
 # %% code 46.
-halfpi, pi, twopi = [f*np.pi for f in (0.5, 1, 2)]
-degs, rads = 180/pi, pi/180
-
-# 지구 반지름(km)
-re = 6378.
-
-theta = np.linspace(0, twopi, 201)
-cth, sth, zth = [f(theta) for f in [np.cos, np.sin, np.zeros_like]]
-
-# 경선
-lon0 = re*np.vstack((cth, zth, sth))
-lons = []
-for phi in rads*np.arange(0, 180, 15):
-    cph, sph = [f(phi) for f in (np.cos, np.sin)]
-    lon = np.vstack((lon0[0]*cph - lon0[1]*sph,
-                     lon0[1]*cph + lon0[0]*sph,
-                     lon0[2]) )
-    lons.append(lon)
-
-# 위선
-lat0 = re*np.vstack((cth, sth, zth))
-lats = []
-for phi in rads*np.arange(-75, 90, 15):
-    cph, sph = [f(phi) for f in (np.cos, np.sin)]
-    lat = re*np.vstack((cth*cph, sth*cph, zth+sph))
-    lats.append(lat)
-
 fig = plt.figure(figsize=[10, 10])
-
 ax  = fig.add_subplot(1, 1, 1, projection='3d')
 
-for x, y, z in lons:
-    ax.plot(x, y, z, '-k')
-for x, y, z in lats:
-    ax.plot(x, y, z, '-k')
+plot_earth(ax)   # 앞에서 만든 함수로 지구 그리기
 
 # 위성 궤도
 x, y, z = Rpos
@@ -168,7 +123,7 @@ plt.show()
 def makecubelimits(axis, centers=None, hw=None):
     """
     3D 플롯의 축 비율을 고정하여 정육면체 형태의 플롯 영역을 만드는 함수
-    
+
     Parameters:
     -----------
     axis : matplotlib 3D axis object
@@ -182,37 +137,25 @@ def makecubelimits(axis, centers=None, hw=None):
         - list: [x_hw, y_hw, z_hw] 각 축에 다른 반폭 적용
         - None: 현재 축 중 가장 큰 범위를 기준으로 자동 계산
     """
-    lims = ax.get_xlim(), ax.get_ylim(), ax.get_zlim()
-    
+    lims = axis.get_xlim(), axis.get_ylim(), axis.get_zlim()
+
     # 중심점: 각 축 범위의 가운데
-    if centers == None:
+    if centers is None:
         centers = [0.5*sum(pair) for pair in lims]
-        print(f"중심점 자동 계산: {centers}")
 
     # 반폭: 가장 넓은 축 범위의 절반(정육면체 유지)
-    if hw == None:
+    if hw is None:
         widths = [pair[1] - pair[0] for pair in lims]
         hw = 0.5*max(widths)
-        
-        ax.set_xlim(centers[0]-hw, centers[0]+hw)
-        ax.set_ylim(centers[1]-hw, centers[1]+hw)
-        ax.set_zlim(centers[2]-hw, centers[2]+hw)
-        print(f"반폭 자동 계산: {hw}")
-    else:
-        try:
-            # hw가 리스트이면 축마다 다른 반폭
-            hwx, hwy, hwz = hw
-            print(f"각 축에 다른 반폭 적용: x={hwx}, y={hwy}, z={hwz}")
 
-            ax.set_xlim(centers[0]-hwx, centers[0]+hwx)
-            ax.set_ylim(centers[1]-hwy, centers[1]+hwy)
-            ax.set_zlim(centers[2]-hwz, centers[2]+hwz)
-        except:
-            # hw가 단일 값이면 모든 축에 같은 반폭
-            print(f"모든 축에 동일한 반폭 적용: {hw}")
-            ax.set_xlim(centers[0]-hw, centers[0]+hw)
-            ax.set_ylim(centers[1]-hw, centers[1]+hw)
-            ax.set_zlim(centers[2]-hw, centers[2]+hw)
+    if np.ndim(hw) == 0:
+        hwx = hwy = hwz = hw     # 단일 값이면 모든 축에 같은 반폭
+    else:
+        hwx, hwy, hwz = hw       # 리스트이면 축마다 다른 반폭
+
+    axis.set_xlim(centers[0]-hwx, centers[0]+hwx)
+    axis.set_ylim(centers[1]-hwy, centers[1]+hwy)
+    axis.set_zlim(centers[2]-hwz, centers[2]+hwz)
 
     return centers, hw
 
@@ -220,10 +163,7 @@ fig = plt.figure(figsize=[10, 10])
 
 ax  = fig.add_subplot(1, 1, 1, projection='3d')
 
-for x, y, z in lons:
-    ax.plot(x, y, z, '-k')
-for x, y, z in lats:
-    ax.plot(x, y, z, '-k')
+plot_earth(ax)
 
 # 위성 궤도
 x, y, z = Rpos
@@ -274,96 +214,59 @@ plt.tight_layout()
 plt.show()
 
 # %% code 49.
+# 스타링크 위성 TLE(STARLINK-1007, 기준 시각 2024-05-21)
+# TLE는 글자 위치로 값을 읽는 고정 폭 형식이라 빈칸 수를 바꾸면 안 됨
 TLE = """STARLINK-1007
-1 44713U 19074A 24142.62636216 .00014211 00000+0 97051-3 0 9998
-2 44713 53.0541 256.2864 0001579 91.4399 268.6771 15.06419455249719"""
+1 44713U 19074A   24142.62636216  .00014211  00000+0  97051-3 0  9998
+2 44713  53.0541 256.2864 0001579  91.4399 268.6771 15.06419455249719"""
 
 L0, L1, L2 = TLE.splitlines()
 
-halfpi, pi, twopi = [f*np.pi for f in [0.5, 1, 2]]
-degs, rads = 180/pi, pi/180
-
-load = Loader(str(proj_dir))  
+load = Loader(str(proj_dir))
 ts   = load.timescale()
 
-planets = load('de421.bsp')
-earth   = planets['earth']
-
 # 위성 객체와 위치 계산
-Roadster = EarthSatellite(L1, L2)
+sat = EarthSatellite(L1, L2, L0, ts)
+print(f"TLE 기준 시각: {sat.epoch.utc_jpl()}")
 
-print(Roadster.epoch.tt)
+# TLE 기준 시각부터 3시간, 0.01시간 간격
 hours = np.arange(0, 3, 0.01)
+time = ts.tt_jd(sat.epoch.tt + hours/24)
 
-time = ts.utc(2018, 2, 7, hours)
-
-Rpos    = Roadster.at(time).position.km
-Rposecl = Roadster.at(time).ecliptic_position().km
-
+Rpos = sat.at(time).position.km
 print(Rpos.shape)
 
-# 지구 경선 · 위선
-re = 6378.
+# 3D 궤도 그리기(지구는 앞에서 만든 plot_earth 함수로)
+fig = plt.figure(figsize=[10, 10])
+ax  = fig.add_subplot(1, 1, 1, projection='3d')
 
-theta = np.linspace(0, twopi, 201)
-cth, sth, zth = [f(theta) for f in [np.cos, np.sin, np.zeros_like]]
-lon0 = re*np.vstack((cth, zth, sth))
-lons = []
-for phi in rads*np.arange(0, 180, 15):
-    cph, sph = [f(phi) for f in [np.cos, np.sin]]
-    lon = np.vstack((lon0[0]*cph - lon0[1]*sph,
-                     lon0[1]*cph + lon0[0]*sph,
-                     lon0[2]) )
-    lons.append(lon)
+x, y, z = Rpos
+ax.plot(x, y, z)
+plot_earth(ax)
 
-lat0 = re*np.vstack((cth, sth, zth))
-lats = []
-for phi in rads*np.arange(-75, 90, 15):
-    cph, sph = [f(phi) for f in [np.cos, np.sin]]
-    lat = re*np.vstack((cth*cph, sth*cph, zth+sph))
-    lats.append(lat)
+centers, hw = makecubelimits(ax)
+print("플롯 중심점: ", centers)
+print("축 반폭:     ", hw)
 
-# 3D 궤도 그리기
-if True:    
-    fig = plt.figure(figsize=[10, 10])
-
-    ax  = fig.add_subplot(1, 1, 1, projection='3d')
-
-    x, y, z = Rpos
-    ax.plot(x, y, z)
-    for x, y, z in lons:
-        ax.plot(x, y, z, '-k')
-    for x, y, z in lats:
-        ax.plot(x, y, z, '-k')
-
-    centers, hw = makecubelimits(ax)
-
-    print("centers are: ", centers)
-    print("hw is:       ", hw)
-
-    plt.show()
+plt.show()
 
 # 지구 중심 거리와 고도
-r_Roadster = np.sqrt((Rpos**2).sum(axis=0))
-alt_roadster = r_Roadster - re
+r_sat = np.sqrt((Rpos**2).sum(axis=0))
+alt_sat = r_sat - re
 
-if True:
-    plt.figure()
-    plt.plot(hours, r_Roadster)
-    plt.plot(hours, alt_roadster)
-    plt.xlabel('hours', fontsize=14)
-    plt.ylabel('Geocenter radius or altitude (km)', fontsize=14)
-    plt.show()
+plt.figure()
+plt.plot(hours, r_sat, label='지구 중심 거리')
+plt.plot(hours, alt_sat, label='고도')
+plt.xlabel('시간 (hours)', fontsize=14)
+plt.ylabel('지구 중심 거리 또는 고도 (km)', fontsize=14)
+plt.legend()
+plt.show()
 
 # 축 비율을 고정한 3D 궤도
 fig = plt.figure(figsize=[12, 10])
 ax = fig.add_subplot(1, 1, 1, projection='3d')
 
-for x, y, z in lons:
-    ax.plot(x, y, z, '-k', alpha=0.3)
-
-for x, y, z in lats:
-    ax.plot(x, y, z, '-k', alpha=0.3)
+plot_earth(ax, alpha=0.3)
 
 x, y, z = Rpos
 ax.plot(x, y, z, 'r-', linewidth=2, label='Starlink 위성 궤도')
@@ -377,11 +280,8 @@ ax.legend()
 
 centers, hw = makecubelimits(ax)
 
-print(f"플롯 중심점: {centers}")
-print(f"축 반폭: {hw}")
-
 ax.set_aspect('equal')
- 
+
 plt.tight_layout()
 plt.show()
 
@@ -392,7 +292,7 @@ import requests
 url = "https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=tle"
 
 try:
-    response = requests.get(url)
+    response = requests.get(url, timeout=30)
     response.raise_for_status()  # HTTP 오류면 예외 발생
     
     print("TLE 데이터 다운로드 완료!")
@@ -431,181 +331,61 @@ else:
     print("네트워크 오류로 인해 TLE 데이터를 가져올 수 없습니다.")
 
 # %% code 51.
-from datetime import date, datetime
-import pytz
-
-# 오늘 날짜
-today = date.today()
-print("=== 현재 날짜 정보 ===")
-print(f"오늘 날짜: {today}")
-print(f"년도: {today.year}")
-print(f"월: {today.month}")
-print(f"일: {today.day}")
-
-now = datetime.now()
-print(f"\n현재 시간: {now.strftime('%Y-%m-%d %H:%M:%S')}")
-
-from skyfield.api import Loader, EarthSatellite
-from skyfield.timelib import Time
-import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-
-# 3D 축 비율 고정 함수(앞과 같음)
-def makecubelimits(axis, centers=None, hw=None):
-    lims = ax.get_xlim(), ax.get_ylim(), ax.get_zlim()
-    if centers == None:
-        centers = [0.5*sum(pair) for pair in lims] 
-
-    if hw == None:
-        widths  = [pair[1] - pair[0] for pair in lims]
-        hw      = 0.5*max(widths)
-        ax.set_xlim(centers[0]-hw, centers[0]+hw)
-        ax.set_ylim(centers[1]-hw, centers[1]+hw)
-        ax.set_zlim(centers[2]-hw, centers[2]+hw)
-        print("hw was None so set to:", hw)
-    else:
-        try:
-            hwx, hwy, hwz = hw
-            print("ok hw requested: ", hwx, hwy, hwz)
-
-            ax.set_xlim(centers[0]-hwx, centers[0]+hwx)
-            ax.set_ylim(centers[1]-hwy, centers[1]+hwy)
-            ax.set_zlim(centers[2]-hwz, centers[2]+hwz)
-        except:
-            print("nope hw requested: ", hw)
-            ax.set_xlim(centers[0]-hw, centers[0]+hw)
-            ax.set_ylim(centers[1]-hw, centers[1]+hw)
-            ax.set_zlim(centers[2]-hw, centers[2]+hw)
-
-    return centers, hw
-
-halfpi, pi, twopi = [f*np.pi for f in [0.5, 1, 2]]
-degs, rads = 180/pi, pi/180
-
-load = Loader(str(proj_dir))  
-ts   = load.timescale()
-
-planets = load('de421.bsp')
-earth   = planets['earth']
-
-# ISS 위성 객체
-Roadster = EarthSatellite(iss_tle[1], iss_tle[2])
-
-print(Roadster.epoch.tt)
-# 0~3시간, 0.01시간 간격
-hours = np.arange(0, 3, 0.01)
-
-# 오늘 날짜(UTC)
 from datetime import date
-time = ts.utc(date.today().year, date.today().month, date.today().day, hours)
+from skyfield.api import EarthSatellite
 
-print("time: {}".format(time))
+# ISS 위성 객체(앞에서 받은 최신 TLE: 이름, 1행, 2행)
+sat = EarthSatellite(iss_tle[1], iss_tle[2], iss_tle[0].strip(), ts)
+print(f"TLE 기준 시각: {sat.epoch.utc_jpl()}")
 
-# 위성의 위치 계산
-Rpos    = Roadster.at(time).position.km
-Rposecl = Roadster.at(time).ecliptic_position().km
+# 오늘 날짜(UTC) 0시부터 3시간, 0.01시간 간격
+today = date.today()
+print(f"오늘 날짜: {today}")
+hours = np.arange(0, 3, 0.01)
+time = ts.utc(today.year, today.month, today.day, hours)
 
-print(Rpos.shape)
-
-# 지구 반지름(km)
-re = 6378.
-
-# 지구 경선 · 위선
-theta = np.linspace(0, twopi, 201)
-cth, sth, zth = [f(theta) for f in [np.cos, np.sin, np.zeros_like]]
-
-lon0 = re*np.vstack((cth, zth, sth))
-lons = []
-for phi in rads*np.arange(0, 180, 15):
-    cph, sph = [f(phi) for f in [np.cos, np.sin]]
-    lon = np.vstack((lon0[0]*cph - lon0[1]*sph,
-                     lon0[1]*cph + lon0[0]*sph,
-                     lon0[2]) )
-    lons.append(lon)
-
-lat0 = re*np.vstack((cth, sth, zth))
-lats = []
-for phi in rads*np.arange(-75, 90, 15):
-    cph, sph = [f(phi) for f in [np.cos, np.sin]]
-    lat = re*np.vstack((cth*cph, sth*cph, zth+sph))
-    lats.append(lat)
-
-# 3D 궤도 그리기
-if True:    
-    fig = plt.figure(figsize=[10, 10])
-
-    ax  = fig.add_subplot(1, 1, 1, projection='3d')
-
-    for x, y, z in lons:
-        ax.plot(x, y, z, '-k', linewidth=0.5)
-    for x, y, z in lats:
-        ax.plot(x, y, z, '-k', linewidth=0.5)
-    x, y, z = Rpos
-    ax.plot(x, y, z, label='ISS 궤도')
-
-    centers, hw = makecubelimits(ax)
-
-    print(f"플롯 중심점: {centers}")
-    print(f"축 반폭: {hw}")
-
-    ax.set_aspect('equal')
-
-    ax.set_title('국제우주정거장(ISS) 궤도')
-    ax.legend()
-    plt.show()
-
-# 고도 그래프
-r_Roadster = np.sqrt((Rpos**2).sum(axis=0))
-alt_roadster = r_Roadster - re
-
-if True:
-    plt.figure()
-    plt.plot(hours, r_Roadster, label='지구 중심 거리')
-    plt.plot(hours, alt_roadster, label='고도')
-    plt.xlabel('시간 (hours)', fontsize=14)
-    plt.ylabel('지구 중심 거리 또는 고도 (km)', fontsize=14)
-    plt.title('ISS 고도 변화')
-    plt.legend()
-    plt.show()
-
-# ISS 궤도 계산(1분 간격)
-if 'iss_tle' in locals() and iss_tle:
-    print("\n=== ISS 궤도 계산 시작 ===")
-    
-    # iss_tle[0]은 위성 이름
-    if len(iss_tle) >= 3:
-        iss_line1 = iss_tle[1]
-        iss_line2 = iss_tle[2]
-        
-        iss = EarthSatellite(iss_line1, iss_line2, name='ISS')
-        
-        ts = load.timescale()
-        
-        hours_range = np.arange(0, 3, 1/60)  # 3시간, 1분 간격
-        
-        time_iss = ts.utc(today.year, today.month, today.day, hours_range)
-        
-        iss_positions = iss.at(time_iss).position.km
-        
-        print(f"ISS 위치 데이터 형태: {iss_positions.shape}")
-        print(f"계산 시간 범위: {len(hours_range)}개 시점 (3시간, 1분 간격)")
-        print(f"ISS Epoch: {iss.epoch.utc_jpl()}")
-        
-    else:
-        print("⚠  TLE 데이터 형식이 올바르지 않습니다.")
-else:
-    print("⚠  ISS TLE 데이터가 없어 궤도 계산을 수행할 수 없습니다.")
-    print("이전 셀에서 TLE 데이터를 먼저 다운로드해주세요.")
+# 위성의 위치(지구 중심 좌표, km)
+Rpos = sat.at(time).position.km
+print("Rpos.shape:", Rpos.shape)
 
 # %% code 52.
-import requests
-from skyfield.api import Loader, EarthSatellite
-import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+fig = plt.figure(figsize=[10, 10])
+ax  = fig.add_subplot(1, 1, 1, projection='3d')
 
-print("=== 스타링크 위성 TLE 데이터 다운로드 ===")
+plot_earth(ax, linewidth=0.5)
+x, y, z = Rpos
+ax.plot(x, y, z, label='ISS 궤도')
+
+centers, hw = makecubelimits(ax)
+print(f"플롯 중심점: {centers}")
+print(f"축 반폭: {hw}")
+
+ax.set_aspect('equal')
+ax.set_title('국제우주정거장(ISS) 궤도')
+ax.legend()
+plt.show()
+
+# %% code 53.
+# 지구 중심 거리와 고도
+r_sat = np.sqrt((Rpos**2).sum(axis=0))
+alt_sat = r_sat - re
+
+plt.figure()
+plt.plot(hours, r_sat, label='지구 중심 거리')
+plt.plot(hours, alt_sat, label='고도')
+plt.xlabel('시간 (hours)', fontsize=14)
+plt.ylabel('지구 중심 거리 또는 고도 (km)', fontsize=14)
+plt.title('ISS 고도 변화')
+plt.legend()
+plt.show()
+
+print(f"최대 고도: {alt_sat.max():.2f} km")
+print(f"최소 고도: {alt_sat.min():.2f} km")
+print(f"평균 고도: {alt_sat.mean():.2f} km")
+
+# %% code 54.
+import requests
+from skyfield.api import EarthSatellite
 
 # 1) 스타링크 TLE 내려받기
 url = "https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=tle"
@@ -618,123 +398,53 @@ try:
         response.raise_for_status()
         tle_file.write_text(response.text, encoding="utf-8")
     lines = tle_file.read_text(encoding="utf-8").splitlines()
-    
-    print(f"✓ 스타링크 TLE 데이터 다운로드 완료!")
-    print(f"  - 총 라인 수: {len(lines)}")
-    
-    # 2) 첫 번째 스타링크 위성의 TLE 찾기
-    starlink_name = None
-    starlink_tle = []
-    
-    for i in range(len(lines)-2):
-        # 이름 줄 다음에 '1 ', '2 '로 시작하는 두 줄
-        if (lines[i].strip() and 
-            i+1 < len(lines) and lines[i+1].strip().startswith('1 ') and
-            i+2 < len(lines) and lines[i+2].strip().startswith('2 ')):
-            
-            starlink_name = lines[i].strip()
-            starlink_tle = [lines[i+1].strip(), lines[i+2].strip()]
-            break
-    
-    if starlink_name and starlink_tle:
-        print(f"\n✓ 스타링크 위성 TLE 추출 완료:")
-        print(f"  위성명: {starlink_name}")
-        print(f"  TLE Line 1: {starlink_tle[0]}")
-        print(f"  TLE Line 2: {starlink_tle[1]}")
-        
-        # 3) Skyfield로 궤도 계산
-        print(f"\n=== 궤도 계산 시작 ===")
-        
-        load = Loader(str(proj_dir))
-        ts = load.timescale()
-        
-        sat = EarthSatellite(starlink_tle[0], starlink_tle[1], starlink_name, ts)
-        
-        # 0~3시간, 0.01시간(약 36초) 간격
-        hours = np.arange(0, 3, 0.01)
-        from datetime import date
-        time = ts.utc(date.today().year, date.today().month, date.today().day, hours)
-        
-        # 지구 중심 좌표(km)
-        Rpos = sat.at(time).position.km
-        
-        print(f"✓ 궤도 계산 완료:")
-        print(f"  - 위성 위치 데이터 형태: {Rpos.shape}")
-        print(f"  - 계산 시간 범위: {len(hours)}개 시점 (3시간)")
-        print(f"  - 위성 Epoch: {sat.epoch.utc_jpl()}")
-        
-        # 4) 지구 경선 · 위선
-        print(f"\n=== 지구 3D 좌표계 생성 ===")
-        
-        re = 6378.                            # 지구 반지름(km)
-        theta = np.linspace(0, 2*np.pi, 201)
-        cth, sth, zth = [f(theta) for f in [np.cos, np.sin, np.zeros_like]]
-        
-        lon0 = re*np.vstack((cth, zth, sth))
-        lons = []
-        for phi in np.radians(np.arange(0, 180, 15)):
-            cph, sph = np.cos(phi), np.sin(phi)
-            lon = np.vstack((lon0[0]*cph - lon0[1]*sph,
-                             lon0[1]*cph + lon0[0]*sph,
-                             lon0[2]))
-            lons.append(lon)
-        
-        lat0 = re*np.vstack((cth, sth, zth))
-        lats = []
-        for phi in np.radians(np.arange(-75, 90, 15)):
-            cph, sph = np.cos(phi), np.sin(phi)
-            lat = re*np.vstack((cth*cph, sth*cph, zth+sph))
-            lats.append(lat)
-        
-        print(f"✓ 지구 좌표계 생성 완료:")
-        print(f"  - 경선 개수: {len(lons)}")
-        print(f"  - 위선 개수: {len(lats)}")
-        
-        # 5) 3D 궤도 그리기
-        print(f"\n=== 3D 시각화 생성 ===")
-        
-        fig = plt.figure(figsize=[12, 10])
-        ax = fig.add_subplot(1, 1, 1, projection='3d')
-        
-        for x, y, z in lons:
-            ax.plot(x, y, z, '-k', linewidth=0.5, alpha=0.7)
-        
-        for x, y, z in lats:
-            ax.plot(x, y, z, '-k', linewidth=0.5, alpha=0.7)
-        
-        x, y, z = Rpos
-        ax.plot(x, y, z, 'r-', linewidth=2, label=f'{starlink_name}')
-        
-        # 앞에서 정의한 축 비율 고정 함수
-        if 'makecubelimits' in locals():
-            centers, hw = makecubelimits(ax)
-            print(f"✓ 축 비율 고정 적용: 중심점 {centers}, 반폭 {hw}")
-        
-        ax.set_xlabel('X (km)', fontsize=12)
-        ax.set_ylabel('Y (km)', fontsize=12)
-        ax.set_zlabel('Z (km)', fontsize=12)
-        ax.set_title(f"스타링크 위성 궤도 시각화\n{starlink_name}", fontsize=14)
-        ax.legend(fontsize=12)
-        
-        # 고도 통계
-        r_satellite = np.sqrt((Rpos**2).sum(axis=0))
-        alt_satellite = r_satellite - re
-        
-        print(f"\n=== 위성 궤도 정보 ===")
-        print(f"최대 고도: {alt_satellite.max():.2f} km")
-        print(f"최소 고도: {alt_satellite.min():.2f} km")
-        print(f"평균 고도: {alt_satellite.mean():.2f} km")
-        print(f"고도 변화 범위: {alt_satellite.max()-alt_satellite.min():.2f} km")
-        
-        plt.tight_layout()
-        plt.show()
-        
-    else:
-        print("⚠  스타링크 위성 TLE 데이터를 찾을 수 없습니다.")
-        print("다운로드된 데이터의 처음 몇 라인:")
-        for i, line in enumerate(lines[:10]):
-            print(f"  {i+1}: {line}")
-            
+    print(f"스타링크 TLE 총 줄 수: {len(lines)}")
 except requests.exceptions.RequestException as e:
-    print(f"✗ 스타링크 TLE 데이터 다운로드 실패: {e}")
-    print("네트워크 연결을 확인하거나 나중에 다시 시도해주세요.")
+    print(f"스타링크 TLE 데이터 다운로드 실패: {e}")
+    lines = []
+
+# 2) 첫 번째 스타링크 위성의 TLE 찾기: 이름 줄 다음에 '1 ', '2 '로 시작하는 두 줄
+starlink_name, starlink_tle = None, []
+for i in range(len(lines)-2):
+    if (lines[i].strip() and lines[i+1].startswith('1 ') and lines[i+2].startswith('2 ')):
+        starlink_name = lines[i].strip()
+        starlink_tle = [lines[i+1].strip(), lines[i+2].strip()]
+        break
+
+if starlink_tle:
+    print(f"위성명: {starlink_name}")
+    print(f"TLE 1행: {starlink_tle[0]}")
+    print(f"TLE 2행: {starlink_tle[1]}")
+
+    # 3) 궤도 계산: 오늘 날짜(UTC) 0시부터 3시간, 0.01시간(약 36초) 간격
+    sat = EarthSatellite(starlink_tle[0], starlink_tle[1], starlink_name, ts)
+    print(f"TLE 기준 시각: {sat.epoch.utc_jpl()}")
+    hours = np.arange(0, 3, 0.01)
+    today = date.today()
+    time = ts.utc(today.year, today.month, today.day, hours)
+    Rpos = sat.at(time).position.km   # 지구 중심 좌표(km)
+
+    # 4) 3D 궤도 그리기(앞에서 만든 plot_earth, makecubelimits 사용)
+    fig = plt.figure(figsize=[12, 10])
+    ax = fig.add_subplot(1, 1, 1, projection='3d')
+    plot_earth(ax, linewidth=0.5, alpha=0.7)
+    x, y, z = Rpos
+    ax.plot(x, y, z, 'r-', linewidth=2, label=f'{starlink_name}')
+    centers, hw = makecubelimits(ax)
+
+    ax.set_xlabel('X (km)', fontsize=12)
+    ax.set_ylabel('Y (km)', fontsize=12)
+    ax.set_zlabel('Z (km)', fontsize=12)
+    ax.set_title(f"스타링크 위성 궤도 시각화\n{starlink_name}", fontsize=14)
+    ax.legend(fontsize=12)
+
+    # 5) 고도 통계
+    alt_satellite = np.sqrt((Rpos**2).sum(axis=0)) - re
+    print(f"최대 고도: {alt_satellite.max():.2f} km")
+    print(f"최소 고도: {alt_satellite.min():.2f} km")
+    print(f"평균 고도: {alt_satellite.mean():.2f} km")
+
+    plt.tight_layout()
+    plt.show()
+else:
+    print("스타링크 위성 TLE 데이터를 찾을 수 없습니다.")

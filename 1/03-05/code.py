@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | III-05. 태양계 시뮬레이션
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 53.
+# %% code 55.
 from astropy.time import Time
 
 specific_time = Time("2017-01-01")
@@ -10,16 +10,16 @@ specific_time = Time("2017-01-01")
 from astroquery.jplhorizons import Horizons
 
 # 수성의 위치 · 속도 벡터
-obj1 = Horizons(id = 1,                    # 1 = 수성
+obj1 = Horizons(id = '199',                # 199 = 수성
                 location="@sun",          # 태양 중심 기준
-                epochs=specific_time.jd,  # 줄리안 데이
-                id_type='majorbody').vectors()
+                epochs=specific_time.jd   # 줄리안 데이
+                ).vectors()
 
 print("type(obj1): ", type(obj1))
 
 print("obj1: ",obj1)
 
-# %% code 54.
+# %% code 56.
 import numpy as np
 from astropy.time import Time, TimeDelta
 
@@ -66,7 +66,7 @@ dts = [dt.iso for dt in
 print("len(dts) :", len(dts))
 print("dts :", dts)
 
-# %% code 55.
+# %% code 57.
 import matplotlib.pyplot as plt
 
 fig = plt.figure(figsize=[4, 4])
@@ -89,7 +89,7 @@ plot = ax.scatter(0, 0,
                   edgecolors = None,
                   zorder = 10)        # 다른 것보다 앞에 그리기
 
-# %% code 56.
+# %% code 58.
 import matplotlib.pyplot as plt
 
 # 검은 배경
@@ -115,14 +115,13 @@ plot = ax.scatter(0, 0,
                   edgecolors = None,
                   zorder = 10)
 
-# %% code 57.
+# %% code 59.
 from astropy.time import Time
 specific_time = Time("2017-01-01")
 
 from astroquery.jplhorizons import Horizons
 # 수성의 위치 · 속도 벡터
-obj1 = Horizons(id = 1, location="@sun", epochs=specific_time.jd,
-                id_type='majorbody').vectors()
+obj1 = Horizons(id = '199', location="@sun", epochs=specific_time.jd).vectors()
 
 print("type(obj1): ", type(obj1))
 print("obj1: ", obj1)
@@ -137,7 +136,7 @@ print("obj1['vx']: ", obj1['vx'])
 print("obj1['vy']: ", obj1['vy'])
 print("obj1['vz']: ", obj1['vz'])
 
-# %% code 58.
+# %% code 60.
 from astropy.time import Time
 specific_time = Time("2017-01-01")
 
@@ -154,29 +153,29 @@ plot = ax.scatter(0, 0, color="red", s=28**2, edgecolors=None, zorder=10)
 
 # 왼쪽 위에 날짜
 ax.text(.03, .94,                          # 축 좌표(0~1) 기준 위치
-        'Date: {}'.format(specific_time),
+        '날짜: {}'.format(specific_time.iso[:10]),
         color='w',
         transform=ax.transAxes,
         fontsize='x-large')
 
 # 수성 · 금성 · 지구 · 화성
 from astroquery.jplhorizons import Horizons
+ids = ['199', '299', '399', '499']             # Horizons ID(행성 본체)
 sizes = [0.38, 0.95, 1., 0.53]                 # 상대 크기(지구 = 1)
-names = ['Mercury', 'Venus', 'Earth', 'Mars']
+names = ['수성', '금성', '지구', '화성']
 for i in range(4):
-    obj = Horizons(id = i+1,               # 1 수성, 2 금성, 3 지구, 4 화성
+    obj = Horizons(id = ids[i],
                    location = "@sun",
-                   epochs = specific_time.jd,
-                   id_type = 'majorbody').vectors()
+                   epochs = specific_time.jd).vectors()
 
     plot = ax.scatter(obj["x"], obj["y"], s = (10 * sizes[i])**2,
                       edgecolors = None, zorder = 10)
-    
+
     # 행성 위에 이름
     ax.text(obj["x"], obj["y"]+0.1, names[i], zorder=1000, ha='center',
             fontsize='large')
 
-# %% code 59.
+# %% code 61.
 from astropy.time import Time
 specific_time = Time("2017-01-01")
 
@@ -191,24 +190,16 @@ ax.axis('off')
 # 태양(원점)
 sun = ax.scatter(0, 0, color="red", s=28**2, edgecolors=None, zorder=10)
 
-ax.text(.03, .94, 'Date: {}'.format(specific_time), color='w', 
+ax.text(.03, .94, '날짜: {}'.format(specific_time.iso[:10]), color='w',
         transform=ax.transAxes, fontsize='x-large')
 
 from astroquery.jplhorizons import Horizons
-# 지구(id=3)의 위치 · 속도 벡터
-obj = Horizons(id=3, location="@sun", epochs=specific_time.jd,
-               id_type='id').vectors()
+# 지구(id='399')의 위치 · 속도 벡터
+obj = Horizons(id='399', location="@sun", epochs=specific_time.jd).vectors()
 
 plot = ax.scatter(obj["x"], obj["y"], s=10**2, edgecolors=None, zorder=10)
 
-ax.text(obj["x"], obj["y"]+0.1, "Earth", zorder=1000, ha='center', fontsize='large')
-
-# 시각 다시 정의(중복이지만 명확성을 위해)
-from astropy.time import Time
-specific_time = Time("2017-01-01")
-
-from astroquery.jplhorizons import Horizons
-obj = Horizons(id=3, location="@sun", epochs=specific_time.jd, id_type='id').vectors()
+ax.text(obj["x"], obj["y"]+0.1, "지구", zorder=1000, ha='center', fontsize='large')
 
 print([obj[xi] for xi in ['x', 'y', 'z']])
 
@@ -217,40 +208,36 @@ import numpy as np
 r = np.array([np.double(obj[xi]) for xi in ['x', 'y', 'z']], dtype=np.float64)
 r
 
-# %% code 60.
+# %% code 62.
 import numpy as np
 from astropy.time import Time, TimeDelta
 
 start_time_text = "2017-01-01"
 end_time_text = "2020-01-01"
 
-dt = 1
+dt = 1  # 시간 간격(일)
 
-def astropyTime_range(start, end, delta):
-    current = start
-    while current < end:
-        yield current
-        current += delta
-
-dts = [dt.iso for dt in 
-       astropyTime_range(Time(start_time_text), Time(end_time_text), 
+# 1일 간격 시각 목록(astropyTime_range는 앞에서 정의함)
+dts = [t.iso for t in
+       astropyTime_range(Time(start_time_text), Time(end_time_text),
        TimeDelta(dt, format='jd'))]
 
 # 지구의 처음 위치 · 속도
 from astroquery.jplhorizons import Horizons
-obj = Horizons(id=3, location="@sun", epochs=Time(start_time_text).jd, id_type='id').vectors()
+obj = Horizons(id='399', location="@sun", epochs=Time(start_time_text).jd).vectors()
 
-r = np.array([np.double(obj[xi]) for xi in ['x', 'y', 'z']], dtype=np.float64)
-v = np.array([np.double(obj[vxi]) for vxi in ['vx', 'vy', 'vz']], dtype=np.float64)
+r = np.array([np.double(obj[xi]) for xi in ['x', 'y', 'z']], dtype=np.float64)    # AU
+v = np.array([np.double(obj[vxi]) for vxi in ['vx', 'vy', 'vz']], dtype=np.float64)  # AU/day
 print("r: {}, v: {}".format(r, v))
 
 xs, ys = [], []
 rs, vs, accs = [], [], []
 i = 0
-while i < (len(dts)) :    
-    r = r + v * dt
-    acc = -2.959e-4 * r / np.sum(r**2)**(3./2)  # 태양 GM = 2.959e-4 AU³/day²
-    v = v + acc * dt
+# 오일러-크로머 방법으로 궤도 계산
+while i < (len(dts)) :
+    r = r + v * dt                                   # 위치 갱신: r ← r + v·dt
+    acc = -2.959e-4 * r / np.sum(r**2)**(3./2)  # 새 위치의 가속도(태양 GM = 2.959e-4 AU³/day²)
+    v = v + acc * dt                                 # 속도 갱신: v ← v + a·dt
     rs.append(r)
     vs.append(v)
     accs.append(acc)
@@ -270,35 +257,10 @@ print("rs[5][:2]: {}".format(rs[5][:2]))
 print("rs[4]: {}".format(rs[4]))
 print("rs[5]: {}".format(rs[5]))
 
-# %% code 61.
-import numpy as np
-from astropy.time import Time, TimeDelta
+# %% code 63.
+import matplotlib.pyplot as plt
 
-# 시뮬레이션 기간
-start_time_text = "2017-01-01"
-end_time_text = "2020-01-01"
-
-dt = 1  # 시간 간격(일)
-
-def astropyTime_range(start, end, delta):
-    """
-    주어진 시작 시간부터 종료 시간까지 일정한 간격으로 시간을 생성하는 제너레이터 함수
-    
-    Parameters:
-    start: 시작 시간 (astropy Time 객체)
-    end: 종료 시간 (astropy Time 객체)  
-    delta: 시간 간격 (TimeDelta 객체)
-    """
-    current = start
-    while current < end:
-        yield current
-        current += delta
-
-# 1일 간격 시각 목록
-dts = [dt.iso for dt in 
-       astropyTime_range(Time(start_time_text), Time(end_time_text), 
-       TimeDelta(dt, format='jd'))]
-
+# 궤도(rs, xs, ys)와 날짜 목록(dts)은 앞에서 계산한 것을 그대로 씀
 plt.style.use('dark_background')
 fig = plt.figure(figsize=[6, 6])
 ax = plt.axes([0., 0., 1., 1.], xlim=(-1.8, 1.8), ylim=(-1.8, 1.8))
@@ -306,156 +268,103 @@ ax.set_aspect('equal')
 ax.axis('off')
 sun = ax.scatter(0, 0, color="red", s=28**2, edgecolors=None, zorder=10)
 
-# 지구의 처음 위치 · 속도(Horizons)
-from astroquery.jplhorizons import Horizons
-obj = Horizons(id=3, location="@sun", epochs=Time(start_time_text).jd,
-               id_type='id').vectors()
-
+# 지구의 처음 위치(앞에서 Horizons로 받은 obj)
 ax.text(obj["x"], obj["y"]+0.1,
-        "Earth", zorder=1000, ha='center', fontsize='large')
+        "지구", zorder=1000, ha='center', fontsize='large')
 plot = ax.scatter(obj["x"], obj["y"], s=10**2, edgecolors=None, zorder=10)
 line, = ax.plot([], [], linewidth=1.4)
-timestamp = ax.text(.03, .94, 'Date: ', color='w', transform=ax.transAxes, fontsize='x-large')
+timestamp = ax.text(.03, .94, '날짜: ', color='w', transform=ax.transAxes, fontsize='x-large')
 
-# 처음 위치(AU)
-r = np.array([np.double(obj[xi]) for xi in ['x', 'y', 'z']], dtype=np.float64)
-# 처음 속도(AU/day)
-v = np.array([np.double(obj[vxi]) for vxi in ['vx', 'vy', 'vz']], dtype=np.float64)
-print("r: {}, v: {}".format(r, v))
-
-xs, ys = [], []
-rs, vs, accs = [], [], []
-
-i = 0
-
-# 오일러 방법으로 궤도 계산
-while i < (len(dts)):    
-    # 위치 갱신: r ← r + v·dt
-    r = r + v * dt
-    
-    # 태양 중력 가속도: a = -GM·r/|r|³
-    acc = -2.959e-4 * r / np.sum(r**2)**(3./2)  # 태양 GM = 2.959e-4 AU³/day²
-    
-    # 속도 갱신: v ← v + a·dt
-    v = v + acc * dt
-    
-    rs.append(r)
-    vs.append(v)
-    accs.append(acc)
-    xs.append(r[0])
-    ys.append(r[1])
-    
-    i += 1
-
-print("len(xs): {}".format(len(xs)))
-print("xs: {}".format(xs))
-print("len(ys): {}".format(len(ys)))
-print("ys: {}".format(ys))
-
-print("len(rs): {}".format(len(rs)))
-print("rs: {}".format(rs))
-
-print("len(vs): {}".format(len(vs)))
-print("vs: {}".format(vs))
-
-print("len(accs): {}".format(len(accs)))
-print("accs: {}".format(accs))
-
-# 특정 시점 확인(검증용)
-print("rs[5][:2]: {}".format(rs[5][:2]))
-print("rs[4]: {}".format(rs[4]))
-print("rs[5]: {}".format(rs[5]))
-
-# %% code 62.
+# %% code 64.
 def animate(i):
     plot.set_offsets(rs[i][:2])
     line.set_xdata(xs[:i])
     line.set_ydata(ys[:i])
-    timestamp.set_text('Date: ' + Time(dts[i]).iso)
+    timestamp.set_text('날짜: ' + dts[i][:10])
     return plot, line, timestamp
 
 from matplotlib.animation import FuncAnimation
 ani = FuncAnimation(fig, animate, frames=len(dts), blit=True)
 
-# %% code 63.
+# %% code 65.
 import matplotlib
-import matplotlib.pyplot as plt
-
-# 애니메이션 용량 한도 50 MB로(기본 약 20 MB)
-matplotlib.rcParams['animation.embed_limit'] = 50
-
-matplotlib.rcParams['animation.html'] = 'jshtml'
-matplotlib.rcParams['animation.writer'] = 'ffmpeg'  # ffmpeg이 있을 때
-
-print(f"Animation embed limit set to: {matplotlib.rcParams['animation.embed_limit']} MB")
-print(f"Animation HTML format: {matplotlib.rcParams['animation.html']}")
-
 from IPython.display import HTML
+
+# 애니메이션 설정(이 장의 모든 애니메이션에 씀)
+matplotlib.rcParams['animation.embed_limit'] = 100     # 용량 한도 100 MB(기본 약 20 MB)
+matplotlib.rcParams['animation.html'] = 'jshtml'       # 노트북에 넣는 형식
+matplotlib.rcParams['animation.writer'] = 'ffmpeg'     # MP4 저장(ffmpeg 실행 파일 필요)
+
+print(f"애니메이션 용량 한도: {matplotlib.rcParams['animation.embed_limit']} MB")
+print(f"애니메이션 HTML 형식: {matplotlib.rcParams['animation.html']}")
+
 HTML(ani.to_jshtml())
 
-# %% code 64.
-import matplotlib
-matplotlib.rcParams['animation.html'] = 'html5'
-print(f"Animation HTML format: {matplotlib.rcParams['animation.html']}")
+# %% code 66.
+# MP4 동영상으로 넣기(ffmpeg 실행 파일 필요)
 HTML(ani.to_html5_video())
 
-# %% code 65.
+# %% code 67.
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.time import Time
 from astroquery.jplhorizons import Horizons
 
 sim_start_date = "2018-01-01"
-sim_duration = 2 * 365            # 2년(일)
-m_earth = 5.9722e24 / 1.98847e30  # 지구 질량(태양 질량 단위)
-m_moon = 7.3477e22 / 1.98847e30   # 달 질량(태양 질량 단위)
+sim_duration = 2 * 365            # 2년(일) = 애니메이션 프레임 수
+GM_sun = 2.959e-4                 # 태양 GM(AU³/day²)
 
 class Object:                     # 천체 하나(태양, 행성)
-    def __init__(self, name, rad, color, r, v):
+    def __init__(self, name, rad, color, r, v, ax):
         self.name = name
-        self.r    = np.array(r, dtype=np.float64)  # 위치(AU)
-        self.v    = np.array(v, dtype=np.float64)  # 속도(AU/day)
-        self.xs = []                               # 궤적 기록
-        self.ys = []
-        # 현재 위치 점
-        self.plot = ax.scatter(r[0], r[1], color=color, s=rad**2, edgecolors=None, zorder=10)
-        # 궤도 선
-        self.line, = ax.plot([], [], color=color, linewidth=1.4)
+        self.r    = np.array(r, dtype=np.float64)  # 처음 위치(AU)
+        self.v    = np.array(v, dtype=np.float64)  # 처음 속도(AU/day)
+        self.path = None                           # 미리 계산한 날짜별 위치
+        self.is3d = (ax.name == '3d')              # 3D 축이면 3D로 그림
+        if self.is3d:
+            self.plot = ax.scatter(r[0], r[1], r[2], color=color, s=rad**2, edgecolors=None, zorder=10)
+            self.line, = ax.plot([], [], [], color=color, linewidth=1.4)
+        else:
+            self.plot = ax.scatter(r[0], r[1], color=color, s=rad**2, edgecolors=None, zorder=10)
+            self.line, = ax.plot([], [], color=color, linewidth=1.4)
 
 class SolarSystem:                # 태양계 전체
-    def __init__(self, thesun):
+    def __init__(self, thesun, ax):
         self.thesun = thesun
         self.planets = []
-        self.time = None      # 줄리안 데이
-        self.timestamp = ax.text(.03, .94, 'Date: ', color='w', transform=ax.transAxes, fontsize='x-large')
-    
+        self.time = None          # 시작 시각(줄리안 데이)
+        text = ax.text2D if thesun.is3d else ax.text
+        self.timestamp = text(.03, .94, '날짜: ', color='w', transform=ax.transAxes, fontsize='x-large')
+
     def add_planet(self, planet):
         self.planets.append(planet)
-    
-    def evolve(self):             # 하루씩 궤도 계산
-        dt = 1.0
-        self.time += dt
-        plots = []
-        lines = []
-        
+
+    def run(self, n_days, dt=1.0):    # 궤도를 미리 계산(오일러-크로머 방법)
+        self.times = self.time + dt * np.arange(1, n_days + 1)
+        self.timestamp.set_text('날짜: ' + Time(self.time, format='jd').iso[:10])  # 시작 날짜
         for p in self.planets:
-            # 위치 갱신: r ← r + v·dt
-            p.r += p.v * dt
-            # 태양 중력 가속도(GM = 2.959e-4 AU³/day²)
-            acc = -2.959e-4 * p.r / np.sum(p.r**2)**(3./2)
-            # 속도 갱신: v ← v + a·dt
-            p.v += acc * dt
-            p.xs.append(p.r[0])
-            p.ys.append(p.r[1])
-            p.plot.set_offsets(p.r[:2])
-            p.line.set_xdata(p.xs)
-            p.line.set_ydata(p.ys)
-            plots.append(p.plot)
-            lines.append(p.line)
-        
-        self.timestamp.set_text('Date: ' + Time(self.time, format='jd').iso)
+            r, v = p.r.copy(), p.v.copy()
+            p.path = np.zeros((n_days, 3))
+            for k in range(n_days):
+                r = r + v * dt                                # 위치 갱신: r ← r + v·dt
+                acc = -GM_sun * r / np.sum(r**2)**(3./2)      # 새 위치의 태양 중력 가속도
+                v = v + acc * dt                              # 속도 갱신: v ← v + a·dt
+                p.path[k] = r
+
+    def draw(self, i):            # i번째 날의 모습만 그림(계산하지 않음)
+        artists = []
+        for p in self.planets:
+            x, y, z = p.path[:i+1].T                          # 처음부터 i번째 날까지의 궤적
+            if p.is3d:
+                p.plot._offsets3d = ([x[-1]], [y[-1]], [z[-1]])  # 3D 점 위치(내부 속성 사용)
+                p.line.set_data_3d(x, y, z)
+            else:
+                p.plot.set_offsets([x[-1], y[-1]])
+                p.line.set_data(x, y)
+            artists += [p.plot, p.line]
+        self.timestamp.set_text('날짜: ' + Time(self.times[i], format='jd').iso[:10])
         # blit용으로 바뀐 객체 반환
-        return plots + lines + [self.timestamp]
+        return artists + [self.timestamp]
 
 fig = plt.figure(facecolor='black')
 plt.style.use('dark_background')
@@ -465,35 +374,38 @@ ax.set_aspect('equal')
 ax.axis('off')
 
 # 태양을 원점에 둔 태양계
-ss = SolarSystem(Object("Sun", 28, 'red', [0, 0, 0], [0, 0, 0]))
+ss = SolarSystem(Object("태양", 28, 'red', [0, 0, 0], [0, 0, 0], ax), ax)
 ss.time = Time(sim_start_date).jd
 
+ids = ['199', '299', '399', '499']               # Horizons ID: 수성 · 금성 · 지구 · 화성
 colors = ['gray', 'orange', 'blue', 'chocolate']
 sizes = [0.38, 0.95, 1., 0.53]                    # 상대 크기(지구 = 1)
-names = ['Mercury', 'Venus', 'Earth', 'Mars']
+names = ['수성', '금성', '지구', '화성']
 texty = [.47, .73, 1, 1.5]                        # 이름 표시 y 위치
 
 # 수성~화성 추가
-for i, nasaid in enumerate([1, 2, 3, 4]):  # Horizons ID: 1 수성, 2 금성, 3 지구, 4 화성
-    obj = Horizons(id=nasaid, location="@sun", epochs=ss.time, id_type='id').vectors()
-    
-    ss.add_planet(Object(nasaid,
+for i, nasaid in enumerate(ids):
+    obj = Horizons(id=nasaid, location="@sun", epochs=ss.time).vectors()
+
+    ss.add_planet(Object(names[i],
                          20 * sizes[i],
                          colors[i],
-                         [np.double(obj[xi]) for xi in ['x', 'y', 'z']], 
-                         [np.double(obj[vxi]) for vxi in ['vx', 'vy', 'vz']]))
-    
+                         [np.double(obj[xi]) for xi in ['x', 'y', 'z']],
+                         [np.double(obj[vxi]) for vxi in ['vx', 'vy', 'vz']],
+                         ax))
+
     # 아래쪽에 이름
-    ax.text(0, - (texty[i] + 0.1), names[i], color=colors[i], 
+    ax.text(0, - (texty[i] + 0.1), names[i], color=colors[i],
             zorder=1000, ha='center', fontsize='large')
 
+ss.run(sim_duration)  # 2년 치 궤도를 미리 계산
 plt.show()
 
-# %% code 66.
-# 프레임마다 하루씩 진행
+# %% code 68.
+# 프레임 i: 미리 계산한 궤도에서 i번째 날을 그림
 def animate(i):
-    return ss.evolve()
-    
+    return ss.draw(i)
+
 import matplotlib.animation as animation
 
 ani = animation.FuncAnimation(fig,
@@ -503,29 +415,15 @@ ani = animation.FuncAnimation(fig,
                               blit=True,
                               interval=20)          # ms
 
-# %% code 67.
-import matplotlib
-import matplotlib.pyplot as plt
-
-# 애니메이션 용량 한도 50 MB로(기본 약 20 MB)
-matplotlib.rcParams['animation.embed_limit'] = 50
-
-matplotlib.rcParams['animation.html'] = 'jshtml'
-matplotlib.rcParams['animation.writer'] = 'ffmpeg'  # ffmpeg이 있을 때
-
-print(f"Animation embed limit set to: {matplotlib.rcParams['animation.embed_limit']} MB")
-print(f"Animation HTML format: {matplotlib.rcParams['animation.html']}")
-
-from IPython.display import HTML
+# %% code 69.
+# 애니메이션 설정은 앞에서 정한 것을 그대로 씀
 HTML(ani.to_jshtml())
 
-# %% code 68.
-import matplotlib
-matplotlib.rcParams['animation.html'] = 'html5'
-print(f"Animation HTML format: {matplotlib.rcParams['animation.html']}")
+# %% code 70.
+# MP4 동영상으로 넣기(ffmpeg 실행 파일 필요)
 HTML(ani.to_html5_video())
 
-# %% code 69.
+# %% code 71.
 fname = 'Solar_System_2D_Animation_Class_Based'
 
 try:
@@ -550,18 +448,14 @@ except Exception as e:
         except Exception as e3:
             print(f"HTML 저장 중 오류 발생: {e3}")
 
-# %% code 70.
+# %% code 72.
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.time import Time
 from astroquery.jplhorizons import Horizons
-import mpl_toolkits.mplot3d.axes3d as p3
 
-sim_start_date = "2018-01-01"
-sim_duration = 2 * 365
-m_earth = 5.9722e24 / 1.98847e30
-m_moon = 7.3477e22 / 1.98847e30
-
+# 앞에서 만든 Object · SolarSystem 클래스와 sim_start_date, sim_duration,
+# ids, colors, sizes, names, texty를 그대로 씀(축이 3D이면 3D로 그림)
 plt.style.use('dark_background')
 fig = plt.figure(figsize=(12, 10), facecolor='black')
 
@@ -577,138 +471,55 @@ ax.set_zlim3d([-1.0, 1.0])
 ax.set_xlabel('X (AU)', color='white')
 ax.set_ylabel('Y (AU)', color='white')
 ax.set_zlabel('Z (AU)', color='white')
-ax.set_title('The Solar System (3D)', color='white', fontsize=16)
+ax.set_title('태양계 (3D)', color='white', fontsize=16)
 
-specific_time = Time(sim_start_date)
-
-class Object:
-    def __init__(self, name, rad, color, r, v):
-        self.name = name
-        self.r = np.array(r, dtype=np.float64)
-        self.v = np.array(v, dtype=np.float64)
-        self.xs = []
-        self.ys = []
-        self.zs = []
-        self.plot = ax.scatter(r[0], r[1], r[2], color=color, s=rad**2, 
-                               edgecolors=None, zorder=10)
-        self.line, = ax.plot([], [], [], color=color, linewidth=1.4)
-
-class SolarSystem:
-    def __init__(self, thesun):
-        self.thesun = thesun
-        self.planets = []
-        self.time = None
-        self.timestamp = ax.text2D(.03, .94, 'Date: ', color='white', 
-                                   transform=ax.transAxes, fontsize='x-large')
-    
-    def add_planet(self, planet):
-        self.planets.append(planet)
-    
-    def evolve(self):
-        dt = 1.0
-        self.time += dt
-        plots = []
-        lines = []
-        
-        for p in self.planets:
-            # 위치 갱신(오일러 방법, 앞과 같음)
-            p.r += p.v * dt
-            # 태양 중력 가속도(AU/day²)
-            acc = -2.959e-4 * p.r / np.sum(p.r**2)**(3./2)
-            # 속도 갱신
-            p.v += acc * dt
-            p.xs.append(p.r[0])
-            p.ys.append(p.r[1])
-            p.zs.append(p.r[2])
-            # 3D 점 위치 갱신(내부 속성 사용)
-            p.plot._offsets3d = ([p.r[0]], [p.r[1]], [p.r[2]])
-            p.line.set_data_3d(p.xs, p.ys, p.zs)
-            plots.append(p.plot)
-            lines.append(p.line)
-        
-        self.timestamp.set_text('Date: ' + Time(self.time, format='jd').iso)
-        return plots + lines + [self.timestamp]
-
-# 태양(원점)
-sun = ax.scatter(0, 0, 0, color="red", s=28**2, edgecolors=None, zorder=10)
-
-ax.text2D(.03, .94, 'Date: {}'.format(specific_time.iso), color='white', 
-          transform=ax.transAxes, fontsize='x-large')
-
-ss = SolarSystem(Object("Sun", 28, 'red', [0, 0, 0], [0, 0, 0]))
+# 태양을 원점에 둔 태양계
+ss = SolarSystem(Object("태양", 28, 'red', [0, 0, 0], [0, 0, 0], ax), ax)
 ss.time = Time(sim_start_date).jd
 
-colors = ['gray', 'orange', 'blue', 'chocolate']
-sizes = [0.38, 0.95, 1., 0.53]
-names = ['Mercury', 'Venus', 'Earth', 'Mars']
-texty = [.47, .73, 1, 1.5]
+# 수성~화성 추가
+for i, nasaid in enumerate(ids):
+    obj = Horizons(id=nasaid, location="@sun", epochs=ss.time).vectors()
+    ss.add_planet(Object(names[i],
+                         20 * sizes[i],
+                         colors[i],
+                         [np.double(obj[xi]) for xi in ['x', 'y', 'z']],
+                         [np.double(obj[vxi]) for vxi in ['vx', 'vy', 'vz']],
+                         ax))
+    ax.text(0, -(texty[i] + 0.1), 0, names[i], color=colors[i],
+            zorder=1000, ha='center', fontsize='large')
 
-# 수성~화성 추가(Horizons ID 1~4)
-print("행성 데이터를 가져오는 중...")
-for i, nasaid in enumerate([1, 2, 3, 4]):
-    try:
-        print(f"{names[i]} 데이터 처리 중...")
-        obj = Horizons(id=nasaid, location="@sun", epochs=ss.time, id_type='id').vectors()
-        
-        ss.add_planet(Object(nasaid,
-                             20 * sizes[i],
-                             colors[i],
-                             [np.double(obj[xi]) for xi in ['x', 'y', 'z']], 
-                             [np.double(obj[vxi]) for vxi in ['vx', 'vy', 'vz']]))
-        
-        ax.text(0, -(texty[i] + 0.1), 0, names[i], color=colors[i], 
-                zorder=1000, ha='center', fontsize='large')
-        
-        print(f"{names[i]} 추가 완료")
-    except Exception as e:
-        print(f"{names[i]} 데이터 가져오기 실패: {e}")
-
-print("태양계 시뮬레이션 초기화 완료!")
+ss.run(sim_duration)  # 2년 치 궤도를 미리 계산
 plt.tight_layout()
 plt.show()
 
-# %% code 71.
-# 프레임마다 하루씩 진행
+# %% code 73.
+# 프레임 i: 미리 계산한 궤도에서 i번째 날을 그림
 def animate(i):
-    return ss.evolve()
-    
+    return ss.draw(i)
+
 from matplotlib.animation import FuncAnimation
 
 ani = FuncAnimation(fig, animate,
-                    frames=len(dts),  # 앞에서 만든 dts 길이만큼
+                    frames=sim_duration,  # 프레임 수 = 시뮬레이션 일수(2년)
                     blit=True)
-                    
-
-# %% code 72.
-import matplotlib
-import matplotlib.pyplot as plt
-
-# 애니메이션 용량 한도 100 MB로(기본 약 20 MB)
-matplotlib.rcParams['animation.embed_limit'] = 100
-
-matplotlib.rcParams['animation.html'] = 'jshtml'
-matplotlib.rcParams['animation.writer'] = 'ffmpeg'  # ffmpeg이 있을 때
-
-print(f"Animation embed limit set to: {matplotlib.rcParams['animation.embed_limit']} MB")
-print(f"Animation HTML format: {matplotlib.rcParams['animation.html']}")
-
-from IPython.display import HTML
-HTML(ani.to_jshtml())
-
-# %% code 73.
-import matplotlib
-matplotlib.rcParams['animation.html'] = 'html5'
-print(f"Animation HTML format: {matplotlib.rcParams['animation.html']}")
-HTML(ani.to_html5_video())
 
 # %% code 74.
+# 애니메이션 설정은 앞에서 정한 것을 그대로 씀
+HTML(ani.to_jshtml())
+
+# %% code 75.
+# MP4 동영상으로 넣기(ffmpeg 실행 파일 필요)
+HTML(ani.to_html5_video())
+
+# %% code 76.
 fname = 'Solar_System_3D_Animation_Class_Based'
 
 ani.save(f'{proj_dir}/{fname}.mp4', fps=60, dpi=150,
          writer='ffmpeg')  # ffmpeg 필요
 print(f"동영상이 저장되었습니다: {proj_dir}/{fname}.mp4")
 
-# %% code 75.
+# %% code 77.
 ani.save(f'{proj_dir}/{fname}.gif',
             fps=30,           # MP4보다 낮춰 용량 줄이기
             dpi=100,

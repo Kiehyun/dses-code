@@ -16,50 +16,52 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 
 dt = datetime.datetime(2023, 4, 15, 12, 30, 0)
 
-print(&quot;Specific date and time:&quot;, dt)
-print(&quot;Year:&quot;, dt.year)
-print(&quot;Month:&quot;, dt.month)
-print(&quot;Day:&quot;, dt.day)
-print(&quot;Hour:&quot;, dt.hour)
-print(&quot;Minute:&quot;, dt.minute)
-print(&quot;Second:&quot;, dt.second)</code></pre>
+print(&quot;날짜와 시각:&quot;, dt)
+print(&quot;연:&quot;, dt.year)
+print(&quot;월:&quot;, dt.month)
+print(&quot;일:&quot;, dt.day)
+print(&quot;시:&quot;, dt.hour)
+print(&quot;분:&quot;, dt.minute)
+print(&quot;초:&quot;, dt.second)</code></pre>
 <h2 id="code-2">code 2. <button class="copy">복사</button></h2><pre><code>from datetime import datetime
 
 dt = datetime(2023, 4, 15, 12, 30, 0)
 
-print(&quot;Specific date and time:&quot;, dt)
-print(&quot;Year:&quot;, dt.year)
-print(&quot;Month:&quot;, dt.month)
-print(&quot;Day:&quot;, dt.day)</code></pre>
-<h2 id="code-3">code 3. <button class="copy">복사</button></h2><pre><code>print(&quot;Specific date and time:&quot;, dt.strftime(&quot;%Y-%m-%d %H:%M:%S&quot;))
+print(&quot;날짜와 시각:&quot;, dt)
+print(&quot;연:&quot;, dt.year)
+print(&quot;월:&quot;, dt.month)
+print(&quot;일:&quot;, dt.day)</code></pre>
+<h2 id="code-3">code 3. <button class="copy">복사</button></h2><pre><code>print(&quot;날짜와 시각:&quot;, dt.strftime(&quot;%Y-%m-%d %H:%M:%S&quot;))
 dt2 = datetime.strptime(&quot;2017-01-02 14:44&quot;, &quot;%Y-%m-%d %H:%M&quot;)
-print(&quot;Specific date and time:&quot;, dt2.strftime(&quot;%Y-%m-%d %H:%M:%S&quot;))</code></pre>
+print(&quot;날짜와 시각:&quot;, dt2.strftime(&quot;%Y-%m-%d %H:%M:%S&quot;))</code></pre>
 <h2 id="code-4">code 4. <button class="copy">복사</button></h2><pre><code>now = datetime.now()
 print(&quot;type(now)&quot;, type(now))
-print(f&quot;Current date and time: {now.strftime(&#x27;%Y-%m-%d %H:%M:%S&#x27;)}&quot;)
+print(f&quot;현재 날짜와 시각: {now.strftime(&#x27;%Y-%m-%d %H:%M:%S&#x27;)}&quot;)
 
-import datetime
-today = datetime.date.today()
-print(&quot;Today&#x27;s date:&quot;, today)</code></pre>
-<h2 id="code-5">code 5. <button class="copy">복사</button></h2><pre><code>diff_days = datetime.timedelta(days=5)
-print(&quot;Difference in days:&quot;, diff_days.days)
-print(&quot;Date after adding 5 days:&quot;, today + diff_days)</code></pre>
+# 날짜만 다루는 date, 시간 간격을 다루는 timedelta 클래스
+# (import datetime 으로 모듈을 다시 들여오면 앞의 datetime 클래스 이름이 가려짐)
+from datetime import date, timedelta
+today = date.today()
+print(&quot;오늘 날짜:&quot;, today)</code></pre>
+<h2 id="code-5">code 5. <button class="copy">복사</button></h2><pre><code>diff_days = timedelta(days=5)
+print(&quot;시간 간격(일):&quot;, diff_days.days)
+print(&quot;5일 뒤 날짜:&quot;, today + diff_days)</code></pre>
 <h2 id="code-6">code 6. <button class="copy">복사</button></h2><pre><code>from datetime import datetime, timedelta
 import pytz
 
 # 토성의 2023년 충(UTC)
-saturn_conjunction_2023 = datetime(2023, 8, 27, 8, 0, 0, tzinfo=pytz.utc)
+saturn_opposition_2023 = datetime(2023, 8, 27, 8, 0, 0, tzinfo=pytz.utc)
 
-# 토성의 회합 주기(일)
+# 토성의 평균 회합 주기(일)
 saturn_synodic_period = timedelta(days=378.10)
 
-saturn_conjunction_2024_utc = saturn_conjunction_2023 + saturn_synodic_period
+saturn_opposition_2024_utc = saturn_opposition_2023 + saturn_synodic_period
 
 KST = pytz.timezone(&#x27;Asia/Seoul&#x27;)
-saturn_conjunction_2024_kst = saturn_conjunction_2024_utc.astimezone(KST)
+saturn_opposition_2024_kst = saturn_opposition_2024_utc.astimezone(KST)
 
-print(&quot;2024년 토성의 충 (KST):&quot;, 
-      saturn_conjunction_2024_kst.strftime(&quot;%Y-%m-%d %H:%M:%S %Z%z&quot;))</code></pre>
+print(&quot;2024년 토성의 충 (KST, 근삿값):&quot;, 
+      saturn_opposition_2024_kst.strftime(&quot;%Y-%m-%d %H:%M:%S %Z%z&quot;))</code></pre>
 <h2 id="code-7">code 7. <button class="copy">복사</button></h2><pre><code>from datetime import datetime, timedelta
 from dateutil import relativedelta        # 월 · 연 단위도 되는 시간 간격
 
@@ -135,7 +137,6 @@ ts3 = TimeSeries(time_start=&quot;2011-01-01T00:00:00&quot;,
             time_delta=[0.1, 0.2, 0.1, 0.3, 0.2]*u.s)
 print(&quot;type(ts3.time): &quot;, type(ts3.time))
 print(&quot;ts3.time.jd: \n&quot;, ts3.time.jd)
-ts3.time.jd = ts3.time.mjd
 print(&quot;ts3.time.mjd: \n&quot;, ts3.time.mjd)
 print(&quot;ts3.time.isot: \n&quot;, ts3.time.isot)</code></pre>
 <h2 id="code-12">code 12. <button class="copy">복사</button></h2><pre><code>from astropy.time import Time
@@ -246,17 +247,18 @@ c_altaz = c.transform_to(altaz_frame)
 print(f&quot;고도: {c_altaz.alt:.2f}, 방위각: {c_altaz.az:.2f}&quot;)</code></pre>
 <h2 id="code-21">code 21. <button class="copy">복사</button></h2><pre><code>from datetime import datetime
 import matplotlib.pyplot as plt
-from pytz import timezone
+from zoneinfo import ZoneInfo
 from starplot import MapPlot, Projection, Star, _
 from starplot.styles import PlotStyle, extensions
 
 plt.rcParams.update({&#x27;figure.max_open_warning&#x27;: 0})  # 그림 여러 장을 열 때의 경고 끄기
 
-tz = timezone(&quot;Asia/Seoul&quot;)
+tz = ZoneInfo(&quot;Asia/Seoul&quot;)  # pytz의 timezone을 tzinfo=에 넣으면 LMT(+08:28)가 붙음
 
 print(f&quot;timezone : {tz}&quot;)
 
 dt = datetime(2023, 7, 13, 22, 0, tzinfo=tz)
+print(f&quot;관측 시각 : {dt.isoformat()}&quot;)  # +09:00 확인
 
 # 성도 설정
 p = MapPlot(

@@ -28,19 +28,17 @@ b = h*c/(wavelengths*k*T)
 
 intensities = a / ( (wavelengths**5) * (np.exp(b) - 1.0) )  # 파장별 복사 세기
 
-# print (&quot;wavelengths: {}&quot;.format(wavelengths))
 print (&quot;len(wavelengths): {}&quot;.format(len(wavelengths)))
-# print (&quot;intensities: {}&quot;.format(intensities))
 print (&quot;len(intensities): {}&quot;.format(len(intensities)))</code></pre>
 <h2 id="code-14">code 14. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 plt.plot(wavelengths*1e9, intensities, &#x27;b-&#x27;, label = &#x27;6000 K&#x27;)  # 파장을 nm로 바꿔 그리기
 
-plt.title(&#x27;Planck Curve&#x27;)
+plt.title(&#x27;플랑크 곡선 (6000 K)&#x27;)
 
-plt.xlabel(r&#x27;Wavelengths [$\rm{nm}$]&#x27;)  # raw 문자열을 쓰면 LaTeX 수식을 넣을 수 있다
+plt.xlabel(r&#x27;파장 [$\rm{nm}$]&#x27;)  # raw 문자열을 쓰면 LaTeX 수식을 넣을 수 있다
 
-plt.ylabel(&#x27;Intensity&#x27;)
+plt.ylabel(r&#x27;분광 복사휘도 [W m$^{-2}$ m$^{-1}$ sr$^{-1}$]&#x27;)
 
 plt.legend()
 
@@ -65,7 +63,8 @@ print(&quot;const.k_B:{}&quot;.format(const.k_B))</code></pre>
 <h2 id="code-17">code 17. <button class="copy">복사</button></h2><pre><code>def planckQ(wavelengths, T):
     a = 2.0 * const.h * const.c**2
     b = const.h * const.c / (wavelengths * const.k_B * T)
-    intensity = a / (((wavelengths.to(u.m))**5) * (np.exp(b) - 1.0))
+    # 분광 복사휘도: 단위 면적 · 단위 파장 · 단위 입체각(sr)당 일률
+    intensity = a / (((wavelengths.to(u.m))**5) * (np.exp(b) - 1.0)) / u.sr
     return intensity
 
 wavelengths = np.arange(1e-8, 3e-6, 1e-8) * u.m
@@ -73,19 +72,24 @@ Temperatures = np.arange(4000, 7001, 1000) * u.K
 
 intensities = planckQ(wavelengths, T)  # T는 앞 셀의 6000 K
 
-# print(f&#x27;intensities : {intensities.value} {intensities.unit}&#x27;)
 print(f&#x27;len(intensities) : {len(intensities)}&#x27;)
+print(f&#x27;intensities.unit : {intensities.unit}&#x27;)
+
+# 축에 적을 단위로 값을 바꾼 뒤 그리기
+wl_unit = u.um
+I_unit = u.kW / (u.m**2 * u.nm * u.sr)
 
 plt.figure()
 
-for T in Temperatures : 
+for T in Temperatures :
     intensity = planckQ(wavelengths, T)
-    plt.plot(wavelengths, intensity, label=&quot;{0:.0f}&quot;.format(T))
+    plt.plot(wavelengths.to(wl_unit).value, intensity.to(I_unit).value,
+             label=&quot;{0:.0f}&quot;.format(T))
 
-plt.title(&#x27;Planck Curves&#x27;)
+plt.title(&#x27;플랑크 곡선&#x27;)
 
-plt.xlabel(f&#x27;Wavelengths [{wavelengths.to(u.um).unit:latex_inline}]&#x27;)
-plt.ylabel(f&#x27;Spectral radiance [{intensity.to(u.kW/u.m/u.m/u.nm).unit:latex_inline}]&#x27;)
+plt.xlabel(f&#x27;파장 [{wl_unit:latex_inline}]&#x27;)
+plt.ylabel(f&#x27;분광 복사휘도 [{I_unit:latex_inline}]&#x27;)
 
 plt.legend()
 
@@ -125,9 +129,9 @@ with quantity_support():  # 단위가 붙은 값을 바로 그리기
     plt.plot(wavelength.to(u.um), flux.to(u.W / (u.m**2 * u.Hz * u.sr)))
     # 진동수 기준 최대 복사(ν_max)를 파장으로 바꾼 위치
     plt.axvline(bb.nu_max.to(u.um, equivalencies=u.spectral()).value, ls=&#x27;--&#x27;)
-    plt.title(&#x27;Blackbody Spectrum (T=5778 K) [SI Units]&#x27;)
-    plt.xlabel(f&#x27;Wavelength [{wavelength.to(u.um).unit:latex_inline}]&#x27;)
-    plt.ylabel(r&#x27;Flux [W m$^{-2}$ Hz$^{-1}$ sr$^{-1}$]&#x27;)
+    plt.title(&#x27;흑체 복사 스펙트럼 (T = 5778 K)&#x27;)
+    plt.xlabel(f&#x27;파장 [{wavelength.to(u.um).unit:latex_inline}]&#x27;)
+    plt.ylabel(r&#x27;분광 복사휘도 [W m$^{-2}$ Hz$^{-1}$ sr$^{-1}$]&#x27;)
     du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;02_02_Plotting_Planck_curve_01&quot;))
     plt.show()</code></pre>
 <h2 id="code-21">code 21. <button class="copy">복사</button></h2><pre><code>from astropy import units as u
@@ -140,12 +144,14 @@ wavelengths = np.arange(100, 2001) * u.nm
 
 Temperatures = np.arange(3500, 5501, 500) * u.K
 
+I_unit = u.kW / (u.m**2 * u.nm * u.sr)  # 세로축 단위
+
 fig = plt.figure(figsize=(6, 6))
 ax = fig.add_subplot(1, 1, 1)
 
 for T in Temperatures : 
-    intensity = planckQ(wavelengths.to(u.m), T)
-    plt.plot(wavelengths.to(u.nm), intensity, label=&quot;{0:.0f}&quot;.format(T)) 
+    intensity = planckQ(wavelengths.to(u.m), T).to(I_unit)  # 축 단위로 바꾸기
+    plt.plot(wavelengths.to(u.nm).value, intensity.value, label=&quot;{0:.0f}&quot;.format(T)) 
 
 ax.set_facecolor(&#x27;xkcd:silver&#x27;)
 
@@ -165,9 +171,9 @@ ax.tick_params(direction=&#x27;in&#x27;, length=3, width=1, colors=&#x27;k&#x27;
                grid_color=&#x27;k&#x27;, grid_alpha=0.5, which = &#x27;minor&#x27;, 
                bottom=True, top=True, left=True, right=True)
 
-plt.title(&#x27;The Planck Curve&#x27;, fontdict={&#x27;size&#x27;:12})
-plt.xlabel(f&#x27;Wavelength [{wavelengths.unit}]&#x27;, fontdict={&#x27;size&#x27;:10})  # 단위를 한 줄로
-plt.ylabel(f&#x27;Spectral energy density [{intensity.unit}]&#x27;, fontdict={&#x27;size&#x27;:10})  # 단위를 한 줄로
+plt.title(&#x27;플랑크 곡선&#x27;, fontdict={&#x27;size&#x27;:12})
+plt.xlabel(f&#x27;파장 [{wavelengths.unit:latex_inline}]&#x27;, fontdict={&#x27;size&#x27;:10})  # 단위를 한 줄로
+plt.ylabel(f&#x27;분광 복사휘도 [{I_unit:latex_inline}]&#x27;, fontdict={&#x27;size&#x27;:10})  # 단위를 한 줄로
 
 plt.legend()
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;02_02_Plotting_Planck_curve_02&quot;))

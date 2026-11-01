@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>V-04. 방사성 동위원소 연대측정 기초</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/05-24/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-565">565</a> <a href="#code-566">566</a> <a href="#code-567">567</a> <a href="#code-568">568</a> <a href="#code-569">569</a> <a href="#code-570">570</a> <a href="#code-571">571</a> <a href="#code-572">572</a></p>
-<h2 id="code-565">code 565. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<p class="jump"><a href="#code-534">534</a> <a href="#code-535">535</a> <a href="#code-536">536</a> <a href="#code-537">537</a> <a href="#code-538">538</a> <a href="#code-539">539</a> <a href="#code-540">540</a> <a href="#code-541">541</a></p>
+<h2 id="code-534">code 534. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -35,7 +35,7 @@ half_lives = pd.DataFrame([
      &quot;typical_use&quot;: &quot;지르콘, 오래된 암석&quot;},
 ])
 half_lives</code></pre>
-<h2 id="code-566">code 566. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(8.5, 4.4))
+<h2 id="code-535">code 535. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(8.5, 4.4))
 
 for row in half_lives.itertuples(index=False):
     # 각 동위원소마다 5번의 반감기가 지나는 구간까지 계산
@@ -50,7 +50,7 @@ ax.grid(alpha=0.3)
 ax.legend()
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_01&quot;))
 plt.show()</code></pre>
-<h2 id="code-567">code 567. <button class="copy">복사</button></h2><pre><code>def age_from_remaining_fraction(remaining_fraction, half_life_year):
+<h2 id="code-536">code 536. <button class="copy">복사</button></h2><pre><code>def age_from_remaining_fraction(remaining_fraction, half_life_year):
     &quot;&quot;&quot;남은 모원소 비율과 반감기로 연대를 계산&quot;&quot;&quot;
     remaining_fraction = np.asarray(remaining_fraction, dtype=float)
     return -np.log2(remaining_fraction) * half_life_year
@@ -65,7 +65,7 @@ pd.DataFrame({
     &quot;age_year&quot;: ages,
     &quot;age_Ma&quot;: ages / 1e6,
 })</code></pre>
-<h2 id="code-568">code 568. <button class="copy">복사</button></h2><pre><code># 40K 붕괴 상수 (Min et al., 2000), 단위 1/년
+<h2 id="code-537">code 537. <button class="copy">복사</button></h2><pre><code># 40K 붕괴 상수 (Min et al., 2000), 단위 1/년
 lambda_e = 0.580e-10     # 40K → 40Ar (전자포획)
 lambda_beta = 4.883e-10  # 40K → 40Ca (베타 붕괴)
 lambda_total = lambda_e + lambda_beta
@@ -95,7 +95,7 @@ pd.DataFrame({
     &quot;diff_percent&quot;: (age_sj / age_min - 1) * 100,
     &quot;age_Ma_no_branching&quot;: age_wrong / 1e6,
 }).round({&quot;age_Ma&quot;: 2, &quot;age_Ma_SJ1977&quot;: 2, &quot;diff_percent&quot;: 2, &quot;age_Ma_no_branching&quot;: 2})</code></pre>
-<h2 id="code-569">code 569. <button class="copy">복사</button></h2><pre><code>measurement_error = np.linspace(-0.03, 0.03, 61)
+<h2 id="code-538">code 538. <button class="copy">복사</button></h2><pre><code>measurement_error = np.linspace(-0.03, 0.03, 61)
 rows = []
 
 fig, ax = plt.subplots(figsize=(8.6, 4.4))
@@ -120,7 +120,7 @@ du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_02&
 plt.show()
 
 pd.DataFrame(rows).round(3)</code></pre>
-<h2 id="code-570">code 570. <button class="copy">복사</button></h2><pre><code>url = &quot;https://data.goettingen-research-online.de/api/access/datafile/40582&quot;
+<h2 id="code-539">code 539. <button class="copy">복사</button></h2><pre><code>url = &quot;https://data.goettingen-research-online.de/api/access/datafile/40582&quot;
 raw_file = DATA_DIR / &quot;Ball_2022_intraplate_volcanics.csv&quot;
 if not raw_file.exists():  # 이미 받아 둔 파일은 다시 받지 않음
     response = requests.get(url, timeout=180)
@@ -144,7 +144,7 @@ kor[&quot;is_radiometric&quot;] = kor[&quot;Method&quot;].isin([&quot;Ar-Ar&quot
 print(f&quot;전체 시료 수: {len(ball):,}&quot;)
 print(f&quot;우리나라 시료 수: {len(kor):,}&quot;)
 pd.crosstab(kor[&quot;region&quot;], kor[&quot;Method&quot;], margins=True, margins_name=&quot;합계&quot;)</code></pre>
-<h2 id="code-571">code 571. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(8.5, 4.2))
+<h2 id="code-540">code 540. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(8.5, 4.2))
 bins = np.arange(0, 7.0, 0.25)
 ax.hist([kor.loc[kor[&quot;is_radiometric&quot;], &quot;Age&quot;], kor.loc[~kor[&quot;is_radiometric&quot;], &quot;Age&quot;]],
         bins=bins, stacked=True, color=[&quot;crimson&quot;, &quot;lightgray&quot;],
@@ -156,7 +156,7 @@ ax.legend()
 ax.grid(alpha=0.3)
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_03&quot;))
 plt.show()</code></pre>
-<h2 id="code-572">code 572. <button class="copy">복사</button></h2><pre><code># 지역 · 방법 · 연대 · 오차가 같은 시료를 한 묶음으로
+<h2 id="code-541">code 541. <button class="copy">복사</button></h2><pre><code># 지역 · 방법 · 연대 · 오차가 같은 시료를 한 묶음으로
 age_groups = (kor.groupby([&quot;region&quot;, &quot;Method&quot;, &quot;Age&quot;, &quot;Uncertainty&quot;])
               .size().reset_index(name=&quot;n_samples&quot;)
               .sort_values(&quot;Age&quot;).reset_index(drop=True))

@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | IV-04. 태풍의 진로와 세기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 460.
+# %% code 441.
 import zipfile
 from pathlib import Path
 import numpy as np
@@ -19,7 +19,7 @@ if not txt_file.exists():
         z.extract("bst_all.txt", proj_dir)
 du.preview_text(txt_file, n=6)
 
-# %% code 461.
+# %% code 442.
 rows = []
 for line in open(txt_file, encoding="ascii", errors="ignore"):
     if line.startswith("66666"):
@@ -48,7 +48,7 @@ bt["year"] = bt["time"].dt.year
 print(f"관측 기록 {len(bt):,}줄, 태풍 {bt['sid'].nunique():,}개 ({bt['year'].min()}~{bt['year'].max()})")
 bt.head()
 
-# %% code 462.
+# %% code 443.
 this_year = pd.Timestamp.now().year
 count = bt.groupby("year")["sid"].nunique()
 count = count[count.index < this_year]
@@ -67,7 +67,7 @@ ax.grid(axis="y", alpha=0.3)
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f"{proj_dir.name}_01"))
 plt.show()
 
-# %% code 463.
+# %% code 444.
 ts = bt[bt["grade"].isin([3, 4, 5, 9])]
 genesis = ts.sort_values("time").groupby("sid").first()
 
@@ -97,7 +97,7 @@ plt.show()
 
 print(f"위도 5° 미만에서 발생한 태풍: {(genesis['lat'] < 5).mean() * 100:.1f}%")
 
-# %% code 464.
+# %% code 445.
 recent = bt[bt["year"] >= 2000]
 gen_month = genesis["time"].dt.month
 
@@ -117,7 +117,7 @@ plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f"{proj_dir.name}_03"))
 plt.show()
 
-# %% code 465.
+# %% code 446.
 GRADE = {2: "열대 저압부", 3: "열대 폭풍", 4: "강한 열대 폭풍", 5: "태풍(TY)",
          6: "온대 저기압"}
 h = bt[bt["sid"] == "2211_HINNAMNOR"].copy()
@@ -155,7 +155,7 @@ ax.set_title("태풍 힌남노(2022)의 진로와 중심 기압", fontsize=10)
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f"{proj_dir.name}_04"))
 plt.show()
 
-# %% code 466.
+# %% code 447.
 landfall = pd.Timestamp("2022-09-06 04:50")
 
 fig, ax = plt.subplots(2, 1, figsize=(7.5, 4.1), sharex=True)
@@ -192,7 +192,7 @@ strong = mid[mid["kst"] > weak["kst"]].loc[lambda d: d["pres"].idxmin()]
 print(f"다시 발달: {weak['kst']:%m월 %d일 %H시} {weak['pres']} hPa → "
       f"{strong['kst']:%m월 %d일 %H시} {strong['pres']} hPa")
 
-# %% code 467.
+# %% code 448.
 sel = bt[(bt["year"] >= 1977) & bt["grade"].isin([3, 4, 5])].copy()
 bins = np.arange(5, 47, 2)
 sel["lat_bin"] = pd.cut(sel["lat"], bins)
@@ -210,7 +210,7 @@ ax.grid(alpha=0.3)
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f"{proj_dir.name}_06"))
 plt.show()
 
-# %% code 468.
+# %% code 449.
 # 힌남노의 이동 속도: 거제 상륙(6일 04:50 KST) 직전 6시간
 # 9월 5일 12시~18시(UTC) = 5일 21시~6일 3시(KST) 사이 이동 거리 / 시간
 a, b = h.set_index("time").loc["2022-09-05 12:00"], h.set_index("time").loc["2022-09-05 18:00"]
@@ -251,7 +251,7 @@ ax.set_title("움직이는 태풍 모형의 바람 (파란 화살표: 이동 방
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f"{proj_dir.name}_07"))
 plt.show()
 
-# %% code 469.
+# %% code 450.
 cols = ["date", "hour", "temp", "dwpt", "rhum", "prcp", "snow", "wdir",
         "wspd", "wpgt", "pres", "tsun", "coco"]
 st_file = Path(proj_dir) / "meteostat_47153.csv.gz"

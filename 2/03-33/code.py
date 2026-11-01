@@ -1,18 +1,18 @@
 # 지구과학 데이터 사이언스 2 | III-13. 차등 측광과 소행성 광도 곡선
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 382.
+# %% code 363.
 import shutil
 
 fname = "925ALPHONSINA_V_2016-11-08_RiLA600_reduced.zip"
-fid = "1MTFCA4uXo3HpsJ0tYeawIwTWVpQinHyQ"
+fid = "1xRUHe6nvHTD8veUBZKLXQlOTJZmsDI8A"
 du.download(f"https://drive.google.com/uc?id={fid}", proj_dir / fname)
 shutil.unpack_archive(str(proj_dir / fname), str(proj_dir))   # 압축 풀기
 
-# %% code 383.
+# %% code 364.
 fpaths = du.list_files(proj_dir, "fit*")
 
-# %% code 384.
+# %% code 365.
 import re
 from pathlib import Path
 import numpy as np
@@ -26,7 +26,7 @@ from photutils.aperture import CircularAperture as CAp
 from photutils.aperture import CircularAnnulus as CAn
 
 fpath = Path(fpaths[0])                      # 첫 영상
-hdul = fits.open(str(fpath), unit="adu")
+hdul = fits.open(str(fpath))
 hdr = hdul[0].header
 flt = hdr["FILTER"]                          # 영상의 필터(이 데이터는 V)
 for _k in ["NAXIS1", "NAXIS2", "DATE-OBS", "EXPTIME", "OBJECT", "FILTER", "CCDNAME"]:
@@ -49,7 +49,7 @@ observatory_code = "P64"
 OBJID = str(int(re.match(r"\d+", fpath.name).group()))   # 파일 이름 앞의 소행성 번호(0000925 -> 925)
 print("gain, rdnoise :", gain, rdnoise, "/ 소행성 번호 :", OBJID)
 
-# %% code 385.
+# %% code 366.
 from astroquery.jplhorizons import Horizons
 from astroquery.mpc import MPC
 
@@ -94,7 +94,7 @@ print(f"영상 {len(fpaths)}장, {t_mids[0].isot[11:16]} ~ {t_mids[-1].isot[11:1
 print(f"{eph_all['targetname'][0]}: 첫 영상 (x, y) = ({xt[0]:.1f}, {yt[0]:.1f}), "
       f"밤사이 움직인 거리 {np.hypot(xt[-1] - xt[0], yt[-1] - yt[0]):.0f} px")
 
-# %% code 386.
+# %% code 367.
 from astroquery.vizier import Vizier
 
 # 영상을 모두 덮는 원(중심 · 반지름) 안의 PS1 별을 받음
@@ -117,7 +117,7 @@ d_track = np.hypot(np.subtract.outer(np.asarray(q["x"]), xt),
 print(f"track : {len(q)} -> {(d_track > 2 * R_OUT).sum()} ({2 * R_OUT:.0f} px)")
 df_stars = q[d_track > 2 * R_OUT].to_pandas()
 
-# %% code 387.
+# %% code 368.
 from astropy.stats import sigma_clip
 from photutils.aperture import ApertureStats
 
@@ -136,7 +136,7 @@ z0 = np.median(dm[good])
 print(f"첫 영상: 영점 Z = {z0:.3f}, 비교성 잔차의 표준편차 {np.std(dm[good] - z0, ddof=1):.3f} mag, "
       f"{flt} 등급 {df_stars.loc[comp_ids, f'{flt}mag'].min():.1f} ~ {df_stars.loc[comp_ids, f'{flt}mag'].max():.1f}")
 
-# %% code 388.
+# %% code 369.
 import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(6.4, 5.6), subplot_kw={"projection": wcs})
@@ -163,7 +163,7 @@ ax.legend(handles=handles, loc="lower left", fontsize=8)
 plt.tight_layout()
 plt.show()
 
-# %% code 389.
+# %% code 370.
 from astropy.io import fits
 
 def phot_frame(fpath, ra, dec, ids):
@@ -205,7 +205,7 @@ df_lc = pd.DataFrame(rows)
 df_lc.to_csv(proj_dir / f"925_Alphonsina_{flt}_lightcurve.csv", index=False)
 df_lc.round(3)
 
-# %% code 390.
+# %% code 371.
 hours = (df_lc["jd"] - df_lc["jd"].iloc[0]) * 24          # 첫 영상부터 지난 시간
 fig, axs = plt.subplots(3, 1, figsize=(7.5, 6.4), sharex=True,
                         gridspec_kw={"height_ratios": [2.2, 1, 1]})
@@ -237,7 +237,7 @@ print(f"점검성: 표준편차 {df_lc['check'].std(ddof=1):.3f} mag, 등급 오
 print(f"영점: {df_lc['zeropt'].min():.3f} ~ {df_lc['zeropt'].max():.3f} (폭 {df_lc['zeropt'].max() - df_lc['zeropt'].min():.2f} mag), "
       f"대기질량 {df_lc['airmass'].min():.2f} ~ {df_lc['airmass'].max():.2f}")
 
-# %% code 391.
+# %% code 372.
 from astropy.timeseries import LombScargle
 
 t_h, mag, emag = hours.to_numpy(), df_lc[flt].to_numpy(), df_lc[f"e_{flt}"].to_numpy()

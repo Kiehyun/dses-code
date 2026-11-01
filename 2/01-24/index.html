@@ -62,15 +62,23 @@ def check_notebook(path):
             &quot;오류 셀&quot;: len(errors), &quot;실행 안 한 셀&quot;: not_run,
             &quot;오류 종류&quot;: &quot;, &quot;.join(sorted(set(errors)))}
 
-check_notebook(sorted(Path.cwd().glob(&quot;*.ipynb&quot;))[0])   # 폴더의 첫 노트북으로 시험</code></pre>
+nb_paths = sorted(Path.cwd().glob(&quot;*.ipynb&quot;))      # 지금 폴더의 노트북 목록
+if nb_paths:
+    display(check_notebook(nb_paths[0]))           # 첫 노트북으로 시험
+else:
+    print(&quot;이 폴더에는 노트북 파일(.ipynb)이 없습니다.&quot;)</code></pre>
 <h2 id="code-18">code 18. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 
 folder = Path.cwd()                                  # 점검할 폴더(지금 노트북이 있는 곳)
-report = pd.DataFrame([check_notebook(p) for p in sorted(folder.glob(&quot;*.ipynb&quot;))])
-report = report.sort_values([&quot;오류 셀&quot;, &quot;실행 안 한 셀&quot;], ascending=False,
-                            ignore_index=True)
-display(report)
-print(f&quot;오류가 남은 노트북: {(report[&#x27;오류 셀&#x27;] &gt; 0).sum()}개&quot;)</code></pre>
+nb_paths = sorted(folder.glob(&quot;*.ipynb&quot;))
+if nb_paths:
+    report = pd.DataFrame([check_notebook(p) for p in nb_paths])
+    report = report.sort_values([&quot;오류 셀&quot;, &quot;실행 안 한 셀&quot;], ascending=False,
+                                ignore_index=True)
+    display(report)
+    print(f&quot;오류가 남은 노트북: {(report[&#x27;오류 셀&#x27;] &gt; 0).sum()}개&quot;)
+else:
+    print(f&quot;{folder.name} 폴더에는 노트북 파일(.ipynb)이 없습니다.&quot;)</code></pre>
 <script>
 document.querySelectorAll('button.copy').forEach(function (b) {
   b.addEventListener('click', function () {

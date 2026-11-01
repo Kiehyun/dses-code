@@ -112,6 +112,7 @@ print(age_summary)
 print(lith_summary)
 
 # %% code 37.
+import numpy as np
 import matplotlib.pyplot as plt
 
 plot_gdf = gdf.copy()
@@ -129,7 +130,7 @@ ax.set_title("Macrostrat 자료로 그린 대한민국 주변 지질 단위")
 ax.set_xlabel("경도")
 ax.set_ylabel("위도")
 ax.legend(loc="upper right")
-ax.set_aspect("equal")  # 경도 · 위도 1° 길이를 같게
+ax.set_aspect(1 / np.cos(np.deg2rad(36)))  # 위도 36°에서 경도 1° 길이는 위도 1°의 cos 36°배
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "05_04_Geologic_map_basics_01"))
 plt.show()
 
@@ -137,11 +138,13 @@ plt.show()
 import matplotlib.pyplot as plt
 
 # 대표 시대와 색의 짝(중복 제거)
+# 대표 시대 이름이 없는 단위(예: 선캄브리아)는 t_int_name(가장 젊은 시대)으로 채움
+plot_gdf["legend_name"] = plot_gdf["best_int_name"].fillna(plot_gdf["t_int_name"])
 legend_df = (
-    plot_gdf[["best_int_name", "plot_color"]]
+    plot_gdf[["legend_name", "plot_color"]]
     .dropna()
     .drop_duplicates()
-    .sort_values("best_int_name")
+    .sort_values("legend_name")
 )
 
 fig, ax = plt.subplots(figsize=(6, max(2, len(legend_df) * 0.35)))
@@ -150,7 +153,7 @@ ax.axis("off")
 # 시대마다 색 상자 + 이름
 for i, row in enumerate(legend_df.itertuples(index=False)):
     ax.add_patch(plt.Rectangle((0, i), 0.5, 0.25, color=row.plot_color, ec="black", lw=0.4))
-    ax.text(0.65, i + 0.12, row.best_int_name, va="center", fontsize=10)
+    ax.text(0.65, i + 0.12, row.legend_name, va="center", fontsize=10)
 
 ax.set_xlim(0, 3)
 ax.set_ylim(-0.2, len(legend_df))

@@ -66,7 +66,7 @@ m.etopo(scale=0.5, alpha=0.5)
 # 경도 · 위도를 그림 좌표(x, y)로 변환
 x, y = m(127.0, 37.2)  # 수원
 plt.plot(x, y, 'ob', markersize=5)
-plt.text(x, y, 'Suwon', fontsize=12)
+plt.text(x, y, '수원', fontsize=12)
 
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "02_03_Drawing_maps_02"))
 plt.show()
@@ -75,7 +75,7 @@ plt.show()
 from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timezone
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12.0, 4.8))
 
@@ -108,7 +108,7 @@ map2.drawmeridians(np.arange(map2.lonmin,map2.lonmax+30,60),labels=[0,0,0,1])  #
 map2.drawmapboundary(fill_color='aqua')
 map2.fillcontinents(color='coral',lake_color='aqua')
 
-date = datetime.utcnow()    # 현재 UTC 시각
+date = datetime.now(timezone.utc)  # 현재 UTC 시각
 CS = map2.nightshade(date)  # 밤 지역에 그림자
 ax2.set_title('%s (UTC) 주야 구분 지도' % date.strftime("%d %b %Y %H:%M:%S"))
 
@@ -138,7 +138,7 @@ def draw_map(m, scale=0.2):
 fig, ax = plt.subplots(1, 3, figsize=(10, 5))
 
 for i, res in enumerate(['l', 'i', 'h']):  # 해안선 해상도: 낮음 · 중간 · 높음
-    # 심사 도법(gnomonic), 서울 부근 중심, 폭 · 높이 단위 m
+    # 심사 도법(gnomonic), 충남 당진 부근 중심, 폭 · 높이 단위 m
     m = Basemap(projection='gnom', lat_0=37, lon_0=126.5,
                 width=100000, height=150000, resolution=res, ax=ax[i])
     
@@ -169,7 +169,7 @@ m.fillcontinents()
 m.drawparallels(np.arange(-90, 90, 10), labels=[1, 1, 0, 0])
 m.drawmeridians(np.arange(-180, 181, 20), labels=[0, 0, 1, 0])
 m.drawmeridians(np.arange(-180, 181, 10), labels=[0, 0, 0, 1])
-plt.title("Weather map\n", fontsize=20)
+plt.title("일기도 바탕 지도\n", fontsize=20)
 plt.savefig(f'{proj_dir}/Weather_map.pdf')
 plt.show()   
 
@@ -182,14 +182,14 @@ fig, axes = plt.subplots(1, 2, figsize=(12.0, 4.8), subplot_kw={'projection': cc
 
 ax1 = axes[0]
 ax1.coastlines(resolution='110m')
-ax1.set_title('Simple World Map')
+ax1.set_title('해안선만 그린 세계 지도')
 
 ax2 = axes[1]
 ax2.coastlines(resolution='110m')
 ax2.add_feature(cfeature.LAND)
 ax2.add_feature(cfeature.OCEAN)
 ax2.gridlines()
-ax2.set_title('Detailed World Map')
+ax2.set_title('육지 · 바다 · 격자를 더한 세계 지도')
 
 plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "02_03_Drawing_maps_03"))
@@ -213,7 +213,7 @@ ax1.add_feature(cfeature.OCEAN)
 
 ax1.gridlines()
 
-ax1.set_title('World', fontsize=18)
+ax1.set_title('세계 지도', fontsize=18)
 
 # 경위도 눈금과 표기 형식
 ax1.set_xticks([0, 60, 120, 180, 240, 300, 360], crs=ccrs.PlateCarree())
@@ -223,7 +223,7 @@ lat_formatter = LatitudeFormatter()
 ax1.xaxis.set_major_formatter(lon_formatter)
 ax1.yaxis.set_major_formatter(lat_formatter)
 
-# 2) 호주 지도
+# 2) 아시아 · 오세아니아 지도
 ax2 = plt.subplot(1, 2, 2, projection=ccrs.PlateCarree())
 
 ax2.add_feature(cfeature.LAND)
@@ -233,7 +233,7 @@ ax2.gridlines(draw_labels=True)  # 위경도 표기
 
 ax2.set_extent([60, 180, -50, 60], ccrs.PlateCarree())  # [서쪽 경도, 동쪽 경도, 남쪽 위도, 북쪽 위도]
 
-ax2.stock_img()  # 지형 배경 이미지
+ax2.stock_img()  # Natural Earth 음영 기복 배경
 
 ax2.coastlines(resolution='110m')
 
@@ -241,7 +241,7 @@ ax2.add_feature(cfeature.BORDERS, linestyle=':')
 ax2.add_feature(cfeature.LAKES, alpha=0.9)
 ax2.add_feature(cfeature.RIVERS)
 
-ax2.set_title('Australia', fontsize=18)
+ax2.set_title('아시아 · 오세아니아', fontsize=18)
 
 plt.tight_layout()
 
@@ -294,7 +294,6 @@ fig = plt.figure(figsize=(10, 10))
 ax = plt.axes(projection=ccrs.PlateCarree())
 
 ax.add_feature(cfeature.LAND)
-# ax.add_feature(cfeature.OCEAN)
 
 ax.gridlines(draw_labels = True)
 
@@ -302,7 +301,7 @@ ax.set_extent([111, 145, 25, 50], ccrs.PlateCarree())  # 경도 111~145°, 위�
 
 ax.coastlines(resolution='50m')  # 1:5천만 축척 해안선
 
-plt.title('Map of the Korea', fontsize=18)
+plt.title('우리나라 주변 지도', fontsize=18)
 
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "02_03_Drawing_maps_06"))
 plt.show()
@@ -348,10 +347,7 @@ def safe_tile_loader():
     
     for name, tile in safe_tiles.items():
         try:
-            if tile:
-                m = folium.Map(location=location, zoom_start=12, tiles=tile)
-            else:
-                m = folium.Map(location=location, zoom_start=12)
+            m = folium.Map(location=location, zoom_start=12, tiles=tile)
             
             folium.Marker(
                 location, popup=f'{name} 지도', icon=folium.Icon(color='red')
@@ -370,39 +366,19 @@ def check_internet_connection():
     import urllib.request
     
     try:
-        urllib.request.urlopen('http://www.google.com', timeout=5)
+        urllib.request.urlopen('https://www.google.com', timeout=5)
         return True
-    except:
+    except OSError:  # 연결 실패 · 시간 초과
         return False
-
-def create_offline_map():
-    """오프라인용 기본 지도"""
-    location = [37.5665, 126.9780]
-    
-    m = folium.Map(location=location, zoom_start=12)
-    
-    folium.Marker(
-        location, popup='서울시청', tooltip='Seoul City Hall'
-    ).add_to(m)
-    
-    folium.Circle(
-        location,
-        radius=1000,  # m
-        popup='1km 반경',
-        color='blue',
-        fill=True,
-        fillOpacity=0.2
-    ).add_to(m)
-    
-    return m
 
 print("인터넷 연결 확인 중...")
 if check_internet_connection():
     print("✓ 인터넷 연결됨")
     maps = safe_tile_loader()
 else:
-    print("✗ 인터넷 연결 없음 - 오프라인 지도 생성")
-    maps = {'Offline': create_offline_map()}
+    # Folium 지도는 Leaflet 스크립트와 바탕 타일을 인터넷에서 불러오므로 오프라인에서는 보이지 않음
+    print("✗ 인터넷 연결 없음 - 지도를 표시할 수 없음")
+    maps = {}
 
 for name, map_obj in maps.items():
     print(f"\n{name} 지도:")
@@ -485,20 +461,20 @@ display(heatmap)
 
 # %% code 38.
 import pandas as pd
-def create_choropleth_map():
-    """한국 시도별 인구 데이터를 표시하는 코로플레스 지도"""
+def create_bubble_map():
+    """한국 시도별 인구 데이터를 원의 크기 · 색으로 표시하는 버블 지도"""
     
     # 시도별 인구(가상 자료)
     population_data = {
         '서울특별시': 9720846,
         '경기도': 13427014,
         '인천광역시': 2955024,
-        '강원도': 1536270,
+        '강원특별자치도': 1536270,
         '충청북도': 1612801,
         '충청남도': 2118183,
         '대전광역시': 1475221,
         '세종특별자치시': 340575,
-        '전라북도': 1792476,
+        '전북특별자치도': 1792476,
         '전라남도': 1838353,
         '광주광역시': 1441970,
         '경상북도': 2675564,
@@ -520,12 +496,12 @@ def create_choropleth_map():
         '서울특별시': [37.5665, 126.9780],
         '경기도': [37.4138, 127.5183],
         '인천광역시': [37.4563, 126.7052],
-        '강원도': [37.8228, 128.1555],
+        '강원특별자치도': [37.8228, 128.1555],
         '충청북도': [36.6357, 127.4917],
         '충청남도': [36.5184, 126.8000],
         '대전광역시': [36.3504, 127.3845],
         '세종특별자치시': [36.4800, 127.2890],
-        '전라북도': [35.7175, 127.1530],
+        '전북특별자치도': [35.7175, 127.1530],
         '전라남도': [34.8679, 126.9910],
         '광주광역시': [35.1595, 126.8526],
         '경상북도': [36.4919, 128.8889],
@@ -590,7 +566,7 @@ def create_choropleth_map():
     
     return m
 
-choropleth_map = create_choropleth_map()
-choropleth_map.save(Path(proj_dir)/'choropleth_map.html')
-print("코로플레스 지도가 생성되었습니다.")
-display(choropleth_map) 
+bubble_map = create_bubble_map()
+bubble_map.save(Path(proj_dir)/'bubble_map.html')
+print("버블 지도가 생성되었습니다.")
+display(bubble_map) 

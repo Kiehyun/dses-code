@@ -100,7 +100,8 @@ plt.show()</code></pre>
 print(&quot;g       :&quot;, format_result(g, g_err))
 print(&quot;주기    :&quot;, format_result(mean, sem))
 print(&quot;예시 1  :&quot;, format_result(1234.5678, 12.3))
-print(&quot;예시 2  :&quot;, format_result(0.0043219, 0.00007))</code></pre>
+print(&quot;예시 2  :&quot;, format_result(0.0043219, 0.00007))
+print(&quot;g(두 자리):&quot;, format_result(g, g_err, sig=2))</code></pre>
 <script>
 document.querySelectorAll('button.copy').forEach(function (b) {
   b.addEventListener('click', function () {

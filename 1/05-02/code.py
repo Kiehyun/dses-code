@@ -22,7 +22,7 @@ print(f"fpaths: {fpaths}")
 print(f"len(fpaths): {len(fpaths)}")
 
 # %% code 13.
-du.preview_text(fpaths[0], n=10)
+du.preview_text(fpaths[0], n=10);
 
 # %% code 14.
 import pandas as pd
@@ -104,12 +104,12 @@ def save_csv_if_changed(df_obj, output_path):
     df_obj.to_csv(temp_path, index=False, encoding='utf-8-sig')  # 엑셀 한글 깨짐 방지
     if output_path.exists() and _file_hash(output_path) == _file_hash(temp_path):
         temp_path.unlink(missing_ok=True)
-        print(f"Skip (same file): {output_path}")
+        print(f"내용이 같아 저장하지 않음: {output_path}")
         return
     temp_path.replace(output_path)
-    print(f"Saved: {output_path}")
+    print(f"저장 완료: {output_path}")
 
-save_csv_if_changed(df, proj_dir/"noaa_earthquakes.csv")
+save_csv_if_changed(df, proj_dir/"usgs_all_month.csv")
 
 # %% code 17.
 # 폴더의 GeoJSON 파일 목록 다시 확인(두 번째 파일을 쓸 차례)
@@ -199,8 +199,8 @@ for idx, row in df_clean.iterrows():
     경도: {row.get('longitude', 'N/A'):.2f}<br>
     규모: {magnitude}<br>
     깊이: {row.get('depth', 'N/A')} km<br>
-    위치: {row.get('locationName', 'N/A')}<br>
-    연도: {row.get('year', 'N/A')}
+    위치: {row.get('place', 'N/A')}<br>
+    시각: {row['time_utc']:%Y-%m-%d %H:%M} UTC
     """
 
     folium.CircleMarker(
@@ -253,7 +253,7 @@ for idx, row in df1_clean.iterrows():
 
     # 클릭하면 보일 정보(HTML)
     place = row.get('place', 'N/A')
-    time_val = row.get('time', 'N/A')
+    time_val = f"{row['time_utc']:%Y-%m-%d %H:%M} UTC"  # 밀리초 숫자 대신 날짜 · 시각
 
     popup_text = f"""
     <b>지진 정보</b><br>
@@ -262,7 +262,7 @@ for idx, row in df1_clean.iterrows():
     경도: {row.get('longitude', 'N/A'):.2f}<br>
     깊이: {row.get('depth', 'N/A')} km<br>
     위치: {place}<br>
-    시간: {time_val}
+    시각: {time_val}
     """
 
     folium.CircleMarker(
@@ -320,10 +320,10 @@ m.scatter(x, y, s=sizes, c=colors, alpha=0.7, edgecolor='none', zorder=5)
 
 # 5) 범례: 빈 산점도로 대표 규모만 표시
 for mag_val, color_val in zip([3, 5, 7], ['green', 'yellow', 'red']):
-    plt.scatter([], [], c=color_val, alpha=0.7, s=get_marker_size(mag_val), label=f'Magnitude >= {mag_val}')
-plt.legend(scatterpoints=1, frameon=False, labelspacing=1, title='Earthquake Magnitude')
+    plt.scatter([], [], c=color_val, alpha=0.7, s=get_marker_size(mag_val), label=f'규모 {mag_val} 이상')
+plt.legend(scatterpoints=1, frameon=False, labelspacing=1, title='규모')
 
-plt.title('Global Earthquakes (USGS Data) - Basemap')
+plt.title('전 세계 지진 분포 (USGS 데이터, Basemap)')
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "05_02_Visualizing_global_seismic_belts_01"))
 plt.show()
 
@@ -351,8 +351,8 @@ ax.add_feature(cfeature.LAKES, alpha=0.5)
 ax.add_feature(cfeature.RIVERS)
 
 gridlines = ax.gridlines(draw_labels=True, linestyle='--', color='gray')
-gridlines.xlabels_top = False    # 위쪽 경도 눈금 숨김
-gridlines.ylabels_right = False  # 오른쪽 위도 눈금 숨김
+gridlines.top_labels = False    # 위쪽 경도 눈금 숨김
+gridlines.right_labels = False  # 오른쪽 위도 눈금 숨김
 
 # 3) 마커 크기 · 색: 앞 셀의 sizes, colors 사용
 
@@ -369,7 +369,7 @@ ax.scatter(
     zorder=5                       # 지도 요소 위에
 )
 
-ax.set_title('Global Earthquakes (USGS Data) - Cartopy')
+ax.set_title('전 세계 지진 분포 (USGS 데이터, Cartopy)')
 
 # 5) 범례: 빈 산점도로 대표 규모 표시
 legend_elements = []
@@ -378,13 +378,13 @@ for mag_val, color_val in zip([3, 4, 5, 6, 7], ['green', 'blue', 'yellow', 'oran
         [], [],
         c=color_val,
         s=get_marker_size(mag_val),
-        label=f'Magnitude >= {mag_val}',
+        label=f'규모 {mag_val} 이상',
         alpha=0.7,
         edgecolor='black',
         linewidth=0.5
     ))
 
-ax.legend(handles=legend_elements, title='Earthquake Magnitude', loc='lower left', bbox_to_anchor=(0.02, 0.05))
+ax.legend(handles=legend_elements, title='규모', loc='lower left', bbox_to_anchor=(0.02, 0.05))
 
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "05_02_Visualizing_global_seismic_belts_02"))
 plt.show()

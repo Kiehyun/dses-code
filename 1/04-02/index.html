@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>IV-02. 킬링 곡선 그리기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/04-02/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-22">22</a> <a href="#code-23">23</a> <a href="#code-24">24</a> <a href="#code-25">25</a> <a href="#code-26">26</a> <a href="#code-27">27</a> <a href="#code-28">28</a> <a href="#code-29">29</a> <a href="#code-30">30</a> <a href="#code-31">31</a> <a href="#code-32">32</a> <a href="#code-33">33</a> <a href="#code-34">34</a> <a href="#code-35">35</a> <a href="#code-36">36</a> <a href="#code-37">37</a> <a href="#code-38">38</a> <a href="#code-39">39</a></p>
-<h2 id="code-22">code 22. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<p class="jump"><a href="#code-20">20</a> <a href="#code-21">21</a> <a href="#code-22">22</a> <a href="#code-23">23</a> <a href="#code-24">24</a> <a href="#code-25">25</a> <a href="#code-26">26</a> <a href="#code-27">27</a> <a href="#code-28">28</a> <a href="#code-29">29</a> <a href="#code-30">30</a> <a href="#code-31">31</a> <a href="#code-32">32</a> <a href="#code-33">33</a> <a href="#code-34">34</a> <a href="#code-35">35</a> <a href="#code-36">36</a></p>
+<h2 id="code-20">code 20. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 # 건조 공기의 구성 성분과 부피비(%)
 labels = [&#x27;질소 (N₂)&#x27;, &#x27;산소 (O₂)&#x27;, &#x27;아르곤 (Ar)&#x27;, &#x27;이산화탄소 (CO₂)&#x27;, &#x27;기타&#x27;]
@@ -31,14 +31,14 @@ ax.legend(wedges, [f&#x27;{n}: {s:.3f} %&#x27; for n, s in zip(labels, sizes)],
           title=&#x27;부피비&#x27;, loc=&#x27;upper left&#x27;, bbox_to_anchor=(1.0, 1.0), fontsize=9, frameon=False)
 others_text = (&quot;기타 성분(ppm)\n&quot;
                &quot;네온(Ne) 18.2 · 헬륨(He) 5.24\n&quot;
-               &quot;메탄(CH₄) 1.5 · 크립톤(Kr) 1.14\n&quot;
+               &quot;메탄(CH₄) 1.9 · 크립톤(Kr) 1.14\n&quot;
                &quot;수소(H₂) 0.5&quot;)
 ax.text(1.12, -0.95, others_text, fontsize=8.5, va=&#x27;bottom&#x27;, ha=&#x27;left&#x27;,
         bbox=dict(facecolor=&#x27;white&#x27;, edgecolor=&#x27;lightgray&#x27;))
 ax.set_title(&#x27;대기의 구성 성분 (건조 공기)&#x27;, fontsize=13)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-23">code 23. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-21">code 21. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
@@ -109,43 +109,16 @@ ax.text(-155.58 - 5, 19.54, &#x27;MAUNA LOA&#x27;, color=&#x27;red&#x27;, fontsi
 plt.title(&#x27;대기 관측소 분포 (태평양 중심 지도)&#x27;, fontsize=12)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-24">code 24. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
+<h2 id="code-22">code 22. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
 
 fname = &quot;monthly_in_situ_co2_mlo.csv&quot;
 
 # 스크립스 CO₂ 프로그램에서 직접 내려받기
 url = &quot;https://keelinglabsites.ucsd.edu/websitedataco2/monthly_in_situ_co2_mlo.csv&quot;
 du.download(url, Path(proj_dir) / fname)</code></pre>
-<h2 id="code-25">code 25. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;csv&quot;)</code></pre>
-<h2 id="code-26">code 26. <button class="copy">복사</button></h2><pre><code>n_lines = 70  # 출력할 줄 수
-
-print(f&quot;파일 내용 출력 (처음 {n_lines}줄):&quot;)
-print(&quot;=&quot;*40)
-
-try:
-    with open(fpaths[0], encoding=&#x27;utf-8&#x27;) as f:
-        for i, line in enumerate(f):
-            if i &gt;= n_lines:
-                break
-            print(f&quot;{i+1:3d}: {line.rstrip()}&quot;)
-except UnicodeDecodeError:
-    # UTF-8로 못 읽으면 CP949로 다시 시도
-    try:
-        with open(fpaths[0], encoding=&#x27;cp949&#x27;) as f:
-            for i, line in enumerate(f):
-                if i &gt;= n_lines:
-                    break
-                print(f&quot;{i+1:3d}: {line.rstrip()}&quot;)
-    except Exception as e2:
-        print(f&quot;파일 읽기 실패 (UTF-8, CP949 모두 실패): {e2}&quot;)
-except Exception as e:
-    print(f&quot;파일 읽기 실패: {e}&quot;)
-
-print(&quot;=&quot;*60)</code></pre>
-<h2 id="code-27">code 27. <button class="copy">복사</button></h2><pre><code># # !head -n 70 {fpaths[0]} # list the first 50 lines of the file
-# print(f&quot;파일 {fpaths[0]}의 첫 70줄을 출력합니다:&quot;)
-# !powershell -Command &quot;Get-Content {fpaths[0]} -TotalCount 70&quot;</code></pre>
-<h2 id="code-28">code 28. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+<h2 id="code-23">code 23. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;csv&quot;)</code></pre>
+<h2 id="code-24">code 24. <button class="copy">복사</button></h2><pre><code>du.preview_text(fpaths[0], n=70);  # 앞 70줄(설명 64줄 + 데이터)</code></pre>
+<h2 id="code-25">code 25. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 
 df = pd.read_csv(str(fpaths[0]),
                  thousands = &#x27;,&#x27;,
@@ -165,7 +138,7 @@ df = pd.read_csv(str(fpaths[0]),
 
 df = df[df.CO2 != -99.99]  # -99.99는 결측값
 print(&quot;df: &quot;, df)</code></pre>
-<h2 id="code-29">code 29. <button class="copy">복사</button></h2><pre><code># 간단한 방법: 1년을 365.25일로 근사
+<h2 id="code-26">code 26. <button class="copy">복사</button></h2><pre><code># 간단한 방법: 1년을 365.25일로 근사
 df[&#x27;datetime&#x27;] = pd.to_datetime(df[&#x27;Date&#x27;], format=&#x27;%Y&#x27;) + pd.to_timedelta((df[&#x27;Date&#x27;] % 1) * 365.25, unit=&#x27;D&#x27;)
 
 # 윤년을 고려한 변환(NumPy 벡터 연산)
@@ -187,7 +160,7 @@ def decimal_year_to_datetime_vectorized(decimal_years):
 df[&#x27;datetime&#x27;] = decimal_year_to_datetime_vectorized(df[&#x27;Date&#x27;])
 
 print(df[[&#x27;Date&#x27;, &#x27;datetime&#x27;]])</code></pre>
-<h2 id="code-30">code 30. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-27">code 27. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(10.5,8))
 
@@ -197,13 +170,13 @@ ax.set_xlim(min(df[&#x27;Date&#x27;]), max(df[&#x27;Date&#x27;]))
 ax.set_ylim(min(df[&#x27;CO2&#x27;]), max(df[&#x27;CO2&#x27;]))
 
 # 축 제목에 LaTeX 수식
-ax.set_ylabel(r&#x27;$\rm{CO_2}$ Concentration ($\rm{ppm}$)&#x27;)
-ax.set_xlabel(r&#x27;Year&#x27;)
+ax.set_ylabel(r&#x27;$\rm{CO_2}$ 농도 ($\rm{ppm}$)&#x27;)
+ax.set_xlabel(&#x27;연도&#x27;)
 
-ax.set_title(&#x27;Mauna Loa Observatory, Hawaii \nMonthly Average Carbon Dioxide Concentration&#x27;,
+ax.set_title(&#x27;하와이 마우나로아 관측소\n월평균 이산화탄소 농도&#x27;,
              fontdict={&#x27;fontsize&#x27;:16})
 plt.show()</code></pre>
-<h2 id="code-31">code 31. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-28">code 28. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(10.5,8))
 
@@ -212,13 +185,14 @@ ax.plot(df[&#x27;datetime&#x27;], df[&#x27;CO2&#x27;])  # x축을 datetime으로
 ax.set_xlim(min(df[&#x27;datetime&#x27;]), max(df[&#x27;datetime&#x27;]))
 ax.set_ylim(min(df[&#x27;CO2&#x27;]), max(df[&#x27;CO2&#x27;]))
 
-ax.set_ylabel(r&#x27;$\rm{CO_2}$ Concentration ($\rm{ppm}$)&#x27;)
-ax.set_xlabel(r&#x27;Year&#x27;)
+ax.set_ylabel(r&#x27;$\rm{CO_2}$ 농도 ($\rm{ppm}$)&#x27;)
+ax.set_xlabel(&#x27;연도&#x27;)
 
-ax.set_title(&#x27;Mauna Loa Observatory, Hawaii \nMonthly Average Carbon Dioxide Concentration&#x27;,
+ax.set_title(&#x27;하와이 마우나로아 관측소\n월평균 이산화탄소 농도&#x27;,
              fontdict={&#x27;fontsize&#x27;:16})
 plt.show()</code></pre>
-<h2 id="code-32">code 32. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-29">code 29. <button class="copy">복사</button></h2><pre><code>import numpy as np
+import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(10.5, 8))
 
@@ -228,19 +202,20 @@ ax.scatter(df[&#x27;Date&#x27;], df[&#x27;CO2&#x27;], marker=&#x27;o&#x27;, s=5)
 ax.set_xlim(min(df[&#x27;Date&#x27;]), max(df[&#x27;Date&#x27;]))
 ax.set_ylim(min(df[&#x27;CO2&#x27;]), max(df[&#x27;CO2&#x27;]))
 
-ax.set_ylabel(r&#x27;$\rm{CO_2}$ Concentration ($\rm{ppm}$)&#x27;, fontdict={&#x27;fontsize&#x27;:16, &#x27;fontweight&#x27;:&#x27;bold&#x27;})
-ax.set_xlabel(r&#x27;Year&#x27;, fontdict={&#x27;fontsize&#x27;:16, &#x27;fontweight&#x27;:&#x27;bold&#x27;})
+ax.set_ylabel(r&#x27;$\rm{CO_2}$ 농도 ($\rm{ppm}$)&#x27;, fontdict={&#x27;fontsize&#x27;:16, &#x27;fontweight&#x27;:&#x27;bold&#x27;})
+ax.set_xlabel(&#x27;연도&#x27;, fontdict={&#x27;fontsize&#x27;:16, &#x27;fontweight&#x27;:&#x27;bold&#x27;})
 
 # x축 눈금: 큰 눈금 5년, 작은 눈금 1년
 ax.set_xticks([i for i in range(1960, 2026, 5)])
 ax.set_xticks([i for i in range(1960, 2026, 1)], minor=True)
 ax.set_xticklabels([i for i in range(1960, 2026, 5)], fontdict={&#x27;fontsize&#x27;:11, &#x27;fontweight&#x27;:&#x27;bold&#x27;})
 
-# y축 눈금: 큰 눈금 5 ppm, 작은 눈금 1 ppm
-ax.set_yticks([i for i in range(310, 421, 5)])
-ax.set_yticks([i for i in range(310, 421, 1)], minor=True)
-ax.set_yticklabels([i for i in range(310, 421, 5)], fontdict={&#x27;fontsize&#x27;:11, &#x27;fontweight&#x27;:&#x27;bold&#x27;})
-ax.set_yticklabels(sum([[i, &#x27;&#x27;] for i in [i for i in range(310, 421, 10)]], [])[:-1])  # 10 ppm마다만 숫자
+# y축 눈금: 큰 눈금 5 ppm, 작은 눈금 1 ppm(위 끝은 최댓값을 10 단위로 올림)
+y_top = int(np.ceil(df[&#x27;CO2&#x27;].max() / 10) * 10)
+ax.set_yticks([i for i in range(310, y_top + 1, 5)])
+ax.set_yticks([i for i in range(310, y_top + 1, 1)], minor=True)
+ax.set_yticklabels([i for i in range(310, y_top + 1, 5)], fontdict={&#x27;fontsize&#x27;:11, &#x27;fontweight&#x27;:&#x27;bold&#x27;})
+ax.set_yticklabels(sum([[i, &#x27;&#x27;] for i in [i for i in range(310, y_top + 1, 10)]], [])[:-1])  # 10 ppm마다만 숫자
 
 # 눈금을 안쪽으로, 네 변 모두에
 ax.tick_params(direction=&#x27;in&#x27;, length=8, width=1, colors=&#x27;k&#x27;,
@@ -250,18 +225,20 @@ ax.tick_params(direction=&#x27;in&#x27;, length=3, width=1, colors=&#x27;k&#x27;
                grid_color=&#x27;k&#x27;, grid_alpha=0.5, which = &#x27;minor&#x27;,
                bottom=True, top=True, left=True, right=True)
 
-ax.set_title(&#x27;Mauna Loa Observatory, Hawaii \nMonthly Average Carbon Dioxide Concentration&#x27;,
+ax.set_title(&#x27;하와이 마우나로아 관측소\n월평균 이산화탄소 농도&#x27;,
              y=1.05,  # 제목 아래 여백
              loc = &#x27;left&#x27;,
              fontdict={&#x27;fontsize&#x27;:16, &#x27;fontweight&#x27;:&#x27;bold&#x27;, &#x27;horizontalalignment&#x27;: &#x27;left&#x27;})
 
-# 그래프 위 작은 글씨(자료 출처)
-ax.text(1958, 422, r&#x27;Data from Scripps $\rm{CO_2}$ Program&#x27;,
+# 그래프 위 작은 글씨(데이터 출처와 마지막 데이터 달)
+last = df[&#x27;datetime&#x27;].max()
+ax.text(0.0, 1.01, r&#x27;Data from Scripps $\rm{CO_2}$ Program&#x27;, transform=ax.transAxes,
              fontdict={&#x27;fontsize&#x27;:12})
-ax.text(1985, 422, r&#x27;Last updated June 2021&#x27;, fontdict={&#x27;fontsize&#x27;:12})
+ax.text(1.0, 1.01, f&#x27;Data through {last:%B %Y}&#x27;, transform=ax.transAxes, ha=&#x27;right&#x27;,
+        fontdict={&#x27;fontsize&#x27;:12})
 
 plt.show()</code></pre>
-<h2 id="code-33">code 33. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-30">code 30. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
 co2 = df[[&#x27;Date&#x27;, &#x27;CO2&#x27;, &#x27;seasonally adjusted&#x27;, &#x27;fit&#x27;]].replace(-99.99, np.nan)
@@ -275,19 +252,19 @@ for ax, d, title in zip(axes, [co2, recent], [&#x27;전체 기간&#x27;, &#x27;�
     for col, kw in styles.items():
         ax.plot(d[&#x27;Date&#x27;], d[col], **kw)
     ax.set_title(title)
-    ax.set_xlabel(&#x27;Year&#x27;)
+    ax.set_xlabel(&#x27;연도&#x27;)
     ax.grid(alpha=0.3)
-axes[0].set_ylabel(r&#x27;$\rm{CO_2}$ Concentration ($\rm{ppm}$)&#x27;)
+axes[0].set_ylabel(r&#x27;$\rm{CO_2}$ 농도 ($\rm{ppm}$)&#x27;)
 axes[1].legend()
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-34">code 34. <button class="copy">복사</button></h2><pre><code># 계절 성분 = 관측값 - 계절 변동 제거 값
+<h2 id="code-31">code 31. <button class="copy">복사</button></h2><pre><code># 계절 성분 = 관측값 - 계절 변동 제거 값
 seasonal = co2[&#x27;CO2&#x27;] - co2[&#x27;seasonally adjusted&#x27;]
 cycle = seasonal.groupby(df[&#x27;Month&#x27;]).mean()
 print(cycle.round(2).to_string())
 print(f&quot;가장 높은 달: {cycle.idxmax()}월, 가장 낮은 달: {cycle.idxmin()}월, &quot;
       f&quot;진폭: {cycle.max() - cycle.min():.1f}ppm&quot;)</code></pre>
-<h2 id="code-35">code 35. <button class="copy">복사</button></h2><pre><code># 12달이 모두 있는 해만 연평균
+<h2 id="code-32">code 32. <button class="copy">복사</button></h2><pre><code># 12달이 모두 있는 해만 연평균
 annual = df.groupby(&#x27;Year&#x27;)[&#x27;CO2&#x27;].agg([&#x27;mean&#x27;, &#x27;count&#x27;])
 annual = annual.loc[annual[&#x27;count&#x27;] == 12, &#x27;mean&#x27;]
 growth = (annual.diff() / annual.index.to_series().diff()).dropna()  # ppm/년
@@ -304,32 +281,35 @@ ax.set_ylabel(&#x27;연평균 증가율 (ppm/년)&#x27;)
 ax.set_title(&#x27;마우나로아 CO₂ 농도의 10년 단위 증가율&#x27;)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-36">code 36. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-33">code 33. <button class="copy">복사</button></h2><pre><code>import numpy as np
+import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(10.5, 8))
 ax.set_xlim(min(df[&#x27;Date&#x27;]), max(df[&#x27;Date&#x27;]))
 ax.set_ylim(min(df[&#x27;CO2&#x27;]), max(df[&#x27;CO2&#x27;]))
 
-ax.set_xlabel(&#x27;Year&#x27;, fontsize=16, fontweight=&#x27;bold&#x27;)
-ax.set_ylabel(r&#x27;$\rm{CO_2}$ Concentration ($\rm{ppm}$)&#x27;, fontsize=16, fontweight=&#x27;bold&#x27;)
+ax.set_xlabel(&#x27;연도&#x27;, fontsize=16, fontweight=&#x27;bold&#x27;)
+ax.set_ylabel(r&#x27;$\rm{CO_2}$ 농도 ($\rm{ppm}$)&#x27;, fontsize=16, fontweight=&#x27;bold&#x27;)
 
 ax.set_xticks(range(1960, 2026, 5))
 ax.set_xticks(range(1960, 2026, 1), minor=True)
-ax.set_yticks(range(310, 421, 5))
-ax.set_yticks(range(310, 421, 1), minor=True)
+y_top = int(np.ceil(df[&#x27;CO2&#x27;].max() / 10) * 10)  # 눈금 위 끝: 최댓값을 10 단위로 올림
+ax.set_yticks(range(310, y_top + 1, 5))
+ax.set_yticks(range(310, y_top + 1, 1), minor=True)
 
 ax.tick_params(direction=&#x27;in&#x27;, length=8, width=1, colors=&#x27;k&#x27;, which=&#x27;major&#x27;)
 ax.tick_params(direction=&#x27;in&#x27;, length=3, width=1, colors=&#x27;k&#x27;, which=&#x27;minor&#x27;)
 
-ax.set_title(&#x27;Mauna Loa Observatory, Hawaii\nMonthly Average CO₂ Concentration&#x27;,
+ax.set_title(&#x27;하와이 마우나로아 관측소\n월평균 이산화탄소 농도&#x27;,
              loc=&#x27;left&#x27;, y=1.05, fontsize=16, fontweight=&#x27;bold&#x27;)
-ax.text(1958, 422, &#x27;Data from Scripps CO₂ Program&#x27;, fontsize=12)
-ax.text(1985, 422, &#x27;Last updated June 2021&#x27;, fontsize=12)
+ax.text(0.0, 1.01, &#x27;Data from Scripps CO₂ Program&#x27;, transform=ax.transAxes, fontsize=12)
+ax.text(1.0, 1.01, f&quot;Data through {df[&#x27;datetime&#x27;].max():%B %Y}&quot;, transform=ax.transAxes,
+        ha=&#x27;right&#x27;, fontsize=12)
 
 # 첫 자료점만 그려 두고 애니메이션에서 갱신
 line, = ax.plot(df[&#x27;Date&#x27;].iloc[0], df[&#x27;CO2&#x27;].iloc[0])
 point = ax.scatter(df[&#x27;Date&#x27;].iloc[0], df[&#x27;CO2&#x27;].iloc[0], s=5)</code></pre>
-<h2 id="code-37">code 37. <button class="copy">복사</button></h2><pre><code>def animate(i):
+<h2 id="code-34">code 34. <button class="copy">복사</button></h2><pre><code>def animate(i):
     line.set_data(df[&#x27;Date&#x27;].iloc[:i], df[&#x27;CO2&#x27;].iloc[:i])  # i번째까지 선으로
     point.set_offsets([df[&#x27;Date&#x27;].iloc[i], df[&#x27;CO2&#x27;].iloc[i]])  # 현재 점
     return line, point
@@ -353,7 +333,7 @@ except:
         ani
 
 HTML(ani.to_jshtml())</code></pre>
-<h2 id="code-38">code 38. <button class="copy">복사</button></h2><pre><code>fname = &#x27;Keeling_curve_MLO&#x27;
+<h2 id="code-35">code 35. <button class="copy">복사</button></h2><pre><code>fname = &#x27;Keeling_curve_MLO&#x27;
 
 # MP4로 저장, 실패하면 GIF, 그다음 HTML
 try:
@@ -374,14 +354,14 @@ except Exception as e:
             print(f&quot;HTML 파일이 저장되었습니다: {proj_dir}/{fname}.html&quot;)
         except Exception as e3:
             print(f&quot;HTML 저장 중 오류 발생: {e3}&quot;)</code></pre>
-<h2 id="code-39">code 39. <button class="copy">복사</button></h2><pre><code>import re
+<h2 id="code-36">code 36. <button class="copy">복사</button></h2><pre><code>import re
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import requests
 from io import StringIO
 
-url = &quot;https://keelinglabsites.ucsd.edu/websitedataco2/monthly_in_situ_co2_mlo.csv&quot;
+url = &quot;https://keelinglabsites.ucsd.edu/websitedataco2/monthly_flask_co2_spo.csv&quot;  # 남극점(SPO) 플라스크 자료
 
 # 1) 최신 자료를 내려받아 데이터 행만 고르기
 response = requests.get(url)
@@ -402,8 +382,7 @@ df1 = pd.read_csv(
         &#x27;Year&#x27;, &#x27;Month&#x27;, &#x27;Date Excel&#x27;, &#x27;Date&#x27;,
         &#x27;CO2&#x27;, &#x27;seasonally adjusted&#x27;,
         &#x27;fit&#x27;, &#x27;seasonally adjusted fit&#x27;,
-        &#x27;CO2 filled&#x27;, &#x27;seasonally adjusted filled&#x27;,
-        &#x27;Sta&#x27;
+        &#x27;CO2 filled&#x27;, &#x27;seasonally adjusted filled&#x27;
     ],
     skipinitialspace=True
 )
@@ -448,12 +427,16 @@ print(df1_final.isnull().sum())
 
 df1 = df1_final.copy()
 
-# 4) 축 범위를 10 단위로 내림
-x_min = int(df1[&#x27;Date&#x27;].min() // 10 * 10)
-x_max = int(df1[&#x27;Date&#x27;].max() // 10 * 10)
+# 4) 비교할 마우나로아 계절 보정값(앞에서 읽은 df, 결측 -99.99 제외)
+mlo = df[df[&#x27;seasonally adjusted&#x27;] &gt; 0]
 
-y_min = int(df1[&#x27;seasonally adjusted filled&#x27;].min() // 10 * 10)
-y_max = int(df1[&#x27;seasonally adjusted filled&#x27;].max() // 10 * 10)
+# 축 범위: 최솟값은 10 단위로 내리고, 최댓값은 10 단위로 올림(자료가 잘리지 않게)
+x_min = int(np.floor(min(df1[&#x27;Date&#x27;].min(), mlo[&#x27;Date&#x27;].min()) / 10) * 10)
+x_max = int(np.ceil(max(df1[&#x27;Date&#x27;].max(), mlo[&#x27;Date&#x27;].max()) / 10) * 10)
+
+y_all = pd.concat([df1[&#x27;seasonally adjusted filled&#x27;], mlo[&#x27;seasonally adjusted&#x27;]])
+y_min = int(np.floor(y_all.min() / 10) * 10)
+y_max = int(np.ceil(y_all.max() / 10) * 10)
 
 # 5) 그리기(앞의 킬링 곡선과 같은 꾸밈)
 fig, ax = plt.subplots(figsize=(10.5, 8))
@@ -496,7 +479,7 @@ ax.tick_params(
 )
 
 ax.set_title(
-    &#x27;Mauna Loa Observatory, Hawaii\nMonthly Average Carbon Dioxide Concentration&#x27;,
+    &#x27;South Pole Observatory, Antarctica vs Mauna Loa, Hawaii\nMonthly Average Carbon Dioxide Concentration (Seasonally Adjusted)&#x27;,
     y=1.05,
     loc=&#x27;left&#x27;,
     fontdict={
@@ -512,12 +495,17 @@ ax.text(
 )
 
 ax.text(
-    x_min + 20, y_max + 2, f&#x27;Last updated {int(df1[&quot;Year&quot;].max())}&#x27;,
+    x_min + 30, y_max + 2, f&#x27;Last updated {int(df1[&quot;Year&quot;].max())}&#x27;,
     fontdict={&#x27;fontsize&#x27;: 12}
 )
 
-ax.plot(df1[&#x27;Date&#x27;], df1[&#x27;seasonally adjusted filled&#x27;])
+ax.plot(mlo[&#x27;Date&#x27;], mlo[&#x27;seasonally adjusted&#x27;], color=&#x27;gray&#x27;, label=&#x27;Mauna Loa (MLO, 20°N)&#x27;)
+ax.plot(df1[&#x27;Date&#x27;], df1[&#x27;seasonally adjusted filled&#x27;], label=&#x27;South Pole (SPO, 90°S)&#x27;)
 ax.scatter(df1[&#x27;Date&#x27;], df1[&#x27;seasonally adjusted filled&#x27;], marker=&#x27;o&#x27;, s=5)
+ax.legend(fontsize=12)
+
+print(f&quot;남극점 최댓값: {df1[&#x27;seasonally adjusted filled&#x27;].max():.2f} ppm, &quot;
+      f&quot;마우나로아 최댓값: {mlo[&#x27;seasonally adjusted&#x27;].max():.2f} ppm, 세로축 {y_min}~{y_max} ppm&quot;)
 
 plt.show()</code></pre>
 <script>

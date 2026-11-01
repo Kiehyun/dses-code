@@ -24,27 +24,23 @@ y = -1/np.sqrt(2)
 
 # 왼쪽 그림
 ax1.grid(True, linestyle=&#x27;--&#x27;)
-ax2.set_aspect(&#x27;equal&#x27;, 
-               # adjustable=&#x27;box&#x27;
-               )
+ax1.set_aspect(&#x27;equal&#x27;)
 ax1.set(xlim=[-length-0.5, length+0.5], ylim=[-length-0.5, length-0.5])
 line1, = ax1.plot([], [], color=&#x27;b&#x27;, linewidth=2)
 obj1, = ax1.plot([], [], &#x27;bo&#x27;)
 line1.set_data([0, x], [0, y])
 obj1.set_data([x], [y])
-ax1.set_title(&#x27;First Plot&#x27;)
+ax1.set_title(&#x27;첫 번째 그림&#x27;)
 
 # 오른쪽 그림
 ax2.set(xlim=[-length-0.5, length+0.5], ylim=[-length-0.5, length-0.5])
-ax2.set_aspect(&#x27;equal&#x27;, 
-               # adjustable=&#x27;box&#x27;
-               )
+ax2.set_aspect(&#x27;equal&#x27;)
 line2, = ax2.plot([], [], color=&#x27;b&#x27;, linewidth=2)
 center, = ax2.plot(0, 0, &#x27;ko&#x27;, markersize=5)
 obj2, = ax2.plot([], [], &#x27;ro&#x27;, markersize=18)
 line2.set_data([0, x], [0, y])
 obj2.set_data([x], [y])
-ax2.set_title(&#x27;Second Plot&#x27;)
+ax2.set_title(&#x27;두 번째 그림&#x27;)
 
 plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;02_04_Simple_pendulum_motion_01&quot;))
@@ -54,8 +50,8 @@ plt.show()</code></pre>
 # 단진자 추의 (x, y) 좌표
 length = 1 
 angle = 45  # 도(°)
-x = length*np.sin(45*np.pi/180)
-y = -length*np.cos(45*np.pi/180)
+x = length*np.sin(np.radians(angle))
+y = -length*np.cos(np.radians(angle))
 
 ax.set(xlim=[-length-0.5, length+0.5], ylim=[-length-0.5, length-0.5])
 ax.set_aspect(&#x27;equal&#x27;, adjustable=&#x27;box&#x27;)
@@ -99,15 +95,15 @@ Z0 = np.array([init_angle * np.pi / 180, 0])  # 초기 조건 [각도(라디안)
 Z = odeint(odefun, Z0, t, args=(k,))  # 미분방정식 수치 적분
 
 print(f&quot;해의 개수: {len(Z)}&quot;)
-print(f&quot;각도 변화 (처음 5개): {Z[:12, 0] * 180 / np.pi}&quot;)  # 라디안 → 도
-print(f&quot;각속도 변화 (처음 5개): {Z[:12, 1]}&quot;)</code></pre>
+print(f&quot;각도 변화 (처음 12개): {Z[:12, 0] * 180 / np.pi}&quot;)  # 라디안 → 도
+print(f&quot;각속도 변화 (처음 12개): {Z[:12, 1]}&quot;)</code></pre>
 <h2 id="code-42">code 42. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(8,8))
 
 # 단진자 추의 (x, y) 좌표
 length = 1  # 진자 길이
 angle = 45  # 도
-x = length*np.sin(45*np.pi/180)
-y = -length*np.cos(45*np.pi/180)  # 음수: 고정점 아래쪽
+x = length*np.sin(np.radians(angle))
+y = -length*np.cos(np.radians(angle))  # 음수: 고정점 아래쪽
 
 ax.set(xlim=[-length-0.5, length+0.5], ylim=[-length-0.5, length-0.5])
 ax.set_aspect(&#x27;equal&#x27;, adjustable=&#x27;box&#x27;)
@@ -142,7 +138,7 @@ import numpy as np
 frames = range(1, 13)
 
 fig, axes = plt.subplots(3, 4, figsize=(12, 9))
-fig.suptitle(&#x27;Coordinate Tracking Across Frames&#x27;, fontsize=16, fontweight=&#x27;bold&#x27;)
+fig.suptitle(&#x27;프레임별 추의 좌표&#x27;, fontsize=16, fontweight=&#x27;bold&#x27;)
 
 for i, (frame, x, y) in enumerate(zip(frames, x_values, y_values)):
     row = i // 4
@@ -157,10 +153,9 @@ for i, (frame, x, y) in enumerate(zip(frames, x_values, y_values)):
     ax.set_ylim(-1.2, 0.3)
     ax.axhline(y=0, color=&#x27;k&#x27;, linestyle=&#x27;-&#x27;, alpha=0.3)
     ax.axvline(x=0, color=&#x27;k&#x27;, linestyle=&#x27;-&#x27;, alpha=0.3)
-    # ax.grid(False, alpha=0.3)
     ax.set_aspect(&#x27;equal&#x27;)
     
-    ax.set_title(f&#x27;Frame {frame}&#x27;, fontweight=&#x27;bold&#x27;)
+    ax.set_title(f&#x27;프레임 {frame}&#x27;, fontweight=&#x27;bold&#x27;)
     
     # 그림 아래에 좌표값 표시
     ax.text(0, -1.6, f&#x27;x = {x:.3f}, y = {y:.3f}&#x27;, 
@@ -199,6 +194,7 @@ ax.axis(&#x27;off&#x27;)
 center, = ax.plot(0, 0, &#x27;ko&#x27;, markersize=5)
 line, = ax.plot([], [], color=&#x27;b&#x27;, linewidth=2)
 obj, = ax.plot([], [], &#x27;ro&#x27;, markersize=18)
+time_text = ax.text(-length-0.2, -length-0.2, &#x27;&#x27;)  # 시각 표시(애니메이션에서 사용)
 
 line.set_data([0, x], [0, y])
 obj.set_data([x], [y])
@@ -212,7 +208,7 @@ plt.show()</code></pre>
     y = -length*np.cos(theta)
     line.set_data([0, x], [0, y])
     obj.set_data([x], [y])
-    time_text.set_text(&#x27;time = {:.1f}&#x27;.format(t[i]))
+    time_text.set_text(&#x27;시각 = {:.1f} s&#x27;.format(t[i]))
     return line, obj, time_text  # 다시 그릴 객체(blit=True)
 
 from matplotlib.animation import FuncAnimation
@@ -272,6 +268,8 @@ line, = ax.plot([], [], color=&#x27;b&#x27;, linewidth=2)
 obj, = ax.plot([], [], &#x27;ro&#x27;, markersize=18)
 time_text = ax.text(-length-0.2, -length-0.2, &#x27;&#x27;)
 
+x = length*np.sin(pend.init_angle)   # 초기 각도의 추 위치
+y = -length*np.cos(pend.init_angle)
 line.set_data([0, x], [0, y])
 obj.set_data([x], [y])
 
@@ -284,12 +282,12 @@ plt.show()</code></pre>
     y = -length*np.cos(theta)
     line.set_data([0, x], [0, y])
     obj.set_data([x], [y])
-    time_text.set_text(&#x27;time = {:.1f}&#x27;.format(pend.t[i]))
+    time_text.set_text(&#x27;시각 = {:.1f} s&#x27;.format(pend.t[i]))
     return line, obj, time_text
   
 from matplotlib.animation import FuncAnimation
-ani = FuncAnimation(fig, animate, frames=len(Z), 
-                    interval=int(dt*1000), blit=True)
+ani = FuncAnimation(fig, animate, frames=len(pend.Z), 
+                    interval=int(pend.dt*1000), blit=True)
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -315,14 +313,14 @@ fname = &#x27;Simple_pendulum&#x27;
 import shutil
 from pathlib import Path
 
-output_path = BASEPATH / proj_dir / f&quot;{fname}.mp4&quot;
+output_path = Path(proj_dir) / f&quot;{fname}.mp4&quot;
 output_path.parent.mkdir(parents=True, exist_ok=True)
 
 if shutil.which(&#x27;ffmpeg&#x27;) is None:
     print(&#x27;ffmpeg가 설치되어 있지 않아 MP4 저장을 건너뜁니다.&#x27;)
 else:
-    ani.save(str(output_path), fps=60, dpi=150)
-    print(f&quot;Animation saved as {output_path}&quot;)</code></pre>
+    ani.save(str(output_path), fps=int(round(1/pend.dt)), dpi=150)  # dt = 0.05 s → 초당 20프레임(실제 속도)
+    print(f&quot;애니메이션 저장: {output_path}&quot;)</code></pre>
 <script>
 document.querySelectorAll('button.copy').forEach(function (b) {
   b.addEventListener('click', function () {

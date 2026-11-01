@@ -5,7 +5,7 @@
 from pathlib import Path
 
 fname = "SURFACE_ASOS_116_MI_2018-01_2018-12_2018.zip"
-fid = "1THyhljJL8p5mhpnqLKNbU5QPC-bVABOI"  # 구글 드라이브 파일 ID
+fid = "1bUOR1wEmCPCCH8iY23shQ5d_c2td_kt-"  # 구글 드라이브 파일 ID
 
 du.download(f"https://docs.google.com/uc?export=download&id={fid}", Path(proj_dir) / fname)
 
@@ -23,68 +23,9 @@ with ZipFile(str(fpaths[0]), 'r') as zip_ref:
 fpaths = du.list_files(proj_dir, "csv")
 
 # %% code 4.
-n_lines = 10  # 출력할 줄 수
-
-print(f"파일 내용 출력 (처음 {n_lines}줄):")
-print("="*60)
-
-try:
-    with open(fpaths[0], encoding='utf-8') as f:
-        for i, line in enumerate(f):
-            if i >= n_lines:
-                break
-            print(f"{i+1:3d}: {line.rstrip()}")
-except UnicodeDecodeError:
-    # UTF-8로 못 읽으면 CP949로 다시 시도
-    try:
-        with open(fpaths[0], encoding='cp949') as f:
-            for i, line in enumerate(f):
-                if i >= n_lines:
-                    break
-                print(f"{i+1:3d}: {line.rstrip()}")
-    except Exception as e2:
-        print(f"파일 읽기 실패 (UTF-8, CP949 모두 실패): {e2}")
-except Exception as e:
-    print(f"파일 읽기 실패: {e}")
-
-print("="*60)
+du.preview_text(fpaths[0], n=10);  # 앞 10줄(인코딩 자동)
 
 # %% code 5.
-# # !head -n 50 {fpaths[0]} # list the first 50 lines of the file
-# print(f"파일 {fpaths[0]}의 첫 20줄을 출력합니다:")
-# !powershell -Command "Get-Content {fpaths[0]} -TotalCount 20"
-
-# %% code 6.
-# print("\n=== Python으로 직접 읽기 ===")
-# # Python으로 직접 파일 읽기
-# import codecs
-# try:
-# # UTF-8로 시도
-# with open(fpaths[0], 'r', encoding='utf-8') as f:
-# lines = f.readlines()[:10]
-# print("UTF-8로 성공:")
-# for line in lines:
-# print(line.strip())
-# except:
-# try:
-# # EUC-KR로 시도
-# with open(fpaths[0], 'r', encoding='euc-kr') as f:
-# lines = f.readlines()[:10]
-# print("EUC-KR로 성공:")
-# for line in lines:
-# print(line.strip())
-# except:
-# try:
-# # CP949로 시도
-# with open(fpaths[0], 'r', encoding='cp949') as f:
-# lines = f.readlines()[:10]
-# print("CP949로 성공:")
-# for line in lines:
-# print(line.strip())
-# except:
-# print("모든 인코딩 시도 실패")
-
-# %% code 7.
 import pandas as pd
 
 # 천 단위 쉼표 처리, 기상청 자료는 EUC-KR 인코딩
@@ -92,15 +33,14 @@ df = pd.read_csv(str(fpaths[0]), thousands=',', encoding='euc-kr')
 
 print(f"df :\n{df}")
 
-# %% code 8.
+# %% code 6.
 # 월별 파일 모두 합치기
 import pandas as pd
 
 df_month = pd.DataFrame()
 
 for fpath in fpaths:
-    with open(fpath, 'r', encoding='utf-8', errors='ignore') as f:
-        print(f"읽는 중: {fpath.name}, 인코딩: {f.encoding}")
+    print(f"읽는 중: {fpath.name} (인코딩: euc-kr)")
     df_month = pd.read_csv(str(fpath), encoding='euc_kr', sep=',')
     df = pd.concat([df, df_month], ignore_index=True)
 
@@ -108,7 +48,7 @@ df = df.drop_duplicates()  # 첫 달 파일이 두 번 들어가므로 중복 �
 print(f"총 레코드 수(중복 제거 후): {len(df)}")
 print(f"df :\n{df}")
 
-# %% code 9.
+# %% code 7.
 # 문자열 '일시'를 datetime으로 변환
 print(f"type(df['일시'][0]): {type(df['일시'][0])}")
 df['dt_YmdHM'] = pd.to_datetime(df['일시'])
@@ -121,7 +61,7 @@ df['dt_YmdHM-1min'] = df['dt_YmdHM'] - timedelta(minutes=1)
 df.index = df['dt_YmdHM-1min']
 print(f"df :\n{df}")
 
-# %% code 10.
+# %% code 8.
 from datetime import datetime, timedelta
 
 # 같은 날짜를 고르는 세 가지 방법
@@ -134,7 +74,7 @@ print(f"df_jan52 :\n{df_jan52}")
 df_jan53 = df[(df['dt_YmdHM-1min'] >= '2018-01-12 00:00') & (df['dt_YmdHM-1min'] < '2018-01-13 00:00')]
 print(f"df_jan53 :\n{df_jan53}")
 
-# %% code 11.
+# %% code 9.
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
@@ -173,7 +113,7 @@ ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
 plt.tight_layout()
 plt.show()
 
-# %% code 12.
+# %% code 10.
 import pandas as pd
 import numpy as np
 
@@ -215,7 +155,7 @@ months = ['1월', '2월', '3월', '4월', '5월', '6월',
 for month_num, count in monthly_count.items():
     print(f"{months[month_num-1]}: {count}일")
 
-# %% code 13.
+# %% code 11.
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
@@ -330,7 +270,7 @@ print(f"최대 강수량: {rainy_days['누적강수량(mm)'].max():.2f}mm")
 print(f"최소 강수량: {rainy_days['누적강수량(mm)'].min():.2f}mm")
 print(f"중간값: {rainy_days['누적강수량(mm)'].median():.2f}mm")
 
-# %% code 14.
+# %% code 12.
 import pandas as pd
 import numpy as np
 from datetime import datetime
@@ -491,7 +431,7 @@ results = calculate_temperature_averages(df, 'dt_YmdHM-1min', '기온(°C)')
 
 plot_temperature_comparison(results)
 
-# %% code 15.
+# %% code 13.
 # resample()만으로는 값이 아니라 Resampler 객체
 print("type(df.resample('D'): {}".format(type(df.resample('D'))))
 print("df.resample('D') :", df.resample('D'))
@@ -500,7 +440,7 @@ print("df.resample('D') :", df.resample('D'))
 df_daily_max = df.resample('D').max()
 print("df_daily_max :\n{}".format(df_daily_max))
 
-# %% code 16.
+# %% code 14.
 print(f"원본 데이터 형태: {df.shape}")
 print(f"인덱스 타입: {type(df.index)}")
 print(f"인덱스 빈도: {df.index.freq}")
@@ -561,7 +501,7 @@ print("df.resample('ME').max().index.month_name(): {}".format(df.resample('ME').
 print(f"YYYY-MM: {df.resample('ME').max().index.strftime('%Y-%m')[:5].values}")
 print(f"Month Year: {df.resample('ME').max().index.strftime('%B %Y')[:5].values}")
 
-# %% code 17.
+# %% code 15.
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
@@ -590,14 +530,14 @@ box_data = [daily_stats['일평균기온'].dropna(),
 box_labels = ['일평균기온', '일최고기온', '일최저기온']
 colors = ['lightblue', 'lightcoral', 'lightcyan']
 
-bp = plt.boxplot(box_data, labels=box_labels, patch_artist=True)
+bp = plt.boxplot(box_data, tick_labels=box_labels, patch_artist=True)
 for patch, color in zip(bp['boxes'], colors):
     patch.set_facecolor(color)
 plt.title('일별 기온 분포 (박스플롯)', fontsize=14, fontweight='bold')
 plt.ylabel('기온 (°C)')
 plt.grid(True, alpha=0.3)
 
-# 2) 히트맵: 연도 × 월 평균기온
+# 2) 히트맵: 월별 평균기온(1년치라 한 줄)
 plt.subplot(3, 2, 2)
 daily_stats_copy = daily_stats.copy()
 daily_stats_copy['연도'] = daily_stats_copy.index.year
@@ -607,7 +547,7 @@ heatmap_data = daily_stats_copy.groupby(['연도', '월'])['일평균기온'].me
 
 sns.heatmap(heatmap_data, annot=True, fmt='.1f', cmap='RdYlBu_r',
             cbar_kws={'label': '기온 (°C)'})
-plt.title('연도별 일평균 기온 히트맵 (월별 집계)', fontsize=14, fontweight='bold')
+plt.title('월별 일평균 기온 히트맵 (2018년)', fontsize=14, fontweight='bold')
 plt.xlabel('월')
 plt.ylabel('연도')
 
@@ -654,17 +594,17 @@ plt.show()
 
 print("\n=== 일별 기온 통계 요약 ===")
 print(f"전체 기간 평균기온: {daily_stats['일평균기온'].mean():.2f}°C")
-print(f"전체 기간 최고기온: {daily_stats['일평균기온'].max():.2f}°C")
-print(f"전체 기간 최저기온: {daily_stats['일평균기온'].min():.2f}°C")
+print(f"일평균기온의 최댓값: {daily_stats['일평균기온'].max():.2f}°C")
+print(f"일평균기온의 최솟값: {daily_stats['일평균기온'].min():.2f}°C")
 print(f"평균 기온 범위: {daily_stats['기온범위'].mean():.2f}°C")
 
 # 극값과 그 날짜
 max_temp_date = daily_stats['일평균기온'].idxmax()
 min_temp_date = daily_stats['일평균기온'].idxmin()
-print(f"\n최고 기온 기록: {daily_stats.loc[max_temp_date, '일평균기온']:.2f}°C \
-        ({max_temp_date.strftime('%Y년 %m월 %d일')})")
-print(f"최저 기온 기록: {daily_stats.loc[min_temp_date, '일평균기온']:.2f}°C \
-        ({min_temp_date.strftime('%Y년 %m월 %d일')})")
+print(f"\n일평균기온이 가장 높은 날: {daily_stats.loc[max_temp_date, '일평균기온']:.2f}°C "
+      f"({max_temp_date.strftime('%Y년 %m월 %d일')})")
+print(f"일평균기온이 가장 낮은 날: {daily_stats.loc[min_temp_date, '일평균기온']:.2f}°C "
+      f"({min_temp_date.strftime('%Y년 %m월 %d일')})")
 
 print("\n=== 계절별 평균 기온 ===")
 seasonal_avg = daily_stats.groupby(daily_stats.index.month).agg({
@@ -687,7 +627,7 @@ print(f"평균 일일 기온 변화: {daily_stats['기온변화'].mean():.2f}°C
 print(f"최대 일일 기온 상승: {daily_stats['기온변화'].max():.2f}°C")
 print(f"최대 일일 기온 하락: {daily_stats['기온변화'].min():.2f}°C")
 
-# %% code 18.
+# %% code 16.
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
@@ -728,14 +668,14 @@ box_data = [monthly_stats['월평균기온'], monthly_stats['월최고기온'], 
 box_labels = ['월평균기온', '월최고기온', '월최저기온']
 colors = ['lightblue', 'lightcoral', 'lightcyan']
 
-bp = plt.boxplot(box_data, labels=box_labels, patch_artist=True)
+bp = plt.boxplot(box_data, tick_labels=box_labels, patch_artist=True)
 for patch, color in zip(bp['boxes'], colors):
     patch.set_facecolor(color)
 plt.title('월별 기온 분포 (박스플롯)', fontsize=14, fontweight='bold')
 plt.ylabel('기온 (°C)')
 plt.grid(True, alpha=0.3)
 
-# 3) 히트맵: 연도 × 월
+# 3) 히트맵: 연도 × 월(1년치라 한 줄)
 plt.subplot(2, 2, 3)
 monthly_stats_copy = monthly_stats.copy()
 monthly_stats_copy['연도'] = monthly_stats_copy.index.year
@@ -747,7 +687,7 @@ heatmap_data = monthly_stats_copy.pivot_table(
 
 sns.heatmap(heatmap_data, annot=True, fmt='.1f', cmap='RdYlBu_r',
             cbar_kws={'label': '기온 (°C)'})
-plt.title('연도별 월평균 기온 히트맵', fontsize=14, fontweight='bold')
+plt.title('월평균 기온 히트맵 (2018년)', fontsize=14, fontweight='bold')
 plt.xlabel('월')
 plt.ylabel('연도')
 
@@ -801,7 +741,7 @@ for month, row in seasonal_avg.iterrows():
     print(f"{month}월 ({season}): 평균 {row['월평균기온']:.1f}°C, "
           f"최고 {row['월최고기온']:.1f}°C, 최저 {row['월최저기온']:.1f}°C")
 
-# %% code 19.
+# %% code 17.
 import numpy as np
 
 # 연습용 가상 자료
@@ -818,7 +758,7 @@ ax = WindroseAxes.from_ax()  # 바람장미용 극좌표 축
 
 ax.bar(wd, ws)
 
-# %% code 20.
+# %% code 18.
 # windrose가 쓰는 열 이름으로 복사
 df['speed'] = df['풍속(m/s)']
 df['direction'] = df['풍향(deg)']
@@ -873,23 +813,29 @@ print(f"풍향 범위: {df['direction'].min():.1f} - {df['direction'].max():.1f}
 print(f"평균 풍속: {df['speed'].mean():.2f} m/s")
 print(f"최빈 풍향: {df['direction'].mode().values[0]:.1f} degrees")
 
-# %% code 21.
+# %% code 19.
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from windrose import WindroseAxes
 import seaborn as sns
 
-# 일평균 · 월평균 바람
-df_daily = df.resample('D').agg({
-    'direction': 'mean',
-    'speed': 'mean'
-}).dropna()
+# 풍향 · 풍속을 동서(u) · 남북(v) 성분으로(풍향은 바람이 불어오는 방향이므로 - 부호)
+rad = np.deg2rad(df['direction'])
+df_uv = pd.DataFrame({'u': -df['speed'] * np.sin(rad),   # 동쪽으로 부는 성분이 +
+                      'v': -df['speed'] * np.cos(rad),   # 북쪽으로 부는 성분이 +
+                      'speed': df['speed']}, index=df.index)
 
-df_monthly = df.resample('ME').agg({
-    'direction': 'mean',
-    'speed': 'mean'
-}).dropna()
+def mean_wind(rule):
+    # u · v는 벡터 평균, 풍속은 산술평균
+    m = df_uv.resample(rule).mean().dropna()
+    # 평균 u · v를 다시 「불어오는 방향」(0~360°)으로
+    m['direction'] = np.rad2deg(np.arctan2(-m['u'], -m['v'])) % 360
+    return m[['direction', 'speed']]
+
+# 일평균 · 월평균 바람
+df_daily = mean_wind('D')
+df_monthly = mean_wind('ME')
 
 fig = plt.figure(figsize=(12, 10))
 

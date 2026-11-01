@@ -116,7 +116,8 @@ lith_summary = (
 
 print(age_summary)
 print(lith_summary)</code></pre>
-<h2 id="code-37">code 37. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-37">code 37. <button class="copy">복사</button></h2><pre><code>import numpy as np
+import matplotlib.pyplot as plt
 
 plot_gdf = gdf.copy()
 plot_gdf[&quot;plot_color&quot;] = plot_gdf[&quot;color&quot;].fillna(&quot;#cccccc&quot;)  # 색 없으면 회색
@@ -133,17 +134,19 @@ ax.set_title(&quot;Macrostrat 자료로 그린 대한민국 주변 지질 단위
 ax.set_xlabel(&quot;경도&quot;)
 ax.set_ylabel(&quot;위도&quot;)
 ax.legend(loc=&quot;upper right&quot;)
-ax.set_aspect(&quot;equal&quot;)  # 경도 · 위도 1° 길이를 같게
+ax.set_aspect(1 / np.cos(np.deg2rad(36)))  # 위도 36°에서 경도 1° 길이는 위도 1°의 cos 36°배
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;05_04_Geologic_map_basics_01&quot;))
 plt.show()</code></pre>
 <h2 id="code-38">code 38. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 # 대표 시대와 색의 짝(중복 제거)
+# 대표 시대 이름이 없는 단위(예: 선캄브리아)는 t_int_name(가장 젊은 시대)으로 채움
+plot_gdf[&quot;legend_name&quot;] = plot_gdf[&quot;best_int_name&quot;].fillna(plot_gdf[&quot;t_int_name&quot;])
 legend_df = (
-    plot_gdf[[&quot;best_int_name&quot;, &quot;plot_color&quot;]]
+    plot_gdf[[&quot;legend_name&quot;, &quot;plot_color&quot;]]
     .dropna()
     .drop_duplicates()
-    .sort_values(&quot;best_int_name&quot;)
+    .sort_values(&quot;legend_name&quot;)
 )
 
 fig, ax = plt.subplots(figsize=(6, max(2, len(legend_df) * 0.35)))
@@ -152,7 +155,7 @@ ax.axis(&quot;off&quot;)
 # 시대마다 색 상자 + 이름
 for i, row in enumerate(legend_df.itertuples(index=False)):
     ax.add_patch(plt.Rectangle((0, i), 0.5, 0.25, color=row.plot_color, ec=&quot;black&quot;, lw=0.4))
-    ax.text(0.65, i + 0.12, row.best_int_name, va=&quot;center&quot;, fontsize=10)
+    ax.text(0.65, i + 0.12, row.legend_name, va=&quot;center&quot;, fontsize=10)
 
 ax.set_xlim(0, 3)
 ax.set_ylim(-0.2, len(legend_df))

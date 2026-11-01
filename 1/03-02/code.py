@@ -42,6 +42,12 @@ def parse_flattening(text):
         return 1.0 / float(reciprocal.group(1))
     return first_float(s)
 
+# 정보상자의 알베도 칸에는 본드(Bond) · 기하(geometric) 알베도가 함께 적혀 있음
+# → 'Bond' 앞의 수치만 골라냄(복사 평형 계산에는 본드 알베도를 씀)
+def bond_albedo(text):
+    m = re.search(r"(\d*\.\d+)\s*\(?\s*bond", clean_text(text), flags=re.I)
+    return float(m.group(1)) if m else np.nan
+
 def get_row_key(df, prefix):
     return next(i for i in df.index if clean_text(i).startswith(prefix))
 
@@ -163,7 +169,7 @@ for en in planet_order:
             "편평도": parse_flattening(flattening_text),
             "질량(kg)": first_float(w.loc[mass_key, en]),
             "장반경(AU)": second_float(w.loc[distance_key, en]),
-            "알베도": first_float(albedo_text),
+            "본드 알베도": bond_albedo(albedo_text),
             "태양 적도에 대한 경사각(도)": first_float(w.loc[inclination_key, en]),
             "궤도 이심률": first_float(w.loc[eccentricity_key, en]),
             "자전 주기(days)": first_float(w.loc[rotation_key, en]),
@@ -176,7 +182,7 @@ for en in planet_order:
 
 columns = [
     "행성", "영어이름", "적도반지름(km)", "편평도", "질량(kg)", "장반경(AU)",
-    "알베도", "태양 적도에 대한 경사각(도)", "궤도 이심률", "자전 주기(days)",
+    "본드 알베도", "태양 적도에 대한 경사각(도)", "궤도 이심률", "자전 주기(days)",
     "확인된 위성 수", "축 경사각(도)", "고리", "대기",
 ]
 
@@ -209,16 +215,16 @@ import numpy as np
 # 공전주기 계산(케플러 제3법칙)
 df['공전주기(년)'] = (2 * np.pi * ((df["장반경(AU)"].values * u.AU)**3 / const.GM_sun)**0.5).to(u.year).value
 
-# 평균 밀도 계산
-df['평균 밀도 (g cm^-3)'] = (3 * (df["질량(kg)"].values * u.kg) / (4 * np.pi * (df["적도반지름(km)"].values * u.km)**3)).to(u.g / u.cm**3).value
-
-# 적도 중력 계산
-df['적도 중력(m s^-2)'] = (const.G * (df["질량(kg)"].values * u.kg) / (df["적도반지름(km)"].values * u.km)**2).to(u.m / u.s**2).value
-
-# 평균반지름 계산(편평도 고려)
+# 평균반지름 계산(편평도 고려): 부피가 같은 구의 반지름
 df['평균반지름(km)'] = df["적도반지름(km)"] * (1 - df["편평도"])**(1/3)
 
-print("df[['공전주기(년)', '평균 밀도 (g cm^-3)', '적도 중력(m s^-2)', '평균반지름(km)']]:\n", df[['공전주기(년)', '평균 밀도 (g cm^-3)', '적도 중력(m s^-2)', '평균반지름(km)']] )
+# 평균 밀도 계산(평균반지름 사용)
+df['평균 밀도 (g cm^-3)'] = (3 * (df["질량(kg)"].values * u.kg) / (4 * np.pi * (df["평균반지름(km)"].values * u.km)**3)).to(u.g / u.cm**3).value
+
+# 적도에서의 인력 가속도(만유인력만, 자전에 따른 원심 효과는 넣지 않음)
+df['적도 인력 가속도(m s^-2)'] = (const.G * (df["질량(kg)"].values * u.kg) / (df["적도반지름(km)"].values * u.km)**2).to(u.m / u.s**2).value
+
+print("df[['공전주기(년)', '평균반지름(km)', '평균 밀도 (g cm^-3)', '적도 인력 가속도(m s^-2)']]:\n", df[['공전주기(년)', '평균반지름(km)', '평균 밀도 (g cm^-3)', '적도 인력 가속도(m s^-2)']] )
 
 # %% code 28.
 # 지구의 태양상수
@@ -229,9 +235,9 @@ df["태양상수(W m^-2)"] = const.L_sun / (4 * np.pi * (df["장반경(AU)"] *u.
 df["태양상수(W m^-2)"]
 
 # %% code 29.
-df["입사량(W)"] = ((1 - df["알베도"]) * np.pi * (df["평균반지름(km)"] * u.km.to(u.m))**2 * df["태양상수(W m^-2)"]).values
+df["입사량(W)"] = ((1 - df["본드 알베도"]) * np.pi * (df["평균반지름(km)"] * u.km.to(u.m))**2 * df["태양상수(W m^-2)"]).values
 # 복사평형온도 계산
-df["복사평형온도(K)"] = ((((1 - df["알베도"]) * (df["태양상수(W m^-2)"]) * u.W/u.m**2) / (4 * const.sigma_sb))**(1/4))
+df["복사평형온도(K)"] = ((((1 - df["본드 알베도"]) * (df["태양상수(W m^-2)"]) * u.W/u.m**2) / (4 * const.sigma_sb))**(1/4))
 print("df[['입사량(W)', '복사평형온도(K)']]:\n", df[['입사량(W)', '복사평형온도(K)']] )
 
 # %% code 30.

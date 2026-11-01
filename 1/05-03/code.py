@@ -22,16 +22,18 @@ params = {
     "includearrivals": "true",  # P · S파 도착 시각 포함
 }
 
-response = requests.get(EVENT_URL, params=params, timeout=60)
-response.raise_for_status()
-xml_text = response.text
-
-# 2) 파일로 저장
+# 2) 이미 받은(또는 동봉된) 파일이 있으면 그 파일을, 없으면 내려받아 저장
 event_file = Path(proj_dir) / f"ncedc_event_{EVENT_ID}_arrivals.xml"
-event_file.write_text(xml_text, encoding="utf-8")
-
-print(response.url)
-print(f"저장 위치: {event_file}")
+if event_file.exists():
+    xml_text = event_file.read_text(encoding="utf-8")
+    print(f"이미 있는 파일 사용: {event_file}")
+else:
+    response = requests.get(EVENT_URL, params=params, timeout=60)
+    response.raise_for_status()
+    xml_text = response.text
+    event_file.write_text(xml_text, encoding="utf-8")
+    print(response.url)
+    print(f"저장 위치: {event_file}")
 print(f"파일 크기: {event_file.stat().st_size:,} bytes")
 
 # %% code 25.

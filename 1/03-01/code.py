@@ -6,60 +6,62 @@ import datetime
 
 dt = datetime.datetime(2023, 4, 15, 12, 30, 0)
 
-print("Specific date and time:", dt)
-print("Year:", dt.year)
-print("Month:", dt.month)
-print("Day:", dt.day)
-print("Hour:", dt.hour)
-print("Minute:", dt.minute)
-print("Second:", dt.second)
+print("날짜와 시각:", dt)
+print("연:", dt.year)
+print("월:", dt.month)
+print("일:", dt.day)
+print("시:", dt.hour)
+print("분:", dt.minute)
+print("초:", dt.second)
 
 # %% code 2.
 from datetime import datetime
 
 dt = datetime(2023, 4, 15, 12, 30, 0)
 
-print("Specific date and time:", dt)
-print("Year:", dt.year)
-print("Month:", dt.month)
-print("Day:", dt.day)
+print("날짜와 시각:", dt)
+print("연:", dt.year)
+print("월:", dt.month)
+print("일:", dt.day)
 
 # %% code 3.
-print("Specific date and time:", dt.strftime("%Y-%m-%d %H:%M:%S"))
+print("날짜와 시각:", dt.strftime("%Y-%m-%d %H:%M:%S"))
 dt2 = datetime.strptime("2017-01-02 14:44", "%Y-%m-%d %H:%M")
-print("Specific date and time:", dt2.strftime("%Y-%m-%d %H:%M:%S"))
+print("날짜와 시각:", dt2.strftime("%Y-%m-%d %H:%M:%S"))
 
 # %% code 4.
 now = datetime.now()
 print("type(now)", type(now))
-print(f"Current date and time: {now.strftime('%Y-%m-%d %H:%M:%S')}")
+print(f"현재 날짜와 시각: {now.strftime('%Y-%m-%d %H:%M:%S')}")
 
-import datetime
-today = datetime.date.today()
-print("Today's date:", today)
+# 날짜만 다루는 date, 시간 간격을 다루는 timedelta 클래스
+# (import datetime 으로 모듈을 다시 들여오면 앞의 datetime 클래스 이름이 가려짐)
+from datetime import date, timedelta
+today = date.today()
+print("오늘 날짜:", today)
 
 # %% code 5.
-diff_days = datetime.timedelta(days=5)
-print("Difference in days:", diff_days.days)
-print("Date after adding 5 days:", today + diff_days)
+diff_days = timedelta(days=5)
+print("시간 간격(일):", diff_days.days)
+print("5일 뒤 날짜:", today + diff_days)
 
 # %% code 6.
 from datetime import datetime, timedelta
 import pytz
 
 # 토성의 2023년 충(UTC)
-saturn_conjunction_2023 = datetime(2023, 8, 27, 8, 0, 0, tzinfo=pytz.utc)
+saturn_opposition_2023 = datetime(2023, 8, 27, 8, 0, 0, tzinfo=pytz.utc)
 
-# 토성의 회합 주기(일)
+# 토성의 평균 회합 주기(일)
 saturn_synodic_period = timedelta(days=378.10)
 
-saturn_conjunction_2024_utc = saturn_conjunction_2023 + saturn_synodic_period
+saturn_opposition_2024_utc = saturn_opposition_2023 + saturn_synodic_period
 
 KST = pytz.timezone('Asia/Seoul')
-saturn_conjunction_2024_kst = saturn_conjunction_2024_utc.astimezone(KST)
+saturn_opposition_2024_kst = saturn_opposition_2024_utc.astimezone(KST)
 
-print("2024년 토성의 충 (KST):", 
-      saturn_conjunction_2024_kst.strftime("%Y-%m-%d %H:%M:%S %Z%z"))
+print("2024년 토성의 충 (KST, 근삿값):", 
+      saturn_opposition_2024_kst.strftime("%Y-%m-%d %H:%M:%S %Z%z"))
 
 # %% code 7.
 from datetime import datetime, timedelta
@@ -145,7 +147,6 @@ ts3 = TimeSeries(time_start="2011-01-01T00:00:00",
             time_delta=[0.1, 0.2, 0.1, 0.3, 0.2]*u.s)
 print("type(ts3.time): ", type(ts3.time))
 print("ts3.time.jd: \n", ts3.time.jd)
-ts3.time.jd = ts3.time.mjd
 print("ts3.time.mjd: \n", ts3.time.mjd)
 print("ts3.time.isot: \n", ts3.time.isot)
 
@@ -276,17 +277,18 @@ print(f"고도: {c_altaz.alt:.2f}, 방위각: {c_altaz.az:.2f}")
 # %% code 21.
 from datetime import datetime
 import matplotlib.pyplot as plt
-from pytz import timezone
+from zoneinfo import ZoneInfo
 from starplot import MapPlot, Projection, Star, _
 from starplot.styles import PlotStyle, extensions
 
 plt.rcParams.update({'figure.max_open_warning': 0})  # 그림 여러 장을 열 때의 경고 끄기
 
-tz = timezone("Asia/Seoul")
+tz = ZoneInfo("Asia/Seoul")  # pytz의 timezone을 tzinfo=에 넣으면 LMT(+08:28)가 붙음
 
 print(f"timezone : {tz}")
 
 dt = datetime(2023, 7, 13, 22, 0, tzinfo=tz)
+print(f"관측 시각 : {dt.isoformat()}")  # +09:00 확인
 
 # 성도 설정
 p = MapPlot(

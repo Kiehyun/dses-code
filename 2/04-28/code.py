@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | IV-08. 우리 바다의 수온
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 531.
+# %% code 500.
 # 필요한 라이브러리 불러오기
 import io
 from zipfile import ZipFile
@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 # 해역마다 쓸 색 정해 두기
 COLOR = {"동해": "#2b6cb0", "남해": "#38a169", "서해": "#e2553d"}
 
-# %% code 532.
+# %% code 501.
 # 데이터를 저장할 폴더를 만들고 압축 파일 내려받기
 proj_dir = du.make_project_dir(du.current_notebook_name())
 
@@ -33,7 +33,7 @@ with ZipFile(zip_path) as z:
     print("안에 들어 있는 파일:", z.namelist())
     z.extractall(proj_dir)
 
-# %% code 533.
+# %% code 502.
 SEA = {"es_2025": "동해", "ss_2025": "남해", "ys_2025": "서해"}   # 파일 이름 : 해역 이름
 USE = ["관측소", "관측일시", "표층수온(℃)", "표층수심(m)", "저층수온(℃)",
        "저층수심(m)"]
@@ -62,7 +62,7 @@ print(f"데이터 크기 : {df.shape[0]:,} 행 × {df.shape[1]} 열")
 print(f"기간      : {df['관측일시'].min()} ~ {df['관측일시'].max()}")
 df.head()
 
-# %% code 534.
+# %% code 503.
 print("해역별 관측 지점 수")
 print(df.groupby("해역")["지점"].nunique().to_string())
 
@@ -75,7 +75,7 @@ print((df[["표층수온", "저층수온"]].isna().mean() * 100).round(1).to_str
 print("\n관측 수심의 중앙값 (m)")
 print(df.groupby("해역")[["표층수심", "저층수심"]].median().to_string())
 
-# %% code 535.
+# %% code 504.
 # 하루 단위로 묶어 해역별 평균 수온 구하기
 daily = (df.set_index("관측일시")
            .groupby("해역")["표층수온"]
@@ -98,7 +98,7 @@ ax.grid(True, linestyle=":", alpha=0.5)
 plt.tight_layout()
 plt.show()
 
-# %% code 536.
+# %% code 505.
 df["월"] = df["관측일시"].dt.month
 
 # 행은 월, 열은 해역인 표 만들기
@@ -133,7 +133,7 @@ plt.show()
 
 print(monthly.round(1).to_string())
 
-# %% code 537.
+# %% code 506.
 # 표층과 저층이 모두 기록된 데이터만 고르기
 both = df.dropna(subset=["표층수온", "저층수온"]).copy()
 both["수온차"] = both["표층수온"] - both["저층수온"]
@@ -173,7 +173,7 @@ plt.show()
 print("월별 표층 − 저층 수온차 (°C)")
 print(samcheok["수온차"].groupby(samcheok.index.month).mean().round(1).to_string())
 
-# %% code 538.
+# %% code 507.
 df["날짜"] = df["관측일시"].dt.normalize()
 
 # 정시·30분 관측만 사용 (불규칙 시각은 표본이 한두 개뿐이라 제외)
@@ -217,7 +217,7 @@ for label, months in SEASONS.items():
         print(f"  {sea} : 변화 폭 {c.max() - c.min():.2f} °C, "
               f"가장 높은 시각 {c.idxmax():4.1f}시, 가장 낮은 시각 {c.idxmin():4.1f}시")
 
-# %% code 539.
+# %% code 508.
 import matplotlib.dates as mdates
 
 THRESHOLD = 28.0     # 고수온 주의보 기준 (°C)

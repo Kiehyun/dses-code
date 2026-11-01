@@ -42,7 +42,7 @@ length2 = 300 * u.centimeter
 time1 = 10 * u.second
 print("length1 + length2 =", length1 + length2)  # 15 m + 3 m = 18 m(단위 자동 변환)
 print("length1 - length2 =", length1 - length2)  # 15 m - 3 m = 12 m
-area = length1 * length2
+area = (length1 * length2).to('m**2')  # cm·m를 m²로 맞춤
 print("area =", area)  # 15 m * 3 m = 45 m²
 speed = length1 / time1
 print("speed =", speed)  # 15 m / 10 s = 1.5 m/s
@@ -55,8 +55,6 @@ except Exception as e:
 
 # %% code 5.
 import scipy.constants as const
-# print("dir(const):", dir(const))
-# print("const.physical_constants:", const.physical_constants)
 constR1 = const.physical_constants["molar gas constant"]  # 기체 상수(값, 단위, 불확도)
 print("type(constR1):", type(constR1))
 print("constR1:", constR1)
@@ -74,7 +72,6 @@ import astropy.units as u
 distance = 8 * u.m
 print("type(distance):{}".format(type(distance)))
 print("distance:{}".format(distance ))
-# print("dir(distance):", dir(distance)) 
 
 time = 4 * u.s
 average_velocity = distance / time
@@ -171,7 +168,7 @@ print(f"area = {area.magnitude} {area.units}")
 from metpy.constants import Rd, g, Cp_d, epsilon
 
 print(f"건조공기 기체상수 Rd: {Rd}")
-print(f"중력가속도 g: {g}")
+print(f"표준 중력가속도 g: {g}")
 print(f"건조공기 비열 Cp_d: {Cp_d}")
 print(f"수증기/건조공기 분자량비 epsilon: {epsilon}")
 

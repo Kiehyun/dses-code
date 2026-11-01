@@ -29,15 +29,15 @@ message = (&#x27;괄호 안에 나란히 쓴 문자열은 &#x27;
 x = 1; y = 2  # 세미콜론으로 한 줄에 두 문장(권장하지 않음)
 print(len(planets), total, area, x + y)
 print(message)</code></pre>
-<h2 id="code-2">code 2. <button class="copy">복사</button></h2><pre><code>x = 0              #x에 0을 담아 둔다.
-y = &#x27;Hello world&#x27;  #y에 &#x27;Hello world&#x27;라는 문자열을 담아 둔다.   
-x                  #x에 들어 있는 내용을 출력한다.</code></pre>
+<h2 id="code-2">code 2. <button class="copy">복사</button></h2><pre><code>x = 0              # x에 0 저장
+y = &#x27;Hello world&#x27;  # y에 문자열 &#x27;Hello world&#x27; 저장
+x                  # x의 값 출력(셀의 마지막 줄)</code></pre>
 <h2 id="code-3">code 3. <button class="copy">복사</button></h2><pre><code>y = &#x27;Hello world&#x27;
 y</code></pre>
 <h2 id="code-4">code 4. <button class="copy">복사</button></h2><pre><code>y1      =      &#x27;Hello world&#x27;  # = 앞뒤의 공백은 상관없음
 y1</code></pre>
 <h2 id="code-5">code 5. <button class="copy">복사</button></h2><pre><code>class = &#x27;Hello world&#x27;  # class는 예약어라 식별자로 쓸 수 없음</code></pre>
-<h2 id="code-6">code 6. <button class="copy">복사</button></h2><pre><code>print(&#x27;This text will be printed to the command line ....&#x27;)  # 괄호 안의 내용 출력
+<h2 id="code-6">code 6. <button class="copy">복사</button></h2><pre><code>print(&#x27;괄호 안의 글자가 그대로 출력됩니다.&#x27;)  # 괄호 안의 내용 출력
 y = &#x27;Hello world&#x27;
 y           # 마지막 줄이 아니면 출력되지 않음
 print(y)    # print()는 항상 출력
@@ -99,10 +99,10 @@ print (&#x27;I am a fan of the number: &#x27; + z)  # 정수와 문자열은 더
 <h2 id="code-14">code 14. <button class="copy">복사</button></h2><pre><code>z = 10
 print (&#x27;I am a fan of the number: &#x27; + str(z))  # str()로 문자열 변환 후 결합</code></pre>
 <h2 id="code-15">code 15. <button class="copy">복사</button></h2><pre><code>decimalValue, stringValue, floatValue = 42, &#x27;Hello&#x27;, 3.14  # 여러 변수에 한 번에 할당
-print (&#x27;String of text goes here&#x27;, decimalValue, stringValue, floatValue)  # (1) 쉼표로 나열
-print (&#x27;String of text goes here %d %s %f&#x27; % (decimalValue, stringValue, floatValue))  # (2) % 연산자
-print (&#x27;String of text goes here {0:d} {1:s} {2:f}&#x27;.format(decimalValue, stringValue, floatValue))  # (3) format() 메서드
-print (f&#x27;String of text goes here {decimalValue} {stringValue} {floatValue}&#x27;)  # (4) f-string</code></pre>
+print (&#x27;출력 예:&#x27;, decimalValue, stringValue, floatValue)  # (1) 쉼표로 나열
+print (&#x27;출력 예: %d %s %f&#x27; % (decimalValue, stringValue, floatValue))  # (2) % 연산자
+print (&#x27;출력 예: {0:d} {1:s} {2:f}&#x27;.format(decimalValue, stringValue, floatValue))  # (3) format() 메서드
+print (f&#x27;출력 예: {decimalValue} {stringValue} {floatValue}&#x27;)  # (4) f-string</code></pre>
 <h2 id="code-16">code 16. <button class="copy">복사</button></h2><pre><code>print(&quot;4 + 10 =&quot;, 4 + 10)
 print(&quot;4 - 10 =&quot;, 4 - 10)
 print(&quot;5 * 10 =&quot;, 5 * 10)
@@ -149,7 +149,7 @@ print(&quot;myStrLst[-1]: &quot;,  myStrLst[-1])  # 음수 인덱스는 뒤에�
 
 my_newLst2 = [1, 2, 3, [&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;]]
 print(&quot;my_newLst2[-1][0]: &quot;, my_newLst2[-1][0])  # 마지막 원소(리스트)의 첫 원소</code></pre>
-<h2 id="code-23">code 23. <button class="copy">복사</button></h2><pre><code>myStrLst[0:2]                          # 시작 인덱스는 포함, 끝 인덱스는 제외
+<h2 id="code-23">code 23. <button class="copy">복사</button></h2><pre><code>print(&quot;myStrLst[0:2]: &quot;, myStrLst[0:2])  # 시작 인덱스는 포함, 끝 인덱스는 제외
 print(&quot;myStrLst[:2]: &quot;, myStrLst[:2])  # 시작 생략 → 처음부터
 print(&quot;myStrLst[1:]: &quot;, myStrLst[1:])  # 끝 생략 → 끝까지
 
@@ -162,27 +162,27 @@ print(&quot;my_newLst3[3][:2]: &quot;, my_newLst3[3][:2])  # 4번째 원소(리�
 <h2 id="code-24">code 24. <button class="copy">복사</button></h2><pre><code>newLst1 = [&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;, &#x27;d&#x27;, &#x27;e&#x27;, &#x27;f&#x27;, &#x27;g&#x27;]
 print(&quot;newLst1:&quot;, newLst1)
 newLst1.append(&#x27;h&#x27;)
-print(&quot;newLst1(after append):&quot;, newLst1)
+print(&quot;newLst1(append 뒤):&quot;, newLst1)
 
 newLst2 = [&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;, &#x27;d&#x27;, &#x27;e&#x27;, &#x27;f&#x27;, &#x27;g&#x27;]
 print(&quot;newLst2:&quot;, newLst2)
 newLst2.insert(2, &#x27;c&#x27;)
-print(&quot;newLst2(after insert):&quot;, newLst2)
+print(&quot;newLst2(insert 뒤):&quot;, newLst2)
 
 anotherLst = [&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;]
 print(&quot;anotherLst:&quot;, anotherLst)
 anotherLst.insert(2, newLst2)  # 리스트 전체가 원소 하나로 들어감(중첩 리스트)
-print(&quot;anotherLst(after insert):&quot;, anotherLst)
+print(&quot;anotherLst(insert 뒤):&quot;, anotherLst)
 
 newLst3 = [&#x27;a&#x27;,&#x27;b&#x27;,&#x27;c&#x27;,&#x27;d&#x27;,&#x27;e&#x27;,&#x27;f&#x27;]
 print(&quot;newLst3:&quot;, newLst3)
 del newLst3[2]
-print(&quot;newLst3(after del):&quot;, newLst3)
+print(&quot;newLst3(del 뒤):&quot;, newLst3)
 
 newLst4 = [&#x27;a&#x27;,&#x27;b&#x27;,&#x27;c&#x27;,&#x27;d&#x27;,&#x27;e&#x27;,&#x27;f&#x27;]
 print(&quot;newLst4:&quot;, newLst4)
 newLst4.remove(&#x27;e&#x27;)  # 값 &#x27;e&#x27;를 찾아 삭제
-print(&quot;newLst4(after remove):&quot;, newLst4)
+print(&quot;newLst4(remove 뒤):&quot;, newLst4)
 
 newLst5 = [&#x27;h&#x27;, &#x27;i&#x27;, &#x27;j&#x27;, &#x27;k&#x27;, &#x27;l&#x27;, &#x27;m&#x27;, &#x27;n&#x27;, &#x27;o&#x27;, &#x27;p&#x27;]
 newLst5.extend([&#x27;q&#x27;, &#x27;r&#x27;])  # 다른 리스트의 원소를 끝에 추가
@@ -207,12 +207,12 @@ print(&quot;myDic2[&#x27;dec&#x27;]:&quot;, myDic2[&#x27;dec&#x27;])  # 적위(�
 myDic3 = {&#x27;name&#x27;: &#x27;GRB 130702A&#x27;, &#x27;redshift&#x27;: 0.145, &#x27;ra&#x27;: (14, 29, 14.78), &#x27;dec&#x27;: (15, 46, 26.4)}
 print(&quot;myDic3:&quot;, myDic3)
 myDic3[&#x27;url&#x27;] = &#x27;http://gcn.gsfc.nasa.gov/other/130702A.gcn3&#x27;
-print(&quot;myDic3(after &#x27;url&#x27; is added):&quot;, myDic3)
+print(&quot;myDic3(&#x27;url&#x27; 추가 뒤):&quot;, myDic3)
 
 myDic4 = {&#x27;name&#x27;: &#x27;GRB 130702A&#x27;, &#x27;redshift&#x27;: 0.145, &#x27;ra&#x27;: (14, 29, 14.78), &#x27;dec&#x27;: (15, 46, 26.4)}
 print(&quot;myDic4:&quot;, myDic4)
 del myDic4[&#x27;name&#x27;]  # 키 &#x27;name&#x27;과 그 값 삭제
-print(&quot;myDic4(after &#x27;name&#x27; is deleted):&quot;, myDic4)</code></pre>
+print(&quot;myDic4(&#x27;name&#x27; 삭제 뒤):&quot;, myDic4)</code></pre>
 <h2 id="code-27">code 27. <button class="copy">복사</button></h2><pre><code>myDic5 = {1: &#x27;a&#x27;, 2: &#x27;b&#x27;, 1: &#x27;c&#x27;}  # 키 1이 중복됨
 print(&quot;myDic5:&quot;, myDic5)           # 마지막 값만 남음</code></pre>
 <h2 id="code-28">code 28. <button class="copy">복사</button></h2><pre><code># 예제 1: 다중 변수 할당과 비교 연산
@@ -319,9 +319,9 @@ while a &lt; 10:
     if a % 2 == 0: continue  # 짝수면 건너뛰고 다음 반복
     print(a)
 print(&quot;-&quot;*20)
-# 주의: 이 셀은 끝없이 반복됨(실행 중지로 멈춤)
+# 주의: 이 반복은 끝나지 않음(■ 중지 단추로 멈춤)
 while True:
-    print(&quot;Ctrl+C를 눌러야 while문을 빠져나갈 수 있습니다.&quot;)</code></pre>
+    print(&quot;중지 단추를 눌러야 while문을 빠져나갈 수 있습니다.&quot;)</code></pre>
 <h2 id="code-33">code 33. <button class="copy">복사</button></h2><pre><code>def square(n):
     return n * n
 print(&quot;square(3) :&quot;, square(3))
@@ -359,10 +359,12 @@ def fibonacci(seed, n):  # 피보나치 수열 만들기
 seed = [1, 1]        # 시작값
 fibonacci(seed, 10)  # 원소 10개까지 생성
 print(&quot;seed :&quot;, seed)</code></pre>
-<h2 id="code-35">code 35. <button class="copy">복사</button></h2><pre><code># import math
-# def sinc(x):
-#     return math.sin(x) / x
-# print(&quot;sinc(0) :&quot;, sinc(0))  # x = 0이면 ZeroDivisionError</code></pre>
+<h2 id="code-35">code 35. <button class="copy">복사</button></h2><pre><code>import math
+
+def sinc(x):
+    return math.sin(x) / x
+
+print(&quot;sinc(0) :&quot;, sinc(0))  # x = 0이면 ZeroDivisionError</code></pre>
 <h2 id="code-36">code 36. <button class="copy">복사</button></h2><pre><code>import math
 
 def sinc(x):

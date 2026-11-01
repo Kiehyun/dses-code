@@ -16,35 +16,11 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 
 # 세계 화산 목록(VAAC용) 엑셀 파일, 구글 드라이브 파일 ID
 fname = &quot;List_of_Volcanoes_of_the_World_for_VAAC_Use.xls&quot;
-fid = &quot;1dmJpAd1RI6LCaoV_iRR72HMeVP8vDoV-&quot;
+fid = &quot;17wbUIiJCxRz3XIgz6ZUM_1o4D2jOSA5P&quot;
 
 du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={fid}&quot;, Path(proj_dir) / fname)</code></pre>
 <h2 id="code-2">code 2. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;xls&quot;)</code></pre>
-<h2 id="code-3">code 3. <button class="copy">복사</button></h2><pre><code>n_lines = 10  # 출력할 줄 수
-
-print(f&quot;파일 내용 출력 (처음 {n_lines}줄):&quot;)
-print(&quot;=&quot;*40)
-
-# UTF-8로 읽고, 안 되면 CP949로 다시 시도
-try:
-    with open(fpaths[0], encoding=&#x27;utf-8&#x27;) as f:
-        for i, line in enumerate(f):
-            if i &gt;= n_lines:
-                break
-            print(f&quot;{i+1:3d}: {line.rstrip()}&quot;)
-except UnicodeDecodeError:
-    try:
-        with open(fpaths[0], encoding=&#x27;cp949&#x27;) as f:
-            for i, line in enumerate(f):
-                if i &gt;= n_lines:
-                    break
-                print(f&quot;{i+1:3d}: {line.rstrip()}&quot;)
-    except Exception as e2:
-        print(f&quot;파일 읽기 실패 (UTF-8, CP949 모두 실패): {e2}&quot;)
-except Exception as e:
-    print(f&quot;파일 읽기 실패: {e}&quot;)
-
-print(&quot;=&quot;*60)</code></pre>
+<h2 id="code-3">code 3. <button class="copy">복사</button></h2><pre><code>du.preview_text(fpaths[0], n=10);  # 앞 10줄(인코딩 자동)</code></pre>
 <h2 id="code-4">code 4. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 import lxml.etree as ET
 
@@ -67,10 +43,18 @@ df_vol = pd.DataFrame(data)
 df_vol.columns = df_vol.iloc[1]
 df_vol = df_vol.drop([0, 1]).reset_index(drop=True)
 
-# 4) 숫자로 바꿀 수 있는 열은 숫자형으로
-for col in df_vol.columns:
-    df_vol[col] = pd.to_numeric(df_vol[col], errors=&#x27;coerce&#x27;).fillna(df_vol[col])
+# 4) 파일 끝의 메타 정보(설명) 행은 좌표가 없으므로 제외
+lat = pd.to_numeric(df_vol[&#x27;LatitudeDecimal&#x27;], errors=&#x27;coerce&#x27;)
+print(f&quot;전체 행: {len(df_vol)}, 좌표가 없는 행: {lat.isna().sum()}&quot;)
+df_vol = df_vol[lat.notna()].reset_index(drop=True)
 
+# 5) 모든 값이 숫자인 열은 숫자형으로
+for col in df_vol.columns:
+    num = pd.to_numeric(df_vol[col], errors=&#x27;coerce&#x27;)
+    if num.notna().sum() == df_vol[col].notna().sum():
+        df_vol[col] = num
+
+print(f&quot;화산 수: {len(df_vol)}&quot;)
 print(&quot;df_vol :&quot;, df_vol)</code></pre>
 <h2 id="code-5">code 5. <button class="copy">복사</button></h2><pre><code>df_vol.columns</code></pre>
 <h2 id="code-6">code 6. <button class="copy">복사</button></h2><pre><code># 십진 도(°) 단위 위도 · 경도를 짧은 열 이름으로
@@ -103,8 +87,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 
-print(&quot;데이터 샘플:&quot;)
-print(f&quot;\n총 화산 개수: {len(df_vol)}&quot;)
+print(f&quot;총 화산 개수: {len(df_vol)}&quot;)
 
 plt.figure(figsize=(12.0, 8.0))
 
@@ -147,8 +130,8 @@ ax.add_feature(cfeature.BORDERS, linestyle=&#x27;:&#x27;)
 plt.scatter(df_vol[&#x27;Longitude&#x27;], df_vol[&#x27;Latitude&#x27;], 
             c=&#x27;red&#x27;, s=15, alpha=0.6, marker=&#x27;^&#x27;, 
             edgecolors=&#x27;darkred&#x27;, linewidth=0.3, 
-            transform=ccrs.PlateCarree(), label=&#x27;Volcano&#x27;)  # 자료 좌표: 경위도
-plt.title(&#x27;World Volcanoes Distribution (Cartopy)&#x27;, fontsize=16, fontweight=&#x27;bold&#x27;)
+            transform=ccrs.PlateCarree(), label=&#x27;화산&#x27;)  # 자료 좌표: 경위도
+plt.title(&#x27;전 세계 화산 분포 (Cartopy)&#x27;, fontsize=16, fontweight=&#x27;bold&#x27;)
 plt.legend(loc=&#x27;lower left&#x27;)
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;05_01_Plotting_ring_of_fire_03&quot;))
 plt.show()</code></pre>
@@ -189,15 +172,15 @@ fig.add_trace(go.Scattergeo(
             text=df_vol[&#x27;VolcanoName&#x27;] if &#x27;VolcanoName&#x27; in df_vol.columns else None,
             # 마우스를 올렸을 때 보일 정보
             hovertemplate=&#x27;&lt;b&gt;%{text}&lt;/b&gt;&lt;br&gt;&#x27; +
-                            &#x27;Latitude: %{lat}&lt;br&gt;&#x27; +
-                            &#x27;Longitude: %{lon}&lt;br&gt;&#x27; +
+                            &#x27;위도: %{lat}&lt;br&gt;&#x27; +
+                            &#x27;경도: %{lon}&lt;br&gt;&#x27; +
                             &#x27;&lt;extra&gt;&lt;/extra&gt;&#x27;,
-            name=&#x27;Volcanoes&#x27;
+            name=&#x27;화산&#x27;
         ))
 
 # 지도 레이아웃 설정
 fig.update_layout(
-        title=&#x27;World Volcanoes Distribution&#x27;,
+        title=&#x27;전 세계 화산 분포 (Plotly)&#x27;,
         geo=dict(
             showland=True,
             landcolor=&#x27;rgb(243, 243, 243)&#x27;,

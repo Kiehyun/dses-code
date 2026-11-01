@@ -11,49 +11,36 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>III-12. SkyBoT으로 소행성 찾기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/03-32/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-356">356</a> <a href="#code-357">357</a> <a href="#code-358">358</a> <a href="#code-359">359</a> <a href="#code-360">360</a> <a href="#code-361">361</a> <a href="#code-362">362</a> <a href="#code-363">363</a> <a href="#code-364">364</a> <a href="#code-365">365</a> <a href="#code-366">366</a> <a href="#code-367">367</a> <a href="#code-368">368</a> <a href="#code-369">369</a> <a href="#code-370">370</a> <a href="#code-371">371</a> <a href="#code-372">372</a> <a href="#code-373">373</a> <a href="#code-374">374</a> <a href="#code-375">375</a> <a href="#code-376">376</a> <a href="#code-377">377</a> <a href="#code-378">378</a> <a href="#code-379">379</a> <a href="#code-380">380</a> <a href="#code-381">381</a></p>
-<h2 id="code-356">code 356. <button class="copy">복사</button></h2><pre><code>import os
+<p class="jump"><a href="#code-340">340</a> <a href="#code-341">341</a> <a href="#code-342">342</a> <a href="#code-343">343</a> <a href="#code-344">344</a> <a href="#code-345">345</a> <a href="#code-346">346</a> <a href="#code-347">347</a> <a href="#code-348">348</a> <a href="#code-349">349</a> <a href="#code-350">350</a> <a href="#code-351">351</a> <a href="#code-352">352</a> <a href="#code-353">353</a> <a href="#code-354">354</a> <a href="#code-355">355</a> <a href="#code-356">356</a> <a href="#code-357">357</a> <a href="#code-358">358</a> <a href="#code-359">359</a> <a href="#code-360">360</a> <a href="#code-361">361</a> <a href="#code-362">362</a></p>
+<h2 id="code-340">code 340. <button class="copy">복사</button></h2><pre><code>import os
 from pathlib import Path</code></pre>
-<h2 id="code-357">code 357. <button class="copy">복사</button></h2><pre><code># 파일 이름과 파일 ID를 리스트로 저장
+<h2 id="code-341">code 341. <button class="copy">복사</button></h2><pre><code># 파일 이름과 파일 ID를 리스트로 저장
 files = [
     {&quot;fname&quot;: (&quot;0000481-EMITA_LIGHT_R_2023-11-13-15-09-08_150sec_&quot;
                &quot;GSON300_STF-8300M_-29c_1bin.fit&quot;),
-     &quot;fid&quot;: &quot;1RqPKBSsfMZhmXFi1n5a1M05Hwi2iTHj1&quot;},
+     &quot;fid&quot;: &quot;1VeIm-dkmCQMb41tZ2ib_0QwiygYl7-RD&quot;},
     {&quot;fname&quot;: (&quot;0000481-EMITA_LIGHT_R_2023-11-13-18-26-08_150sec_&quot;
                &quot;GSON300_STF-8300M_-29c_1bin.fit&quot;),
-     &quot;fid&quot;: &quot;1rr3uBpHDwBfHis9l4JgzDUoaGLk6PHsV&quot;},
+     &quot;fid&quot;: &quot;13NKJi5YMF5rJnG-zP7L6sYpDf8naXRY5&quot;},
 ]
 
 # for 루프를 사용하여 파일 다운로드
 for file in files:
     du.download(f&quot;https://drive.google.com/uc?id={file[&#x27;fid&#x27;]}&quot;,
                 proj_dir / file[&quot;fname&quot;])</code></pre>
-<h2 id="code-358">code 358. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;fit*&quot;)</code></pre>
-<h2 id="code-359">code 359. <button class="copy">복사</button></h2><pre><code>from astropy.io import fits
+<h2 id="code-342">code 342. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;fit*&quot;)</code></pre>
+<h2 id="code-343">code 343. <button class="copy">복사</button></h2><pre><code>from astropy.io import fits
 
 fpath = Path(fpaths[0])
-print(f&quot;fpath: {fpath}&quot;)
-print(f&quot;type(fpath): {type(fpath)}&quot;)
-
-hdul = fits.open(str(fpath), unit=&quot;adu&quot;)
-
-print(&quot;type(hdul) :&quot;, type(hdul))
-print(&quot;type(hdul[0]) :&quot;, type(hdul[0]))</code></pre>
-<h2 id="code-360">code 360. <button class="copy">복사</button></h2><pre><code>print(&quot;type(hdul[0].header) :&quot;, type(hdul[0].header))
-for _k in [&quot;NAXIS1&quot;, &quot;NAXIS2&quot;, &quot;DATE-OBS&quot;, &quot;EXPTIME&quot;, &quot;OBJECT&quot;, &quot;FILTER&quot;]:
-    if _k in hdul[0].header:
-        print(f&quot;{_k:9s} = {hdul[0].header[_k]}&quot;)</code></pre>
-<h2 id="code-361">code 361. <button class="copy">복사</button></h2><pre><code>print(&quot;hdul[0].header[&#x27;DATE-OBS&#x27;] :&quot;, hdul[0].header[&#x27;DATE-OBS&#x27;])
-print(&quot;type(hdul[0].header[&#x27;DATE-OBS&#x27;]) :&quot;, type(hdul[0].header[&#x27;DATE-OBS&#x27;]))</code></pre>
-<h2 id="code-362">code 362. <button class="copy">복사</button></h2><pre><code>print(&quot;type(hdul[0].data) :&quot;, type(hdul[0].data))
-print(&quot;hdul[0].data.dtype :&quot;, hdul[0].data.dtype)
-print(&quot;hdul[0].data.shape :&quot;, hdul[0].data.shape)
-print(&quot;hdul[0].data :&quot;, hdul[0].data)</code></pre>
-<h2 id="code-363">code 363. <button class="copy">복사</button></h2><pre><code>from astropy import units as u
+hdul = fits.open(str(fpath))
+for k in [&quot;NAXIS1&quot;, &quot;NAXIS2&quot;, &quot;DATE-OBS&quot;, &quot;EXPTIME&quot;, &quot;OBJECT&quot;, &quot;FILTER&quot;]:
+    if k in hdul[0].header:
+        print(f&quot;{k:9s} = {hdul[0].header[k]}&quot;)
+print(&quot;data :&quot;, hdul[0].data.dtype, hdul[0].data.shape)</code></pre>
+<h2 id="code-344">code 344. <button class="copy">복사</button></h2><pre><code>from astropy import units as u
 from astropy.coordinates import SkyCoord, EarthLocation, AltAz
 
 # 관측소
-LOCATION = dict(lon=127.005, lat=37.308889, elevation=101)
 Suwon = EarthLocation(lon=127.005 * u.deg, lat=37.308889 * u.deg,
                                  height=101 * u.m)
 observatory_code = &quot;P64&quot;
@@ -61,7 +48,7 @@ observatory_code = &quot;P64&quot;
 #####################################################################
 # `astropy.SkyCoord` 객체에 공통으로 쓰는 인수
 SKYC_KW = dict(unit=u.deg, frame=&#x27;icrs&#x27;)</code></pre>
-<h2 id="code-364">code 364. <button class="copy">복사</button></h2><pre><code>#######################################################
+<h2 id="code-345">code 345. <button class="copy">복사</button></h2><pre><code>#######################################################
 # 망원경과 CCD
 if hdul[0].header[&quot;CCDNAME&quot;] == &quot;STF-8300M&quot; :
     val_figsize=(7.5, 5.6)
@@ -85,7 +72,7 @@ if hdul[0].header[&quot;OPTIC&quot;] == &quot;RiLA600&quot; :
 
 print(&quot;rdnoise, gain, pix_size, focal_length :&quot;, rdnoise, gain, pix_size,
       focal_length)</code></pre>
-<h2 id="code-365">code 365. <button class="copy">복사</button></h2><pre><code>#######################################################
+<h2 id="code-346">code 346. <button class="copy">복사</button></h2><pre><code>#######################################################
 # PIXSCALE
 if &#x27;PIXSCALE&#x27; in hdul[0].header:
     PIX2ARCSEC = hdul[0].header[&#x27;PIXSCALE&#x27;]
@@ -95,7 +82,7 @@ else :  # 픽셀 크기(um, 비닝 반영)와 초점 거리(mm)로 계산
 
 PIX2ARCSEC = PIX2ARCSEC # * u.arcsec / u.pixel
 print(&quot;PIX2ARCSEC :&quot;, PIX2ARCSEC)</code></pre>
-<h2 id="code-366">code 366. <button class="copy">복사</button></h2><pre><code>#######################################################
+<h2 id="code-347">code 347. <button class="copy">복사</button></h2><pre><code>#######################################################
 # FWHM 초기 추정값(픽셀)
 FWHM_INIT = 6
 
@@ -106,40 +93,41 @@ R_OUT = 6*FWHM_INIT   # 고리(annulus) 바깥쪽 반지름
 
 Mag_UP = 16
 #######################################################</code></pre>
-<h2 id="code-367">code 367. <button class="copy">복사</button></h2><pre><code>from astropy.time import Time
+<h2 id="code-348">code 348. <button class="copy">복사</button></h2><pre><code>from astropy.time import Time
 # 관측 시각을 정하기 위해 관측 시간과 노출 시간 확인
 t_start = Time(hdul[0].header[&#x27;DATE-OBS&#x27;], format=&#x27;isot&#x27;)
 t_expos = hdul[0].header[&#x27;EXPTIME&#x27;] * u.s
 t_middle = t_start + t_expos / 2 # 시작 시각 + 노출 시간의 절반
 print(f&quot;t_start: {t_start}, t_expos: {t_expos}, t_middle: {t_middle}&quot;)</code></pre>
-<h2 id="code-368">code 368. <button class="copy">복사</button></h2><pre><code># 위치 보정 여부 확인 — Ⅲ-06 「FITS 파일 천체 위치 보정」에서 만든 du.checkPSolve(dses_utils)
+<h2 id="code-349">code 349. <button class="copy">복사</button></h2><pre><code># 위치 보정 여부 확인 — Ⅲ-06 「FITS 파일 천체 위치 보정」에서 만든 du.checkPSolve(dses_utils)
 SOLVE, ASTAP, LOCAL = du.checkPSolve(str(fpath))
 print(&quot;SOLVE, ASTAP, LOCAL :&quot;, SOLVE, ASTAP, LOCAL)</code></pre>
-<h2 id="code-369">code 369. <button class="copy">복사</button></h2><pre><code>from astropy.wcs import WCS
+<h2 id="code-350">code 350. <button class="copy">복사</button></h2><pre><code>from astropy.wcs import WCS
 
 wcs = WCS(hdul[0].header)
 
 # 영상 중심 픽셀(0부터 센 번호)을 하늘 좌표로 바꿈
 nx, ny = hdul[0].header[&quot;NAXIS1&quot;], hdul[0].header[&quot;NAXIS2&quot;]
-cent_coord = wcs.pixel_to_world((nx - 1) / 2, (ny - 1) / 2)
+cent = wcs.pixel_to_world((nx - 1) / 2, (ny - 1) / 2).icrs
+cent_coord = SkyCoord(cent.ra, cent.dec, **SKYC_KW)
 
-tel_ra = hdul[0].header[&#x27;RA&#x27;] * u.deg      # 망원경이 가리킨 좌표
-tel_dec = hdul[0].header[&#x27;DEC&#x27;] * u.deg
-offset_RA = (cent_coord.ra.to(u.deg) - tel_ra).to(u.arcmin)
-offset_DEC = (cent_coord.dec.to(u.deg) - tel_dec).to(u.arcmin)
+# 망원경이 가리킨 좌표에서 영상 중심까지 하늘에서 잰 어긋남
+# (spherical_offsets_to: 적경 방향은 cos(적위), 방위각 방향은 cos(고도)를 곱한 각거리)
+tel_coord = SkyCoord(hdul[0].header[&#x27;RA&#x27;], hdul[0].header[&#x27;DEC&#x27;], **SKYC_KW)
+offset_RA, offset_DEC = [o.to(u.arcmin) for o in tel_coord.spherical_offsets_to(cent_coord)]
+
 altaz = AltAz(obstime=t_middle, location=Suwon)
 cent_aa = cent_coord.transform_to(altaz)
-offset_AZ = (cent_aa.az.to(u.deg)
-             - hdul[0].header[&#x27;CENTAZ&#x27;]*u.deg).to(u.arcmin)
-offset_ALT = (cent_aa.alt.to(u.deg)
-              - hdul[0].header[&#x27;CENTALT&#x27;]*u.deg).to(u.arcmin)
+tel_aa = SkyCoord(az=hdul[0].header[&#x27;CENTAZ&#x27;] * u.deg,
+                  alt=hdul[0].header[&#x27;CENTALT&#x27;] * u.deg, frame=altaz)
+offset_AZ, offset_ALT = [o.to(u.arcmin) for o in tel_aa.spherical_offsets_to(cent_aa)]
 
 print(f&quot;image center (RA, DEC): ({cent_coord.ra:.03f}, &quot;
       f&quot;{cent_coord.dec:.03f})&quot;)
-print(f&quot;telescope center (RA, DEC): ({tel_ra:.03f}, {tel_dec:.03f})&quot;)
-print(f&quot;offset (RA, DEC): ({offset_RA:.03f}, {offset_DEC:.03f})&quot;)
-print(f&quot;offset (AZ, ALT): ({offset_AZ:.03f}, {offset_ALT:.03f})&quot;)</code></pre>
-<h2 id="code-370">code 370. <button class="copy">복사</button></h2><pre><code>import requests
+print(f&quot;telescope center (RA, DEC): ({tel_coord.ra:.03f}, {tel_coord.dec:.03f})&quot;)
+print(f&quot;offset (RA cos DEC, DEC): ({offset_RA:.03f}, {offset_DEC:.03f})&quot;)
+print(f&quot;offset (AZ cos ALT, ALT): ({offset_AZ:.03f}, {offset_ALT:.03f})&quot;)</code></pre>
+<h2 id="code-351">code 351. <button class="copy">복사</button></h2><pre><code>import requests
 import pandas as pd
 from astropy.coordinates import Angle
 from astroquery.imcce import Skybot
@@ -185,11 +173,11 @@ except Exception as e:                       # 서버 오류 · 주소 변경 �
                           mpc_code=observatory_code)
     print(&quot;JPL SB Ident에서 받은 소행성:&quot;, len(df_ast))
 df_ast[[&quot;Number&quot;, &quot;Name&quot;, &quot;RA&quot;, &quot;DEC&quot;, &quot;V&quot;]].head(10)   # 앞의 10개만 표시</code></pre>
-<h2 id="code-371">code 371. <button class="copy">복사</button></h2><pre><code>df_targ = df_ast[df_ast[&#x27;V&#x27;] &lt; Mag_UP]
+<h2 id="code-352">code 352. <button class="copy">복사</button></h2><pre><code>df_targ = df_ast[df_ast[&#x27;V&#x27;] &lt; Mag_UP]
 df_targ = df_targ.sort_values(by=[&#x27;V&#x27;])
 df_targ = df_targ.reset_index(drop=True)
 df_targ[[&quot;Number&quot;, &quot;Name&quot;, &quot;RA&quot;, &quot;DEC&quot;, &quot;V&quot;]]</code></pre>
-<h2 id="code-372">code 372. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+<h2 id="code-353">code 353. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 from astroquery.jplhorizons import Horizons
 
 def small_body_ephem(number, epochs, centers):
@@ -220,7 +208,7 @@ else:
     df_targ_eph = df_targ_eph.reset_index(drop=True)
     df_targ_eph = pd.concat([df_targ, df_targ_eph], axis=1)
     print(df_targ_eph[[&quot;Number&quot;, &quot;targetname&quot;, &quot;datetime_str&quot;]])</code></pre>
-<h2 id="code-373">code 373. <button class="copy">복사</button></h2><pre><code>duplicated_columns_list = []
+<h2 id="code-354">code 354. <button class="copy">복사</button></h2><pre><code>duplicated_columns_list = []
 list_of_all_columns = list(df_targ_eph.columns)
 for column in list_of_all_columns:
     if list_of_all_columns.count(column) &gt; 1 and not column in duplicated_columns_list:
@@ -237,16 +225,13 @@ df_targ_eph.to_csv(f&quot;{proj_dir}/{fpath.stem}_AST_Mag{Mag_UP}.csv&quot;)
 df_targ_eph.dropna(subset = [&#x27;RA&#x27;, &#x27;DEC&#x27;, &#x27;V&#x27;, &#x27;RA_1&#x27;, &#x27;DEC_1&#x27;, &#x27;V_1&#x27;],
                    inplace=True)
 df_targ_eph[[&#x27;RA&#x27;, &#x27;DEC&#x27;, &#x27;V&#x27;, &#x27;RA_1&#x27;, &#x27;DEC_1&#x27;, &#x27;V_1&#x27;]]</code></pre>
-<h2 id="code-374">code 374. <button class="copy">복사</button></h2><pre><code>import numpy as np
-pos_sky_targ_init = SkyCoord(df_targ_eph[&#x27;RA&#x27;]*u.deg, df_targ_eph[&quot;DEC&quot;]*u.deg,
-                        **SKYC_KW)
+<h2 id="code-355">code 355. <button class="copy">복사</button></h2><pre><code>import numpy as np
 pos_pix_targ_init = SkyCoord(df_targ_eph[&#x27;RA&#x27;]*u.deg, df_targ_eph[&quot;DEC&quot;]*u.deg,
                         **SKYC_KW).to_pixel(wcs, origin=0, mode=&#x27;wcs&#x27;)
 pos_pix_targ_init = np.array(pos_pix_targ_init).T
 print(&quot;pos_pix_targ_init:&quot;, pos_pix_targ_init)</code></pre>
-<h2 id="code-375">code 375. <button class="copy">복사</button></h2><pre><code># 영상 표시 함수 znorm · zimshow · norm_imshow는 Ⅲ-04 「FITS 파일 다루기」에서 설명했고 dses_utils에 들어 있음
-from astropy.visualization import ImageNormalize, LinearStretch, ZScaleInterval, simple_norm</code></pre>
-<h2 id="code-376">code 376. <button class="copy">복사</button></h2><pre><code>from photutils.aperture import CircularAperture as CAp
+<h2 id="code-356">code 356. <button class="copy">복사</button></h2><pre><code># 영상 표시 함수 znorm · zimshow · norm_imshow는 Ⅲ-04 「FITS 파일 다루기」에서 설명했고 dses_utils에 들어 있음(du.zimshow 등으로 부름)</code></pre>
+<h2 id="code-357">code 357. <button class="copy">복사</button></h2><pre><code>from photutils.aperture import CircularAperture as CAp
 from photutils.aperture import CircularAnnulus as CAn
 import matplotlib.pyplot as plt
 
@@ -289,18 +274,18 @@ plt.suptitle(f&quot;fname: {fpath.name}&quot;, fontsize=10)
 
 info = (f&quot;image center (RA, DEC): ({cent_coord.ra:.03f}, &quot;
         f&quot;{cent_coord.dec:.03f})\n&quot;
-        f&quot;telescope center (RA, DEC): ({tel_ra:.03f}, {tel_dec:.03f})\n&quot;
-        f&quot;offset (RA, DEC): ({offset_RA:.03f}, {offset_DEC:.03f})\n&quot;
-        f&quot;offset (AZ, ALT): ({offset_AZ:.03f}, {offset_ALT:.03f})&quot;)
+        f&quot;telescope center (RA, DEC): ({tel_coord.ra:.03f}, {tel_coord.dec:.03f})\n&quot;
+        f&quot;offset (RA cos DEC, DEC): ({offset_RA:.03f}, {offset_DEC:.03f})\n&quot;
+        f&quot;offset (AZ cos ALT, ALT): ({offset_AZ:.03f}, {offset_ALT:.03f})&quot;)
 axs.annotate(info, xy=(0, 0), xytext=(0.6, -0.1), xycoords=&#x27;axes fraction&#x27;,
             va=&#x27;top&#x27;, ha=&#x27;left&#x27;, fontsize = 8)
 plt.tight_layout()
-plt.savefig(f&quot;{proj_dir}/{fpath.stem}_AST_Mag{Mag_UP}.png&quot;)
+plt.savefig(proj_dir / f&quot;{fpath.stem}_AST_Mag{Mag_UP}.png&quot;)
 plt.show()</code></pre>
-<h2 id="code-377">code 377. <button class="copy">복사</button></h2><pre><code>from astropy.nddata import Cutout2D
+<h2 id="code-358">code 358. <button class="copy">복사</button></h2><pre><code>from astropy.nddata import Cutout2D
 from photutils.centroids import centroid_com
-from astropy.stats import sigma_clip, sigma_clipped_stats</code></pre>
-<h2 id="code-378">code 378. <button class="copy">복사</button></h2><pre><code>if df_targ.empty:
+from astropy.stats import sigma_clipped_stats</code></pre>
+<h2 id="code-359">code 359. <button class="copy">복사</button></h2><pre><code>if df_targ.empty:
     pass
 else:
     cutsizes = 49
@@ -352,20 +337,20 @@ else:
                         fontsize=9)
 
             plt.tight_layout()
-            plt.savefig(f&quot;{proj_dir}/{fpath.stem}_AST_Mag{Mag_UP}_{i:02d}.png&quot;)
+            plt.savefig(proj_dir / f&quot;{fpath.stem}_AST_Mag{Mag_UP}_{i:02d}.png&quot;)
             plt.show()
 
         except Exception as err:
             print(&quot;Err :&quot;, err)
             continue</code></pre>
-<h2 id="code-379">code 379. <button class="copy">복사</button></h2><pre><code>fpath2 = Path(fpaths[1])                                   # 약 3시간 20분 뒤 영상
+<h2 id="code-360">code 360. <button class="copy">복사</button></h2><pre><code>fpath2 = Path(fpaths[1])                                   # 약 3시간 20분 뒤 영상
 hdul2 = fits.open(str(fpath2))
 wcs2 = WCS(hdul2[0].header)
 t_middle2 = (Time(hdul2[0].header[&quot;DATE-OBS&quot;], format=&quot;isot&quot;)
              + hdul2[0].header[&quot;EXPTIME&quot;] * u.s / 2)
 dt = (t_middle2 - t_middle).to(u.hour)
 print(f&quot;첫 영상 {t_middle.isot}, 둘째 영상 {t_middle2.isot}, 간격 {dt:.2f}&quot;)</code></pre>
-<h2 id="code-380">code 380. <button class="copy">복사</button></h2><pre><code>from photutils.centroids import centroid_sources, centroid_2dg
+<h2 id="code-361">code 361. <button class="copy">복사</button></h2><pre><code>from photutils.centroids import centroid_sources, centroid_2dg
 
 def measure(data, w, ra, dec):
     &quot;&quot;&quot;예보 위치 둘레에서 소행성 중심을 찾아 하늘 좌표로 돌려줌&quot;&quot;&quot;
@@ -396,7 +381,7 @@ for _, row in df_targ_eph.iterrows():
 
 df_move = pd.DataFrame(rows).round(2)
 df_move</code></pre>
-<h2 id="code-381">code 381. <button class="copy">복사</button></h2><pre><code>fig, axs = plt.subplots(len(tracks), 2, figsize=(7.5, 3.4 * len(tracks)), squeeze=False)
+<h2 id="code-362">code 362. <button class="copy">복사</button></h2><pre><code>fig, axs = plt.subplots(len(tracks), 2, figsize=(7.5, 3.4 * len(tracks)), squeeze=False)
 for k, (name, (c1, c2)) in enumerate(tracks.items()):
     mid = SkyCoord((c1.ra + c2.ra) / 2, (c1.dec + c2.dec) / 2)   # 두 위치의 가운데
     for j, (h, w, here, other, t) in enumerate([(hdul, wcs, c1, c2, t_middle),
@@ -409,7 +394,7 @@ for k, (name, (c1, c2)) in enumerate(tracks.items()):
         ax.set_title(f&quot;{name}  {t.isot[11:16]} UT&quot;, fontsize=11)
         ax.set_xticks([]); ax.set_yticks([])
 plt.tight_layout()
-plt.savefig(f&quot;{proj_dir}/asteroid_motion.png&quot;)
+plt.savefig(proj_dir / f&quot;asteroid_motion.png&quot;)
 plt.show()</code></pre>
 <script>
 document.querySelectorAll('button.copy').forEach(function (b) {

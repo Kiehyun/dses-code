@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | III-01. 은하의 분류와 특이 은하
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 53.
+# %% code 54.
 import time
 from io import StringIO, BytesIO
 from pathlib import Path
@@ -42,7 +42,7 @@ def cutout(ra, dec, scale, name, size=400):
         f.write_bytes(r.content)
     return Image.open(f)
 
-# %% code 54.
+# %% code 55.
 galaxies = pd.DataFrame([
     ("M87", 187.7059, 12.3911, 2.0, "E0", "타원"),
     ("M49", 187.4446, 8.0004, 2.0, "E2", "타원"),
@@ -66,15 +66,15 @@ for ax, k in zip(axes.ravel(), order):
     ax.axis("off")
 axes.ravel()[-1].axis("off")
 plt.tight_layout()
-du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f"{proj_dir.name}_01"))
+du.save_figure(plt.gcf(), proj_dir / f"{proj_dir.name}_01")
 plt.show()
 
-# %% code 55.
+# %% code 56.
 answer = pd.DataFrame({"은하": [list(order).index(k) + 1 for k in range(len(galaxies))],
                        "이름": galaxies["name"], "허블 형": galaxies["hubble"], "종류": galaxies["kind"]})
 answer.sort_values("은하").reset_index(drop=True)
 
-# %% code 56.
+# %% code 57.
 place = {  # 이름: (x, y) — 그림 좌표(0~1)
     "M87": (0.03, 0.42), "M49": (0.16, 0.42), "NGC 5866": (0.31, 0.42),
     "M65": (0.47, 0.70), "M51": (0.62, 0.70), "M101": (0.77, 0.70),
@@ -95,10 +95,10 @@ for name, (x, y) in place.items():
 for text, (x, y) in {"타원 은하 E": (0.10, 0.36), "렌즈형 S0": (0.33, 0.36), "나선 은하 S (a→c)": (0.80, 0.84),
                      "막대 나선 은하 SB": (0.79, 0.21), "불규칙 은하 Irr": (0.90, 0.36)}.items():
     bg.text(x, y, text, fontsize=13, weight="bold", ha="left")
-du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f"{proj_dir.name}_02"))
+du.save_figure(plt.gcf(), proj_dir / f"{proj_dir.name}_02")
 plt.show()
 
-# %% code 57.
+# %% code 58.
 zoo = sql("""
 SELECT TOP 20000 g.objid, g.ra, g.dec, g.spiral, g.elliptical, s.z,
        p.modelMag_u, p.modelMag_g, p.modelMag_r, p.extinction_u, p.extinction_r,
@@ -111,7 +111,7 @@ WHERE s.z BETWEEN 0.02 AND 0.08 AND (g.spiral = 1 OR g.elliptical = 1)
 zoo["type"] = np.where(zoo["elliptical"] == 1, "타원", "나선")
 print(zoo["type"].value_counts())
 
-# %% code 58.
+# %% code 59.
 from astropy.cosmology import FlatLambdaCDM
 
 cosmo = FlatLambdaCDM(H0=70, Om0=0.3)
@@ -122,7 +122,7 @@ zoo["M_r"] = zoo["modelMag_r"] - zoo["extinction_r"] - 5 * np.log10(d_pc / 10)
 zoo = zoo[(zoo["u_r"].between(0.5, 4)) & (zoo["conc"].between(1.5, 4.5))].copy()
 zoo.groupby("type")[["u_r", "conc", "M_r"]].median().round(2)
 
-# %% code 59.
+# %% code 60.
 colors = {"타원": "tomato", "나선": "royalblue"}
 fig, ax = plt.subplots(1, 2, figsize=(7.5, 2.6))
 for t, c in colors.items():
@@ -140,10 +140,10 @@ for a in ax:
 ax[0].set_title("은하의 색")
 ax[1].set_title("밝기의 집중도")
 plt.tight_layout()
-du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f"{proj_dir.name}_03"))
+du.save_figure(plt.gcf(), proj_dir / f"{proj_dir.name}_03")
 plt.show()
 
-# %% code 60.
+# %% code 61.
 fig, ax = plt.subplots(figsize=(7.5, 4.3))
 for t, c in [("나선", "royalblue"), ("타원", "tomato")]:
     sub = zoo[zoo["type"] == t]
@@ -158,10 +158,10 @@ ax.text(-19.0, 1.25, "푸른 구름\n(blue cloud)", color="navy", fontsize=11)
 ax.legend(markerscale=6)
 ax.grid(alpha=0.3)
 ax.set_title("은하의 색-등급도 (갤럭시 주 형태 분류)", fontsize=11)
-du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f"{proj_dir.name}_04"))
+du.save_figure(plt.gcf(), proj_dir / f"{proj_dir.name}_04")
 plt.show()
 
-# %% code 61.
+# %% code 62.
 def rule(df, cut_color, cut_conc):
     return np.where((df["u_r"] > cut_color) & (df["conc"] > cut_conc), "타원",
                     "나선")
@@ -184,7 +184,7 @@ pred = rule(zoo, best["색 기준"], best["집중도 기준"])
 pd.crosstab(zoo["type"], pred, rownames=["갤럭시 주 분류"],
             colnames=["규칙의 예측"], margins=True)
 
-# %% code 62.
+# %% code 63.
 from astropy.io import fits
 
 spectra = [  # (이름, plate, mjd, fiber, z)
@@ -225,10 +225,10 @@ for ax, (name, plate, mjd, fiber, z) in zip(axes, spectra):
     ax.grid(alpha=0.3)
 axes[-1].set_xlabel("정지 파장 (Å)")
 plt.tight_layout()
-du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f"{proj_dir.name}_05"))
+du.save_figure(plt.gcf(), proj_dir / f"{proj_dir.name}_05")
 plt.show()
 
-# %% code 63.
+# %% code 64.
 bpt = sql("""
 SELECT TOP 20000 l.h_alpha_flux, l.h_beta_flux, l.oiii_5007_flux, l.nii_6584_flux, s.z
 FROM galSpecLine AS l JOIN SpecObj AS s ON s.specObjID = l.specObjID
@@ -266,10 +266,10 @@ ax.tick_params(labelsize=8)
 ax.legend(markerscale=6, fontsize=8)
 ax.grid(alpha=0.3)
 ax.set_title("BPT 도표 — 방출선 은하 2만 개", fontsize=10)
-du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f"{proj_dir.name}_06"))
+du.save_figure(plt.gcf(), proj_dir / f"{proj_dir.name}_06")
 plt.show()
 
-# %% code 64.
+# %% code 65.
 zdist = pd.concat([
     sql("SELECT z, class FROM SpecObj WHERE class = 'QSO' AND zWarning = 0 AND fiberID % 25 = 0",
         "redshift_qso"),
@@ -295,13 +295,13 @@ top = ax.secondary_xaxis("top",
 top.set_xticks([4, 6, 8, 10, 11, 12])   # 가까운 쪽(z < 0.3)은 눈금이 몰리므로 4 Gyr부터
 top.set_xlabel("되돌아본 시간 (10억 년, Gyr)")
 ax.set_title("은하와 퀘이사의 적색편이 분포", fontsize=11)
-du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f"{proj_dir.name}_07"))
+du.save_figure(plt.gcf(), proj_dir / f"{proj_dir.name}_07")
 plt.show()
 
 q = zdist[zdist["class"] == "QSO"]["z"]
 print(f"퀘이사 적색편이 중앙값 {q.median():.2f} → 빛이 출발한 지 약 {cosmo.lookback_time(q.median()).value * 10:.0f}억 년")
 
-# %% code 65.
+# %% code 66.
 fig, ax = plt.subplots(1, 2, figsize=(7.5, 3.7))
 ax[0].imshow(cutout(187.2779, 2.0524, 0.4, "3C273"))
 ax[0].set_title("퀘이사 3C 273\n(z = 0.158, 빛이 출발한 지 약 20억 년)")
@@ -310,5 +310,5 @@ ax[1].set_title("전파 은하 M87의 중심부와 제트")
 for a in ax:
     a.axis("off")
 plt.tight_layout()
-du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f"{proj_dir.name}_08"))
+du.save_figure(plt.gcf(), proj_dir / f"{proj_dir.name}_08")
 plt.show()

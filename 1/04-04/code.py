@@ -1,21 +1,21 @@
 # 지구과학 데이터 사이언스 1 | IV-04. 대기 중의 수증기량
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 69.
+# %% code 66.
 fname = "SURFACE_ASOS_116_MI_2019-08_2019-08_2019.csv"
-fid = "1NLHwhmqnikHC77DdkelYBPnpwkJv8_rb"  # 구글 드라이브 파일 ID
+fid = "1ZZNmeq9UAaz9-FUD1DR4m3Q9_XzZupxB"  # 구글 드라이브 파일 ID
 
 from pathlib import Path
 
 du.download(f"https://docs.google.com/uc?export=download&id={fid}", Path(proj_dir) / fname)
 
-# %% code 70.
+# %% code 67.
 fpaths = du.list_files(proj_dir, "csv")
 
-# %% code 71.
-du.preview_text(fpaths[0], n=10)
+# %% code 68.
+du.preview_text(fpaths[0], n=10);
 
-# %% code 72.
+# %% code 69.
 from metpy.units import units as u
 
 v_distance = 8 * u.m  # 8 m
@@ -26,7 +26,7 @@ average_velocity = v_distance / v_time  # 단위도 m/s로 함께 계산
 print("type(v_distance):{}".format(type(v_distance)))
 print(f"average_velocity):{average_velocity:0.03f}")
 
-# %% code 73.
+# %% code 70.
 import numpy as np
 from metpy.units import units as u
 import metpy.calc as mpcalc
@@ -57,7 +57,7 @@ plt.savefig(f'{proj_dir}/saturation_vapor_pressure_curve.pdf', dpi=300, bbox_inc
 print(f"'saturation_vapor_pressure_curve.pdf' saved in {proj_dir}")
 plt.show()
 
-# %% code 74.
+# %% code 71.
 import numpy as np
 from metpy.units import units as u
 import metpy.calc as mpcalc
@@ -105,7 +105,7 @@ ax.legend(fontsize=12)
 plt.tight_layout()
 plt.show()
 
-# %% code 75.
+# %% code 72.
 import pandas as pd
 
 df = pd.read_csv(fpaths[0],
@@ -129,10 +129,10 @@ df.index = df['dt_YmdHM-1min']
 
 print(f"df :\n{df}")
 
-# %% code 76.
+# %% code 73.
 print("df : \n", df)
 
-# %% code 77.
+# %% code 74.
 # 현지기압 관측값이 없으므로 1000 hPa로 가정
 df['현지기압(hPa)'] = 1000
 
@@ -151,7 +151,7 @@ df['습구온도(°C)'] = mpcalc.wet_bulb_temperature(
 print("df[['기온(°C)', '습도(%)', '이슬점온도(°C)', '습구온도(°C)']] :\n",
       df[['기온(°C)', '습도(%)', '이슬점온도(°C)', '습구온도(°C)']])
 
-# %% code 78.
+# %% code 75.
 # 기압 · 기온 · 상대습도 → 혼합비
 df['혼합비(kg/kg)'] = mpcalc.mixing_ratio_from_relative_humidity(
             df["현지기압(hPa)"].values * u.hPa,
@@ -173,7 +173,7 @@ df['수증기압(hPa)'] = mpcalc.vapor_pressure(
 print("df[['현지기압(hPa)', '혼합비(kg/kg)', '비습(kg/kg)', '수증기압(hPa)']] :\n",
       df[['현지기압(hPa)', '혼합비(kg/kg)', '비습(kg/kg)', '수증기압(hPa)']])
 
-# %% code 79.
+# %% code 76.
 def absolute_humidity_from_vapor_pressure(e, T):
     """
     수증기압(e, hPa)과 기온(T, °C 또는 K)으로부터 절대습도(g/m^3)를 계산합니다.
@@ -205,6 +205,6 @@ df['절대습도(g/m^3)'] = absolute_humidity_from_vapor_pressure(
 print("df[['수증기압(hPa)', '절대습도(g/m^3)']] :\n",
       df[['수증기압(hPa)', '절대습도(g/m^3)']])
 
-# %% code 80.
+# %% code 77.
 df.to_csv(f"{proj_dir}/{fpaths[0].stem}_result.csv", index=False)
 print(f"파일 저장 완료: {proj_dir}/{fpaths[0].stem}_result.csv")

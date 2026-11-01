@@ -110,3 +110,16 @@ ax.legend()
 ax.grid(alpha=0.3)
 du.save_figure(fig, os.path.join(proj_dir, "overfitting"))
 plt.show()
+
+# %% code 32.
+SIGMA = 1.5                                    # 데이터를 만들 때 넣은 잡음의 크기
+N = x.size
+
+print(" 차수  카이제곱  자유도 환산 카이제곱       BIC")
+for degree in (1, 3, 7, 15):
+    coefficients = np.polyfit(x, y, degree)
+    chi2 = np.sum(((y - np.polyval(coefficients, x)) / SIGMA) ** 2)
+    k = degree + 1                             # 매개변수 개수
+    dof = N - k                                # 자유도
+    bic = chi2 + k * np.log(N)
+    print(f"{degree:3d}차   {chi2:7.2f}   {dof:5d}   {chi2 / dof:11.2f}   {bic:7.1f}")

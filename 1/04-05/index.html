@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>IV-05. 해수면의 높이 변동 그래프</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/04-05/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-81">81</a> <a href="#code-82">82</a> <a href="#code-83">83</a> <a href="#code-84">84</a> <a href="#code-85">85</a> <a href="#code-86">86</a> <a href="#code-87">87</a> <a href="#code-88">88</a> <a href="#code-89">89</a> <a href="#code-90">90</a> <a href="#code-91">91</a> <a href="#code-92">92</a> <a href="#code-93">93</a> <a href="#code-94">94</a> <a href="#code-95">95</a> <a href="#code-96">96</a> <a href="#code-97">97</a> <a href="#code-98">98</a> <a href="#code-99">99</a> <a href="#code-100">100</a> <a href="#code-101">101</a></p>
-<h2 id="code-81">code 81. <button class="copy">복사</button></h2><pre><code># 스마트 조석예보 자료 내려받기 주소와 조건(지점 코드, 지점 이름, 연월)
+<p class="jump"><a href="#code-78">78</a> <a href="#code-79">79</a> <a href="#code-80">80</a> <a href="#code-81">81</a> <a href="#code-82">82</a> <a href="#code-83">83</a> <a href="#code-84">84</a> <a href="#code-85">85</a> <a href="#code-86">86</a> <a href="#code-87">87</a> <a href="#code-88">88</a> <a href="#code-89">89</a> <a href="#code-90">90</a> <a href="#code-91">91</a> <a href="#code-92">92</a> <a href="#code-93">93</a> <a href="#code-94">94</a> <a href="#code-95">95</a> <a href="#code-96">96</a> <a href="#code-97">97</a> <a href="#code-98">98</a></p>
+<h2 id="code-78">code 78. <button class="copy">복사</button></h2><pre><code># 스마트 조석예보 자료 내려받기 주소와 조건(지점 코드, 지점 이름, 연월)
 from pathlib import Path
 from urllib.parse import urlencode
 
@@ -24,9 +24,9 @@ for interval in [1, 10, 60]:  # 1분 · 10분 · 60분 간격
                         &quot;timeInterval&quot;: interval, &quot;obsPostName&quot;: OBS_NAME})
     fname = f&quot;[{interval}MinTide]{YYYYMM}_{OBS_ID}.txt&quot;
     du.download(f&quot;{BASE_URL}?{params}&quot;, Path(proj_dir) / fname)</code></pre>
-<h2 id="code-82">code 82. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;txt&quot;)</code></pre>
-<h2 id="code-83">code 83. <button class="copy">복사</button></h2><pre><code>du.preview_text(fpaths[0], n=10)</code></pre>
-<h2 id="code-84">code 84. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+<h2 id="code-79">code 79. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;txt&quot;)</code></pre>
+<h2 id="code-80">code 80. <button class="copy">복사</button></h2><pre><code>du.preview_text(fpaths[0], n=10);</code></pre>
+<h2 id="code-81">code 81. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 # 이름순 정렬이라 fpaths[0]은 10분, [1]은 1분, [2]는 60분 간격
 print(&quot;str(fpaths[2])&quot;, str(fpaths[2]))
 df_60min = pd.read_csv(str(fpaths[2]),
@@ -36,13 +36,13 @@ df_60min = pd.read_csv(str(fpaths[2]),
                  encoding= &#x27;unicode_escape&#x27;,
                  )
 print(&quot;df_60min :&quot;, df_60min )</code></pre>
-<h2 id="code-85">code 85. <button class="copy">복사</button></h2><pre><code>print(&quot;df_60min.columns :&quot;, df_60min.columns )
+<h2 id="code-82">code 82. <button class="copy">복사</button></h2><pre><code>print(&quot;df_60min.columns :&quot;, df_60min.columns )
 print(&quot;type(df_60min[&#x27;str_YmdHM&#x27;][0]): {}&quot;.format(type(df_60min[&#x27;str_YmdHM&#x27;][0])))
 print(&quot;type(df_60min[&#x27;height(cm)&#x27;]): {}&quot;.format(type(df_60min[&#x27;height(cm)&#x27;][0])))
 df_60min[&#x27;dt_YmdHM&#x27;] = pd.to_datetime(df_60min[&#x27;str_YmdHM&#x27;])
 df_60min.index = df_60min[&#x27;dt_YmdHM&#x27;]
 print(&quot;df_60min: &quot;, df_60min)</code></pre>
-<h2 id="code-86">code 86. <button class="copy">복사</button></h2><pre><code># 시각이 오름차순인지 확인
+<h2 id="code-83">code 83. <button class="copy">복사</button></h2><pre><code># 시각이 오름차순인지 확인
 is_sorted = df_60min[&#x27;dt_YmdHM&#x27;].is_monotonic_increasing
 print(&quot;dt_YmdHM 오름차순 정렬 여부:&quot;, is_sorted)
 
@@ -55,11 +55,9 @@ if &#x27;dt_YmdHM&#x27; in df_60min.index.names:
 else:
     df_60min = df_60min.sort_values(by=&#x27;dt_YmdHM&#x27;)
 
-df_60min = df_60min.interpolate(method=&#x27;linear&#x27;)  # 결측은 선형 보간
-
-# 양 끝처럼 보간이 안 되는 결측은 앞뒤 값으로
-df_60min = df_60min.fillna(method=&#x27;bfill&#x27;).fillna(method=&#x27;ffill&#x27;)</code></pre>
-<h2 id="code-87">code 87. <button class="copy">복사</button></h2><pre><code># 10분 간격 자료: 읽기 → 정렬 → 결측 처리
+# 결측은 선형 보간, 양 끝처럼 보간이 안 되는 결측은 앞뒤 값으로(숫자 열만)
+df_60min[&#x27;height(cm)&#x27;] = df_60min[&#x27;height(cm)&#x27;].interpolate(method=&#x27;linear&#x27;).bfill().ffill()</code></pre>
+<h2 id="code-84">code 84. <button class="copy">복사</button></h2><pre><code># 10분 간격 자료: 읽기 → 정렬 → 결측 처리
 df_10min = pd.read_csv(
     str(fpaths[0]), skiprows=5, thousands=&#x27;,&#x27;,
     names=[&#x27;str_YmdHM&#x27;, &#x27;height(cm)&#x27;], encoding=&#x27;unicode_escape&#x27;
@@ -67,8 +65,7 @@ df_10min = pd.read_csv(
 df_10min[&#x27;dt_YmdHM&#x27;] = pd.to_datetime(df_10min[&#x27;str_YmdHM&#x27;])
 df_10min.index = df_10min[&#x27;dt_YmdHM&#x27;]
 df_10min = df_10min.sort_index()
-df_10min = df_10min.interpolate(method=&#x27;linear&#x27;)
-df_10min = df_10min.fillna(method=&#x27;bfill&#x27;).fillna(method=&#x27;ffill&#x27;)
+df_10min[&#x27;height(cm)&#x27;] = df_10min[&#x27;height(cm)&#x27;].interpolate(method=&#x27;linear&#x27;).bfill().ffill()
 print(&quot;df_10min :&quot;, df_10min)
 
 # 1분 간격 자료도 같은 방법으로
@@ -79,10 +76,9 @@ df_1min = pd.read_csv(
 df_1min[&#x27;dt_YmdHM&#x27;] = pd.to_datetime(df_1min[&#x27;str_YmdHM&#x27;])
 df_1min.index = df_1min[&#x27;dt_YmdHM&#x27;]
 df_1min = df_1min.sort_index()
-df_1min = df_1min.interpolate(method=&#x27;linear&#x27;)
-df_1min = df_1min.fillna(method=&#x27;bfill&#x27;).fillna(method=&#x27;ffill&#x27;)
+df_1min[&#x27;height(cm)&#x27;] = df_1min[&#x27;height(cm)&#x27;].interpolate(method=&#x27;linear&#x27;).bfill().ffill()
 print(&quot;df_1min :&quot;, df_1min)</code></pre>
-<h2 id="code-88">code 88. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-85">code 85. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 from datetime import datetime, timedelta
@@ -98,7 +94,7 @@ ax.grid(True, linestyle=&#x27;:&#x27;, alpha=0.5)
 
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-89">code 89. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-86">code 86. <button class="copy">복사</button></h2><pre><code>import numpy as np
 from datetime import timedelta
 import matplotlib.pyplot as plt
 import matplotlib.dates as dates
@@ -136,16 +132,16 @@ for i, (df, title) in enumerate(zip(dfs, titles)):
     ax.grid(axis=&quot;x&quot;, color=&quot;green&quot;, alpha=.3, linewidth=.8, linestyle=&quot;:&quot;)
     ax.grid(axis=&quot;y&quot;, color=&quot;black&quot;, alpha=.3, linewidth=.8, linestyle=&quot;:&quot;)
 
-    ax.set_xlabel(&#x27;time (day)&#x27;, fontsize=14)
+    ax.set_xlabel(&#x27;날짜 (일)&#x27;, fontsize=14)
     if i == 0:
-        ax.set_ylabel(&#x27;height of sea level (cm)&#x27;, fontsize=14)
+        ax.set_ylabel(&#x27;해수면 높이 (cm)&#x27;, fontsize=14)
     ax.set_title(title, fontsize=16, fontweight=&#x27;bold&#x27;, y=1.02)
 
 fig.suptitle(&#x27;2020년 6월 인천 해수면 높이 변동 (1시간/10분/1분)&#x27;,
             fontsize=20, fontweight=&#x27;bold&#x27;, y=0.98)
 fig.tight_layout(rect=[0, 0, 1, 0.97])
 plt.show()</code></pre>
-<h2 id="code-90">code 90. <button class="copy">복사</button></h2><pre><code># 6월 7~9일 자료만
+<h2 id="code-87">code 87. <button class="copy">복사</button></h2><pre><code># 6월 7~9일 자료만
 start_date = df_1min[&#x27;dt_YmdHM&#x27;].dt.floor(&#x27;D&#x27;).min().replace(day=7)
 end_date = df_1min[&#x27;dt_YmdHM&#x27;].dt.floor(&#x27;D&#x27;).min().replace(day=10)
 df_1min_selected = df_1min[(df_1min[&#x27;dt_YmdHM&#x27;] &gt;= start_date) &amp; (df_1min[&#x27;dt_YmdHM&#x27;] &lt; end_date)]
@@ -185,7 +181,7 @@ for i, (df, title) in enumerate(zip(dfs, titles)):
 fig.suptitle(&#x27;2020년 6월 7~9일 인천 해수면 높이 변동 (1분 간격)&#x27;, fontsize=20, fontweight=&#x27;bold&#x27;, y=0.985)
 fig.tight_layout(rect=[0, 0, 1, 0.97])
 plt.show()</code></pre>
-<h2 id="code-91">code 91. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-88">code 88. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -220,14 +216,14 @@ plt.xlabel(&#x27;시(hour)&#x27;)
 plt.ylabel(&#x27;날짜 (6월)&#x27;)
 plt.title(&#x27;2020년 6월 인천 해수면 높이(1분 간격) 히트맵&#x27;)
 plt.tight_layout()</code></pre>
-<h2 id="code-92">code 92. <button class="copy">복사</button></h2><pre><code># 2024년 1~12월 60분 간격 자료를 달마다 내려받기
+<h2 id="code-89">code 89. <button class="copy">복사</button></h2><pre><code># 2024년 1~12월 60분 간격 자료를 달마다 내려받기
 year_dir = Path(proj_dir) / &quot;2024&quot;
 for month in range(1, 13):
     yyyymm = f&quot;2024{month:02d}&quot;
     params = urlencode({&quot;obsPostId&quot;: OBS_ID, &quot;date&quot;: yyyymm,
                         &quot;timeInterval&quot;: 60, &quot;obsPostName&quot;: OBS_NAME})
     du.download(f&quot;{BASE_URL}?{params}&quot;, year_dir / f&quot;[60MinTide]{yyyymm}_{OBS_ID}.txt&quot;)</code></pre>
-<h2 id="code-93">code 93. <button class="copy">복사</button></h2><pre><code># 12개 파일을 이어 붙이고 시간순 정렬, 결측 보간
+<h2 id="code-90">code 90. <button class="copy">복사</button></h2><pre><code># 12개 파일을 이어 붙이고 시간순 정렬, 결측 보간
 fpaths_2024 = du.list_files(year_dir, &quot;txt&quot;, show=False)
 df_year = pd.concat([pd.read_csv(f, skiprows=5, thousands=&#x27;,&#x27;,
                                  names=[&#x27;str_YmdHM&#x27;, &#x27;height(cm)&#x27;],
@@ -244,7 +240,7 @@ print(f&quot;파일 {len(fpaths_2024)}개, 데이터 {len(h):,}개, 결측값 {n
 print(f&quot;기간: {h.index[0]} ~ {h.index[-1]}&quot;)
 print(f&quot;평균 {h.mean():.1f}cm, 최고 {h.max():.0f}cm({h.idxmax():%m월 %d일 %H시}), &quot;
       f&quot;최저 {h.min():.0f}cm({h.idxmin():%m월 %d일 %H시})&quot;)</code></pre>
-<h2 id="code-94">code 94. <button class="copy">복사</button></h2><pre><code>import matplotlib.dates as dates
+<h2 id="code-91">code 91. <button class="copy">복사</button></h2><pre><code>import matplotlib.dates as dates
 
 fig, ax = plt.subplots(figsize=(15, 5))
 ax.plot(df_year.index, df_year[&#x27;height(cm)&#x27;], color=&#x27;royalblue&#x27;, linewidth=0.5)
@@ -257,7 +253,7 @@ ax.set_ylabel(&#x27;해수면 높이 (cm)&#x27;, fontsize=14)
 ax.grid(True, linestyle=&#x27;:&#x27;, alpha=0.5)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-95">code 95. <button class="copy">복사</button></h2><pre><code># 월별 평균과 표준편차
+<h2 id="code-92">code 92. <button class="copy">복사</button></h2><pre><code># 월별 평균과 표준편차
 monthly = df_year.groupby(df_year.index.month)[&#x27;height(cm)&#x27;].agg([&#x27;mean&#x27;, &#x27;std&#x27;])
 
 fig, axes = plt.subplots(1, 2, figsize=(15, 5))
@@ -277,7 +273,7 @@ plt.show()
 monthly.columns = [&#x27;평균(cm)&#x27;, &#x27;표준편차(cm)&#x27;]
 monthly.index.name = &#x27;월&#x27;
 print(monthly.round(1).T.to_string())</code></pre>
-<h2 id="code-96">code 96. <button class="copy">복사</button></h2><pre><code>t_demo = np.arange(0, 24 * 30, 0.1)  # 30일, 0.1시간 간격
+<h2 id="code-93">code 93. <button class="copy">복사</button></h2><pre><code>t_demo = np.arange(0, 24 * 30, 0.1)  # 30일, 0.1시간 간격
 m2 = 275 * np.cos(2 * np.pi * t_demo / 12.4206)
 s2 = 115 * np.cos(2 * np.pi * t_demo / 12.0)
 
@@ -298,7 +294,7 @@ axes[2].set_xlabel(&#x27;시간 (일)&#x27;, fontsize=12)
 axes[2].set_xticks(range(0, 31, 5))
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-97">code 97. <button class="copy">복사</button></h2><pre><code>y = df_year[&#x27;height(cm)&#x27;].to_numpy()
+<h2 id="code-94">code 94. <button class="copy">복사</button></h2><pre><code>y = df_year[&#x27;height(cm)&#x27;].to_numpy()
 y_dev = y - y.mean()  # 평균 해수면으로부터의 높이
 
 amp_fft = 2 * np.abs(np.fft.rfft(y_dev)) / len(y_dev)
@@ -325,7 +321,7 @@ ax.set_ylabel(&#x27;진폭 (cm)&#x27;, fontsize=13)
 ax.grid(True, linestyle=&#x27;:&#x27;, alpha=0.5)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-98">code 98. <button class="copy">복사</button></h2><pre><code># 분석할 분조: 이름과 주기(시간), 기원
+<h2 id="code-95">code 95. <button class="copy">복사</button></h2><pre><code># 분석할 분조: 이름과 주기(시간), 기원
 PERIODS = {&#x27;M2&#x27;: 12.4206012, &#x27;S2&#x27;: 12.0000000, &#x27;N2&#x27;: 12.6583475, &#x27;K2&#x27;: 11.9672348,
            &#x27;K1&#x27;: 23.9344696, &#x27;O1&#x27;: 25.8193417, &#x27;P1&#x27;: 24.0658902, &#x27;Q1&#x27;: 26.8683567,
            &#x27;M4&#x27;: 6.2103006, &#x27;MS4&#x27;: 6.1032725}
@@ -368,7 +364,7 @@ ax.set_ylabel(&#x27;진폭 (cm)&#x27;, fontsize=12)
 ax.grid(axis=&#x27;y&#x27;, linestyle=&#x27;:&#x27;, alpha=0.5)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-99">code 99. <button class="copy">복사</button></h2><pre><code>def synth(names):
+<h2 id="code-96">code 96. <button class="copy">복사</button></h2><pre><code>def synth(names):
     &quot;&quot;&quot;고른 분조만 더해 되살린 파형&quot;&quot;&quot;
     out = np.zeros_like(t)
     for i, (name, T) in enumerate(PERIODS.items()):
@@ -402,7 +398,7 @@ plt.show()
 
 print(f&quot;달 성분 표준편차 {moon.std():.1f}cm, 태양 성분 표준편차 {sun.std():.1f}cm, &quot;
       f&quot;비 {moon.std() / sun.std():.1f}&quot;)</code></pre>
-<h2 id="code-100">code 100. <button class="copy">복사</button></h2><pre><code>fit = A @ coef      # 분조 10개로 되살린 조위
+<h2 id="code-97">code 97. <button class="copy">복사</button></h2><pre><code>fit = A @ coef      # 분조 10개로 되살린 조위
 resid = y - fit     # 잔차
 
 fig, axes = plt.subplots(2, 1, figsize=(15, 8), sharex=True)
@@ -424,7 +420,7 @@ plt.tight_layout()
 plt.show()
 
 print(f&quot;설명한 비율 {(1 - resid.var() / y.var()) * 100:.2f}%, 잔차 표준편차 {resid.std():.1f}cm&quot;)</code></pre>
-<h2 id="code-101">code 101. <button class="copy">복사</button></h2><pre><code># Sa(1년) · Ssa(반년)를 더한 12개 분조로 다시 분석
+<h2 id="code-98">code 98. <button class="copy">복사</button></h2><pre><code># Sa(1년) · Ssa(반년)를 더한 12개 분조로 다시 분석
 PERIODS_SA = {**PERIODS, &#x27;Sa&#x27;: 8766.15265, &#x27;Ssa&#x27;: 4383.07633}
 A2 = design_matrix(t, PERIODS_SA.values())
 coef2, *_ = np.linalg.lstsq(A2, y, rcond=None)

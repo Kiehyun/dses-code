@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | IV-09. 수괴와 T-S도
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 540.
+# %% code 509.
 from pathlib import Path
 import numpy as np
 import xarray as xr
@@ -40,10 +40,10 @@ def get_section(lon):
 atl = get_section(-25.5)   # 대서양 25.5°W
 print(atl)
 
-# %% code 541.
+# %% code 510.
 panels = [
     ("t", "수온 (°C)", "RdYlBu_r", np.arange(-2, 29, 1), [0, 2, 4, 10]),
-    ("s", "염분 (psu)", "viridis", np.arange(33.8, 37.01, 0.1),
+    ("s", "실용염분", "viridis", np.arange(33.8, 37.01, 0.1),
      [34.3, 34.7, 34.9, 35.5]),
     ("o", "용존 산소 (µmol/kg)", "YlGnBu", np.arange(140, 361, 10),
      [200, 250, 280]),
@@ -67,7 +67,7 @@ plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f"{proj_dir.name}_01"))
 plt.show()
 
-# %% code 542.
+# %% code 511.
 def add_density(sec, lon):
     depth2d, lat2d = np.meshgrid(sec.depth.values, sec.lat.values,
                                  indexing="ij")
@@ -81,7 +81,7 @@ def add_density(sec, lon):
 atl = add_density(atl, -25.5)
 print(f"σθ 범위: {float(atl.sigma0.min()):.2f} ~ {float(atl.sigma0.max()):.2f}")
 
-# %% code 543.
+# %% code 512.
 fig, ax = plt.subplots(figsize=(7.5, 3.4))
 cf = ax.contourf(atl.lat, atl.depth, atl["s"],
                  levels=np.arange(33.8, 37.01, 0.1), cmap="viridis",
@@ -95,12 +95,12 @@ ax.set_xlim(-70, 65)
 ax.set_xlabel("위도 (°N)")
 ax.set_ylabel("깊이 (m)")
 ax.set_title("대서양 25.5°W — 염분(색)과 포텐셜 밀도 σθ(흰 선)")
-fig.colorbar(cf, ax=ax, pad=0.01, label="염분 (psu)")
+fig.colorbar(cf, ax=ax, pad=0.01, label="실용염분")
 plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f"{proj_dir.name}_02"))
 plt.show()
 
-# %% code 544.
+# %% code 513.
 S = atl["s"].values.ravel()
 TH = atl["theta"].values.ravel()
 D = np.broadcast_to(atl.depth.values[:, None], atl["s"].shape).ravel()
@@ -137,13 +137,13 @@ for name, (m, (dx, dy)) in masks.items():
                 bbox=dict(boxstyle="round", fc="w", ec="crimson", alpha=0.9))
 ax.set_xlim(33.8, 37.0)
 ax.set_ylim(-2, 28)
-ax.set_xlabel("염분 (psu)")
+ax.set_xlabel("실용염분")
 ax.set_ylabel("포텐셜 수온 θ (°C)")
 ax.set_title("대서양 25.5°W 단면의 T-S도 (회색 선: σθ)")
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f"{proj_dir.name}_03"))
 plt.show()
 
-# %% code 545.
+# %% code 514.
 from matplotlib.colors import ListedColormap
 
 th, s = atl["theta"].values, atl["s"].values
@@ -173,7 +173,7 @@ plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f"{proj_dir.name}_04"))
 plt.show()
 
-# %% code 546.
+# %% code 515.
 pac = get_section(-165.5)   # 태평양 165.5°W
 
 layer = slice(2500, 4000)
@@ -195,7 +195,7 @@ plt.show()
 print(f"대서양 평균: {float(o_atl.mean()):.0f} µmol/kg, "
       f"태평양 평균: {float(o_pac.mean()):.0f} µmol/kg")
 
-# %% code 547.
+# %% code 516.
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 

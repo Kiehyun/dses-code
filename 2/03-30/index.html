@@ -11,46 +11,30 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>III-10. 측광 표준화</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/03-30/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-301">301</a> <a href="#code-302">302</a> <a href="#code-303">303</a> <a href="#code-304">304</a> <a href="#code-305">305</a> <a href="#code-306">306</a> <a href="#code-307">307</a> <a href="#code-308">308</a> <a href="#code-309">309</a> <a href="#code-310">310</a> <a href="#code-311">311</a> <a href="#code-312">312</a> <a href="#code-313">313</a> <a href="#code-314">314</a> <a href="#code-315">315</a> <a href="#code-316">316</a> <a href="#code-317">317</a> <a href="#code-318">318</a> <a href="#code-319">319</a> <a href="#code-320">320</a> <a href="#code-321">321</a> <a href="#code-322">322</a> <a href="#code-323">323</a> <a href="#code-324">324</a> <a href="#code-325">325</a> <a href="#code-326">326</a> <a href="#code-327">327</a> <a href="#code-328">328</a> <a href="#code-329">329</a> <a href="#code-330">330</a> <a href="#code-331">331</a> <a href="#code-332">332</a> <a href="#code-333">333</a> <a href="#code-334">334</a> <a href="#code-335">335</a></p>
-<h2 id="code-301">code 301. <button class="copy">복사</button></h2><pre><code>import os
+<p class="jump"><a href="#code-288">288</a> <a href="#code-289">289</a> <a href="#code-290">290</a> <a href="#code-291">291</a> <a href="#code-292">292</a> <a href="#code-293">293</a> <a href="#code-294">294</a> <a href="#code-295">295</a> <a href="#code-296">296</a> <a href="#code-297">297</a> <a href="#code-298">298</a> <a href="#code-299">299</a> <a href="#code-300">300</a> <a href="#code-301">301</a> <a href="#code-302">302</a> <a href="#code-303">303</a> <a href="#code-304">304</a> <a href="#code-305">305</a> <a href="#code-306">306</a> <a href="#code-307">307</a> <a href="#code-308">308</a> <a href="#code-309">309</a> <a href="#code-310">310</a> <a href="#code-311">311</a> <a href="#code-312">312</a> <a href="#code-313">313</a> <a href="#code-314">314</a> <a href="#code-315">315</a> <a href="#code-316">316</a> <a href="#code-317">317</a> <a href="#code-318">318</a> <a href="#code-319">319</a></p>
+<h2 id="code-288">code 288. <button class="copy">복사</button></h2><pre><code>import os
 from pathlib import Path</code></pre>
-<h2 id="code-302">code 302. <button class="copy">복사</button></h2><pre><code>fname = (&quot;TrES-4b_LIGHT_R_2024-06-13-15-09-52_&quot;
+<h2 id="code-289">code 289. <button class="copy">복사</button></h2><pre><code>fname = (&quot;TrES-4b_LIGHT_R_2024-06-13-15-09-52_&quot;
          &quot;120sec_GSON300_STF-8300M_-10c_1bin.fit&quot;)
-fid = &quot;19Y2TMjSFUgldAWiXftpHHcFZ7N92ebhP&quot;
+fid = &quot;1_ha7akgPnktWVQ8_s-r0BGqmqk-c1F_q&quot;
 
 du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={fid}&quot;,
             proj_dir / fname)</code></pre>
-<h2 id="code-303">code 303. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;fit*&quot;)</code></pre>
-<h2 id="code-304">code 304. <button class="copy">복사</button></h2><pre><code>from astropy.io import fits
+<h2 id="code-290">code 290. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;fit*&quot;)</code></pre>
+<h2 id="code-291">code 291. <button class="copy">복사</button></h2><pre><code>from astropy.io import fits
 fpath = Path(fpaths[0])
 
 hdul = fits.open(fpath)
 flt = hdul[0].header[&quot;filter&quot;]
-
-print(&quot;type(hdul) :&quot;, type(hdul))
-print(&quot;type(hdul[0]) :&quot;, type(hdul[0]))</code></pre>
-<h2 id="code-305">code 305. <button class="copy">복사</button></h2><pre><code>print(&quot;type(hdul[0].header) :&quot;, type(hdul[0].header))
-for _k in [&quot;NAXIS1&quot;, &quot;NAXIS2&quot;, &quot;DATE-OBS&quot;, &quot;EXPTIME&quot;, &quot;OBJECT&quot;, &quot;FILTER&quot;]:
-    if _k in hdul[0].header:
-        print(f&quot;{_k:9s} = {hdul[0].header[_k]}&quot;)</code></pre>
-<h2 id="code-306">code 306. <button class="copy">복사</button></h2><pre><code>print(&quot;hdul[0].header[&#x27;DATE-OBS&#x27;] :&quot;, hdul[0].header[&#x27;DATE-OBS&#x27;])
-print(&quot;type(hdul[0].header[&#x27;DATE-OBS&#x27;]) :&quot;, type(hdul[0].header[&#x27;DATE-OBS&#x27;]))</code></pre>
-<h2 id="code-307">code 307. <button class="copy">복사</button></h2><pre><code>print(&quot;type(hdul[0].data) :&quot;, type(hdul[0].data))
-print(&quot;hdul[0].data.dtype :&quot;, hdul[0].data.dtype)
-print(&quot;hdul[0].data.shape :&quot;, hdul[0].data.shape)
-print(&quot;hdul[0].data :&quot;, hdul[0].data)</code></pre>
-<h2 id="code-308">code 308. <button class="copy">복사</button></h2><pre><code>from astropy.coordinates import SkyCoord, EarthLocation, AltAz
+for k in [&quot;NAXIS1&quot;, &quot;NAXIS2&quot;, &quot;DATE-OBS&quot;, &quot;EXPTIME&quot;, &quot;OBJECT&quot;, &quot;FILTER&quot;]:
+    if k in hdul[0].header:
+        print(f&quot;{k:9s} = {hdul[0].header[k]}&quot;)
+print(&quot;data :&quot;, hdul[0].data.dtype, hdul[0].data.shape)</code></pre>
+<h2 id="code-292">code 292. <button class="copy">복사</button></h2><pre><code>from astropy.coordinates import SkyCoord
 from astropy import units as u</code></pre>
-<h2 id="code-309">code 309. <button class="copy">복사</button></h2><pre><code>#####################################################################
-# 관측 위치: 경기과학고등학교 관측소(수원, MPC 관측소 코드 P64)
-LOCATION = dict(lon=127.005, lat=37.308889, elevation=101)
-GSHS = EarthLocation(lon=127.005 * u.deg, lat=37.308889 * u.deg,
-                     height=101 * u.m)
-MPC_obscode = &quot;P64&quot;
-#######################################################
-# `astropy.SkyCoord` 객체에 공통으로 쓰임
+<h2 id="code-293">code 293. <button class="copy">복사</button></h2><pre><code># `astropy.SkyCoord` 객체에 공통으로 쓰임
 SKYC_KW = dict(unit=u.deg, frame=&#x27;icrs&#x27;)</code></pre>
-<h2 id="code-310">code 310. <button class="copy">복사</button></h2><pre><code>#######################################################
+<h2 id="code-294">code 294. <button class="copy">복사</button></h2><pre><code>#######################################################
 # 망원경과 CCD
 if hdul[0].header[&quot;CCDNAME&quot;] == &quot;STF-8300M&quot; :
     gain = 0.37
@@ -70,7 +54,7 @@ if hdul[0].header[&quot;OPTIC&quot;] == &quot;RiLA600&quot; :
 
 print(&quot;rdnoise, gain, pix_size, focal_length :&quot;, rdnoise, gain, pix_size,
       focal_length)</code></pre>
-<h2 id="code-311">code 311. <button class="copy">복사</button></h2><pre><code>#######################################################
+<h2 id="code-295">code 295. <button class="copy">복사</button></h2><pre><code>#######################################################
 # PIXSCALE
 if &#x27;PIXSCALE&#x27; in hdul[0].header:
     PIX2ARCSEC = hdul[0].header[&#x27;PIXSCALE&#x27;]
@@ -80,12 +64,10 @@ else :  # 픽셀 크기(um, 비닝 반영)와 초점 거리(mm)로 계산
 
 PIX2ARCSEC = PIX2ARCSEC # * u.arcsec / u.pixel
 print(&quot;PIX2ARCSEC :&quot;, PIX2ARCSEC)</code></pre>
-<h2 id="code-312">code 312. <button class="copy">복사</button></h2><pre><code>from astropy import units as u
+<h2 id="code-296">code 296. <button class="copy">복사</button></h2><pre><code>from astropy import units as u
 from astropy.time import Time
 from astropy.coordinates import SkyCoord
 from astropy.wcs import WCS
-from astropy.nddata import Cutout2D
-from astroquery.jplhorizons import Horizons
 
 # 관측 시각을 정하려고 관측 시작 시각과 노출 시간 확인
 t_start = Time(hdul[0].header[&#x27;DATE-OBS&#x27;], format=&#x27;isot&#x27;)
@@ -93,17 +75,17 @@ t_expos = hdul[0].header[&#x27;EXPTIME&#x27;] * u.s
 t_middle = t_start + t_expos / 2 # 시작 시각 + 노출 시간의 절반
 
 print(f&quot;t_start: {t_start}, t_expos: {t_expos}, t_middle: {t_middle}&quot;)</code></pre>
-<h2 id="code-313">code 313. <button class="copy">복사</button></h2><pre><code># 영상 표시 함수 znorm · zimshow · norm_imshow: Ⅲ-04 code 97~99 (dses_utils 에 들어 있음)</code></pre>
-<h2 id="code-314">code 314. <button class="copy">복사</button></h2><pre><code># 위치 보정 여부 확인 — Ⅲ-06에서 만든 du.checkPSolve(dses_utils)
+<h2 id="code-297">code 297. <button class="copy">복사</button></h2><pre><code># 영상 표시 함수 znorm · zimshow · norm_imshow: Ⅲ-04 「FITS 파일 다루기」의 「zscale로 표시하는 함수(zimshow)」 (dses_utils 에 들어 있음)</code></pre>
+<h2 id="code-298">code 298. <button class="copy">복사</button></h2><pre><code># 위치 보정 여부 확인 — Ⅲ-06에서 만든 du.checkPSolve(dses_utils)
 SOLVE, ASTAP, LOCAL = du.checkPSolve(str(fpath))
 print(&quot;SOLVE, ASTAP, LOCAL :&quot;, SOLVE, ASTAP, LOCAL)</code></pre>
-<h2 id="code-315">code 315. <button class="copy">복사</button></h2><pre><code>from astropy.wcs import WCS
+<h2 id="code-299">code 299. <button class="copy">복사</button></h2><pre><code>from astropy.wcs import WCS
 
 wcs = WCS(hdul[0].header)
 print(&quot;wcs :&quot;, wcs)
 
 wcs.pixel_n_dim</code></pre>
-<h2 id="code-316">code 316. <button class="copy">복사</button></h2><pre><code># 영상 중심 픽셀(0부터 센 번호)을 하늘 좌표로 바꿈
+<h2 id="code-300">code 300. <button class="copy">복사</button></h2><pre><code># 영상 중심 픽셀(0부터 센 번호)을 하늘 좌표로 바꿈
 nx, ny = hdul[0].header[&quot;NAXIS1&quot;], hdul[0].header[&quot;NAXIS2&quot;]
 cent_coord = wcs.pixel_to_world((nx - 1) / 2, (ny - 1) / 2)
 print(&quot;cent_coord: {}&quot;.format(cent_coord))
@@ -119,7 +101,7 @@ pos_pix = pos_sky.to_pixel(wcs=wcs)
 
 print(&quot;pos_sky: {}&quot;.format(pos_sky))
 print(&quot;pos_pix: {}&quot;.format(pos_pix))</code></pre>
-<h2 id="code-317">code 317. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-301">code 301. <button class="copy">복사</button></h2><pre><code>import numpy as np
 
 #######################################################
 # FWHM 초기 추정값(픽셀)
@@ -149,11 +131,11 @@ PS1_stars_all = vquery.query_region(cent_coord, radius=rad,
                                     catalog=&quot;II/349/ps1&quot;)[0]
 print(&quot;type(PS1_stars_all) :&quot;, type(PS1_stars_all))
 print(&quot;len(PS1_stars_all) :&quot;, len(PS1_stars_all))</code></pre>
-<h2 id="code-318">code 318. <button class="copy">복사</button></h2><pre><code>df_stars_all = PS1_stars_all.to_pandas()
+<h2 id="code-302">code 302. <button class="copy">복사</button></h2><pre><code>df_stars_all = PS1_stars_all.to_pandas()
 print(&quot;type(df_stars_all) :&quot;, type(df_stars_all))
 print(&quot;len(df_stars_all) :&quot;, len(df_stars_all))
 df_stars_all.head()</code></pre>
-<h2 id="code-319">code 319. <button class="copy">복사</button></h2><pre><code># 비교 측광에 맞지 않는 천체를 나타내는 f_objID(objInfoFlag)의 비트 위치
+<h2 id="code-303">code 303. <button class="copy">복사</button></h2><pre><code># 비교 측광에 맞지 않는 천체를 나타내는 f_objID(objInfoFlag)의 비트 위치
 # 관측 횟수 부족·낮은 품질, 퀘이사, 변광성, 일시 천체, 태양계 천체, 은하
 PS1_DEL_FLAG_BITS = [0, 1, 2, 3, 5, 7, 8, 9, 10, 23, 24]
 
@@ -213,7 +195,7 @@ def add_jc_mags(tab):
         tab[f&quot;e_{band}mag&quot;] = np.sqrt((dg * col(&quot;e_gmag&quot;))**2
                                       + (dr * col(&quot;e_rmag&quot;))**2 + sc**2)
     return tab</code></pre>
-<h2 id="code-320">code 320. <button class="copy">복사</button></h2><pre><code>df_stars_all = PS1_stars_all.to_pandas()
+<h2 id="code-304">code 304. <button class="copy">복사</button></h2><pre><code>df_stars_all = PS1_stars_all.to_pandas()
 df_stars_all = df_stars_all.dropna(subset=[&quot;gmag&quot;, &quot;rmag&quot;])
 print(df_stars_all.columns)
 
@@ -227,7 +209,7 @@ df_stars = ps1_stars.to_pandas()
 print(&quot;len(df_stars):&quot;, len(df_stars))
 df_stars = df_stars.dropna(subset=[&quot;gmag&quot;, &quot;rmag&quot;])
 print(&quot;len(df_stars):&quot;, len(df_stars))</code></pre>
-<h2 id="code-321">code 321. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-305">code 305. <button class="copy">복사</button></h2><pre><code>import numpy as np
 
 pos_stars_all = np.array([df_stars_all[&quot;RAJ2000&quot;].array,
                           df_stars_all[&quot;DEJ2000&quot;].array]).T
@@ -239,15 +221,11 @@ pos_stars = np.array([df_stars[&quot;RAJ2000&quot;].array, df_stars[&quot;DEJ200
 pos_stars = SkyCoord(pos_stars, **SKYC_KW).to_pixel(wcs)
 pos_stars = np.transpose(pos_stars)
 # pos_stars # PS1 query 중 비교 측광에 사용될 별</code></pre>
-<h2 id="code-322">code 322. <button class="copy">복사</button></h2><pre><code>from photutils.aperture import CircularAperture as CAp
+<h2 id="code-306">code 306. <button class="copy">복사</button></h2><pre><code>from photutils.aperture import CircularAperture as CAp
 from photutils.aperture import CircularAnnulus as CAn
 ap_stars = CAp(positions=pos_stars, r=R_IN)
-ap_stars_all = CAp(positions=pos_stars_all, r=R_IN)
-#구경(aperture)
-an_stars = CAn(positions=pos_stars, r_in=R_IN, r_out=R_OUT)
-an_stars_all = CAn(positions=pos_stars_all, r_in=R_IN, r_out=R_OUT)
-#고리(annulus)</code></pre>
-<h2 id="code-323">code 323. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+ap_stars_all = CAp(positions=pos_stars_all, r=R_IN)</code></pre>
+<h2 id="code-307">code 307. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 fig, axs = plt.subplots(1, 1, figsize=(7.5, 5),
                         subplot_kw={&#x27;projection&#x27;: wcs},
                         sharex=False, sharey=False, gridspec_kw=None)
@@ -287,11 +265,11 @@ axs.annotate(f&#x27;Number of star(s): {len(pos_stars)}&#x27;, fontsize=8,
     xycoords=&#x27;axes fraction&#x27;, textcoords=&#x27;offset points&#x27;)
 
 plt.tight_layout()
-plt.savefig(f&quot;{proj_dir}/{fpath.stem}_PS1_comparison.png&quot;)
+plt.savefig(proj_dir / f&quot;{fpath.stem}_PS1_comparison.png&quot;)
 
 plt.show()
 #plt.close()</code></pre>
-<h2 id="code-324">code 324. <button class="copy">복사</button></h2><pre><code>fig, axs = plt.subplots(1, 1, figsize=(7.5, 5),
+<h2 id="code-308">code 308. <button class="copy">복사</button></h2><pre><code>fig, axs = plt.subplots(1, 1, figsize=(7.5, 5),
                         subplot_kw={&#x27;projection&#x27;: wcs},
                         sharex=False, sharey=False, gridspec_kw=None)
 
@@ -349,12 +327,12 @@ axs.annotate(f&#x27;Number of star(s): {len(pos_stars)}&#x27;, fontsize=8,
                             textcoords=&#x27;offset points&#x27;)
 
 plt.tight_layout()
-plt.savefig(f&quot;{proj_dir}/{fpath.stem}_PS1_magnitude.png&quot;)
+plt.savefig(proj_dir / f&quot;{fpath.stem}_PS1_magnitude.png&quot;)
 
 plt.show()</code></pre>
-<h2 id="code-325">code 325. <button class="copy">복사</button></h2><pre><code>print(&quot;type(_phot_stars) :&quot;, type(_phot_stars))
+<h2 id="code-309">code 309. <button class="copy">복사</button></h2><pre><code>print(&quot;type(_phot_stars) :&quot;, type(_phot_stars))
 print(&quot;len(_phot_stars) :&quot;, len(_phot_stars))</code></pre>
-<h2 id="code-326">code 326. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+<h2 id="code-310">code 310. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 df_phot_stars = pd.concat(_phot_stars)
 # phot_stars = phot_stars.loc[phot_stars[&quot;objID&quot;] != 110823405221754720].copy() # star 15
 print(&quot;type(df_phot_stars):&quot;,type(df_phot_stars))
@@ -362,7 +340,7 @@ print(&quot;len(df_phot_stars):&quot;,len(df_phot_stars))
 print(&quot;df_phot_stars.columns:&quot;, df_phot_stars.columns)
 # print(phot_stars)
 df_phot_stars</code></pre>
-<h2 id="code-327">code 327. <button class="copy">복사</button></h2><pre><code>df_phot_stars_na = df_phot_stars.dropna()
+<h2 id="code-311">code 311. <button class="copy">복사</button></h2><pre><code>df_phot_stars_na = df_phot_stars.dropna()
 print(len(df_phot_stars_na))
 
 df_phot_stars_na = df_phot_stars[df_phot_stars[&quot;merr&quot;] &lt; ERR_Min]
@@ -371,7 +349,7 @@ df_phot_stars_na = df_phot_stars_na.reset_index(drop=True)
 print(len(df_phot_stars_na))
 # print(df_phot_stars_na)
 df_phot_stars_na</code></pre>
-<h2 id="code-328">code 328. <button class="copy">복사</button></h2><pre><code>merr_total1 = np.sqrt((df_phot_stars_na[&quot;merr&quot;])**2 + (df_phot_stars_na[f&quot;e_{flt}mag&quot;])**2)
+<h2 id="code-312">code 312. <button class="copy">복사</button></h2><pre><code>merr_total1 = np.sqrt((df_phot_stars_na[&quot;merr&quot;])**2 + (df_phot_stars_na[f&quot;e_{flt}mag&quot;])**2)
 
 # === 영점(zero point)과 오차 계산
 _xx = np.linspace(Mag_Low, Mag_High)
@@ -386,7 +364,7 @@ print(f&quot;N = {len(resid)}, Z(중앙값) = {zeropt_med:.3f}, Z(가중 평균)
 print(f&quot;잔차 표준편차 = {np.std(resid, ddof=1):.3f}, &quot;
       f&quot;가중 평균의 오차 = {1/np.sqrt(np.sum(1/merr_total1**2)):.4f}, &quot;
       f&quot;σ_Z = {dzeropt:.4f}&quot;)</code></pre>
-<h2 id="code-329">code 329. <button class="copy">복사</button></h2><pre><code>def linf(x, a, b):
+<h2 id="code-313">code 313. <button class="copy">복사</button></h2><pre><code>def linf(x, a, b):
     return a + b*x
 from scipy.optimize import curve_fit
 
@@ -417,7 +395,7 @@ print(f&quot;g, r &gt; 14 인 별 {faint.sum()}개: 기울기 = {poptc14[1]:+.4f
       f&quot;{np.sqrt(pcovc14[1, 1]):.4f}, 보정 전 잔차 표준편차 = &quot;
       f&quot;{np.std(d14[&#x27;mag&#x27;] - d14[f&#x27;{flt}mag&#x27;], ddof=1):.3f}, 보정 후 = &quot;
       f&quot;{np.std(resid14, ddof=1):.3f}&quot;)</code></pre>
-<h2 id="code-330">code 330. <button class="copy">복사</button></h2><pre><code>import logging
+<h2 id="code-314">code 314. <button class="copy">복사</button></h2><pre><code>import logging
 logging.getLogger(&quot;fontTools&quot;).setLevel(logging.ERROR)   # PDF 글꼴 저장 알림 감춤
 
 d = df_phot_stars_na
@@ -450,34 +428,28 @@ for ax in axs:
     ax.tick_params(labelsize=9)
     ax.grid(ls=&quot;:&quot;)
 fig.suptitle(f&quot;영점과 색항 ({flt} 필터, 비교성 {len(d)}개)&quot;, fontsize=13)
-plt.savefig(f&quot;{proj_dir}/{fpath.stem}_standardization_extended.png&quot;)
+plt.savefig(proj_dir / f&quot;{fpath.stem}_standardization_extended.png&quot;)
 plt.show()</code></pre>
-<h2 id="code-331">code 331. <button class="copy">복사</button></h2><pre><code># 뺄 별: g 또는 r 등급이 14보다 밝은 별(PS1 포화 위험)
+<h2 id="code-315">code 315. <button class="copy">복사</button></h2><pre><code># 뺄 별: g 또는 r 등급이 14보다 밝은 별(PS1 포화 위험)
 mask = (df_phot_stars_na[&quot;gmag&quot;] &lt;= 14) | (df_phot_stars_na[&quot;rmag&quot;] &lt;= 14)
 print(f&quot;전체 {len(mask)}개 중 뺄 별 {mask.sum()}개, 남는 별 {(~mask).sum()}개&quot;)</code></pre>
-<h2 id="code-332">code 332. <button class="copy">복사</button></h2><pre><code>df_phot_stars_na_filter = df_phot_stars_na[~mask]
-df_phot_stars_na_filter
-
-merr_total1 = np.sqrt((df_phot_stars_na_filter[&quot;merr&quot;])**2 + (df_phot_stars_na_filter[f&quot;e_{flt}mag&quot;])**2)
+<h2 id="code-316">code 316. <button class="copy">복사</button></h2><pre><code># 걸러 낸 별을 뺀 비교성(good)으로 영점과 색항을 구함
+good = df_phot_stars_na[~mask]
+M_cat, m_inst = good[f&quot;{flt}mag&quot;], good[&quot;mag&quot;]           # 성표 등급, 기기 등급
 
 # === 영점(zero point)과 오차 계산
-_xx = np.linspace(Mag_Low, Mag_High)
-dmag = df_phot_stars_na_filter[&quot;mag&quot;] - df_phot_stars_na_filter[f&quot;{flt}mag&quot;]             # m - M (별마다의 영점)
+merr_total1 = np.sqrt(good[&quot;merr&quot;]**2 + good[f&quot;e_{flt}mag&quot;]**2)   # 기기 등급 오차 + 성표 등급 오차
+dmag = m_inst - M_cat                                     # m - M (별마다의 영점)
 zeropt_med = np.median(dmag)
 zeropt_avg = np.average(dmag, weights=1/merr_total1**2)
-resid = dmag - zeropt_med                      # 영점 잔차
-dzeropt = np.max([1/np.sqrt(np.sum(1/merr_total1**2)),        # 가중 평균의 오차
-                  np.std(resid, ddof=1)/np.sqrt(len(resid))])  # 잔차의 표준 오차
-merr_total2 = np.sqrt(merr_total1**2 + dzeropt**2)  # 별마다의 오차 + 영점 오차
+resid = dmag - zeropt_med                                 # 영점 잔차
+dzeropt = np.max([1/np.sqrt(np.sum(1/merr_total1**2)),         # 가중 평균의 오차
+                  np.std(resid, ddof=1)/np.sqrt(len(resid))])   # 잔차의 표준 오차
+merr_total2 = np.sqrt(merr_total1**2 + dzeropt**2)        # 별마다의 오차 + 영점 오차
 
-# === 맞춤 직선 찾기
-# scipy.optimize.curve_fit 으로 직선 맞춤
-poptm, _ = curve_fit(linf, df_phot_stars_na_filter[f&quot;{flt}mag&quot;],
-                     df_phot_stars_na_filter[&quot;mag&quot;],
-                     sigma= df_phot_stars_na_filter[&quot;merr&quot;], absolute_sigma=True)
-poptc, _ = curve_fit(linf, df_phot_stars_na_filter[&quot;grcolor&quot;],
-                     df_phot_stars_na_filter[&quot;mag&quot;] - df_phot_stars_na_filter[f&quot;{flt}mag&quot;],
-                     sigma=merr_total2, absolute_sigma=True)
+# === 직선 맞춤(scipy.optimize.curve_fit): 기기 등급 대 성표 등급, m - M 대 색지수
+poptm, _ = curve_fit(linf, M_cat, m_inst, sigma=good[&quot;merr&quot;], absolute_sigma=True)
+poptc, _ = curve_fit(linf, good[&quot;grcolor&quot;], dmag, sigma=merr_total2, absolute_sigma=True)
 
 # === 결과 비교 그림: 왼쪽 m - M 대 성표 등급, 오른쪽 m - M 대 색지수
 dm_all = df_phot_stars_na[&quot;mag&quot;] - df_phot_stars_na[f&quot;{flt}mag&quot;]
@@ -486,7 +458,7 @@ for ax, xcol, xlabel in zip(axs, [f&quot;{flt}mag&quot;, &quot;grcolor&quot;],
                             [f&quot;${{{flt}}}_{{PS1}}$&quot;, &quot;$g - r$ (PS1)&quot;]):
     ax.plot(df_phot_stars_na.loc[mask, xcol], dm_all[mask], &quot;x&quot;, color=&quot;gray&quot;,
             label=&quot;뺀 별&quot;)
-    ax.errorbar(df_phot_stars_na_filter[xcol], dmag, yerr=merr_total1,
+    ax.errorbar(good[xcol], dmag, yerr=merr_total1,
                 fmt=&quot;+&quot;, color=&quot;C0&quot;, ecolor=&quot;lightgray&quot;, elinewidth=0.5, label=&quot;남은 별&quot;)
     ax.axhline(zeropt_med, color=&quot;r&quot;, lw=1, label=f&quot;Z(중앙값) = {zeropt_med:.3f} ± {dzeropt:.3f}&quot;)
     ax.axhline(zeropt_avg, color=&quot;b&quot;, lw=1, label=f&quot;Z(가중 평균) = {zeropt_avg:.3f}&quot;)
@@ -499,20 +471,20 @@ axs[1].legend(fontsize=8.5, loc=&quot;lower left&quot;)
 plt.show()
 print(f&quot;남은 별 {len(dmag)}개: 영점(중앙값) {zeropt_med:.3f}, 가중 평균 {zeropt_avg:.3f}, &quot;
       f&quot;오차 {dzeropt:.3f}, 잔차 표준편차 {np.std(resid, ddof=1):.3f}, 색항 기울기 {poptc[1]:+.3f}&quot;)</code></pre>
-<h2 id="code-333">code 333. <button class="copy">복사</button></h2><pre><code>from astropy.stats import sigma_clipped_stats
+<h2 id="code-317">code 317. <button class="copy">복사</button></h2><pre><code>from astropy.stats import sigma_clipped_stats
 
 FWHM = FWHM_INIT
-avg, med, std = sigma_clipped_stats(hdul[0].data)  # 기본값은 3σ, 5회 반복
+_, _, std = sigma_clipped_stats(hdul[0].data)  # 기본값은 3σ, 5회 반복(배경 표준편차만 씀)
 thresh = 5. * std   # 배경 위 높이(상대값)
 
 from photutils.detection import DAOStarFinder
 DAOfind = DAOStarFinder(
                         fwhm = FWHM,
                         threshold=thresh,
- # sharplo=0.2, sharphi=1.0, # default values 0.2 and 1.0
- # roundlo=-1.0, roundhi=1.0, # default values -1 and +1
- # sigma_radius=1.5, # default values 1.5
- # ratio=1.0, # 1.0: circular gaussian
+ # sharpness_range=(0.2, 1.0),   # 기본값
+ # roundness_range=(-1.0, 1.0),  # 기본값
+ # sigma_radius=1.5,             # 기본값
+ # ratio=1.0,                    # 1.0: 원형 가우스
                         exclude_border=True         # 가장자리에 가까운 천체 제외
                         )
 
@@ -524,10 +496,12 @@ df_DAO = DAOfound.to_pandas()
 print(type(df_DAO))
 df_DAO
 
-pos = np.transpose((DAOfound[&#x27;x_centroid&#x27;], DAOfound[&#x27;y_centroid&#x27;]))
+# 중심 열 이름: photutils 3.0부터 x_centroid, 그 전 판은 xcentroid
+xc, yc = (&quot;x_centroid&quot;, &quot;y_centroid&quot;) if &quot;x_centroid&quot; in DAOfound.colnames else (&quot;xcentroid&quot;, &quot;ycentroid&quot;)
+pos = np.transpose((DAOfound[xc], DAOfound[yc]))
 apert = CAp(pos, r=R_AP)
 annul = CAn(positions=pos, r_in= R_IN, r_out=R_OUT)</code></pre>
-<h2 id="code-334">code 334. <button class="copy">복사</button></h2><pre><code># 검출한 모든 별을 Ⅲ-08 과 같은 방법(du.apphot_annulus)으로 측광
+<h2 id="code-318">code 318. <button class="copy">복사</button></h2><pre><code># 검출한 모든 별을 Ⅲ-08 과 같은 방법(du.apphot_annulus)으로 측광
 df_apphot = du.apphot_annulus(hdul[0].data, apert, annul, gain=gain, rdnoise=rdnoise)
 
 sky_coord = wcs.pixel_to_world(df_apphot[&quot;x_center&quot;], df_apphot[&quot;y_center&quot;])
@@ -545,7 +519,7 @@ df_apphot.to_csv(f&quot;{proj_dir}/{fpath.stem}_result_photometry.csv&quot;)
 print(f&quot;별 {len(df_apphot)}개 가운데 표준 등급을 구한 별 {df_apphot[&#x27;mag&#x27;].notna().sum()}개 &quot;
       f&quot;(영점 Z = {zeropt_med:.3f} ± {dzeropt:.3f})&quot;)
 df_apphot[[&quot;id&quot;, &quot;x_center&quot;, &quot;y_center&quot;, &quot;msky&quot;, &quot;source_sum&quot;, &quot;mag&quot;, &quot;merr&quot;, f&quot;{flt}_magnitude&quot;]].head()</code></pre>
-<h2 id="code-335">code 335. <button class="copy">복사</button></h2><pre><code>df_apphot_sub = df_apphot.dropna(subset=[&quot;mag&quot;])
+<h2 id="code-319">code 319. <button class="copy">복사</button></h2><pre><code>df_apphot_sub = df_apphot.dropna(subset=[&quot;mag&quot;])
 
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.2), constrained_layout=True)
 axs[0].hist(df_apphot_sub[f&quot;{flt}_magnitude&quot;], bins=np.arange(9, 21, 0.5), edgecolor=&quot;white&quot;)
@@ -562,7 +536,7 @@ for ax in axs:
     ax.tick_params(labelsize=9)
     ax.grid(ls=&quot;:&quot;)
 fig.suptitle(f&quot;모든 별의 표준 등급 ({len(df_apphot_sub)}개)&quot;, fontsize=13)
-plt.savefig(f&quot;{proj_dir}/{fpath.stem}_Result_of_standardization.png&quot;)
+plt.savefig(proj_dir / f&quot;{fpath.stem}_Result_of_standardization.png&quot;)
 plt.show()
 
 for lim in [0.01, 0.05, 0.1]:

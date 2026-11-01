@@ -1,63 +1,41 @@
 # 지구과학 데이터 사이언스 2 | III-10. 측광 표준화
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 301.
+# %% code 288.
 import os
 from pathlib import Path
 
-# %% code 302.
+# %% code 289.
 fname = ("TrES-4b_LIGHT_R_2024-06-13-15-09-52_"
          "120sec_GSON300_STF-8300M_-10c_1bin.fit")
-fid = "19Y2TMjSFUgldAWiXftpHHcFZ7N92ebhP"
+fid = "1_ha7akgPnktWVQ8_s-r0BGqmqk-c1F_q"
 
 du.download(f"https://docs.google.com/uc?export=download&id={fid}",
             proj_dir / fname)
 
-# %% code 303.
+# %% code 290.
 fpaths = du.list_files(proj_dir, "fit*")
 
-# %% code 304.
+# %% code 291.
 from astropy.io import fits
 fpath = Path(fpaths[0])
 
 hdul = fits.open(fpath)
 flt = hdul[0].header["filter"]
+for k in ["NAXIS1", "NAXIS2", "DATE-OBS", "EXPTIME", "OBJECT", "FILTER"]:
+    if k in hdul[0].header:
+        print(f"{k:9s} = {hdul[0].header[k]}")
+print("data :", hdul[0].data.dtype, hdul[0].data.shape)
 
-print("type(hdul) :", type(hdul))
-print("type(hdul[0]) :", type(hdul[0]))
-
-# %% code 305.
-print("type(hdul[0].header) :", type(hdul[0].header))
-for _k in ["NAXIS1", "NAXIS2", "DATE-OBS", "EXPTIME", "OBJECT", "FILTER"]:
-    if _k in hdul[0].header:
-        print(f"{_k:9s} = {hdul[0].header[_k]}")
-
-# %% code 306.
-print("hdul[0].header['DATE-OBS'] :", hdul[0].header['DATE-OBS'])
-print("type(hdul[0].header['DATE-OBS']) :", type(hdul[0].header['DATE-OBS']))
-
-# %% code 307.
-print("type(hdul[0].data) :", type(hdul[0].data))
-print("hdul[0].data.dtype :", hdul[0].data.dtype)
-print("hdul[0].data.shape :", hdul[0].data.shape)
-print("hdul[0].data :", hdul[0].data)
-
-# %% code 308.
-from astropy.coordinates import SkyCoord, EarthLocation, AltAz
+# %% code 292.
+from astropy.coordinates import SkyCoord
 from astropy import units as u
 
-# %% code 309.
-#####################################################################
-# 관측 위치: 경기과학고등학교 관측소(수원, MPC 관측소 코드 P64)
-LOCATION = dict(lon=127.005, lat=37.308889, elevation=101)
-GSHS = EarthLocation(lon=127.005 * u.deg, lat=37.308889 * u.deg,
-                     height=101 * u.m)
-MPC_obscode = "P64"
-#######################################################
+# %% code 293.
 # `astropy.SkyCoord` 객체에 공통으로 쓰임
 SKYC_KW = dict(unit=u.deg, frame='icrs')
 
-# %% code 310.
+# %% code 294.
 #######################################################
 # 망원경과 CCD
 if hdul[0].header["CCDNAME"] == "STF-8300M" :
@@ -79,7 +57,7 @@ if hdul[0].header["OPTIC"] == "RiLA600" :
 print("rdnoise, gain, pix_size, focal_length :", rdnoise, gain, pix_size,
       focal_length)
 
-# %% code 311.
+# %% code 295.
 #######################################################
 # PIXSCALE
 if 'PIXSCALE' in hdul[0].header:
@@ -91,13 +69,11 @@ else :  # 픽셀 크기(um, 비닝 반영)와 초점 거리(mm)로 계산
 PIX2ARCSEC = PIX2ARCSEC # * u.arcsec / u.pixel
 print("PIX2ARCSEC :", PIX2ARCSEC)
 
-# %% code 312.
+# %% code 296.
 from astropy import units as u
 from astropy.time import Time
 from astropy.coordinates import SkyCoord
 from astropy.wcs import WCS
-from astropy.nddata import Cutout2D
-from astroquery.jplhorizons import Horizons
 
 # 관측 시각을 정하려고 관측 시작 시각과 노출 시간 확인
 t_start = Time(hdul[0].header['DATE-OBS'], format='isot')
@@ -106,15 +82,15 @@ t_middle = t_start + t_expos / 2 # 시작 시각 + 노출 시간의 절반
 
 print(f"t_start: {t_start}, t_expos: {t_expos}, t_middle: {t_middle}")
 
-# %% code 313.
-# 영상 표시 함수 znorm · zimshow · norm_imshow: Ⅲ-04 code 97~99 (dses_utils 에 들어 있음)
+# %% code 297.
+# 영상 표시 함수 znorm · zimshow · norm_imshow: Ⅲ-04 「FITS 파일 다루기」의 「zscale로 표시하는 함수(zimshow)」 (dses_utils 에 들어 있음)
 
-# %% code 314.
+# %% code 298.
 # 위치 보정 여부 확인 — Ⅲ-06에서 만든 du.checkPSolve(dses_utils)
 SOLVE, ASTAP, LOCAL = du.checkPSolve(str(fpath))
 print("SOLVE, ASTAP, LOCAL :", SOLVE, ASTAP, LOCAL)
 
-# %% code 315.
+# %% code 299.
 from astropy.wcs import WCS
 
 wcs = WCS(hdul[0].header)
@@ -122,7 +98,7 @@ print("wcs :", wcs)
 
 wcs.pixel_n_dim
 
-# %% code 316.
+# %% code 300.
 # 영상 중심 픽셀(0부터 센 번호)을 하늘 좌표로 바꿈
 nx, ny = hdul[0].header["NAXIS1"], hdul[0].header["NAXIS2"]
 cent_coord = wcs.pixel_to_world((nx - 1) / 2, (ny - 1) / 2)
@@ -140,7 +116,7 @@ pos_pix = pos_sky.to_pixel(wcs=wcs)
 print("pos_sky: {}".format(pos_sky))
 print("pos_pix: {}".format(pos_pix))
 
-# %% code 317.
+# %% code 301.
 import numpy as np
 
 #######################################################
@@ -172,13 +148,13 @@ PS1_stars_all = vquery.query_region(cent_coord, radius=rad,
 print("type(PS1_stars_all) :", type(PS1_stars_all))
 print("len(PS1_stars_all) :", len(PS1_stars_all))
 
-# %% code 318.
+# %% code 302.
 df_stars_all = PS1_stars_all.to_pandas()
 print("type(df_stars_all) :", type(df_stars_all))
 print("len(df_stars_all) :", len(df_stars_all))
 df_stars_all.head()
 
-# %% code 319.
+# %% code 303.
 # 비교 측광에 맞지 않는 천체를 나타내는 f_objID(objInfoFlag)의 비트 위치
 # 관측 횟수 부족·낮은 품질, 퀘이사, 변광성, 일시 천체, 태양계 천체, 은하
 PS1_DEL_FLAG_BITS = [0, 1, 2, 3, 5, 7, 8, 9, 10, 23, 24]
@@ -240,7 +216,7 @@ def add_jc_mags(tab):
                                       + (dr * col("e_rmag"))**2 + sc**2)
     return tab
 
-# %% code 320.
+# %% code 304.
 df_stars_all = PS1_stars_all.to_pandas()
 df_stars_all = df_stars_all.dropna(subset=["gmag", "rmag"])
 print(df_stars_all.columns)
@@ -256,7 +232,7 @@ print("len(df_stars):", len(df_stars))
 df_stars = df_stars.dropna(subset=["gmag", "rmag"])
 print("len(df_stars):", len(df_stars))
 
-# %% code 321.
+# %% code 305.
 import numpy as np
 
 pos_stars_all = np.array([df_stars_all["RAJ2000"].array,
@@ -270,17 +246,13 @@ pos_stars = SkyCoord(pos_stars, **SKYC_KW).to_pixel(wcs)
 pos_stars = np.transpose(pos_stars)
 # pos_stars # PS1 query 중 비교 측광에 사용될 별
 
-# %% code 322.
+# %% code 306.
 from photutils.aperture import CircularAperture as CAp
 from photutils.aperture import CircularAnnulus as CAn
 ap_stars = CAp(positions=pos_stars, r=R_IN)
 ap_stars_all = CAp(positions=pos_stars_all, r=R_IN)
-#구경(aperture)
-an_stars = CAn(positions=pos_stars, r_in=R_IN, r_out=R_OUT)
-an_stars_all = CAn(positions=pos_stars_all, r_in=R_IN, r_out=R_OUT)
-#고리(annulus)
 
-# %% code 323.
+# %% code 307.
 import matplotlib.pyplot as plt
 fig, axs = plt.subplots(1, 1, figsize=(7.5, 5),
                         subplot_kw={'projection': wcs},
@@ -321,12 +293,12 @@ axs.annotate(f'Number of star(s): {len(pos_stars)}', fontsize=8,
     xycoords='axes fraction', textcoords='offset points')
 
 plt.tight_layout()
-plt.savefig(f"{proj_dir}/{fpath.stem}_PS1_comparison.png")
+plt.savefig(proj_dir / f"{fpath.stem}_PS1_comparison.png")
 
 plt.show()
 #plt.close()
 
-# %% code 324.
+# %% code 308.
 fig, axs = plt.subplots(1, 1, figsize=(7.5, 5),
                         subplot_kw={'projection': wcs},
                         sharex=False, sharey=False, gridspec_kw=None)
@@ -385,15 +357,15 @@ axs.annotate(f'Number of star(s): {len(pos_stars)}', fontsize=8,
                             textcoords='offset points')
 
 plt.tight_layout()
-plt.savefig(f"{proj_dir}/{fpath.stem}_PS1_magnitude.png")
+plt.savefig(proj_dir / f"{fpath.stem}_PS1_magnitude.png")
 
 plt.show()
 
-# %% code 325.
+# %% code 309.
 print("type(_phot_stars) :", type(_phot_stars))
 print("len(_phot_stars) :", len(_phot_stars))
 
-# %% code 326.
+# %% code 310.
 import pandas as pd
 df_phot_stars = pd.concat(_phot_stars)
 # phot_stars = phot_stars.loc[phot_stars["objID"] != 110823405221754720].copy() # star 15
@@ -403,7 +375,7 @@ print("df_phot_stars.columns:", df_phot_stars.columns)
 # print(phot_stars)
 df_phot_stars
 
-# %% code 327.
+# %% code 311.
 df_phot_stars_na = df_phot_stars.dropna()
 print(len(df_phot_stars_na))
 
@@ -414,7 +386,7 @@ print(len(df_phot_stars_na))
 # print(df_phot_stars_na)
 df_phot_stars_na
 
-# %% code 328.
+# %% code 312.
 merr_total1 = np.sqrt((df_phot_stars_na["merr"])**2 + (df_phot_stars_na[f"e_{flt}mag"])**2)
 
 # === 영점(zero point)과 오차 계산
@@ -431,7 +403,7 @@ print(f"잔차 표준편차 = {np.std(resid, ddof=1):.3f}, "
       f"가중 평균의 오차 = {1/np.sqrt(np.sum(1/merr_total1**2)):.4f}, "
       f"σ_Z = {dzeropt:.4f}")
 
-# %% code 329.
+# %% code 313.
 def linf(x, a, b):
     return a + b*x
 from scipy.optimize import curve_fit
@@ -464,7 +436,7 @@ print(f"g, r > 14 인 별 {faint.sum()}개: 기울기 = {poptc14[1]:+.4f} ± "
       f"{np.std(d14['mag'] - d14[f'{flt}mag'], ddof=1):.3f}, 보정 후 = "
       f"{np.std(resid14, ddof=1):.3f}")
 
-# %% code 330.
+# %% code 314.
 import logging
 logging.getLogger("fontTools").setLevel(logging.ERROR)   # PDF 글꼴 저장 알림 감춤
 
@@ -498,38 +470,32 @@ for ax in axs:
     ax.tick_params(labelsize=9)
     ax.grid(ls=":")
 fig.suptitle(f"영점과 색항 ({flt} 필터, 비교성 {len(d)}개)", fontsize=13)
-plt.savefig(f"{proj_dir}/{fpath.stem}_standardization_extended.png")
+plt.savefig(proj_dir / f"{fpath.stem}_standardization_extended.png")
 plt.show()
 
-# %% code 331.
+# %% code 315.
 # 뺄 별: g 또는 r 등급이 14보다 밝은 별(PS1 포화 위험)
 mask = (df_phot_stars_na["gmag"] <= 14) | (df_phot_stars_na["rmag"] <= 14)
 print(f"전체 {len(mask)}개 중 뺄 별 {mask.sum()}개, 남는 별 {(~mask).sum()}개")
 
-# %% code 332.
-df_phot_stars_na_filter = df_phot_stars_na[~mask]
-df_phot_stars_na_filter
-
-merr_total1 = np.sqrt((df_phot_stars_na_filter["merr"])**2 + (df_phot_stars_na_filter[f"e_{flt}mag"])**2)
+# %% code 316.
+# 걸러 낸 별을 뺀 비교성(good)으로 영점과 색항을 구함
+good = df_phot_stars_na[~mask]
+M_cat, m_inst = good[f"{flt}mag"], good["mag"]           # 성표 등급, 기기 등급
 
 # === 영점(zero point)과 오차 계산
-_xx = np.linspace(Mag_Low, Mag_High)
-dmag = df_phot_stars_na_filter["mag"] - df_phot_stars_na_filter[f"{flt}mag"]             # m - M (별마다의 영점)
+merr_total1 = np.sqrt(good["merr"]**2 + good[f"e_{flt}mag"]**2)   # 기기 등급 오차 + 성표 등급 오차
+dmag = m_inst - M_cat                                     # m - M (별마다의 영점)
 zeropt_med = np.median(dmag)
 zeropt_avg = np.average(dmag, weights=1/merr_total1**2)
-resid = dmag - zeropt_med                      # 영점 잔차
-dzeropt = np.max([1/np.sqrt(np.sum(1/merr_total1**2)),        # 가중 평균의 오차
-                  np.std(resid, ddof=1)/np.sqrt(len(resid))])  # 잔차의 표준 오차
-merr_total2 = np.sqrt(merr_total1**2 + dzeropt**2)  # 별마다의 오차 + 영점 오차
+resid = dmag - zeropt_med                                 # 영점 잔차
+dzeropt = np.max([1/np.sqrt(np.sum(1/merr_total1**2)),         # 가중 평균의 오차
+                  np.std(resid, ddof=1)/np.sqrt(len(resid))])   # 잔차의 표준 오차
+merr_total2 = np.sqrt(merr_total1**2 + dzeropt**2)        # 별마다의 오차 + 영점 오차
 
-# === 맞춤 직선 찾기
-# scipy.optimize.curve_fit 으로 직선 맞춤
-poptm, _ = curve_fit(linf, df_phot_stars_na_filter[f"{flt}mag"],
-                     df_phot_stars_na_filter["mag"],
-                     sigma= df_phot_stars_na_filter["merr"], absolute_sigma=True)
-poptc, _ = curve_fit(linf, df_phot_stars_na_filter["grcolor"],
-                     df_phot_stars_na_filter["mag"] - df_phot_stars_na_filter[f"{flt}mag"],
-                     sigma=merr_total2, absolute_sigma=True)
+# === 직선 맞춤(scipy.optimize.curve_fit): 기기 등급 대 성표 등급, m - M 대 색지수
+poptm, _ = curve_fit(linf, M_cat, m_inst, sigma=good["merr"], absolute_sigma=True)
+poptc, _ = curve_fit(linf, good["grcolor"], dmag, sigma=merr_total2, absolute_sigma=True)
 
 # === 결과 비교 그림: 왼쪽 m - M 대 성표 등급, 오른쪽 m - M 대 색지수
 dm_all = df_phot_stars_na["mag"] - df_phot_stars_na[f"{flt}mag"]
@@ -538,7 +504,7 @@ for ax, xcol, xlabel in zip(axs, [f"{flt}mag", "grcolor"],
                             [f"${{{flt}}}_{{PS1}}$", "$g - r$ (PS1)"]):
     ax.plot(df_phot_stars_na.loc[mask, xcol], dm_all[mask], "x", color="gray",
             label="뺀 별")
-    ax.errorbar(df_phot_stars_na_filter[xcol], dmag, yerr=merr_total1,
+    ax.errorbar(good[xcol], dmag, yerr=merr_total1,
                 fmt="+", color="C0", ecolor="lightgray", elinewidth=0.5, label="남은 별")
     ax.axhline(zeropt_med, color="r", lw=1, label=f"Z(중앙값) = {zeropt_med:.3f} ± {dzeropt:.3f}")
     ax.axhline(zeropt_avg, color="b", lw=1, label=f"Z(가중 평균) = {zeropt_avg:.3f}")
@@ -552,21 +518,21 @@ plt.show()
 print(f"남은 별 {len(dmag)}개: 영점(중앙값) {zeropt_med:.3f}, 가중 평균 {zeropt_avg:.3f}, "
       f"오차 {dzeropt:.3f}, 잔차 표준편차 {np.std(resid, ddof=1):.3f}, 색항 기울기 {poptc[1]:+.3f}")
 
-# %% code 333.
+# %% code 317.
 from astropy.stats import sigma_clipped_stats
 
 FWHM = FWHM_INIT
-avg, med, std = sigma_clipped_stats(hdul[0].data)  # 기본값은 3σ, 5회 반복
+_, _, std = sigma_clipped_stats(hdul[0].data)  # 기본값은 3σ, 5회 반복(배경 표준편차만 씀)
 thresh = 5. * std   # 배경 위 높이(상대값)
 
 from photutils.detection import DAOStarFinder
 DAOfind = DAOStarFinder(
                         fwhm = FWHM,
                         threshold=thresh,
- # sharplo=0.2, sharphi=1.0, # default values 0.2 and 1.0
- # roundlo=-1.0, roundhi=1.0, # default values -1 and +1
- # sigma_radius=1.5, # default values 1.5
- # ratio=1.0, # 1.0: circular gaussian
+ # sharpness_range=(0.2, 1.0),   # 기본값
+ # roundness_range=(-1.0, 1.0),  # 기본값
+ # sigma_radius=1.5,             # 기본값
+ # ratio=1.0,                    # 1.0: 원형 가우스
                         exclude_border=True         # 가장자리에 가까운 천체 제외
                         )
 
@@ -578,11 +544,13 @@ df_DAO = DAOfound.to_pandas()
 print(type(df_DAO))
 df_DAO
 
-pos = np.transpose((DAOfound['x_centroid'], DAOfound['y_centroid']))
+# 중심 열 이름: photutils 3.0부터 x_centroid, 그 전 판은 xcentroid
+xc, yc = ("x_centroid", "y_centroid") if "x_centroid" in DAOfound.colnames else ("xcentroid", "ycentroid")
+pos = np.transpose((DAOfound[xc], DAOfound[yc]))
 apert = CAp(pos, r=R_AP)
 annul = CAn(positions=pos, r_in= R_IN, r_out=R_OUT)
 
-# %% code 334.
+# %% code 318.
 # 검출한 모든 별을 Ⅲ-08 과 같은 방법(du.apphot_annulus)으로 측광
 df_apphot = du.apphot_annulus(hdul[0].data, apert, annul, gain=gain, rdnoise=rdnoise)
 
@@ -602,7 +570,7 @@ print(f"별 {len(df_apphot)}개 가운데 표준 등급을 구한 별 {df_apphot
       f"(영점 Z = {zeropt_med:.3f} ± {dzeropt:.3f})")
 df_apphot[["id", "x_center", "y_center", "msky", "source_sum", "mag", "merr", f"{flt}_magnitude"]].head()
 
-# %% code 335.
+# %% code 319.
 df_apphot_sub = df_apphot.dropna(subset=["mag"])
 
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.2), constrained_layout=True)
@@ -620,7 +588,7 @@ for ax in axs:
     ax.tick_params(labelsize=9)
     ax.grid(ls=":")
 fig.suptitle(f"모든 별의 표준 등급 ({len(df_apphot_sub)}개)", fontsize=13)
-plt.savefig(f"{proj_dir}/{fpath.stem}_Result_of_standardization.png")
+plt.savefig(proj_dir / f"{fpath.stem}_Result_of_standardization.png")
 plt.show()
 
 for lim in [0.01, 0.05, 0.1]:

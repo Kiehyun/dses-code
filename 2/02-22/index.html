@@ -11,7 +11,7 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>II-02. 곡선 맞춤과 모형 평가</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/02-22/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-25">25</a> <a href="#code-26">26</a> <a href="#code-27">27</a> <a href="#code-28">28</a> <a href="#code-29">29</a> <a href="#code-30">30</a> <a href="#code-31">31</a></p>
+<p class="jump"><a href="#code-25">25</a> <a href="#code-26">26</a> <a href="#code-27">27</a> <a href="#code-28">28</a> <a href="#code-29">29</a> <a href="#code-30">30</a> <a href="#code-31">31</a> <a href="#code-32">32</a></p>
 <h2 id="code-25">code 25. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
@@ -108,6 +108,17 @@ ax.legend()
 ax.grid(alpha=0.3)
 du.save_figure(fig, os.path.join(proj_dir, &quot;overfitting&quot;))
 plt.show()</code></pre>
+<h2 id="code-32">code 32. <button class="copy">복사</button></h2><pre><code>SIGMA = 1.5                                    # 데이터를 만들 때 넣은 잡음의 크기
+N = x.size
+
+print(&quot; 차수  카이제곱  자유도 환산 카이제곱       BIC&quot;)
+for degree in (1, 3, 7, 15):
+    coefficients = np.polyfit(x, y, degree)
+    chi2 = np.sum(((y - np.polyval(coefficients, x)) / SIGMA) ** 2)
+    k = degree + 1                             # 매개변수 개수
+    dof = N - k                                # 자유도
+    bic = chi2 + k * np.log(N)
+    print(f&quot;{degree:3d}차   {chi2:7.2f}   {dof:5d}   {chi2 / dof:11.2f}   {bic:7.1f}&quot;)</code></pre>
 <script>
 document.querySelectorAll('button.copy').forEach(function (b) {
   b.addEventListener('click', function () {

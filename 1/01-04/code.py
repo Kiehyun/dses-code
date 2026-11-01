@@ -14,30 +14,34 @@ import datetime
 now1 = datetime.datetime.now()  # 모듈.클래스.메서드
 print("now1:", now1)
 
-from datetime import datetime  # datetime 클래스만 불러오기
-now2 = datetime.now()          # 클래스.메서드(모듈명 생략)
-print("now2:", now2)
+from datetime import date  # date 클래스만 불러오기(모듈 이름 datetime은 그대로 남음)
+today = date.today()       # 클래스.메서드(모듈명 생략)
+print("today:", today)
 
 # %% code 38.
 import numpy
 a = numpy.random.rand(6)  # 0과 1 사이 난수 6개
 print("a :", a)
-print("numpy.ndarray.max(a):", numpy.ndarray.max(a))
+print("a.max():", a.max())  # 배열의 메서드로 최댓값
 
 import numpy as np  # 별칭 np로 불러오기
 a = np.random.rand(6)
 print("a :", a)
-print("np.ndarray.max(a):", np.ndarray.max(a))
+print("np.max(a):", np.max(a))  # 함수로 최댓값
+
+from numpy.random import rand  # 필요한 함수만 불러오기
+b = rand(3)
+print("b :", b)
 
 # %% code 39.
 # 패키지 설치
 !pip install numpy
 
-# 특정 버전 패키지 설치
-!pip install pandas==1.5.3
+# 특정 버전 패키지 설치(예시 — 지금 환경의 다른 패키지와 충돌할 수 있으니 그대로 실행하지 말 것)
+# !pip install pandas==1.5.3
 
-# 패키지 업그레이드
-!pip install --upgrade pandas 
+# 패키지 업그레이드(예시)
+# !pip install --upgrade pandas
 
 # 현재 설치된 패키지 목록 확인
 !pip list 
@@ -45,26 +49,27 @@ print("np.ndarray.max(a):", np.ndarray.max(a))
 # %% code 40.
 from pathlib import Path
 cwd = Path.cwd()  # 현재 작업 폴더(current working directory)
-print(f"Current working directory: {cwd}")
-home = Path.home()  # 홈 폴더(Windows: C:\Users\사용자명, Linux·macOS: /home/사용자명)
-print(f"Home directory: {home}")
+print(f"현재 작업 폴더: {cwd}")
+home = Path.home()  # 홈 폴더(Windows: C:\Users\사용자명, macOS: /Users/사용자명, Linux: /home/사용자명)
+print(f"홈 폴더가 있는가: {home.exists()}")  # 실제 경로는 컴퓨터마다 다름
 file_path = Path('/home/user/data.txt')  # 문자열로 Path 객체 만들기
-print(f"File path from string: {file_path}")
+print(f"문자열로 만든 경로: {file_path}")
 relative = Path('my_folder/my_file.txt')  # 상대 경로
-print(f"Relative path: {relative}")
+print(f"상대 경로: {relative}")
 base = Path('/home/user')
 new_path = base / 'data' / 'file.csv'  # / 연산자로 경로 결합
-print(f"New path: {new_path}")         # 운영체제에 맞는 구분자로 표시(Windows는 \)
+print(f"결합한 경로: {new_path}")         # 운영체제에 맞는 구분자로 표시(Windows는 \)
 
 # %% code 41.
 from pathlib import Path
 p = Path('.')
 
-dirs = [x for x in p.iterdir() if x.is_dir()]  # 폴더만 고르기
-print("Directories in current path:", dirs)
+dirs = sorted(x.name for x in p.iterdir() if x.is_dir())  # 폴더 이름만 골라 정렬
+print("하위 폴더 수:", len(dirs))
+print("처음 4개:", dirs[:4])
 
-ipynb_files = list(Path('.').glob('*.ipynb'))  # .ipynb 파일 찾기
-print("Jupyter Notebook files in current path:", ipynb_files)
+py_files = sorted(Path('.').glob('*.py'))  # .py 파일 찾기(예: 내려받은 dses_utils.py)
+print(".py 파일:", py_files)
 
 # %% code 42.
 from datetime import datetime, date, time
@@ -85,13 +90,13 @@ print("type(t):", type(t))
 from datetime import datetime, timedelta
 now = datetime.now()
 str_date = now.strftime("%Y-%m-%d %H:%M:%S")  # datetime → 문자열
-print("Formatted date string:", str_date)
+print("문자열로 바꾼 날짜:", str_date)
 dt = datetime.strptime("2025-04-22 16:20:00", "%Y-%m-%d %H:%M:%S")  # 문자열 → datetime
-print("Parsed datetime object:", dt)
+print("datetime으로 바꾼 값:", dt)
 now = datetime.now()
 tomorrow = now + timedelta(days=1)  # 하루 뒤
 diff = tomorrow - now               # 시간 차(timedelta)
-print("Time difference:", diff)
+print("시간 차:", diff)
 print("type(diff):", type(diff))
 
 # %% code 44.
@@ -183,13 +188,13 @@ print("arr1 ** 2:\n", arr1 ** 2)
 # %% code 50.
 import numpy as np
 a = np.array([[-1,2,3],[3,4,8]])
-s = np.sum(a)
-print('sum=', a.sum())
+print('np.sum(a) =', np.sum(a))  # 함수로 합계
+print('a.sum() =', a.sum())      # 메서드로 합계(결과 같음)
 # axis=0: 열별, axis=1: 행별
-print('sum by column=', a.sum(axis=0))  # 세로 방향 합
-print('sum by row=', a.sum(axis=1))     # 가로 방향 합
-print('mean=', a.mean())
-print('sd=', a.std())  # 표준편차
+print('열별 합(axis=0) =', a.sum(axis=0))  # 세로 방향 합
+print('행별 합(axis=1) =', a.sum(axis=1))  # 가로 방향 합
+print('평균 =', a.mean())
+print('표준편차 =', a.std())
 
 # %% code 51.
 import numpy as np
@@ -221,9 +226,7 @@ print("-"*20+"\ns1[s1 > s1.median()]:", s1[s1 > s1.median()])  # 중앙값보다
 print("-"*20+"\ns1.iloc[[4, 3, 1]]:", s1.iloc[[4, 3, 1]])  # 위치로 고르기
 
 # %% code 53.
-np.exp(s2)
 print("s2.dtype:", s2.dtype)
-s2.dtype
 print("np.exp(s2):", np.exp(s2))  # 원소마다 지수 함수 적용
 
 s3_ar = s3.array  # pandas 배열
@@ -254,7 +257,7 @@ print("-"*20+"\ns:\n", s)
 print("-"*20+"\ns.name:", s.name)
 
 s = s.rename("different")  # 이름 바꾸기
-print("s.name(after rename):", s.name)
+print("s.name(rename 뒤):", s.name)
 
 # %% code 56.
 import pandas as pd
@@ -557,7 +560,7 @@ x = [1, 2, 3, 4, 5]
 y = [2, 4, 6, 8, 10]
 
 plt.plot(x, y)
-plt.title("Sample Plot")
+plt.title("예시 그래프")
 plt.xlabel("X축")
 plt.ylabel("Y축")
 plt.grid(True)
@@ -571,23 +574,23 @@ fig, axes = plt.subplots(2, 2, figsize=(10, 8))
 
 # 첫 번째 그래프 (0,0)
 axes[0, 0].plot([1, 2])
-axes[0, 0].set_title('Graph 1: [1, 2]')
+axes[0, 0].set_title('그래프 1: [1, 2]')
 axes[0, 0].grid(True)
 
 # 두 번째 그래프 (0,1)
 axes[0, 1].plot([2, 3, 5, 10])
-axes[0, 1].set_title('Graph 2: [2, 3, 5, 10]')
+axes[0, 1].set_title('그래프 2: [2, 3, 5, 10]')
 axes[0, 1].grid(True)
 
 # 세 번째 그래프 (1,0)
 axes[1, 0].plot([1, 2, 3, 4], [2, 3, 5, 10])
-axes[1, 0].set_title('Graph 3: x=[1,2,3,4], y=[2,3,5,10]')
+axes[1, 0].set_title('그래프 3: x=[1,2,3,4], y=[2,3,5,10]')
 axes[1, 0].grid(True)
 
 # 네 번째 그래프 (1,1)
 data_dict = {'data_x': [1, 2, 3, 4, 5], 'data_y': [2, 3, 5, 10, 8]}
 axes[1, 1].plot('data_x', 'data_y', data=data_dict)
-axes[1, 1].set_title('Graph 4: Dictionary data')
+axes[1, 1].set_title('그래프 4: 딕셔너리 자료')
 axes[1, 1].grid(True)
 
 plt.tight_layout()
@@ -604,43 +607,43 @@ axes[0,0].set_xlabel('X-Axis', labelpad=15,
     fontdict={'family': 'serif', 'color': 'b', 'weight': 'bold', 'size': 14})
 axes[0,0].set_ylabel('Y-Axis', labelpad=20, 
     fontdict={'family': 'monospace', 'color': 'deeppink', 'weight': 'normal', 'size': 'xx-large'})
-axes[0,0].set_title('Font Styling')
+axes[0,0].set_title('글꼴 꾸미기(영문 글꼴)')
 
 # 두 번째 플롯 (0,1) - 레이블 위치 조정
 axes[0,1].plot([1, 2, 3, 4], [2, 3, 5, 10])
-axes[0,1].set_xlabel('X-Axis', loc='right')
-axes[0,1].set_ylabel('Y-Axis', loc='top')
-axes[0,1].set_title('Label Position')
+axes[0,1].set_xlabel('X축', loc='right')
+axes[0,1].set_ylabel('Y축', loc='top')
+axes[0,1].set_title('이름표 위치')
 
 # 세 번째 플롯 (0,2) - 기본 범례
-axes[0,2].plot([1, 2, 3, 4], [2, 3, 5, 10], label='Price ($)')
-axes[0,2].set_xlabel('X-Axis')
-axes[0,2].set_ylabel('Y-Axis')
+axes[0,2].plot([1, 2, 3, 4], [2, 3, 5, 10], label='가격($)')
+axes[0,2].set_xlabel('X축')
+axes[0,2].set_ylabel('Y축')
 axes[0,2].legend()
-axes[0,2].set_title('Basic Legend')
+axes[0,2].set_title('기본 범례')
 
 # 네 번째 플롯 (1,0) - 범례 위치 지정
-axes[1,0].plot([1, 2, 3, 4], [2, 3, 5, 10], label='Price ($)')
-axes[1,0].set_xlabel('X-Axis')
-axes[1,0].set_ylabel('Y-Axis')
+axes[1,0].plot([1, 2, 3, 4], [2, 3, 5, 10], label='가격($)')
+axes[1,0].set_xlabel('X축')
+axes[1,0].set_ylabel('Y축')
 axes[1,0].legend(loc='lower right')
-axes[1,0].set_title('Legend Position')
+axes[1,0].set_title('범례 위치')
 
 # 다섯 번째 플롯 (1,1) - 다중 라인과 범례 스타일링
-axes[1,1].plot([1, 2, 3, 4], [2, 3, 5, 10], label='Price ($)')
-axes[1,1].plot([1, 2, 3, 4], [3, 5, 9, 7], label='Demand (#)')
-axes[1,1].set_xlabel('X-Axis')
-axes[1,1].set_ylabel('Y-Axis')
+axes[1,1].plot([1, 2, 3, 4], [2, 3, 5, 10], label='가격($)')
+axes[1,1].plot([1, 2, 3, 4], [3, 5, 9, 7], label='수요(개)')
+axes[1,1].set_xlabel('X축')
+axes[1,1].set_ylabel('Y축')
 axes[1,1].legend(loc='best', ncol=2, fontsize=14)
-axes[1,1].set_title('Multi-line with Legend Styling')
+axes[1,1].set_title('여러 선과 범례 모양')
 
 # 여섯 번째 플롯 (1,2) - 범례 프레임과 그림자
-axes[1,2].plot([1, 2, 3, 4], [2, 3, 5, 10], label='Price ($)')
-axes[1,2].plot([1, 2, 3, 4], [3, 5, 9, 7], label='Demand (#)')
-axes[1,2].set_xlabel('X-Axis')
-axes[1,2].set_ylabel('Y-Axis')
+axes[1,2].plot([1, 2, 3, 4], [2, 3, 5, 10], label='가격($)')
+axes[1,2].plot([1, 2, 3, 4], [3, 5, 9, 7], label='수요(개)')
+axes[1,2].set_xlabel('X축')
+axes[1,2].set_ylabel('Y축')
 axes[1,2].legend(loc='best', ncol=2, fontsize=14, frameon=True, shadow=True)
-axes[1,2].set_title('Legend with Frame & Shadow')
+axes[1,2].set_title('범례 테두리와 그림자')
 
 plt.tight_layout()
 plt.show()
@@ -722,6 +725,7 @@ print("한글이 정상적으로 표시되면 설정이 완료되었습니다.")
 # %% code 70.
 import matplotlib.pyplot as plt
 
+du.set_korean_font()  # 한글 글꼴 지정
 fig, ax = plt.subplots(figsize=(4, 3))
 ax.plot([1, 2, 3, 4], [2, 3, 5, 10])
 ax.set_xlabel("X축")

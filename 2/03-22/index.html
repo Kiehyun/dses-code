@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>III-02. 허블-르메트르 법칙</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/03-22/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-66">66</a> <a href="#code-67">67</a> <a href="#code-68">68</a> <a href="#code-69">69</a> <a href="#code-70">70</a> <a href="#code-71">71</a> <a href="#code-72">72</a> <a href="#code-73">73</a> <a href="#code-74">74</a> <a href="#code-75">75</a></p>
-<h2 id="code-66">code 66. <button class="copy">복사</button></h2><pre><code># NED-D 거리 목록(2020년 4월 판)을 프로젝트 폴더에 내려받기(이미 있으면 건너뜀)
+<p class="jump"><a href="#code-67">67</a> <a href="#code-68">68</a> <a href="#code-69">69</a> <a href="#code-70">70</a> <a href="#code-71">71</a> <a href="#code-72">72</a> <a href="#code-73">73</a> <a href="#code-74">74</a> <a href="#code-75">75</a> <a href="#code-76">76</a></p>
+<h2 id="code-67">code 67. <button class="copy">복사</button></h2><pre><code># NED-D 거리 목록(2020년 4월 판)을 프로젝트 폴더에 내려받기(이미 있으면 건너뜀)
 fname = &quot;NED30.5.1-D-17.1.2-20200415.csv&quot;
 url = &quot;https://ned.ipac.caltech.edu/Archive/Distances/&quot; + fname
 du.download(url, proj_dir / fname)
@@ -21,13 +21,13 @@ du.download(url, proj_dir / fname)
 fpaths = sorted(proj_dir.glob(&quot;*.csv&quot;))
 for p in fpaths:
     print(f&quot;{p.name}  ({p.stat().st_size / 1e6:.1f} MB)&quot;)</code></pre>
-<h2 id="code-67">code 67. <button class="copy">복사</button></h2><pre><code># 파일 앞 16줄만 읽어 머리말과 첫 데이터 줄 확인
+<h2 id="code-68">code 68. <button class="copy">복사</button></h2><pre><code># 파일 앞 16줄만 읽어 머리말과 첫 데이터 줄 확인
 with open(fpaths[0], encoding=&quot;utf-8&quot;) as f:
     for i, line in enumerate(f):
         if i &gt;= 16:
             break
         print(line.rstrip()[:150])</code></pre>
-<h2 id="code-68">code 68. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-69">code 69. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import pandas as pd
 
 # 머리말 13줄을 건너뛰고, 첫 열(제외 코드)을 인덱스로 사용
@@ -44,7 +44,7 @@ for col in [&quot;m-M&quot;, &quot;err&quot;, &quot;D (Mpc)&quot;, &quot;redshif
 
 print(f&quot;측정값(행) {len(df):,}개, 천체 {df[&#x27;Galaxy ID&#x27;].nunique():,}개&quot;)
 display(df[[&quot;Galaxy ID&quot;, &quot;m-M&quot;, &quot;err&quot;, &quot;D (Mpc)&quot;, &quot;Method&quot;]].head(8))</code></pre>
-<h2 id="code-69">code 69. <button class="copy">복사</button></h2><pre><code>print(f&quot;거리 측정 방법: {df[&#x27;Method&#x27;].nunique()}가지&quot;)
+<h2 id="code-70">code 70. <button class="copy">복사</button></h2><pre><code>print(f&quot;거리 측정 방법: {df[&#x27;Method&#x27;].nunique()}가지&quot;)
 method_table = pd.DataFrame({
     &quot;측정값 수&quot;: df[&quot;Method&quot;].value_counts(),
     &quot;적색편이가 있는 수&quot;: df.groupby(&quot;Method&quot;)[&quot;redshift (z)&quot;].count(),
@@ -54,7 +54,7 @@ print(&quot;\n[측정값이 많은 방법 10개]&quot;)
 display(method_table.sort_values(&quot;측정값 수&quot;, ascending=False).head(10))
 print(&quot;[적색편이가 함께 적힌 방법 6개]&quot;)
 display(method_table.sort_values(&quot;적색편이가 있는 수&quot;, ascending=False).head(6))</code></pre>
-<h2 id="code-70">code 70. <button class="copy">복사</button></h2><pre><code>c = 299792.458  # 빛의 속력(km/s)
+<h2 id="code-71">code 71. <button class="copy">복사</button></h2><pre><code>c = 299792.458  # 빛의 속력(km/s)
 
 z = df[&quot;redshift (z)&quot;]
 df[&quot;v_approx&quot;] = c * z                                     # 비상대론 근사 v = cz
@@ -70,7 +70,7 @@ for z0 in [0.01, 0.05, 0.1, 0.5, 1.0, 2.0]:
     v_a = c * z0
     v_r = c * ((1 + z0)**2 - 1) / ((1 + z0)**2 + 1)
     print(f&quot;{z0:4.2f}  {v_a:10,.0f}  {v_r:12,.0f}   {100 * (v_a - v_r) / v_r:5.1f}%&quot;)</code></pre>
-<h2 id="code-71">code 71. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-72">code 72. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 def fit_through_origin(x, y):
     # 원점을 지나는 직선 y = slope * x를 최소제곱으로 맞춤
@@ -134,7 +134,7 @@ print(f&quot;간단한 범위로 고른 표본: H0 = {H0_local:.1f} ± {se_local
 print(&quot;\n속도가 가장 큰 측정값:&quot;)
 display(df[mask_pos][[&quot;Galaxy ID&quot;, &quot;D (Mpc)&quot;, &quot;redshift (z)&quot;, &quot;v_approx&quot;, &quot;err&quot;, &quot;Method&quot;]]
         .sort_values(&quot;v_approx&quot;, ascending=False).head(8).round({&quot;v_approx&quot;: 0}))</code></pre>
-<h2 id="code-72">code 72. <button class="copy">복사</button></h2><pre><code>trusted_methods = [&quot;SNIa&quot;, &quot;SNIa SDSS&quot;, &quot;SNII optical&quot;]
+<h2 id="code-73">code 73. <button class="copy">복사</button></h2><pre><code>trusted_methods = [&quot;SNIa&quot;, &quot;SNIa SDSS&quot;, &quot;SNII optical&quot;]
 
 sel = df.dropna(subset=[&quot;Galaxy ID&quot;, &quot;D (Mpc)&quot;, &quot;redshift (z)&quot;, &quot;err&quot;,
                         &quot;Method&quot;]).copy()
@@ -186,7 +186,7 @@ plt.show()
 
 display(gal.sort_values(&quot;n_meas&quot;, ascending=False).head(8)
         .round({&quot;v_approx&quot;: 0, &quot;v_rel&quot;: 0}))</code></pre>
-<h2 id="code-73">code 73. <button class="copy">복사</button></h2><pre><code>rows[&quot;assumed_H0&quot;] = rows[&quot;Hubble const.&quot;].round(0)
+<h2 id="code-74">code 74. <button class="copy">복사</button></h2><pre><code>rows[&quot;assumed_H0&quot;] = rows[&quot;Hubble const.&quot;].round(0)
 print(&quot;가정한 H0   은하 수   맞춘 기울기 (km/s/Mpc)&quot;)
 for assumed, group in rows.dropna(subset=[&quot;assumed_H0&quot;]).groupby(&quot;assumed_H0&quot;):
     per_gal = group.groupby(&quot;Galaxy ID&quot;)[[&quot;D (Mpc)&quot;, &quot;v_approx&quot;]].median()
@@ -194,7 +194,7 @@ for assumed, group in rows.dropna(subset=[&quot;assumed_H0&quot;]).groupby(&quot
         continue
     slope, se, _ = fit_through_origin(per_gal[&quot;D (Mpc)&quot;], per_gal[&quot;v_approx&quot;])
     print(f&quot;{assumed:8.0f}   {len(per_gal):6d}   {slope:6.1f} ± {se:.1f}&quot;)</code></pre>
-<h2 id="code-74">code 74. <button class="copy">복사</button></h2><pre><code>fig, axes = plt.subplots(1, 2, figsize=(7.5, 3.2), sharey=True)
+<h2 id="code-75">code 75. <button class="copy">복사</button></h2><pre><code>fig, axes = plt.subplots(1, 2, figsize=(7.5, 3.2), sharey=True)
 results = {}
 for ax, col, title in zip(axes, [&quot;v_approx&quot;, &quot;v_rel&quot;],
                           [&quot;(a) 비상대론 근사: $v = cz$&quot;,
@@ -221,7 +221,7 @@ plt.show()
 H0_a, H0_r = results[&quot;v_approx&quot;][0], results[&quot;v_rel&quot;][0]
 print(f&quot;비상대론 근사: {H0_a:.1f} km/s/Mpc, 상대론적 관계: {H0_r:.1f} km/s/Mpc, &quot;
       f&quot;차이 {100 * (H0_a - H0_r) / H0_r:.1f}%&quot;)</code></pre>
-<h2 id="code-75">code 75. <button class="copy">복사</button></h2><pre><code>from astropy.cosmology import Planck18
+<h2 id="code-76">code 76. <button class="copy">복사</button></h2><pre><code>from astropy.cosmology import Planck18
 
 print(f&quot;이 장, 간단한 범위로 고른 표본 : {H0_local:6.2f} ± {se_local:.2f} km/s/Mpc&quot;)
 print(f&quot;이 장, 믿을 만한 표본(v = cz)  : {H0_fit:6.2f} ± {H0_se:.2f} km/s/Mpc&quot;)

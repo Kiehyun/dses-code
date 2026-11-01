@@ -87,7 +87,8 @@ moonset_time = moon.moonset(city.observer, date=today)
 print(f&quot;날짜: {today}&quot;)
 print(f&quot;달이 뜨는 시각 (Moonrise): {moonrise_time}&quot;)
 print(f&quot;달이 지는 시각 (Moonset): {moonset_time}&quot;)</code></pre>
-<h2 id="code-37">code 37. <button class="copy">복사</button></h2><pre><code>from datetime import datetime
+<h2 id="code-37">code 37. <button class="copy">복사</button></h2><pre><code>from datetime import datetime, date, timedelta
+from zoneinfo import ZoneInfo
 from suntime import Sun
 
 print(&quot;city_Suwon.latitude: {}&quot;.format(city_Suwon.latitude))
@@ -96,167 +97,107 @@ print(&quot;city_Suwon.longitude: {}&quot;.format(city_Suwon.longitude))
 sun = Sun(city_Suwon.latitude, city_Suwon.longitude)
 
 print(&quot;type(sun): {}&quot;.format(type(sun)))
-print(&quot;sun: {}&quot;.format(sun))
 
-# 이전 날짜 일출, 다음 날짜 일몰 사용(한국 표준시)
-from datetime import datetime, date, timedelta
-import pytz
+def sun_times(sun, day, tz):
+    &quot;&quot;&quot;그날(현지 날짜)의 일출 · 일몰 시각&quot;&quot;&quot;
+    d = datetime.combine(day, datetime.min.time())
+    sunrise = sun.get_sunrise_time(d, tz)
+    sunset = sun.get_sunset_time(d, tz)
+    # suntime은 일몰 날짜가 하루 어긋날 수 있으므로 일출과 같은 날로 맞춤
+    while sunset &lt; sunrise:
+        sunset += timedelta(days=1)
+    while sunset - sunrise &gt; timedelta(days=1):
+        sunset -= timedelta(days=1)
+    return sunrise, sunset
 
-tz = pytz.timezone(&#x27;Asia/Seoul&#x27;)
+KST = ZoneInfo(&#x27;Asia/Seoul&#x27;)  # 한국 표준시
 today_date = date.today()
 
-yesterday_datetime = datetime.combine(today_date - timedelta(days=1), datetime.min.time())
-tomorrow_datetime = datetime.combine(today_date + timedelta(days=1), datetime.min.time())
-
-sunrise = sun.get_sunrise_time(yesterday_datetime).astimezone(tz)
-sunset = sun.get_sunset_time(tomorrow_datetime).astimezone(tz)
+sunrise, sunset = sun_times(sun, today_date, KST)
 daytime = sunset - sunrise
 
-print(f&quot;이전 날짜({yesterday_datetime.date()}) 일출 시각(LST): {sunrise}&quot;)
-print(f&quot;다음 날짜({tomorrow_datetime.date()}) 일몰 시각(LST): {sunset}&quot;)
+print(f&quot;{today_date} 일출 시각(KST): {sunrise}&quot;)
+print(f&quot;{today_date} 일몰 시각(KST): {sunset}&quot;)
 print(f&quot;낮의 길이 (일몰-일출): {daytime}&quot;)</code></pre>
-<h2 id="code-38">code 38. <button class="copy">복사</button></h2><pre><code># 1년 동안 낮의 길이(이전 날짜 일출, 다음 날짜 일몰 기준)
+<h2 id="code-38">code 38. <button class="copy">복사</button></h2><pre><code># 1년 동안 수원의 낮의 길이
 import matplotlib.pyplot as plt
-from datetime import datetime, timedelta, date
-import pytz
 
-tz = pytz.timezone(&#x27;Asia/Seoul&#x27;)
+def day_length_hours(sun, day, tz):
+    &quot;&quot;&quot;그날 낮의 길이(시간) — 앞에서 만든 sun_times() 사용&quot;&quot;&quot;
+    sunrise, sunset = sun_times(sun, day, tz)
+    return (sunset - sunrise).total_seconds() / 3600  # 초 → 시간
+
 year = 2021
 latitude = 37.2636    # 수원 위도
 longitude = 127.0286  # 수원 경도
-
-from suntime import Sun
 sun = Sun(latitude, longitude)
 
 dates = []
 day_lengths = []
 
-start_date = date(year, 1, 1)
-end_date = date(year, 12, 31)
-delta = timedelta(days=1)
-current_date = start_date
-
-while current_date &lt;= end_date:
-    yesterday_datetime = datetime.combine(current_date - timedelta(days=1), datetime.min.time())
-    tomorrow_datetime = datetime.combine(current_date + timedelta(days=1), datetime.min.time())
-    sunrise = sun.get_sunrise_time(yesterday_datetime).astimezone(tz)
-    sunset = sun.get_sunset_time(tomorrow_datetime).astimezone(tz)
-    day_length_sec = (sunset - sunrise).total_seconds()
-    # 24시간(86400초)을 넘으면 나머지만 사용
-    if day_length_sec &gt; 86400:
-        day_length_sec %= 86400
-    day_length = day_length_sec / 3600  # 초 → 시간
+current_date = date(year, 1, 1)
+while current_date &lt;= date(year, 12, 31):
     dates.append(current_date)
-    day_lengths.append(day_length)
-    current_date += delta
+    day_lengths.append(day_length_hours(sun, current_date, KST))
+    current_date += timedelta(days=1)
 
 # 그래프 그리기
 plt.figure(figsize=(12.0, 4.3))
 plt.plot(dates, day_lengths, color=&#x27;blue&#x27;)
-plt.title(f&#x27;{year}년 수원에서의 낮의 길이 변화 (이전 날짜 일출, 다음 날짜 일몰 기준)&#x27;)
+plt.title(f&#x27;{year}년 수원에서의 낮의 길이 변화&#x27;)
 plt.xlabel(&#x27;날짜&#x27;)
 plt.ylabel(&#x27;낮의 길이 (시간)&#x27;)
 plt.grid(True)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-39">code 39. <button class="copy">복사</button></h2><pre><code># 월별 낮의 총합(이전 날짜 일출, 다음 날짜 일몰 기준)
+<h2 id="code-39">code 39. <button class="copy">복사</button></h2><pre><code># 월별 낮의 총합
 import matplotlib.pyplot as plt
-from datetime import datetime, timedelta, date
-import pytz
+from zoneinfo import ZoneInfo
 
-tz = pytz.timezone(&#x27;Asia/Seoul&#x27;)
+def get_monthly_daytime_totals(year, latitude, longitude, tz_str):
+    &quot;&quot;&quot;월별 낮의 길이 합(시간) 12개를 돌려줌&quot;&quot;&quot;
+    tz = ZoneInfo(tz_str)
+    sun = Sun(latitude, longitude)
+    monthly_totals = []
+    for month in range(1, 13):
+        total_daytime = 0
+        current_date = date(year, month, 1)
+        while current_date.month == month:  # 그달의 마지막 날까지
+            total_daytime += day_length_hours(sun, current_date, tz)
+            current_date += timedelta(days=1)
+        monthly_totals.append(total_daytime)
+    return monthly_totals
+
 year = 2021
-latitude = 37.2636    # 수원 위도
-longitude = 127.0286  # 수원 경도
-
-from suntime import Sun
-sun = Sun(latitude, longitude)
-
-months = [&#x27;Jan&#x27;, &#x27;Feb&#x27;, &#x27;Mar&#x27;, &#x27;Apr&#x27;, &#x27;May&#x27;, &#x27;Jun&#x27;, &#x27;Jul&#x27;, &#x27;Aug&#x27;, &#x27;Sep&#x27;, &#x27;Oct&#x27;, &#x27;Nov&#x27;, &#x27;Dec&#x27;]
-monthly_daytime_totals = []
-
-for month in range(1, 13):
-    total_daytime = 0
-    start_date = date(year, month, 1)
-    if month == 12:
-        end_date = date(year, 12, 31)
-    else:
-        end_date = date(year, month + 1, 1) - timedelta(days=1)
-    current_date = start_date
-    while current_date &lt;= end_date:
-        yesterday_datetime = datetime.combine(current_date - timedelta(days=1), datetime.min.time())
-        tomorrow_datetime = datetime.combine(current_date + timedelta(days=1), datetime.min.time())
-        sunrise = sun.get_sunrise_time(yesterday_datetime).astimezone(tz)
-        sunset = sun.get_sunset_time(tomorrow_datetime).astimezone(tz)
-        day_length_sec = (sunset - sunrise).total_seconds()
-        # 24시간(86400초)을 넘으면 나머지만 사용
-        if day_length_sec &gt; 86400:
-            day_length_sec %= 86400
-        total_daytime += day_length_sec
-        current_date += timedelta(days=1)
-    monthly_daytime_totals.append(total_daytime / 3600)  # 초 → 시간
+months = [f&#x27;{m}월&#x27; for m in range(1, 13)]
+suwon_lat, suwon_lon, suwon_tz = 37.2636, 127.0286, &#x27;Asia/Seoul&#x27;
+suwon_totals = get_monthly_daytime_totals(year, suwon_lat, suwon_lon, suwon_tz)
 
 # 그래프 그리기
 plt.figure(figsize=(10, 5))
-plt.bar(months, monthly_daytime_totals, color=&#x27;skyblue&#x27;)
-plt.title(f&#x27;{year}년 수원 월별 낮의 총합 (이전 날짜 일출, 다음 날짜 일몰 기준)&#x27;)
+plt.bar(months, suwon_totals, color=&#x27;skyblue&#x27;)
+plt.title(f&#x27;{year}년 수원 월별 낮의 총합&#x27;)
 plt.xlabel(&#x27;월&#x27;)
 plt.ylabel(&#x27;월별 낮의 총합 (시간)&#x27;)
 plt.grid(axis=&#x27;y&#x27;)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-40">code 40. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
-from datetime import datetime, timedelta, date
-import pytz
-from suntime import Sun
+<h2 id="code-40">code 40. <button class="copy">복사</button></h2><pre><code>import numpy as np
+import matplotlib.pyplot as plt
 
-def get_monthly_daytime_totals(year, latitude, longitude, tz_str):
-    tz = pytz.timezone(tz_str)
-    sun = Sun(latitude, longitude)
-    monthly_totals = []
-    for month in range(1, 13):
-        total_daytime = 0
-        start_date = date(year, month, 1)
-        if month == 12:
-            end_date = date(year, 12, 31)
-        else:
-            end_date = date(year, month + 1, 1) - timedelta(days=1)
-        current_date = start_date
-        while current_date &lt;= end_date:
-            yesterday_datetime = datetime.combine(current_date - timedelta(days=1), datetime.min.time())
-            tomorrow_datetime = datetime.combine(current_date + timedelta(days=1), datetime.min.time())
-            sunrise = sun.get_sunrise_time(yesterday_datetime).astimezone(tz)
-            sunset = sun.get_sunset_time(tomorrow_datetime).astimezone(tz)
-            day_length_sec = (sunset - sunrise).total_seconds()
-            # 24시간(86400초)을 넘으면 나머지만 사용
-            if day_length_sec &gt; 86400:
-                day_length_sec %= 86400
-            total_daytime += day_length_sec
-            current_date += timedelta(days=1)
-        monthly_totals.append(total_daytime / 3600)  # 초 → 시간
-    return monthly_totals
-
-year = 2021
-months = [&#x27;Jan&#x27;, &#x27;Feb&#x27;, &#x27;Mar&#x27;, &#x27;Apr&#x27;, &#x27;May&#x27;, &#x27;Jun&#x27;, &#x27;Jul&#x27;, &#x27;Aug&#x27;, &#x27;Sep&#x27;, &#x27;Oct&#x27;, &#x27;Nov&#x27;, &#x27;Dec&#x27;]
-
-# 수원
-suwon_lat, suwon_lon, suwon_tz = 37.2636, 127.0286, &#x27;Asia/Seoul&#x27;
-suwon_totals = get_monthly_daytime_totals(year, suwon_lat, suwon_lon, suwon_tz)
-
-# 모스코바
+# 수원(suwon_totals)은 앞에서 구함, 모스크바도 같은 함수로
 moscow_lat, moscow_lon, moscow_tz = 55.751244, 37.618423, &#x27;Europe/Moscow&#x27;
 moscow_totals = get_monthly_daytime_totals(year, moscow_lat, moscow_lon, moscow_tz)
 
 # 그래프 그리기
-import numpy as np
 x = np.arange(len(months))
 bar_width = 0.35
 
 plt.figure(figsize=(10, 5))
-plt.bar(x - bar_width/2, suwon_totals, width=bar_width, color=&#x27;skyblue&#x27;, alpha=0.8, label=&#x27;Suwon&#x27;)
-plt.bar(x + bar_width/2, moscow_totals, width=bar_width, color=&#x27;salmon&#x27;, alpha=0.8, label=&#x27;Moscow&#x27;)
+plt.bar(x - bar_width/2, suwon_totals, width=bar_width, color=&#x27;skyblue&#x27;, alpha=0.8, label=&#x27;수원&#x27;)
+plt.bar(x + bar_width/2, moscow_totals, width=bar_width, color=&#x27;salmon&#x27;, alpha=0.8, label=&#x27;모스크바&#x27;)
 plt.xticks(x, months, rotation=45)
-plt.title(f&#x27;{year}년 수원과 모스코바 월별 낮의 총합 비교&#x27;)
+plt.title(f&#x27;{year}년 수원과 모스크바 월별 낮의 총합 비교&#x27;)
 plt.xlabel(&#x27;월&#x27;)
 plt.ylabel(&#x27;월별 낮의 총합 (시간)&#x27;)
 plt.legend()

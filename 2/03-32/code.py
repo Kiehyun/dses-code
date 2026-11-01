@@ -1,19 +1,19 @@
 # 지구과학 데이터 사이언스 2 | III-12. SkyBoT으로 소행성 찾기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 356.
+# %% code 340.
 import os
 from pathlib import Path
 
-# %% code 357.
+# %% code 341.
 # 파일 이름과 파일 ID를 리스트로 저장
 files = [
     {"fname": ("0000481-EMITA_LIGHT_R_2023-11-13-15-09-08_150sec_"
                "GSON300_STF-8300M_-29c_1bin.fit"),
-     "fid": "1RqPKBSsfMZhmXFi1n5a1M05Hwi2iTHj1"},
+     "fid": "1VeIm-dkmCQMb41tZ2ib_0QwiygYl7-RD"},
     {"fname": ("0000481-EMITA_LIGHT_R_2023-11-13-18-26-08_150sec_"
                "GSON300_STF-8300M_-29c_1bin.fit"),
-     "fid": "1rr3uBpHDwBfHis9l4JgzDUoaGLk6PHsV"},
+     "fid": "13NKJi5YMF5rJnG-zP7L6sYpDf8naXRY5"},
 ]
 
 # for 루프를 사용하여 파일 다운로드
@@ -21,43 +21,24 @@ for file in files:
     du.download(f"https://drive.google.com/uc?id={file['fid']}",
                 proj_dir / file["fname"])
 
-# %% code 358.
+# %% code 342.
 fpaths = du.list_files(proj_dir, "fit*")
 
-# %% code 359.
+# %% code 343.
 from astropy.io import fits
 
 fpath = Path(fpaths[0])
-print(f"fpath: {fpath}")
-print(f"type(fpath): {type(fpath)}")
+hdul = fits.open(str(fpath))
+for k in ["NAXIS1", "NAXIS2", "DATE-OBS", "EXPTIME", "OBJECT", "FILTER"]:
+    if k in hdul[0].header:
+        print(f"{k:9s} = {hdul[0].header[k]}")
+print("data :", hdul[0].data.dtype, hdul[0].data.shape)
 
-hdul = fits.open(str(fpath), unit="adu")
-
-print("type(hdul) :", type(hdul))
-print("type(hdul[0]) :", type(hdul[0]))
-
-# %% code 360.
-print("type(hdul[0].header) :", type(hdul[0].header))
-for _k in ["NAXIS1", "NAXIS2", "DATE-OBS", "EXPTIME", "OBJECT", "FILTER"]:
-    if _k in hdul[0].header:
-        print(f"{_k:9s} = {hdul[0].header[_k]}")
-
-# %% code 361.
-print("hdul[0].header['DATE-OBS'] :", hdul[0].header['DATE-OBS'])
-print("type(hdul[0].header['DATE-OBS']) :", type(hdul[0].header['DATE-OBS']))
-
-# %% code 362.
-print("type(hdul[0].data) :", type(hdul[0].data))
-print("hdul[0].data.dtype :", hdul[0].data.dtype)
-print("hdul[0].data.shape :", hdul[0].data.shape)
-print("hdul[0].data :", hdul[0].data)
-
-# %% code 363.
+# %% code 344.
 from astropy import units as u
 from astropy.coordinates import SkyCoord, EarthLocation, AltAz
 
 # 관측소
-LOCATION = dict(lon=127.005, lat=37.308889, elevation=101)
 Suwon = EarthLocation(lon=127.005 * u.deg, lat=37.308889 * u.deg,
                                  height=101 * u.m)
 observatory_code = "P64"
@@ -66,7 +47,7 @@ observatory_code = "P64"
 # `astropy.SkyCoord` 객체에 공통으로 쓰는 인수
 SKYC_KW = dict(unit=u.deg, frame='icrs')
 
-# %% code 364.
+# %% code 345.
 #######################################################
 # 망원경과 CCD
 if hdul[0].header["CCDNAME"] == "STF-8300M" :
@@ -92,7 +73,7 @@ if hdul[0].header["OPTIC"] == "RiLA600" :
 print("rdnoise, gain, pix_size, focal_length :", rdnoise, gain, pix_size,
       focal_length)
 
-# %% code 365.
+# %% code 346.
 #######################################################
 # PIXSCALE
 if 'PIXSCALE' in hdul[0].header:
@@ -104,7 +85,7 @@ else :  # 픽셀 크기(um, 비닝 반영)와 초점 거리(mm)로 계산
 PIX2ARCSEC = PIX2ARCSEC # * u.arcsec / u.pixel
 print("PIX2ARCSEC :", PIX2ARCSEC)
 
-# %% code 366.
+# %% code 347.
 #######################################################
 # FWHM 초기 추정값(픽셀)
 FWHM_INIT = 6
@@ -117,7 +98,7 @@ R_OUT = 6*FWHM_INIT   # 고리(annulus) 바깥쪽 반지름
 Mag_UP = 16
 #######################################################
 
-# %% code 367.
+# %% code 348.
 from astropy.time import Time
 # 관측 시각을 정하기 위해 관측 시간과 노출 시간 확인
 t_start = Time(hdul[0].header['DATE-OBS'], format='isot')
@@ -125,38 +106,39 @@ t_expos = hdul[0].header['EXPTIME'] * u.s
 t_middle = t_start + t_expos / 2 # 시작 시각 + 노출 시간의 절반
 print(f"t_start: {t_start}, t_expos: {t_expos}, t_middle: {t_middle}")
 
-# %% code 368.
+# %% code 349.
 # 위치 보정 여부 확인 — Ⅲ-06 「FITS 파일 천체 위치 보정」에서 만든 du.checkPSolve(dses_utils)
 SOLVE, ASTAP, LOCAL = du.checkPSolve(str(fpath))
 print("SOLVE, ASTAP, LOCAL :", SOLVE, ASTAP, LOCAL)
 
-# %% code 369.
+# %% code 350.
 from astropy.wcs import WCS
 
 wcs = WCS(hdul[0].header)
 
 # 영상 중심 픽셀(0부터 센 번호)을 하늘 좌표로 바꿈
 nx, ny = hdul[0].header["NAXIS1"], hdul[0].header["NAXIS2"]
-cent_coord = wcs.pixel_to_world((nx - 1) / 2, (ny - 1) / 2)
+cent = wcs.pixel_to_world((nx - 1) / 2, (ny - 1) / 2).icrs
+cent_coord = SkyCoord(cent.ra, cent.dec, **SKYC_KW)
 
-tel_ra = hdul[0].header['RA'] * u.deg      # 망원경이 가리킨 좌표
-tel_dec = hdul[0].header['DEC'] * u.deg
-offset_RA = (cent_coord.ra.to(u.deg) - tel_ra).to(u.arcmin)
-offset_DEC = (cent_coord.dec.to(u.deg) - tel_dec).to(u.arcmin)
+# 망원경이 가리킨 좌표에서 영상 중심까지 하늘에서 잰 어긋남
+# (spherical_offsets_to: 적경 방향은 cos(적위), 방위각 방향은 cos(고도)를 곱한 각거리)
+tel_coord = SkyCoord(hdul[0].header['RA'], hdul[0].header['DEC'], **SKYC_KW)
+offset_RA, offset_DEC = [o.to(u.arcmin) for o in tel_coord.spherical_offsets_to(cent_coord)]
+
 altaz = AltAz(obstime=t_middle, location=Suwon)
 cent_aa = cent_coord.transform_to(altaz)
-offset_AZ = (cent_aa.az.to(u.deg)
-             - hdul[0].header['CENTAZ']*u.deg).to(u.arcmin)
-offset_ALT = (cent_aa.alt.to(u.deg)
-              - hdul[0].header['CENTALT']*u.deg).to(u.arcmin)
+tel_aa = SkyCoord(az=hdul[0].header['CENTAZ'] * u.deg,
+                  alt=hdul[0].header['CENTALT'] * u.deg, frame=altaz)
+offset_AZ, offset_ALT = [o.to(u.arcmin) for o in tel_aa.spherical_offsets_to(cent_aa)]
 
 print(f"image center (RA, DEC): ({cent_coord.ra:.03f}, "
       f"{cent_coord.dec:.03f})")
-print(f"telescope center (RA, DEC): ({tel_ra:.03f}, {tel_dec:.03f})")
-print(f"offset (RA, DEC): ({offset_RA:.03f}, {offset_DEC:.03f})")
-print(f"offset (AZ, ALT): ({offset_AZ:.03f}, {offset_ALT:.03f})")
+print(f"telescope center (RA, DEC): ({tel_coord.ra:.03f}, {tel_coord.dec:.03f})")
+print(f"offset (RA cos DEC, DEC): ({offset_RA:.03f}, {offset_DEC:.03f})")
+print(f"offset (AZ cos ALT, ALT): ({offset_AZ:.03f}, {offset_ALT:.03f})")
 
-# %% code 370.
+# %% code 351.
 import requests
 import pandas as pd
 from astropy.coordinates import Angle
@@ -204,13 +186,13 @@ except Exception as e:                       # 서버 오류 · 주소 변경 �
     print("JPL SB Ident에서 받은 소행성:", len(df_ast))
 df_ast[["Number", "Name", "RA", "DEC", "V"]].head(10)   # 앞의 10개만 표시
 
-# %% code 371.
+# %% code 352.
 df_targ = df_ast[df_ast['V'] < Mag_UP]
 df_targ = df_targ.sort_values(by=['V'])
 df_targ = df_targ.reset_index(drop=True)
 df_targ[["Number", "Name", "RA", "DEC", "V"]]
 
-# %% code 372.
+# %% code 353.
 import pandas as pd
 from astroquery.jplhorizons import Horizons
 
@@ -243,7 +225,7 @@ else:
     df_targ_eph = pd.concat([df_targ, df_targ_eph], axis=1)
     print(df_targ_eph[["Number", "targetname", "datetime_str"]])
 
-# %% code 373.
+# %% code 354.
 duplicated_columns_list = []
 list_of_all_columns = list(df_targ_eph.columns)
 for column in list_of_all_columns:
@@ -262,20 +244,17 @@ df_targ_eph.dropna(subset = ['RA', 'DEC', 'V', 'RA_1', 'DEC_1', 'V_1'],
                    inplace=True)
 df_targ_eph[['RA', 'DEC', 'V', 'RA_1', 'DEC_1', 'V_1']]
 
-# %% code 374.
+# %% code 355.
 import numpy as np
-pos_sky_targ_init = SkyCoord(df_targ_eph['RA']*u.deg, df_targ_eph["DEC"]*u.deg,
-                        **SKYC_KW)
 pos_pix_targ_init = SkyCoord(df_targ_eph['RA']*u.deg, df_targ_eph["DEC"]*u.deg,
                         **SKYC_KW).to_pixel(wcs, origin=0, mode='wcs')
 pos_pix_targ_init = np.array(pos_pix_targ_init).T
 print("pos_pix_targ_init:", pos_pix_targ_init)
 
-# %% code 375.
-# 영상 표시 함수 znorm · zimshow · norm_imshow는 Ⅲ-04 「FITS 파일 다루기」에서 설명했고 dses_utils에 들어 있음
-from astropy.visualization import ImageNormalize, LinearStretch, ZScaleInterval, simple_norm
+# %% code 356.
+# 영상 표시 함수 znorm · zimshow · norm_imshow는 Ⅲ-04 「FITS 파일 다루기」에서 설명했고 dses_utils에 들어 있음(du.zimshow 등으로 부름)
 
-# %% code 376.
+# %% code 357.
 from photutils.aperture import CircularAperture as CAp
 from photutils.aperture import CircularAnnulus as CAn
 import matplotlib.pyplot as plt
@@ -319,21 +298,21 @@ plt.suptitle(f"fname: {fpath.name}", fontsize=10)
 
 info = (f"image center (RA, DEC): ({cent_coord.ra:.03f}, "
         f"{cent_coord.dec:.03f})\n"
-        f"telescope center (RA, DEC): ({tel_ra:.03f}, {tel_dec:.03f})\n"
-        f"offset (RA, DEC): ({offset_RA:.03f}, {offset_DEC:.03f})\n"
-        f"offset (AZ, ALT): ({offset_AZ:.03f}, {offset_ALT:.03f})")
+        f"telescope center (RA, DEC): ({tel_coord.ra:.03f}, {tel_coord.dec:.03f})\n"
+        f"offset (RA cos DEC, DEC): ({offset_RA:.03f}, {offset_DEC:.03f})\n"
+        f"offset (AZ cos ALT, ALT): ({offset_AZ:.03f}, {offset_ALT:.03f})")
 axs.annotate(info, xy=(0, 0), xytext=(0.6, -0.1), xycoords='axes fraction',
             va='top', ha='left', fontsize = 8)
 plt.tight_layout()
-plt.savefig(f"{proj_dir}/{fpath.stem}_AST_Mag{Mag_UP}.png")
+plt.savefig(proj_dir / f"{fpath.stem}_AST_Mag{Mag_UP}.png")
 plt.show()
 
-# %% code 377.
+# %% code 358.
 from astropy.nddata import Cutout2D
 from photutils.centroids import centroid_com
-from astropy.stats import sigma_clip, sigma_clipped_stats
+from astropy.stats import sigma_clipped_stats
 
-# %% code 378.
+# %% code 359.
 if df_targ.empty:
     pass
 else:
@@ -386,14 +365,14 @@ else:
                         fontsize=9)
 
             plt.tight_layout()
-            plt.savefig(f"{proj_dir}/{fpath.stem}_AST_Mag{Mag_UP}_{i:02d}.png")
+            plt.savefig(proj_dir / f"{fpath.stem}_AST_Mag{Mag_UP}_{i:02d}.png")
             plt.show()
 
         except Exception as err:
             print("Err :", err)
             continue
 
-# %% code 379.
+# %% code 360.
 fpath2 = Path(fpaths[1])                                   # 약 3시간 20분 뒤 영상
 hdul2 = fits.open(str(fpath2))
 wcs2 = WCS(hdul2[0].header)
@@ -402,7 +381,7 @@ t_middle2 = (Time(hdul2[0].header["DATE-OBS"], format="isot")
 dt = (t_middle2 - t_middle).to(u.hour)
 print(f"첫 영상 {t_middle.isot}, 둘째 영상 {t_middle2.isot}, 간격 {dt:.2f}")
 
-# %% code 380.
+# %% code 361.
 from photutils.centroids import centroid_sources, centroid_2dg
 
 def measure(data, w, ra, dec):
@@ -435,7 +414,7 @@ for _, row in df_targ_eph.iterrows():
 df_move = pd.DataFrame(rows).round(2)
 df_move
 
-# %% code 381.
+# %% code 362.
 fig, axs = plt.subplots(len(tracks), 2, figsize=(7.5, 3.4 * len(tracks)), squeeze=False)
 for k, (name, (c1, c2)) in enumerate(tracks.items()):
     mid = SkyCoord((c1.ra + c2.ra) / 2, (c1.dec + c2.dec) / 2)   # 두 위치의 가운데
@@ -449,5 +428,5 @@ for k, (name, (c1, c2)) in enumerate(tracks.items()):
         ax.set_title(f"{name}  {t.isot[11:16]} UT", fontsize=11)
         ax.set_xticks([]); ax.set_yticks([])
 plt.tight_layout()
-plt.savefig(f"{proj_dir}/asteroid_motion.png")
+plt.savefig(proj_dir / f"asteroid_motion.png")
 plt.show()

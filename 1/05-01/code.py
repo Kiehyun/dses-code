@@ -6,7 +6,7 @@ from pathlib import Path
 
 # 세계 화산 목록(VAAC용) 엑셀 파일, 구글 드라이브 파일 ID
 fname = "List_of_Volcanoes_of_the_World_for_VAAC_Use.xls"
-fid = "1dmJpAd1RI6LCaoV_iRR72HMeVP8vDoV-"
+fid = "17wbUIiJCxRz3XIgz6ZUM_1o4D2jOSA5P"
 
 du.download(f"https://docs.google.com/uc?export=download&id={fid}", Path(proj_dir) / fname)
 
@@ -14,31 +14,7 @@ du.download(f"https://docs.google.com/uc?export=download&id={fid}", Path(proj_di
 fpaths = du.list_files(proj_dir, "xls")
 
 # %% code 3.
-n_lines = 10  # 출력할 줄 수
-
-print(f"파일 내용 출력 (처음 {n_lines}줄):")
-print("="*40)
-
-# UTF-8로 읽고, 안 되면 CP949로 다시 시도
-try:
-    with open(fpaths[0], encoding='utf-8') as f:
-        for i, line in enumerate(f):
-            if i >= n_lines:
-                break
-            print(f"{i+1:3d}: {line.rstrip()}")
-except UnicodeDecodeError:
-    try:
-        with open(fpaths[0], encoding='cp949') as f:
-            for i, line in enumerate(f):
-                if i >= n_lines:
-                    break
-                print(f"{i+1:3d}: {line.rstrip()}")
-    except Exception as e2:
-        print(f"파일 읽기 실패 (UTF-8, CP949 모두 실패): {e2}")
-except Exception as e:
-    print(f"파일 읽기 실패: {e}")
-
-print("="*60)
+du.preview_text(fpaths[0], n=10);  # 앞 10줄(인코딩 자동)
 
 # %% code 4.
 import pandas as pd
@@ -63,10 +39,18 @@ df_vol = pd.DataFrame(data)
 df_vol.columns = df_vol.iloc[1]
 df_vol = df_vol.drop([0, 1]).reset_index(drop=True)
 
-# 4) 숫자로 바꿀 수 있는 열은 숫자형으로
-for col in df_vol.columns:
-    df_vol[col] = pd.to_numeric(df_vol[col], errors='coerce').fillna(df_vol[col])
+# 4) 파일 끝의 메타 정보(설명) 행은 좌표가 없으므로 제외
+lat = pd.to_numeric(df_vol['LatitudeDecimal'], errors='coerce')
+print(f"전체 행: {len(df_vol)}, 좌표가 없는 행: {lat.isna().sum()}")
+df_vol = df_vol[lat.notna()].reset_index(drop=True)
 
+# 5) 모든 값이 숫자인 열은 숫자형으로
+for col in df_vol.columns:
+    num = pd.to_numeric(df_vol[col], errors='coerce')
+    if num.notna().sum() == df_vol[col].notna().sum():
+        df_vol[col] = num
+
+print(f"화산 수: {len(df_vol)}")
 print("df_vol :", df_vol)
 
 # %% code 5.
@@ -107,8 +91,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 
-print("데이터 샘플:")
-print(f"\n총 화산 개수: {len(df_vol)}")
+print(f"총 화산 개수: {len(df_vol)}")
 
 plt.figure(figsize=(12.0, 8.0))
 
@@ -153,8 +136,8 @@ ax.add_feature(cfeature.BORDERS, linestyle=':')
 plt.scatter(df_vol['Longitude'], df_vol['Latitude'], 
             c='red', s=15, alpha=0.6, marker='^', 
             edgecolors='darkred', linewidth=0.3, 
-            transform=ccrs.PlateCarree(), label='Volcano')  # 자료 좌표: 경위도
-plt.title('World Volcanoes Distribution (Cartopy)', fontsize=16, fontweight='bold')
+            transform=ccrs.PlateCarree(), label='화산')  # 자료 좌표: 경위도
+plt.title('전 세계 화산 분포 (Cartopy)', fontsize=16, fontweight='bold')
 plt.legend(loc='lower left')
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "05_01_Plotting_ring_of_fire_03"))
 plt.show()
@@ -199,15 +182,15 @@ fig.add_trace(go.Scattergeo(
             text=df_vol['VolcanoName'] if 'VolcanoName' in df_vol.columns else None,
             # 마우스를 올렸을 때 보일 정보
             hovertemplate='<b>%{text}</b><br>' +
-                            'Latitude: %{lat}<br>' +
-                            'Longitude: %{lon}<br>' +
+                            '위도: %{lat}<br>' +
+                            '경도: %{lon}<br>' +
                             '<extra></extra>',
-            name='Volcanoes'
+            name='화산'
         ))
 
 # 지도 레이아웃 설정
 fig.update_layout(
-        title='World Volcanoes Distribution',
+        title='전 세계 화산 분포 (Plotly)',
         geo=dict(
             showland=True,
             landcolor='rgb(243, 243, 243)',

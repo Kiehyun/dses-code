@@ -46,7 +46,7 @@ length2 = 300 * u.centimeter
 time1 = 10 * u.second
 print(&quot;length1 + length2 =&quot;, length1 + length2)  # 15 m + 3 m = 18 m(단위 자동 변환)
 print(&quot;length1 - length2 =&quot;, length1 - length2)  # 15 m - 3 m = 12 m
-area = length1 * length2
+area = (length1 * length2).to(&#x27;m**2&#x27;)  # cm·m를 m²로 맞춤
 print(&quot;area =&quot;, area)  # 15 m * 3 m = 45 m²
 speed = length1 / time1
 print(&quot;speed =&quot;, speed)  # 15 m / 10 s = 1.5 m/s
@@ -57,8 +57,6 @@ try:
 except Exception as e:
     print(&quot;오류 (단위 불일치):&quot;, e)</code></pre>
 <h2 id="code-5">code 5. <button class="copy">복사</button></h2><pre><code>import scipy.constants as const
-# print(&quot;dir(const):&quot;, dir(const))
-# print(&quot;const.physical_constants:&quot;, const.physical_constants)
 constR1 = const.physical_constants[&quot;molar gas constant&quot;]  # 기체 상수(값, 단위, 불확도)
 print(&quot;type(constR1):&quot;, type(constR1))
 print(&quot;constR1:&quot;, constR1)
@@ -74,7 +72,6 @@ print(f&quot;천문단위(AU): {const.au} m&quot;)</code></pre>
 distance = 8 * u.m
 print(&quot;type(distance):{}&quot;.format(type(distance)))
 print(&quot;distance:{}&quot;.format(distance ))
-# print(&quot;dir(distance):&quot;, dir(distance)) 
 
 time = 4 * u.s
 average_velocity = distance / time
@@ -159,7 +156,7 @@ print(f&quot;area = {area.magnitude} {area.units}&quot;)</code></pre>
 <h2 id="code-12">code 12. <button class="copy">복사</button></h2><pre><code>from metpy.constants import Rd, g, Cp_d, epsilon
 
 print(f&quot;건조공기 기체상수 Rd: {Rd}&quot;)
-print(f&quot;중력가속도 g: {g}&quot;)
+print(f&quot;표준 중력가속도 g: {g}&quot;)
 print(f&quot;건조공기 비열 Cp_d: {Cp_d}&quot;)
 print(f&quot;수증기/건조공기 분자량비 epsilon: {epsilon}&quot;)
 

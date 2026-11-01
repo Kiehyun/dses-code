@@ -21,9 +21,9 @@ print(len(planets), total, area, x + y)
 print(message)
 
 # %% code 2.
-x = 0              #x에 0을 담아 둔다.
-y = 'Hello world'  #y에 'Hello world'라는 문자열을 담아 둔다.   
-x                  #x에 들어 있는 내용을 출력한다.
+x = 0              # x에 0 저장
+y = 'Hello world'  # y에 문자열 'Hello world' 저장
+x                  # x의 값 출력(셀의 마지막 줄)
 
 # %% code 3.
 y = 'Hello world'
@@ -37,7 +37,7 @@ y1
 class = 'Hello world'  # class는 예약어라 식별자로 쓸 수 없음
 
 # %% code 6.
-print('This text will be printed to the command line ....')  # 괄호 안의 내용 출력
+print('괄호 안의 글자가 그대로 출력됩니다.')  # 괄호 안의 내용 출력
 y = 'Hello world'
 y           # 마지막 줄이 아니면 출력되지 않음
 print(y)    # print()는 항상 출력
@@ -117,10 +117,10 @@ print ('I am a fan of the number: ' + str(z))  # str()로 문자열 변환 후 �
 
 # %% code 15.
 decimalValue, stringValue, floatValue = 42, 'Hello', 3.14  # 여러 변수에 한 번에 할당
-print ('String of text goes here', decimalValue, stringValue, floatValue)  # (1) 쉼표로 나열
-print ('String of text goes here %d %s %f' % (decimalValue, stringValue, floatValue))  # (2) % 연산자
-print ('String of text goes here {0:d} {1:s} {2:f}'.format(decimalValue, stringValue, floatValue))  # (3) format() 메서드
-print (f'String of text goes here {decimalValue} {stringValue} {floatValue}')  # (4) f-string
+print ('출력 예:', decimalValue, stringValue, floatValue)  # (1) 쉼표로 나열
+print ('출력 예: %d %s %f' % (decimalValue, stringValue, floatValue))  # (2) % 연산자
+print ('출력 예: {0:d} {1:s} {2:f}'.format(decimalValue, stringValue, floatValue))  # (3) format() 메서드
+print (f'출력 예: {decimalValue} {stringValue} {floatValue}')  # (4) f-string
 
 # %% code 16.
 print("4 + 10 =", 4 + 10)
@@ -183,7 +183,7 @@ my_newLst2 = [1, 2, 3, ['a', 'b', 'c']]
 print("my_newLst2[-1][0]: ", my_newLst2[-1][0])  # 마지막 원소(리스트)의 첫 원소
 
 # %% code 23.
-myStrLst[0:2]                          # 시작 인덱스는 포함, 끝 인덱스는 제외
+print("myStrLst[0:2]: ", myStrLst[0:2])  # 시작 인덱스는 포함, 끝 인덱스는 제외
 print("myStrLst[:2]: ", myStrLst[:2])  # 시작 생략 → 처음부터
 print("myStrLst[1:]: ", myStrLst[1:])  # 끝 생략 → 끝까지
 
@@ -198,27 +198,27 @@ print("my_newLst3[3][:2]: ", my_newLst3[3][:2])  # 4번째 원소(리스트)를 
 newLst1 = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
 print("newLst1:", newLst1)
 newLst1.append('h')
-print("newLst1(after append):", newLst1)
+print("newLst1(append 뒤):", newLst1)
 
 newLst2 = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
 print("newLst2:", newLst2)
 newLst2.insert(2, 'c')
-print("newLst2(after insert):", newLst2)
+print("newLst2(insert 뒤):", newLst2)
 
 anotherLst = ['a', 'b', 'c']
 print("anotherLst:", anotherLst)
 anotherLst.insert(2, newLst2)  # 리스트 전체가 원소 하나로 들어감(중첩 리스트)
-print("anotherLst(after insert):", anotherLst)
+print("anotherLst(insert 뒤):", anotherLst)
 
 newLst3 = ['a','b','c','d','e','f']
 print("newLst3:", newLst3)
 del newLst3[2]
-print("newLst3(after del):", newLst3)
+print("newLst3(del 뒤):", newLst3)
 
 newLst4 = ['a','b','c','d','e','f']
 print("newLst4:", newLst4)
 newLst4.remove('e')  # 값 'e'를 찾아 삭제
-print("newLst4(after remove):", newLst4)
+print("newLst4(remove 뒤):", newLst4)
 
 newLst5 = ['h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p']
 newLst5.extend(['q', 'r'])  # 다른 리스트의 원소를 끝에 추가
@@ -247,12 +247,12 @@ print("myDic2['dec']:", myDic2['dec'])  # 적위(도, 분, 초)
 myDic3 = {'name': 'GRB 130702A', 'redshift': 0.145, 'ra': (14, 29, 14.78), 'dec': (15, 46, 26.4)}
 print("myDic3:", myDic3)
 myDic3['url'] = 'http://gcn.gsfc.nasa.gov/other/130702A.gcn3'
-print("myDic3(after 'url' is added):", myDic3)
+print("myDic3('url' 추가 뒤):", myDic3)
 
 myDic4 = {'name': 'GRB 130702A', 'redshift': 0.145, 'ra': (14, 29, 14.78), 'dec': (15, 46, 26.4)}
 print("myDic4:", myDic4)
 del myDic4['name']  # 키 'name'과 그 값 삭제
-print("myDic4(after 'name' is deleted):", myDic4)
+print("myDic4('name' 삭제 뒤):", myDic4)
 
 # %% code 27.
 myDic5 = {1: 'a', 2: 'b', 1: 'c'}  # 키 1이 중복됨
@@ -371,9 +371,9 @@ while a < 10:
     if a % 2 == 0: continue  # 짝수면 건너뛰고 다음 반복
     print(a)
 print("-"*20)
-# 주의: 이 셀은 끝없이 반복됨(실행 중지로 멈춤)
+# 주의: 이 반복은 끝나지 않음(■ 중지 단추로 멈춤)
 while True:
-    print("Ctrl+C를 눌러야 while문을 빠져나갈 수 있습니다.")
+    print("중지 단추를 눌러야 while문을 빠져나갈 수 있습니다.")
 
 # %% code 33.
 def square(n):
@@ -417,10 +417,12 @@ fibonacci(seed, 10)  # 원소 10개까지 생성
 print("seed :", seed)
 
 # %% code 35.
-# import math
-# def sinc(x):
-#     return math.sin(x) / x
-# print("sinc(0) :", sinc(0))  # x = 0이면 ZeroDivisionError
+import math
+
+def sinc(x):
+    return math.sin(x) / x
+
+print("sinc(0) :", sinc(0))  # x = 0이면 ZeroDivisionError
 
 # %% code 36.
 import math

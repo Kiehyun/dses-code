@@ -1,14 +1,14 @@
 # 지구과학 데이터 사이언스 2 | III-09. PSF 측광
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 283.
+# %% code 270.
 fname = ("M13_LIGHT_V_2025-04-26-14-10-00_60sec_"
          "GSON300_STF-8300M_-19c_1bin_cal.fits")
-fid = "17Ptwl1fvC73CvEhK9tXo9MfPYtG1sawL"
+fid = "1DffJFv7AKpm_7WMD1Xza4Y1RznPvJ1Dr"
 
 du.download(f"https://drive.google.com/uc?id={fid}", proj_dir / fname)
 
-# %% code 284.
+# %% code 271.
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.io import fits
@@ -32,7 +32,7 @@ m13 = SkyCoord("16h41m41.6s", "+36d27m41s")                # M13 중심
 cx, cy = wcs.world_to_pixel(m13)                           # 성단 중심의 화소 좌표
 print(f"픽셀 축척 {pixscale:.3f} arcsec/px, 성단 중심 (x, y) = ({cx:.1f}, {cy:.1f})")
 
-# %% code 285.
+# %% code 272.
 from astropy.visualization import simple_norm
 
 def show(ax, img, title, percent=99.5):
@@ -50,7 +50,7 @@ show(axs[1], data[core], "중심부 200x200 px", percent=99.9)
 plt.tight_layout()
 plt.show()
 
-# %% code 286.
+# %% code 273.
 from astropy.stats import SigmaClip
 from photutils.background import Background2D, MMMBackground
 
@@ -69,7 +69,7 @@ show(axs[1], sub, "배경을 뺀 영상")
 plt.tight_layout()
 plt.show()
 
-# %% code 287.
+# %% code 274.
 from photutils.detection import DAOStarFinder
 
 def xy_cols(tab):
@@ -82,7 +82,7 @@ found0 = DAOStarFinder(threshold=4 * bkg_rms, fwhm=FWHM_INIT,
 xc, yc = xy_cols(found0)
 print("찾은 별:", len(found0))
 
-# %% code 288.
+# %% code 275.
 from scipy.spatial import cKDTree
 from photutils.psf import fit_fwhm
 
@@ -102,12 +102,12 @@ FWHM = float(np.median(fwhms))
 print(f"고른 별 {sel.sum()}개, FWHM 중앙값 {FWHM:.2f} px = {FWHM * pixscale:.2f} arcsec "
       f"(16~84 백분위 {np.percentile(fwhms, 16):.2f}~{np.percentile(fwhms, 84):.2f} px)")
 
-# %% code 289.
+# %% code 276.
 finder = DAOStarFinder(threshold=4 * bkg_rms, fwhm=FWHM, min_separation=1.5 * FWHM)
 found = finder(sub)
 print("FWHM 으로 다시 찾은 별:", len(found))
 
-# %% code 290.
+# %% code 277.
 from astropy.nddata import NDData
 from astropy.table import Table
 from photutils.psf import extract_stars
@@ -126,7 +126,7 @@ plt.suptitle("ePSF 를 만들 별(앞 12개)", fontsize=9)
 plt.tight_layout()
 plt.show()
 
-# %% code 291.
+# %% code 278.
 from photutils.psf import EPSFBuilder
 
 result = EPSFBuilder(oversampling=2, maxiters=10, progress_bar=False)(stars)
@@ -134,7 +134,7 @@ result = EPSFBuilder(oversampling=2, maxiters=10, progress_bar=False)(stars)
 epsf = result.epsf if hasattr(result, "epsf") else result[0]
 print("ePSF 격자:", epsf.data.shape, "(오버샘플링 2)")
 
-# %% code 292.
+# %% code 279.
 from astropy.modeling.functional_models import Gaussian1D
 
 from matplotlib.ticker import FuncFormatter
@@ -160,7 +160,7 @@ axs[1].legend(fontsize=8); axs[1].grid(ls=":")
 plt.tight_layout()
 plt.show()
 
-# %% code 293.
+# %% code 280.
 from photutils.psf import PSFPhotometry, SourceGrouper
 
 FIT_SHAPE = (7, 7)
@@ -179,7 +179,7 @@ print("묶음으로 함께 맞춘 별:", (gsize > 1).sum(), "/ 가장 큰 묶음
 print("품질 표시(flags)가 붙은 별:", (np.asarray(psf_tab["flags"]) > 0).sum())
 psf_tab["id", "group_id", "group_size", "x_fit", "y_fit", "flux_fit", "flux_err", "qfit", "flags"][:5]
 
-# %% code 294.
+# %% code 281.
 resid = psfphot.make_residual_image(sub, psf_shape=(19, 19))
 model = sub - resid
 
@@ -196,7 +196,7 @@ for row, (reg, name) in enumerate([(core, "중심부"), (outer, "바깥쪽")]):
 plt.tight_layout()
 plt.show()
 
-# %% code 295.
+# %% code 282.
 from photutils.psf import CircularGaussianPRF
 
 gpsf = CircularGaussianPRF(fwhm=FWHM)
@@ -235,7 +235,7 @@ plt.colorbar(im, ax=axs[2], fraction=0.046, pad=0.04)
 plt.tight_layout()
 plt.show()
 
-# %% code 296.
+# %% code 283.
 from photutils.aperture import CircularAperture, aperture_photometry
 
 ok = (np.asarray(psf_tab["flags"]) == 0) & (np.asarray(psf_tab["flux_fit"]) > 0)
@@ -257,7 +257,7 @@ ap_corr = np.median(dm[iso])
 print(f"고립된 밝은 별 {iso.sum()}개: Δm 중앙값 {ap_corr:+.3f} (흩어짐 {np.std(dm[iso]):.3f}) mag")
 print(f"이웃과 붙은 별 {crowd.sum()}개: Δm 중앙값 {np.median(dm[crowd]):+.3f} mag")
 
-# %% code 297.
+# %% code 284.
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.4))
 for ax, xv, xl in [(axs[0], m_psf, "PSF 기기 등급"), (axs[1], r_cl * pixscale / 60, "성단 중심 거리 (arcmin)")]:
     ax.plot(xv[~crowd], dm[~crowd], ".", ms=3, color="C0", label="떨어진 별")
@@ -269,7 +269,7 @@ axs[0].legend(fontsize=7, loc="lower left")
 plt.tight_layout()
 plt.show()
 
-# %% code 298.
+# %% code 285.
 from photutils.aperture import CircularAperture
 
 gid = pt["group_id"][np.argmax(np.where(r_cl < 150, np.asarray(pt["group_size"]), 0))]
@@ -297,7 +297,7 @@ print(" 별   x       y     m_PSF   m_ap-보정   차이")
 for k in np.flatnonzero(g):
     print(f"{pt['id'][k]:4d} {xf[k]:7.1f} {yf[k]:7.1f} {m_psf[k]:7.3f} {m_ap[k] - ap_corr:8.3f} {m_ap[k] - ap_corr - m_psf[k]:+8.3f}")
 
-# %% code 299.
+# %% code 286.
 from photutils.psf import IterativePSFPhotometry
 
 itphot = IterativePSFPhotometry(epsf, FIT_SHAPE, finder=finder, grouper=grouper,
@@ -316,7 +316,7 @@ for ax, r, ttl in [(axs[0], resid, "한 번 맞춘 잔차"), (axs[1], resid_it, 
 plt.tight_layout()
 plt.show()
 
-# %% code 300.
+# %% code 287.
 out = pt["id", "group_id", "group_size", "x_fit", "y_fit", "flux_fit", "flux_err", "qfit", "cfit"].to_pandas()
 out["mag_psf"] = m_psf
 out["merr_psf"] = 1.0857 * out["flux_err"] / out["flux_fit"]

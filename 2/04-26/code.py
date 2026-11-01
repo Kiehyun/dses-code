@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | IV-06. 기후변화의 원인 가르기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 479.
+# %% code 460.
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -24,7 +24,7 @@ for name, url in URLS.items():
         du.download(url, F[name])
 print("내려받기 끝:", ", ".join(URLS))
 
-# %% code 480.
+# %% code 461.
 # 1) 기온 편차
 g = pd.read_csv(F["gistemp.csv"], skiprows=1, na_values="***")
 months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
@@ -66,7 +66,7 @@ for name, x in [("기온", temp), ("CO2", co2), ("ENSO", enso), ("화산", volc)
     x = x.dropna()
     print(f"{name:5s} {x.index[0]:%Y-%m} ~ {x.index[-1]:%Y-%m}  ({len(x):,}개월)")
 
-# %% code 481.
+# %% code 462.
 df = pd.concat({"temp": temp, "co2": co2, "enso": enso, "volc": volc, "sun": sun},
                axis=1)
 df = df.loc["1979-01-01":].dropna()
@@ -93,7 +93,7 @@ plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f"{proj_dir.name}_01"))
 plt.show()
 
-# %% code 482.
+# %% code 463.
 def design(lags):
     l1, l2, l3 = lags
     X = pd.DataFrame({
@@ -136,7 +136,7 @@ for name, b, e1, e2 in zip(X.columns, coef, se, se_adj):
 print(f"CO2 계수 × 3.7 = {coef[1] * 3.7:.2f} ± {2 * se_adj[1] * 3.7:.2f} °C "
       "(보정 표준오차 2배 범위)")
 
-# %% code 483.
+# %% code 464.
 contrib = pd.DataFrame({name: X[name] * b for name,
                         b in zip(X.columns, coef) if name != "상수"})
 contrib = contrib - contrib.mean()
@@ -160,7 +160,7 @@ plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f"{proj_dir.name}_02"))
 plt.show()
 
-# %% code 484.
+# %% code 465.
 years = (y.index.year + (y.index.month - 0.5) / 12).values
 trend = {"관측 기온": np.polyfit(years, y.values, 1)[0] * 10}
 for name in contrib:
@@ -182,7 +182,7 @@ du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f"{proj_dir.name}_03"))
 plt.show()
 print(trend.round(3))
 
-# %% code 485.
+# %% code 466.
 # CO2 강제력 대신 시간(연도)을 넣은 모형 — 지연은 앞에서 고른 best 그대로
 X_t, y_t = design(best)
 X_t = X_t.rename(columns={"CO2": "시간"})
@@ -199,7 +199,7 @@ print(f"CO2 모형  R² = {r2:.3f}   CO2 항의 추세 기여 {trend['CO2']:+.3f
 print(f"시간 모형 R² = {r2_t:.3f}   시간 계수          {coef_t[1] * 10:+.3f} °C/10년")
 print(f"두 모형 예측값의 상관 r = {r_pred:.4f}")
 
-# %% code 486.
+# %% code 467.
 sun_trend = np.polyfit(years, X["태양"].values, 1)[0] * 10
 co2_change = df["co2"].iloc[-12:].mean() - df["co2"].iloc[:12].mean()
 peak_enso = df["enso"].idxmax()
@@ -217,7 +217,7 @@ cards = pd.DataFrame([
 ], columns=["번호", "증거", "값"])
 cards
 
-# %% code 487.
+# %% code 468.
 pre = temp.loc["1880":"1900"].mean()  # 산업화 이전 기준(GISTEMP는 1880년부터)
 offset = -pre                         # 1951~1980년 기준 → 산업화 이전 기준
 base = (coef[0] + coef[2] * df["enso"].mean()

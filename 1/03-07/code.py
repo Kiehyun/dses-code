@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | III-07. H-R도 그리기(히파르코스 성표)
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 87.
+# %% code 89.
 from pathlib import Path
 import requests
 
@@ -26,45 +26,21 @@ if not fpath.exists():
         except Exception as e:
             print(f"{host} 실패: {e}")
     else:  # 두 서버 모두 안 되면 구글 드라이브 사본
-        du.download("https://docs.google.com/uc?export=download&id=1e-LMG8Q3HBIRphwxiLabUs9bkB5dQODE", fpath)
+        du.download("https://docs.google.com/uc?export=download&id=1TkmU9cE-C4XSQfiDppBk06Jhmyow3ftJ", fpath)
 
 print(f"{fpath} ({fpath.stat().st_size:,} 바이트)")
 
-# %% code 88.
+# %% code 90.
 from pathlib import Path 
 fpaths = sorted(list(Path(proj_dir).glob('*.tsv')))
 print(f"fpaths: {fpaths}")
 print(f"len(fpaths): {len(fpaths)}")
 
-# %% code 89.
-n_lines = 40
+# %% code 91.
+# 파일 앞 40줄 출력(공통 함수, 인코딩 자동 판별)
+head = du.preview_text(fpaths[0], n=40)  # 출력한 줄 목록은 head에 담아 둠
 
-print(f"파일 내용 출력 (처음 {n_lines}줄):")
-print("="*40)
-
-# 운영체제와 상관없이 읽기
-try:
-    with open(fpaths[0], encoding='utf-8') as f:
-        for i, line in enumerate(f):
-            if i >= n_lines:
-                break
-            print(f"{i+1:3d}: {line.rstrip()}")
-except UnicodeDecodeError:
-    # UTF-8이 안 되면 CP949
-    try:
-        with open(fpaths[0], encoding='cp949') as f:
-            for i, line in enumerate(f):
-                if i >= n_lines:
-                    break
-                print(f"{i+1:3d}: {line.rstrip()}")
-    except Exception as e2:
-        print(f"파일 읽기 실패 (UTF-8, CP949 모두 실패): {e2}")
-except Exception as e:
-    print(f"파일 읽기 실패: {e}")
-
-print("="*60)
-
-# %% code 90.
+# %% code 92.
 import numpy as np
 import pandas as pd
 
@@ -74,20 +50,21 @@ with open(fpaths[0], encoding='utf-8') as f:
 
 # 구분자: 탭(VizieR 직접 받기) 또는 세미콜론(웹 양식 · 드라이브 사본)
 # 열: HIP 번호, V 등급, 연주시차(mas), B-V 색지수, 분광형
-df = pd.read_table(fpaths[0], skiprows=n_skip, sep=r'[;\t]', header=None, index_col=0,
-                   names = ['HIP', 'Vmag', 'Plx', 'B-V', 'SpType'],
-                   dtype={'Vmag': str, 'Plx': str, 'B-V': str, 'SpType': str},  # 값은 문자열로
-                   engine='python').sort_index()
+df = pd.read_table(
+    fpaths[0], skiprows=n_skip, sep=r'[;\t]', header=None, index_col=0,
+    names=['HIP', 'Vmag', 'Plx', 'B-V', 'SpType'],
+    dtype={'Vmag': str, 'Plx': str, 'B-V': str, 'SpType': str},  # 값은 문자열로
+    engine='python').sort_index()
 
 print(f"df.shape:\n{df.shape}")
 print(f"df:\n", df)
 
-# %% code 91.
+# %% code 93.
 print("df[['Vmag', 'Plx', 'B-V']]:\n", df[['Vmag', 'Plx', 'B-V']])
-print("type(df['Vmag'][1]), type(df['Plx'][1]), type(df_clean['B-V'][1]):", 
+print("type(df['Vmag'][1]), type(df['Plx'][1]), type(df['B-V'][1]):", 
         type(df['Vmag'][1]), type(df['Plx'][1]), type(df['B-V'][1])) 
 
-# %% code 92.
+# %% code 94.
 print("df.describe() :", df.describe())
 
 # 문자열 양쪽 공백 제거
@@ -113,20 +90,24 @@ df_clean['B-V'] = df_clean['B-V'].astype(np.float64)
 print("type(df_clean['Vmag'][1]), type(df_clean['Plx'][1]), type(df_clean['B-V'][1]) :", 
       type(df_clean['Vmag'][1]), type(df_clean['Plx'][1]), type(df_clean['B-V'][1]))
 
-# %% code 93.
+# %% code 95.
+# 연주시차가 0 이하인 별 제외(거리를 구할 수 없음)
+df_clean = df_clean[df_clean['Plx'] > 0].copy()
+print(f"Plx > 0 인 별: {len(df_clean)}개")
+
 # 절대등급: M = V + 5 log(p/100), p는 연주시차(mas)
 df_clean['M_V'] = df_clean['Vmag'] + 5 * np.log10(df_clean['Plx']/100.)
 
 print("df_clean:\n", df_clean)
 
-# %% code 94.
+# %% code 96.
 # G8, F5처럼 「알파벳+숫자」로 시작하는 분광형만 남기기
 f = lambda s: (len(s) >= 2) and (s[0].isalpha()) and (s[1].isdigit())
 i = df_clean['SpType'].apply(f)
 df_clean = df_clean[i]
-print("df_clean after SpType filtering:\n", df_clean)
+print("분광형으로 거른 뒤 df_clean:\n", df_clean)
 
-# %% code 95.
+# %% code 97.
 # 분광형 앞 두 글자(예: G8)
 f = lambda s: s[0:2]
 df_clean['SpType2'] = df_clean['SpType'].apply(f)
@@ -140,7 +121,7 @@ clases = df_clean['SpType'].map(f)
 print('***df_clean에서 각 분광형별 개수 세기***')
 print(clases.value_counts())
 
-# %% code 96.
+# %% code 98.
 # OBAFGKM 분광형만 남기기
 f = lambda s: s[0] in 'OBAFGKM'
 df_clean = df_clean[df_clean['SpType'].map(f)]
@@ -151,9 +132,9 @@ clases = df_clean['SpType'].map(f)
 print('***df_clean에서 각 분광형별 개수 세기***')
 print(clases.value_counts())
 
-# %% code 97.
+# %% code 99.
 df_clean.to_csv(Path(proj_dir) / "HIP_clean.csv")
-print(f"df_clean is saved to {Path(proj_dir) / 'HIP_clean.csv'}")
+print(f"df_clean을 저장함: {Path(proj_dir) / 'HIP_clean.csv'}")
 
 # 분광형 순서 → 숫자
 orden = {'O':'0', 'B':'1', 'A':'2', 'F':'3', 'G':'4', 'K':'5', 'M':'6'}
@@ -164,7 +145,7 @@ df_clean['SpType2'] = df_clean['SpType2'].apply(f)
 
 print("df_clean:\n", df_clean)
 
-# %% code 98.
+# %% code 100.
 import matplotlib.pyplot as plt
 fig, ax = plt.subplots(figsize=(6,8))
 
@@ -182,13 +163,13 @@ ax.tick_params(axis='both', labelsize=14)
 ax.set_xticks(range(5,75,10))
 ax.set_xticklabels(['O', 'B', 'A', 'F', 'G', 'K', 'M'])
 
-ax.set_title('H-R Diagram \n (Hipparcos catalog)', fontsize=16)
-ax.set_xlabel('spectral class', fontsize=16)
-ax.set_ylabel('Absolute magnitude (M_v)', fontsize=16)
+ax.set_title('H-R도\n(히파르코스 성표)', fontsize=16)
+ax.set_xlabel('분광형', fontsize=16)
+ax.set_ylabel('절대 등급 ($M_V$)', fontsize=16)
 
 plt.show()
 
-# %% code 99.
+# %% code 101.
 import matplotlib.pyplot as plt
 fig, ax = plt.subplots(figsize=(6,8))
 
@@ -201,60 +182,45 @@ ax.set_ylim(15, -10)
 ax.grid()
 ax.tick_params(axis='both', labelsize=14)
 
-ax.set_title('H-R Diagram \n (Hipparcos catalog)', fontsize=16)
-ax.set_xlabel('Color index(B-V)', fontsize=12)
-ax.set_ylabel('Absolute magnitude (M_v)', fontsize=12)
+ax.set_title('H-R도\n(히파르코스 성표)', fontsize=16)
+ax.set_xlabel('색지수 ($B-V$)', fontsize=12)
+ax.set_ylabel('절대 등급 ($M_V$)', fontsize=12)
 
 plt.show()
 
-# %% code 100.
+# %% code 102.
 # 광도 계급(I, V 등)이 적힌 별
 f = lambda s: ('I' in s) or ('V' in s)
 b = df_clean['SpType'].map(f)
 print("b:", b)
 print("sum(b):", sum(b))
 
-# %% code 101.
-# VII: 백색왜성
-f = lambda s: 'VII' in s
-b = df_clean['SpType'].map(f)
-print ("Class VII: white dwarfs, there are %d stars" %sum(b))
+# %% code 103.
+# 광도 계급별 (이름, 조건) — 긴 표기부터 확인해 짧은 표기와 헷갈리지 않게 함
+lum_classes = {
+    'VII': ('백색왜성(옛 표기)', lambda s: 'VII' in s),
+    'VI':  ('준왜성',   lambda s: ('VI' in s) and ('VII' not in s)),
+    'V':   ('주계열성', lambda s: ('V' in s) and ('VI' not in s) and ('IV' not in s)),
+    'IV':  ('준거성',   lambda s: 'IV' in s),
+    'III': ('거성',     lambda s: 'III' in s),
+    'II':  ('밝은 거성', lambda s: ('II' in s) and ('III' not in s) and ('VII' not in s)),
+    'I':   ('초거성',   lambda s: ('I' in s) and ('II' not in s) and ('V' not in s)),
+}
 
-# VI: 준왜성(VII 제외)
-f = lambda s: ('VI' in s) and ('VII' not in s)
-b = df_clean['SpType'].map(f)
-print ("Class VI: subdwarfs, there are %d stars" %sum(b))
+masks = {}  # 계급별로 고른 별(불 Series)
+for cls, (name, f) in lum_classes.items():
+    masks[cls] = df_clean['SpType'].map(f)
+    print(f"{cls:>3} {name}: {masks[cls].sum()}개")
 
-# V: 주계열성(VI, IV 제외)
-f = lambda s: ('V' in s) and ('VI' not in s) and ('IV' not in s)
-b = df_clean['SpType'].map(f)
-print ("Class V: main-sequence, there are %d stars" %sum(b))
+# 두 계급 이상에 중복으로 센 별(예: 'III-IV')
+n_class = sum(m.astype(int) for m in masks.values())
+print(f"두 계급 이상에 중복으로 센 별: {(n_class > 1).sum()}개")
 
-# IV: 준거성
-f = lambda s: 'IV' in s
-b = df_clean['SpType'].map(f)
-print ("Class IV: subgiants, there are %d stars" %sum(b))
-
-# III: 거성
-f = lambda s: 'III' in s
-b = df_clean['SpType'].map(f)
-print ("Class III: giants, there are %d stars" %sum(b))
-
-# II: 밝은 거성(III, VII 제외)
-f = lambda s: ('II' in s) and ('III' not in s) and ('VII' not in s)
-b = df_clean['SpType'].map(f)
-print ("Class II:  bright giants, there are %d stars" %sum(b))
-
-# I: 초거성(II, V 제외)
-f = lambda s: ('I' in s) and ('II' not in s) and ('V' not in s)
-b = df_clean['SpType'].map(f)
-print ("Class I: supergiants, there are %d stars" %sum(b))
-
-# %% code 102.
+# %% code 104.
 def plot_lum_class(b, c, label):
-    ''' b: 선택할 별을 나타내는 불리언 Series
+    ''' b: 선택할 별을 나타내는 불 Series
         c: 색상
-        label: 범례에 표시할 라벨
+        label: 범례에 표시할 이름
     '''
     x = df_clean['B-V'][b]
     y = df_clean['M_V'][b]
@@ -267,41 +233,18 @@ ax.set_xlim(-0.5, 2.5)
 ax.set_ylim(15, -15)
 ax.grid()
 
-ax.set_title('H-R Diagram \n (Hipparcos catalog)', fontsize=16)
-ax.set_xlabel('Color index (B-V)', fontsize=12)
-ax.set_ylabel('Absolute magnitude (M)', fontsize=12)
+ax.set_title('H-R도\n(히파르코스 성표)', fontsize=16)
+ax.set_xlabel('색지수 ($B-V$)', fontsize=12)
+ax.set_ylabel('절대 등급 ($M_V$)', fontsize=12)
 
-# 광도 계급별로 그리기
-f = lambda s: 'VII' in s
-b = df_clean['SpType'].map(f)
-plot_lum_class(b,'magenta', 'VII: white dwarfs')
-
-f = lambda s: ('VI' in s) and ('VII' not in s)
-b = df_clean['SpType'].map(f)
-plot_lum_class(b,'blue', 'VI: subdwarfs')
-
-f = lambda s: ('V' in s) and ('VI' not in s) and ('IV' not in s)
-b = df_clean['SpType'].map(f)
-plot_lum_class(b,'black', 'V: main-sequence')
-
-f = lambda s: 'IV' in s
-b = df_clean['SpType'].map(f)
-plot_lum_class(b,'grey', 'IV: subgiants')
-
-f = lambda s: 'III' in s
-b = df_clean['SpType'].map(f)
-plot_lum_class(b,'green', 'III: giants')
-
-f = lambda s: ('II' in s) and ('III' not in s) and ('VII' not in s)
-b = df_clean['SpType'].map(f)
-plot_lum_class(b,'orange', 'II: bright giants')
-
-f = lambda s: ('I' in s) and ('II' not in s) and ('V' not in s)
-b = df_clean['SpType'].map(f)
-plot_lum_class(b,'yellow', 'I: supergiants')
+# 광도 계급별로 그리기(앞에서 만든 masks 사용)
+colors = {'VII': 'magenta', 'VI': 'blue', 'V': 'black', 'IV': 'grey',
+          'III': 'green', 'II': 'orange', 'I': 'yellow'}
+for cls, (name, f) in lum_classes.items():
+    plot_lum_class(masks[cls], colors[cls], f'{cls}: {name}')
 
 ax.tick_params(axis='both', labelsize=14)
-legend = ax.legend(scatterpoints=1, markerscale = 5, shadow=True)
+legend = ax.legend(loc='lower left', scatterpoints=1, markerscale = 5, shadow=True)  # 자리 고정(별이 많으면 'best' 계산이 느림)
 frame = legend.get_frame()
 
 frame.set_facecolor('0.90')

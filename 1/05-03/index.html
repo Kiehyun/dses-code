@@ -32,16 +32,18 @@ params = {
     &quot;includearrivals&quot;: &quot;true&quot;,  # P · S파 도착 시각 포함
 }
 
-response = requests.get(EVENT_URL, params=params, timeout=60)
-response.raise_for_status()
-xml_text = response.text
-
-# 2) 파일로 저장
+# 2) 이미 받은(또는 동봉된) 파일이 있으면 그 파일을, 없으면 내려받아 저장
 event_file = Path(proj_dir) / f&quot;ncedc_event_{EVENT_ID}_arrivals.xml&quot;
-event_file.write_text(xml_text, encoding=&quot;utf-8&quot;)
-
-print(response.url)
-print(f&quot;저장 위치: {event_file}&quot;)
+if event_file.exists():
+    xml_text = event_file.read_text(encoding=&quot;utf-8&quot;)
+    print(f&quot;이미 있는 파일 사용: {event_file}&quot;)
+else:
+    response = requests.get(EVENT_URL, params=params, timeout=60)
+    response.raise_for_status()
+    xml_text = response.text
+    event_file.write_text(xml_text, encoding=&quot;utf-8&quot;)
+    print(response.url)
+    print(f&quot;저장 위치: {event_file}&quot;)
 print(f&quot;파일 크기: {event_file.stat().st_size:,} bytes&quot;)</code></pre>
 <h2 id="code-25">code 25. <button class="copy">복사</button></h2><pre><code># XML 도우미 함수(태그 이름 · 자식 요소 · 글자 읽기)
 def tag_name(element):

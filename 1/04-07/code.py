@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | IV-07. 엘니뇨와 남방진동
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 112.
+# %% code 109.
 import cartopy.crs as ccrs
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 import matplotlib.ticker as mticker
@@ -44,6 +44,7 @@ ax2.scatter(lonTahiti, latTahiti, color='red', marker='o', transform=ccrs.PlateC
 ax2.text(lonTahiti, latTahiti-5, "Tahiti", color='red', fontsize=8, transform=ccrs.PlateCarree())
 
 # 3) 니뇨 영역 경계(꼭짓점 위도 · 경도, 서경은 음수)
+#    경위선을 따르는 사각형이므로 PlateCarree로 잇는다(Geodetic은 대원으로 이어 변이 휜다)
 latsNino1 = [0, -10, -10, 0, 0]
 lonsNino1 = [-90, -90, -80, -80, -90]
 latsNino3 = [5, -5, -5, 5, 5]
@@ -53,16 +54,16 @@ lonsNino34 = [-170, -170, -120, -120, -170]
 latsNino4 = [5, -5, -5, 5, 5]
 lonsNino4 = [-200, -200, -150, -150, -200]  # -200° = 160°E
 
-ax2.plot(lonsNino1, latsNino1, color='black', linewidth=0.75, transform=ccrs.Geodetic())
+ax2.plot(lonsNino1, latsNino1, color='black', linewidth=0.75, transform=ccrs.PlateCarree())
 ax2.text(lonsNino1[0], latsNino1[1]-4, "NINO 1+2", color='black', fontsize=8, transform=ccrs.PlateCarree())
 
-ax2.plot(lonsNino3, latsNino3, color='orange', linewidth=0.75, transform=ccrs.Geodetic())
+ax2.plot(lonsNino3, latsNino3, color='orange', linewidth=0.75, transform=ccrs.PlateCarree())
 ax2.text((lonsNino3[0]+lonsNino3[2])/2, latsNino3[1]-4, "NINO 3", color='orange', fontsize=8, transform=ccrs.PlateCarree())
 
-ax2.plot(lonsNino34, latsNino34, color='purple', linewidth=0.75, transform=ccrs.Geodetic())
+ax2.plot(lonsNino34, latsNino34, color='purple', linewidth=0.75, transform=ccrs.PlateCarree())
 ax2.text((lonsNino34[0]+lonsNino34[2])/2, latsNino34[0]+3, "NINO 3.4", color='purple', fontsize=8, transform=ccrs.PlateCarree())
 
-ax2.plot(lonsNino4, latsNino4, color='blue', linewidth=0.75, transform=ccrs.Geodetic())
+ax2.plot(lonsNino4, latsNino4, color='blue', linewidth=0.75, transform=ccrs.PlateCarree())
 ax2.text((lonsNino4[0]+lonsNino4[2])/2, latsNino4[1]-3.5, "NINO 4", color='blue', fontsize=8, transform=ccrs.PlateCarree())
 
 ax2.set_title("ENSO 관련 해역(니뇨 영역)", fontsize=14)
@@ -71,7 +72,7 @@ plt.tight_layout()
 plt.savefig(f"{proj_dir}/ENSO_map.png", dpi=300, bbox_inches='tight')
 plt.show()
 
-# %% code 113.
+# %% code 110.
 import re
 import requests
 from pathlib import Path
@@ -95,64 +96,16 @@ print("SOI 주소:", url2)
 du.download(url1, oni_path, overwrite=True)
 du.download(url2, soi_path, overwrite=True)
 
-# %% code 114.
+# %% code 111.
 fpaths = du.list_files(proj_dir, "txt")
 
-# %% code 115.
-n_lines = 10  # 출력할 줄 수
+# %% code 112.
+du.preview_text(oni_path, n=10);  # ONI 파일 앞 10줄
 
-print(f"파일 내용 출력 (처음 {n_lines}줄):")
-print("="*40)
+# %% code 113.
+du.preview_text(soi_path, n=10);  # SOI 파일 앞 10줄
 
-try:
-    with open(oni_path, encoding='utf-8') as f:
-        for i, line in enumerate(f):
-            if i >= n_lines:
-                break
-            print(f"{i+1:3d}: {line.rstrip()}")
-except UnicodeDecodeError:
-    # UTF-8로 못 읽으면 CP949로 다시 시도
-    try:
-        with open(oni_path, encoding='cp949') as f:
-            for i, line in enumerate(f):
-                if i >= n_lines:
-                    break
-                print(f"{i+1:3d}: {line.rstrip()}")
-    except Exception as e2:
-        print(f"파일 읽기 실패 (UTF-8, CP949 모두 실패): {e2}")
-except Exception as e:
-    print(f"파일 읽기 실패: {e}")
-
-print("="*60)
-
-# %% code 116.
-n_lines = 10  # 출력할 줄 수
-
-print(f"파일 내용 출력 (처음 {n_lines}줄):")
-print("="*40)
-
-try:
-    with open(soi_path, encoding='utf-8') as f:
-        for i, line in enumerate(f):
-            if i >= n_lines:
-                break
-            print(f"{i+1:3d}: {line.rstrip()}")
-except UnicodeDecodeError:
-    # UTF-8로 못 읽으면 CP949로 다시 시도
-    try:
-        with open(soi_path, encoding='cp949') as f:
-            for i, line in enumerate(f):
-                if i >= n_lines:
-                    break
-                print(f"{i+1:3d}: {line.rstrip()}")
-    except Exception as e2:
-        print(f"파일 읽기 실패 (UTF-8, CP949 모두 실패): {e2}")
-except Exception as e:
-    print(f"파일 읽기 실패: {e}")
-
-print("="*60)
-
-# %% code 117.
+# %% code 114.
 import pandas as pd
 import numpy as np
 
@@ -171,7 +124,7 @@ df_ONI.index = df_ONI['dt_date']
 
 print("df_ONI : \n", df_ONI)
 
-# %% code 118.
+# %% code 115.
 import numpy as np
 
 arr = np.loadtxt(soi_path)
@@ -205,7 +158,7 @@ while date1 < EndDT:
 print("len(proc_dates): {}".format(len(proc_dates)))
 print(f"proc_dates: {proc_dates}")
 
-# %% code 119.
+# %% code 116.
 import pandas as pd
 
 # (날짜, SOI) 쌍으로 DataFrame 만들기
@@ -215,7 +168,7 @@ df_SOI.index = df_SOI['dt_date']
 df_SOI['SOI'] = df_SOI['SOI'].replace(-99.9, np.nan)  # -99.9는 결측값
 print("df_SOI :", df_SOI)
 
-# %% code 120.
+# %% code 117.
 import matplotlib.pyplot as plt
 from matplotlib import rc
 
@@ -226,7 +179,7 @@ ax.set_xlabel('시간(년)', fontsize=14)
 ax.set_ylabel('수온 편차 (°C)', fontsize=14)
 plt.show()
 
-# %% code 121.
+# %% code 118.
 import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(12.0, 4.0))
@@ -248,7 +201,7 @@ ax.fill_between(df_ONI['dt_date'], df_ONI['ONI'].astype(float), -1,
                 color='blue', alpha=0.7)
 ax.grid()
 ax.set_xlabel(r'시간(년)', fontsize = 14)
-ax.set_ylabel(r'수온 편차 ($\rm{^{\circ C}}$)', fontsize = 14)
+ax.set_ylabel(r'수온 편차 ($\rm{^{\circ}C}$)', fontsize = 14)
 
 ax.set_title('니뇨 3.4 지역의 해양 엘니뇨 지수(ONI)',
           y=1.05,  # 제목 아래 여백
@@ -259,7 +212,7 @@ fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0.1)
 
 plt.show()
 
-# %% code 122.
+# %% code 119.
 import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(12.0, 4.0))
@@ -267,7 +220,7 @@ fig, ax = plt.subplots(figsize=(12.0, 4.0))
 ax.plot(df_SOI['dt_date'], df_SOI['SOI'].astype(float), "k-", linewidth=0.5)
 
 ax.set_xlabel(r'시간(년)', fontsize = 16)
-ax.set_ylabel(r'기압 편차 ($\rm{hPa}$)', fontsize = 16)
+ax.set_ylabel('SOI (표준화, 단위 없음)', fontsize = 16)
 
 ax.set_xlim([df_SOI['dt_date'].min(), df_SOI['dt_date'].max()])
 ax.set_ylim([-6, 6])
@@ -283,7 +236,7 @@ ax.fill_between(df_SOI['dt_date'], df_SOI['SOI'].astype(float), 0,
                 where= df_SOI['SOI'].astype(float) < 0,
                 color='red', alpha=0.7)
 ax.grid()
-ax.set_title('다윈과 타히티의 기압 편차(SOI)',
+ax.set_title('남방진동지수(SOI)',
           y=1.05,  # 제목 아래 여백
           fontdict={'fontsize':18,'fontweight':'bold'})
 
@@ -295,7 +248,7 @@ fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0.1)
 
 plt.show()
 
-# %% code 123.
+# %% code 120.
 # 달마다 상태 표시: 1(엘니뇨 쪽), -1(라니냐 쪽), 0(중립)
 oni = df_ONI['ONI'].astype(float)
 state = pd.Series(np.select([oni >= 0.5, oni <= -0.5], [1, -1], 0), index=oni.index)
@@ -325,12 +278,12 @@ print()
 print("최근 사례 5개")
 print(events.tail(5).to_string(index=False))
 
-# %% code 124.
+# %% code 121.
 # 최댓값의 절댓값이 큰 순서로 상위 8개 사례
 top = events.sort_values("최댓값", key=abs, ascending=False).head(8)
 print(top.to_string(index=False))
 
-# %% code 125.
+# %% code 122.
 fig, ax = plt.subplots(figsize=(12.0, 4.0))
 ax.plot(df_ONI['dt_date'], oni, "k-", linewidth=0.7)
 

@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>IV-04. 태풍의 진로와 세기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/04-24/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-460">460</a> <a href="#code-461">461</a> <a href="#code-462">462</a> <a href="#code-463">463</a> <a href="#code-464">464</a> <a href="#code-465">465</a> <a href="#code-466">466</a> <a href="#code-467">467</a> <a href="#code-468">468</a> <a href="#code-469">469</a></p>
-<h2 id="code-460">code 460. <button class="copy">복사</button></h2><pre><code>import zipfile
+<p class="jump"><a href="#code-441">441</a> <a href="#code-442">442</a> <a href="#code-443">443</a> <a href="#code-444">444</a> <a href="#code-445">445</a> <a href="#code-446">446</a> <a href="#code-447">447</a> <a href="#code-448">448</a> <a href="#code-449">449</a> <a href="#code-450">450</a></p>
+<h2 id="code-441">code 441. <button class="copy">복사</button></h2><pre><code>import zipfile
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -28,7 +28,7 @@ if not txt_file.exists():
     with zipfile.ZipFile(zip_file) as z:
         z.extract(&quot;bst_all.txt&quot;, proj_dir)
 du.preview_text(txt_file, n=6)</code></pre>
-<h2 id="code-461">code 461. <button class="copy">복사</button></h2><pre><code>rows = []
+<h2 id="code-442">code 442. <button class="copy">복사</button></h2><pre><code>rows = []
 for line in open(txt_file, encoding=&quot;ascii&quot;, errors=&quot;ignore&quot;):
     if line.startswith(&quot;66666&quot;):
         intl = line[6:10].strip()          # 국제 번호(yynn), 열대 폭풍이 되지 못한 것은 0000
@@ -55,7 +55,7 @@ bt[&quot;wind_ms&quot;] = bt[&quot;wind_kt&quot;] * 0.514          # kt → m/s
 bt[&quot;year&quot;] = bt[&quot;time&quot;].dt.year
 print(f&quot;관측 기록 {len(bt):,}줄, 태풍 {bt[&#x27;sid&#x27;].nunique():,}개 ({bt[&#x27;year&#x27;].min()}~{bt[&#x27;year&#x27;].max()})&quot;)
 bt.head()</code></pre>
-<h2 id="code-462">code 462. <button class="copy">복사</button></h2><pre><code>this_year = pd.Timestamp.now().year
+<h2 id="code-443">code 443. <button class="copy">복사</button></h2><pre><code>this_year = pd.Timestamp.now().year
 count = bt.groupby(&quot;year&quot;)[&quot;sid&quot;].nunique()
 count = count[count.index &lt; this_year]
 
@@ -72,7 +72,7 @@ ax.legend()
 ax.grid(axis=&quot;y&quot;, alpha=0.3)
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_01&quot;))
 plt.show()</code></pre>
-<h2 id="code-463">code 463. <button class="copy">복사</button></h2><pre><code>ts = bt[bt[&quot;grade&quot;].isin([3, 4, 5, 9])]
+<h2 id="code-444">code 444. <button class="copy">복사</button></h2><pre><code>ts = bt[bt[&quot;grade&quot;].isin([3, 4, 5, 9])]
 genesis = ts.sort_values(&quot;time&quot;).groupby(&quot;sid&quot;).first()
 
 fig = plt.figure(figsize=(7.5, 2.9))
@@ -100,7 +100,7 @@ du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_02&
 plt.show()
 
 print(f&quot;위도 5° 미만에서 발생한 태풍: {(genesis[&#x27;lat&#x27;] &lt; 5).mean() * 100:.1f}%&quot;)</code></pre>
-<h2 id="code-464">code 464. <button class="copy">복사</button></h2><pre><code>recent = bt[bt[&quot;year&quot;] &gt;= 2000]
+<h2 id="code-445">code 445. <button class="copy">복사</button></h2><pre><code>recent = bt[bt[&quot;year&quot;] &gt;= 2000]
 gen_month = genesis[&quot;time&quot;].dt.month
 
 fig, axes = plt.subplots(1, 4, figsize=(7.5, 2.3),
@@ -118,7 +118,7 @@ for ax, month in zip(axes, [7, 8, 9, 10]):
 plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_03&quot;))
 plt.show()</code></pre>
-<h2 id="code-465">code 465. <button class="copy">복사</button></h2><pre><code>GRADE = {2: &quot;열대 저압부&quot;, 3: &quot;열대 폭풍&quot;, 4: &quot;강한 열대 폭풍&quot;, 5: &quot;태풍(TY)&quot;,
+<h2 id="code-446">code 446. <button class="copy">복사</button></h2><pre><code>GRADE = {2: &quot;열대 저압부&quot;, 3: &quot;열대 폭풍&quot;, 4: &quot;강한 열대 폭풍&quot;, 5: &quot;태풍(TY)&quot;,
          6: &quot;온대 저기압&quot;}
 h = bt[bt[&quot;sid&quot;] == &quot;2211_HINNAMNOR&quot;].copy()
 h[&quot;kst&quot;] = h[&quot;time&quot;] + pd.Timedelta(&quot;9h&quot;)
@@ -154,7 +154,7 @@ gl.xlabel_style = gl.ylabel_style = {&quot;size&quot;: 8}
 ax.set_title(&quot;태풍 힌남노(2022)의 진로와 중심 기압&quot;, fontsize=10)
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_04&quot;))
 plt.show()</code></pre>
-<h2 id="code-466">code 466. <button class="copy">복사</button></h2><pre><code>landfall = pd.Timestamp(&quot;2022-09-06 04:50&quot;)
+<h2 id="code-447">code 447. <button class="copy">복사</button></h2><pre><code>landfall = pd.Timestamp(&quot;2022-09-06 04:50&quot;)
 
 fig, ax = plt.subplots(2, 1, figsize=(7.5, 4.1), sharex=True)
 ax[0].plot(h[&quot;kst&quot;], h[&quot;pres&quot;], &quot;o-&quot;, color=&quot;purple&quot;, ms=3)
@@ -189,7 +189,7 @@ weak = mid.loc[mid[&quot;pres&quot;].idxmax()]
 strong = mid[mid[&quot;kst&quot;] &gt; weak[&quot;kst&quot;]].loc[lambda d: d[&quot;pres&quot;].idxmin()]
 print(f&quot;다시 발달: {weak[&#x27;kst&#x27;]:%m월 %d일 %H시} {weak[&#x27;pres&#x27;]} hPa → &quot;
       f&quot;{strong[&#x27;kst&#x27;]:%m월 %d일 %H시} {strong[&#x27;pres&#x27;]} hPa&quot;)</code></pre>
-<h2 id="code-467">code 467. <button class="copy">복사</button></h2><pre><code>sel = bt[(bt[&quot;year&quot;] &gt;= 1977) &amp; bt[&quot;grade&quot;].isin([3, 4, 5])].copy()
+<h2 id="code-448">code 448. <button class="copy">복사</button></h2><pre><code>sel = bt[(bt[&quot;year&quot;] &gt;= 1977) &amp; bt[&quot;grade&quot;].isin([3, 4, 5])].copy()
 bins = np.arange(5, 47, 2)
 sel[&quot;lat_bin&quot;] = pd.cut(sel[&quot;lat&quot;], bins)
 groups = [g[&quot;pres&quot;].values for _, g in sel.groupby(&quot;lat_bin&quot;, observed=False)]
@@ -205,7 +205,7 @@ ax.set_title(&quot;위도별 태풍 중심 기압 분포 (1977~, 위쪽일수록
 ax.grid(alpha=0.3)
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_06&quot;))
 plt.show()</code></pre>
-<h2 id="code-468">code 468. <button class="copy">복사</button></h2><pre><code># 힌남노의 이동 속도: 거제 상륙(6일 04:50 KST) 직전 6시간
+<h2 id="code-449">code 449. <button class="copy">복사</button></h2><pre><code># 힌남노의 이동 속도: 거제 상륙(6일 04:50 KST) 직전 6시간
 # 9월 5일 12시~18시(UTC) = 5일 21시~6일 3시(KST) 사이 이동 거리 / 시간
 a, b = h.set_index(&quot;time&quot;).loc[&quot;2022-09-05 12:00&quot;], h.set_index(&quot;time&quot;).loc[&quot;2022-09-05 18:00&quot;]
 dy = (b[&quot;lat&quot;] - a[&quot;lat&quot;]) * 111e3
@@ -244,7 +244,7 @@ ax.set_aspect(&quot;equal&quot;)
 ax.set_title(&quot;움직이는 태풍 모형의 바람 (파란 화살표: 이동 방향)&quot;, fontsize=10)
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_07&quot;))
 plt.show()</code></pre>
-<h2 id="code-469">code 469. <button class="copy">복사</button></h2><pre><code>cols = [&quot;date&quot;, &quot;hour&quot;, &quot;temp&quot;, &quot;dwpt&quot;, &quot;rhum&quot;, &quot;prcp&quot;, &quot;snow&quot;, &quot;wdir&quot;,
+<h2 id="code-450">code 450. <button class="copy">복사</button></h2><pre><code>cols = [&quot;date&quot;, &quot;hour&quot;, &quot;temp&quot;, &quot;dwpt&quot;, &quot;rhum&quot;, &quot;prcp&quot;, &quot;snow&quot;, &quot;wdir&quot;,
         &quot;wspd&quot;, &quot;wpgt&quot;, &quot;pres&quot;, &quot;tsun&quot;, &quot;coco&quot;]
 st_file = Path(proj_dir) / &quot;meteostat_47153.csv.gz&quot;
 if not st_file.exists():

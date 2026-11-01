@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>IV-07. 엘니뇨와 남방진동</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/04-07/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-112">112</a> <a href="#code-113">113</a> <a href="#code-114">114</a> <a href="#code-115">115</a> <a href="#code-116">116</a> <a href="#code-117">117</a> <a href="#code-118">118</a> <a href="#code-119">119</a> <a href="#code-120">120</a> <a href="#code-121">121</a> <a href="#code-122">122</a> <a href="#code-123">123</a> <a href="#code-124">124</a> <a href="#code-125">125</a></p>
-<h2 id="code-112">code 112. <button class="copy">복사</button></h2><pre><code>import cartopy.crs as ccrs
+<p class="jump"><a href="#code-109">109</a> <a href="#code-110">110</a> <a href="#code-111">111</a> <a href="#code-112">112</a> <a href="#code-113">113</a> <a href="#code-114">114</a> <a href="#code-115">115</a> <a href="#code-116">116</a> <a href="#code-117">117</a> <a href="#code-118">118</a> <a href="#code-119">119</a> <a href="#code-120">120</a> <a href="#code-121">121</a> <a href="#code-122">122</a></p>
+<h2 id="code-109">code 109. <button class="copy">복사</button></h2><pre><code>import cartopy.crs as ccrs
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 import matplotlib.ticker as mticker
 import matplotlib.pyplot as plt
@@ -54,6 +54,7 @@ ax2.scatter(lonTahiti, latTahiti, color=&#x27;red&#x27;, marker=&#x27;o&#x27;, t
 ax2.text(lonTahiti, latTahiti-5, &quot;Tahiti&quot;, color=&#x27;red&#x27;, fontsize=8, transform=ccrs.PlateCarree())
 
 # 3) 니뇨 영역 경계(꼭짓점 위도 · 경도, 서경은 음수)
+#    경위선을 따르는 사각형이므로 PlateCarree로 잇는다(Geodetic은 대원으로 이어 변이 휜다)
 latsNino1 = [0, -10, -10, 0, 0]
 lonsNino1 = [-90, -90, -80, -80, -90]
 latsNino3 = [5, -5, -5, 5, 5]
@@ -63,16 +64,16 @@ lonsNino34 = [-170, -170, -120, -120, -170]
 latsNino4 = [5, -5, -5, 5, 5]
 lonsNino4 = [-200, -200, -150, -150, -200]  # -200° = 160°E
 
-ax2.plot(lonsNino1, latsNino1, color=&#x27;black&#x27;, linewidth=0.75, transform=ccrs.Geodetic())
+ax2.plot(lonsNino1, latsNino1, color=&#x27;black&#x27;, linewidth=0.75, transform=ccrs.PlateCarree())
 ax2.text(lonsNino1[0], latsNino1[1]-4, &quot;NINO 1+2&quot;, color=&#x27;black&#x27;, fontsize=8, transform=ccrs.PlateCarree())
 
-ax2.plot(lonsNino3, latsNino3, color=&#x27;orange&#x27;, linewidth=0.75, transform=ccrs.Geodetic())
+ax2.plot(lonsNino3, latsNino3, color=&#x27;orange&#x27;, linewidth=0.75, transform=ccrs.PlateCarree())
 ax2.text((lonsNino3[0]+lonsNino3[2])/2, latsNino3[1]-4, &quot;NINO 3&quot;, color=&#x27;orange&#x27;, fontsize=8, transform=ccrs.PlateCarree())
 
-ax2.plot(lonsNino34, latsNino34, color=&#x27;purple&#x27;, linewidth=0.75, transform=ccrs.Geodetic())
+ax2.plot(lonsNino34, latsNino34, color=&#x27;purple&#x27;, linewidth=0.75, transform=ccrs.PlateCarree())
 ax2.text((lonsNino34[0]+lonsNino34[2])/2, latsNino34[0]+3, &quot;NINO 3.4&quot;, color=&#x27;purple&#x27;, fontsize=8, transform=ccrs.PlateCarree())
 
-ax2.plot(lonsNino4, latsNino4, color=&#x27;blue&#x27;, linewidth=0.75, transform=ccrs.Geodetic())
+ax2.plot(lonsNino4, latsNino4, color=&#x27;blue&#x27;, linewidth=0.75, transform=ccrs.PlateCarree())
 ax2.text((lonsNino4[0]+lonsNino4[2])/2, latsNino4[1]-3.5, &quot;NINO 4&quot;, color=&#x27;blue&#x27;, fontsize=8, transform=ccrs.PlateCarree())
 
 ax2.set_title(&quot;ENSO 관련 해역(니뇨 영역)&quot;, fontsize=14)
@@ -80,7 +81,7 @@ plt.tight_layout()
 
 plt.savefig(f&quot;{proj_dir}/ENSO_map.png&quot;, dpi=300, bbox_inches=&#x27;tight&#x27;)
 plt.show()</code></pre>
-<h2 id="code-113">code 113. <button class="copy">복사</button></h2><pre><code>import re
+<h2 id="code-110">code 110. <button class="copy">복사</button></h2><pre><code>import re
 import requests
 from pathlib import Path
 
@@ -102,58 +103,10 @@ print(&quot;SOI 주소:&quot;, url2)
 # 주기적으로 갱신되는 데이터라 늘 새로 받기(overwrite)
 du.download(url1, oni_path, overwrite=True)
 du.download(url2, soi_path, overwrite=True)</code></pre>
-<h2 id="code-114">code 114. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;txt&quot;)</code></pre>
-<h2 id="code-115">code 115. <button class="copy">복사</button></h2><pre><code>n_lines = 10  # 출력할 줄 수
-
-print(f&quot;파일 내용 출력 (처음 {n_lines}줄):&quot;)
-print(&quot;=&quot;*40)
-
-try:
-    with open(oni_path, encoding=&#x27;utf-8&#x27;) as f:
-        for i, line in enumerate(f):
-            if i &gt;= n_lines:
-                break
-            print(f&quot;{i+1:3d}: {line.rstrip()}&quot;)
-except UnicodeDecodeError:
-    # UTF-8로 못 읽으면 CP949로 다시 시도
-    try:
-        with open(oni_path, encoding=&#x27;cp949&#x27;) as f:
-            for i, line in enumerate(f):
-                if i &gt;= n_lines:
-                    break
-                print(f&quot;{i+1:3d}: {line.rstrip()}&quot;)
-    except Exception as e2:
-        print(f&quot;파일 읽기 실패 (UTF-8, CP949 모두 실패): {e2}&quot;)
-except Exception as e:
-    print(f&quot;파일 읽기 실패: {e}&quot;)
-
-print(&quot;=&quot;*60)</code></pre>
-<h2 id="code-116">code 116. <button class="copy">복사</button></h2><pre><code>n_lines = 10  # 출력할 줄 수
-
-print(f&quot;파일 내용 출력 (처음 {n_lines}줄):&quot;)
-print(&quot;=&quot;*40)
-
-try:
-    with open(soi_path, encoding=&#x27;utf-8&#x27;) as f:
-        for i, line in enumerate(f):
-            if i &gt;= n_lines:
-                break
-            print(f&quot;{i+1:3d}: {line.rstrip()}&quot;)
-except UnicodeDecodeError:
-    # UTF-8로 못 읽으면 CP949로 다시 시도
-    try:
-        with open(soi_path, encoding=&#x27;cp949&#x27;) as f:
-            for i, line in enumerate(f):
-                if i &gt;= n_lines:
-                    break
-                print(f&quot;{i+1:3d}: {line.rstrip()}&quot;)
-    except Exception as e2:
-        print(f&quot;파일 읽기 실패 (UTF-8, CP949 모두 실패): {e2}&quot;)
-except Exception as e:
-    print(f&quot;파일 읽기 실패: {e}&quot;)
-
-print(&quot;=&quot;*60)</code></pre>
-<h2 id="code-117">code 117. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+<h2 id="code-111">code 111. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;txt&quot;)</code></pre>
+<h2 id="code-112">code 112. <button class="copy">복사</button></h2><pre><code>du.preview_text(oni_path, n=10);  # ONI 파일 앞 10줄</code></pre>
+<h2 id="code-113">code 113. <button class="copy">복사</button></h2><pre><code>du.preview_text(soi_path, n=10);  # SOI 파일 앞 10줄</code></pre>
+<h2 id="code-114">code 114. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 import numpy as np
 
 # 공백으로 나뉜 표: SEAS(3개월 묶음), YR(연도), TOTAL(수온), ANOM(편차 = ONI)
@@ -170,7 +123,7 @@ df_ONI[&#x27;ONI&#x27;] = df_ONI[&#x27;ANOM&#x27;]
 df_ONI.index = df_ONI[&#x27;dt_date&#x27;]
 
 print(&quot;df_ONI : \n&quot;, df_ONI)</code></pre>
-<h2 id="code-118">code 118. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-115">code 115. <button class="copy">복사</button></h2><pre><code>import numpy as np
 
 arr = np.loadtxt(soi_path)
 print(&quot;arr.shape :&quot;, arr.shape)
@@ -202,7 +155,7 @@ while date1 &lt; EndDT:
 
 print(&quot;len(proc_dates): {}&quot;.format(len(proc_dates)))
 print(f&quot;proc_dates: {proc_dates}&quot;)</code></pre>
-<h2 id="code-119">code 119. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+<h2 id="code-116">code 116. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 
 # (날짜, SOI) 쌍으로 DataFrame 만들기
 df_SOI = pd.DataFrame(list(zip(proc_dates, arr2)), columns = [&quot;date&quot;, &quot;SOI&quot;])
@@ -210,7 +163,7 @@ df_SOI[&#x27;dt_date&#x27;] = pd.to_datetime(df_SOI[&#x27;date&#x27;])
 df_SOI.index = df_SOI[&#x27;dt_date&#x27;]
 df_SOI[&#x27;SOI&#x27;] = df_SOI[&#x27;SOI&#x27;].replace(-99.9, np.nan)  # -99.9는 결측값
 print(&quot;df_SOI :&quot;, df_SOI)</code></pre>
-<h2 id="code-120">code 120. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-117">code 117. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 from matplotlib import rc
 
 fig, ax = plt.subplots(figsize=(12.0, 4.0))
@@ -219,7 +172,7 @@ ax.set_title(&#x27;니뇨 3.4 지역의 해양 엘니뇨 지수(ONI)&#x27;, font
 ax.set_xlabel(&#x27;시간(년)&#x27;, fontsize=14)
 ax.set_ylabel(&#x27;수온 편차 (°C)&#x27;, fontsize=14)
 plt.show()</code></pre>
-<h2 id="code-121">code 121. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-118">code 118. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(12.0, 4.0))
 
@@ -240,7 +193,7 @@ ax.fill_between(df_ONI[&#x27;dt_date&#x27;], df_ONI[&#x27;ONI&#x27;].astype(floa
                 color=&#x27;blue&#x27;, alpha=0.7)
 ax.grid()
 ax.set_xlabel(r&#x27;시간(년)&#x27;, fontsize = 14)
-ax.set_ylabel(r&#x27;수온 편차 ($\rm{^{\circ C}}$)&#x27;, fontsize = 14)
+ax.set_ylabel(r&#x27;수온 편차 ($\rm{^{\circ}C}$)&#x27;, fontsize = 14)
 
 ax.set_title(&#x27;니뇨 3.4 지역의 해양 엘니뇨 지수(ONI)&#x27;,
           y=1.05,  # 제목 아래 여백
@@ -250,14 +203,14 @@ fig.tight_layout()
 fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0.1)
 
 plt.show()</code></pre>
-<h2 id="code-122">code 122. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-119">code 119. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(12.0, 4.0))
 
 ax.plot(df_SOI[&#x27;dt_date&#x27;], df_SOI[&#x27;SOI&#x27;].astype(float), &quot;k-&quot;, linewidth=0.5)
 
 ax.set_xlabel(r&#x27;시간(년)&#x27;, fontsize = 16)
-ax.set_ylabel(r&#x27;기압 편차 ($\rm{hPa}$)&#x27;, fontsize = 16)
+ax.set_ylabel(&#x27;SOI (표준화, 단위 없음)&#x27;, fontsize = 16)
 
 ax.set_xlim([df_SOI[&#x27;dt_date&#x27;].min(), df_SOI[&#x27;dt_date&#x27;].max()])
 ax.set_ylim([-6, 6])
@@ -273,7 +226,7 @@ ax.fill_between(df_SOI[&#x27;dt_date&#x27;], df_SOI[&#x27;SOI&#x27;].astype(floa
                 where= df_SOI[&#x27;SOI&#x27;].astype(float) &lt; 0,
                 color=&#x27;red&#x27;, alpha=0.7)
 ax.grid()
-ax.set_title(&#x27;다윈과 타히티의 기압 편차(SOI)&#x27;,
+ax.set_title(&#x27;남방진동지수(SOI)&#x27;,
           y=1.05,  # 제목 아래 여백
           fontdict={&#x27;fontsize&#x27;:18,&#x27;fontweight&#x27;:&#x27;bold&#x27;})
 
@@ -284,7 +237,7 @@ fig.tight_layout()
 fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0.1)
 
 plt.show()</code></pre>
-<h2 id="code-123">code 123. <button class="copy">복사</button></h2><pre><code># 달마다 상태 표시: 1(엘니뇨 쪽), -1(라니냐 쪽), 0(중립)
+<h2 id="code-120">code 120. <button class="copy">복사</button></h2><pre><code># 달마다 상태 표시: 1(엘니뇨 쪽), -1(라니냐 쪽), 0(중립)
 oni = df_ONI[&#x27;ONI&#x27;].astype(float)
 state = pd.Series(np.select([oni &gt;= 0.5, oni &lt;= -0.5], [1, -1], 0), index=oni.index)
 
@@ -312,10 +265,10 @@ print(events.groupby([&quot;구분&quot;, &quot;강도&quot;], observed=False).s
 print()
 print(&quot;최근 사례 5개&quot;)
 print(events.tail(5).to_string(index=False))</code></pre>
-<h2 id="code-124">code 124. <button class="copy">복사</button></h2><pre><code># 최댓값의 절댓값이 큰 순서로 상위 8개 사례
+<h2 id="code-121">code 121. <button class="copy">복사</button></h2><pre><code># 최댓값의 절댓값이 큰 순서로 상위 8개 사례
 top = events.sort_values(&quot;최댓값&quot;, key=abs, ascending=False).head(8)
 print(top.to_string(index=False))</code></pre>
-<h2 id="code-125">code 125. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(12.0, 4.0))
+<h2 id="code-122">code 122. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(12.0, 4.0))
 ax.plot(df_ONI[&#x27;dt_date&#x27;], oni, &quot;k-&quot;, linewidth=0.7)
 
 # 사례 기간마다 색 띠(끝 달은 그달 말일까지)

@@ -54,14 +54,22 @@ def check_notebook(path):
             "오류 셀": len(errors), "실행 안 한 셀": not_run,
             "오류 종류": ", ".join(sorted(set(errors)))}
 
-check_notebook(sorted(Path.cwd().glob("*.ipynb"))[0])   # 폴더의 첫 노트북으로 시험
+nb_paths = sorted(Path.cwd().glob("*.ipynb"))      # 지금 폴더의 노트북 목록
+if nb_paths:
+    display(check_notebook(nb_paths[0]))           # 첫 노트북으로 시험
+else:
+    print("이 폴더에는 노트북 파일(.ipynb)이 없습니다.")
 
 # %% code 18.
 import pandas as pd
 
 folder = Path.cwd()                                  # 점검할 폴더(지금 노트북이 있는 곳)
-report = pd.DataFrame([check_notebook(p) for p in sorted(folder.glob("*.ipynb"))])
-report = report.sort_values(["오류 셀", "실행 안 한 셀"], ascending=False,
-                            ignore_index=True)
-display(report)
-print(f"오류가 남은 노트북: {(report['오류 셀'] > 0).sum()}개")
+nb_paths = sorted(folder.glob("*.ipynb"))
+if nb_paths:
+    report = pd.DataFrame([check_notebook(p) for p in nb_paths])
+    report = report.sort_values(["오류 셀", "실행 안 한 셀"], ascending=False,
+                                ignore_index=True)
+    display(report)
+    print(f"오류가 남은 노트북: {(report['오류 셀'] > 0).sum()}개")
+else:
+    print(f"{folder.name} 폴더에는 노트북 파일(.ipynb)이 없습니다.")

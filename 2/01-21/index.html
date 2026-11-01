@@ -96,7 +96,7 @@ print()
 for mod in [&quot;numpy&quot;, &quot;pandas&quot;, &quot;sklearn&quot;, &quot;없는_패키지&quot;]:
     found = importlib.util.find_spec(mod) is not None
     print(f&quot;{mod:12} {&#x27;설치됨&#x27; if found else &#x27;없음&#x27;}&quot;)
-print(&quot;\n지금 쓰는 파이썬:&quot;, Path(sys.executable).parent.name, &quot;환경&quot;)</code></pre>
+print(&quot;\n지금 쓰는 파이썬 환경:&quot;, Path(sys.prefix).name)   # 가상환경 폴더 이름</code></pre>
 <h2 id="code-8">code 8. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 
 df = pd.DataFrame({

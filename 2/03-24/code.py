@@ -1,20 +1,20 @@
 # 지구과학 데이터 사이언스 2 | III-04. FITS 파일 다루기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 90.
+# %% code 91.
 # 파일 ID와 저장 경로를 리스트로 정의
 files = [
-    ('1YZqev797sh5SyJIXzdwQBJ34-9w91Rsm', 'm42-001L.fit'),
-    ("1qJQdbmdeHg23sPdLKRGfPq93Sfo1HT_3",
+    ('1V7cWf_scSRdDclb-ciz5CU6dajDIEUyk', 'm42-001L.fit'),
+    ("1USKkCup8BTHmBVyg8iC4od1gV19v2MEg",
      "46P-WIRTANEN_LIGHT_R_2018-12-13-17-46-15_"
      "60sec_FSQ106ED-x73_QSI683ws_-30c_2bin.fit"),
-    ("1mCX_QfgbyskObkF9I_IDRk2oYWHOQjxs",
+    ("1eRogyBdYziV1oO6PV_ZGUlCvf3VRGnlS",
      "IC434_Light_H_2019-10-08-09-38-54_"
      "900sec_GSON300_QSI683ws_-15C_1bin.fit"),
-    ("1h15EMnhYb02KNhLkuqyUdR00fZV4xf3C",
+    ("1seA_sztIITefVCJcfNmCW8MLKDjL8HhH",
      "M13_Light_L_2021-06-04-13-10-16_090sec_"
      "TEC140x75_STL-11000M_-19C_1bin.fit"),
-    ("1NhaUjTvlXLFLIAmHXZyD7jt5IcLbMySU",
+    ("1PId7ZHtPABbMzeLOxNczgUN4kDEvI_xJ",
      "241GERMANIA_LIGHT_R_2023-11-07-18-38-15_"
      "150sec_GSON300_STF-8300M_-19c_1bin.fit")
 ]
@@ -24,11 +24,11 @@ for file_id, output_path in files:
     du.download(f"https://docs.google.com/uc?export=download&id={file_id}",
                 proj_dir / output_path)
 
-# %% code 91.
+# %% code 92.
 fpaths = du.list_files(proj_dir, "fit*")
 print(f"fpaths[0]: {fpaths[0]}")
 
-# %% code 92.
+# %% code 93.
 from pathlib import Path
 from astropy.io import fits
 
@@ -42,14 +42,13 @@ print("hdul :", hdul)
 print("len(hdul) :", len(hdul))
 print("type(hdul[0]) :", type(hdul[0]))
 
-# %% code 93.
+# %% code 94.
 print("type(hdul[0].header) :", type(hdul[0].header))
 print("hdul[0].header :", f"헤더 카드 {len(hdul[0].header)}개")
 
 print("hdul[0].header['DATE-OBS'] :", hdul[0].header['DATE-OBS'])
 print("type(hdul[0].header['DATE-OBS']) :", type(hdul[0].header['DATE-OBS']))
 
-import astropy.units as u
 print("type(hdul[0].header['OBJCTDEC'])", type(hdul[0].header['OBJCTDEC']))
 print("hdul[0].header['OBJCTDEC']", hdul[0].header['OBJCTDEC'])
 
@@ -58,7 +57,7 @@ print("hdul[0].data.dtype :", hdul[0].data.dtype)
 print("hdul[0].data.shape :", hdul[0].data.shape)
 print("hdul[0].data :", hdul[0].data)
 
-# %% code 94.
+# %% code 95.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -79,7 +78,7 @@ fig.colorbar(im2, ax=axes[1], fraction=0.035, pad=0.04)
 plt.tight_layout()
 plt.show()
 
-# %% code 95.
+# %% code 96.
 from astropy.visualization import (MinMaxInterval, SqrtStretch, LogStretch,
                                    ImageNormalize)
 
@@ -108,13 +107,13 @@ fig.colorbar(im1, ax=axs[1], fraction=0.035, pad=0.04)
 plt.tight_layout()
 plt.show()
 
-# %% code 96.
+# %% code 97.
 from warnings import warn
 from astropy.visualization import (
     ImageNormalize, LinearStretch, ZScaleInterval, simple_norm,
 )
 
-# %% code 97.
+# %% code 98.
 def znorm(image, stretch=LinearStretch(), **kwargs):
     """
     이미지에 ZScale 간격과 스트레칭을 적용한 정규화 객체를 생성합니다.
@@ -136,7 +135,7 @@ def znorm(image, stretch=LinearStretch(), **kwargs):
     return ImageNormalize(image, interval=ZScaleInterval(**kwargs),
                           stretch=stretch)
 
-# %% code 98.
+# %% code 99.
 def zimshow(
     ax,
     image,
@@ -177,7 +176,7 @@ def zimshow(
     )
     return im
 
-# %% code 99.
+# %% code 100.
 def norm_imshow(
     ax,
     data,
@@ -258,27 +257,26 @@ def norm_imshow(
         im = ax.imshow(data, origin=origin, vmin=vmin, vmax=vmax, **kwargs)
     else:
  # simple_norm을 사용한 정규화 적용
-        im = ax.imshow(
-            data,
-            origin=origin,
-            norm=simple_norm(
-                data=data,
-                stretch=stretch,          # 스트레칭 방법
-                power=power,              # power 스트레칭 지수
-                asinh_a=asinh_a,          # asinh 스트레칭 매개변수
-                min_cut=min_cut,          # 최소 절단값
-                max_cut=max_cut,          # 최대 절단값
-                min_percent=min_percent,  # 최소 백분위수
-                max_percent=max_percent,  # 최대 백분위수
-                percent=percent,          # 대칭 백분위수
-                clip=clip,                # 클리핑 여부
-                log_a=log_a,              # 로그 스트레칭 매개변수
-                invalid=invalid           # 유효하지 않은 값 처리
-            ),
-            **kwargs)
+        kw = dict(
+            data=data,
+            stretch=stretch,          # 스트레칭 방법
+            power=power,              # power 스트레칭 지수
+            asinh_a=asinh_a,          # asinh 스트레칭 매개변수
+            min_percent=min_percent,  # 최소 백분위수
+            max_percent=max_percent,  # 최대 백분위수
+            percent=percent,          # 대칭 백분위수
+            clip=clip,                # 클리핑 여부
+            log_a=log_a,              # 로그 스트레칭 매개변수
+            invalid=invalid           # 유효하지 않은 값 처리
+        )
+        try:   # astropy 6.1부터 최소·최대 절단값의 인자 이름이 vmin · vmax
+            norm = simple_norm(vmin=min_cut, vmax=max_cut, **kw)
+        except TypeError:   # 옛 판 astropy는 min_cut · max_cut
+            norm = simple_norm(min_cut=min_cut, max_cut=max_cut, **kw)
+        im = ax.imshow(data, origin=origin, norm=norm, **kwargs)
     return im
 
-# %% code 100.
+# %% code 101.
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 2.5),
                        sharex=False, sharey=False, gridspec_kw=None)
 
@@ -299,7 +297,7 @@ fig.colorbar(im1, ax = axs[1], fraction=0.035, pad=0.04)
 
 plt.tight_layout()
 
-# %% code 101.
+# %% code 102.
 print("fpaths[2]", (fpaths[2]))
 hdul2 = fits.open(str(fpaths[2]))
 
@@ -317,13 +315,13 @@ fig.colorbar(im0, ax = axs[0], fraction=0.031, pad=0.04)
 fig.colorbar(im1, ax = axs[1], fraction=0.031, pad=0.04)
 plt.tight_layout()
 
-# %% code 102.
+# %% code 103.
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.nddata import Cutout2D
 import textwrap
 
-hdul =  fits.open(str(fpaths[0]), unit="adu")
+hdul = fits.open(str(fpaths[0]))
 
 fig_set = plt.figure(figsize=(7.5, 3.8))
 
@@ -390,13 +388,13 @@ plt.colorbar(im31, ax=ax31, fraction=0.0455, pad=0.04)
 plt.tight_layout()
 plt.show()
 
-# %% code 103.
+# %% code 104.
 import matplotlib.patches as patches
 from astropy.nddata import Cutout2D
 import textwrap
 
 def plot_image_with_cutouts(fpath, location, cutsizes=101):
-    hdul = fits.open(str(fpath), unit="adu")
+    hdul = fits.open(str(fpath))
     data = hdul[0].data
 
     fig_set = plt.figure(figsize=(7.5, 3.8))
@@ -443,11 +441,11 @@ def plot_image_with_cutouts(fpath, location, cutsizes=101):
 # 함수 사용 예
 # plot_image_with_cutouts('path_to_your_fits_file.fits', location)
 
-# %% code 104.
+# %% code 105.
 # 함수 사용 예
 plot_image_with_cutouts(fpaths[0], 500)
 
-# %% code 105.
+# %% code 106.
 from astropy.modeling.functional_models import Moffat1D, Gaussian1D
 from scipy.special import gamma as G
 import numpy as np
@@ -494,13 +492,13 @@ ax1.legend(*ax2.get_legend_handles_labels(), fontsize=8, loc='upper right')   # 
 plt.tight_layout()
 plt.show()
 
-# %% code 106.
+# %% code 107.
 # 함수 사용 예
 plot_image_with_cutouts(fpaths[0], 700)
 
-# %% code 107.
+# %% code 108.
 import matplotlib.pyplot as plt
-hdul = fits.open(str(fpaths[0]), unit="adu")
+hdul = fits.open(str(fpaths[0]))
 data = hdul[0].data
 
 row_index = 910  # 특정 행 인덱스
@@ -515,19 +513,20 @@ plt.grid(True, which='both')  # 그리드 추가
 plt.minorticks_on()           # 마이너 틱 추가
 plt.show()
 
-# %% code 108.
+# %% code 109.
 import matplotlib.pyplot as plt
 
 def plot_row_pixels(fpath, row_index, col_center, width):
   """
-  FITS 파일에서 특정 행의 픽셀 값을 추출하여 가로 너비를 지정하여 세로축으로 plot합니다.
+  FITS 파일에서 한 행의 화소값을 꺼내, 지정한 열을 가운데 두고 앞뒤 width 화소만 그립니다.
 
   Args:
     fpath: FITS 파일 경로
-    row_number: 추출할 행 번호
-    width: 그래프 가로 길이
+    row_index: 꺼낼 행 번호
+    col_center: 가운데에 둘 열 번호
+    width: 가운데 열에서 양쪽으로 잘라 낼 화소 수
   """
-  hdul = fits.open(str(fpath), unit="adu")
+  hdul = fits.open(str(fpath))
   data = hdul[0].data
   row_data = data[row_index, col_center-width:col_center+width]
 
@@ -553,19 +552,21 @@ width = 50        # 가로 픽셀 너비
 
 plot_row_pixels(fpaths[0], row_number, col_center, width)
 
-# %% code 109.
-def plot_row_pixels_fwhm(fpath, row_number, conter, width):
+# %% code 110.
+def plot_row_pixels_fwhm(fpath, row_number, col_center, width):
     """
-    FITS 파일에서 특정 행의 픽셀 값을 추출하여 가로 너비를 지정하여 세로축으로 plot합니다.
+    FITS 파일에서 한 행의 화소값을 꺼내 앞뒤 width 화소만 그리고,
+    화소값 0을 기준으로 한 최댓값의 절반에서 FWHM(화소)을 재어 함께 표시합니다.
 
     Args:
     fpath: FITS 파일 경로
-    row_number: 추출할 행 번호
-    width: 그래프 가로 길이
+    row_number: 꺼낼 행 번호
+    col_center: 가운데에 둘 열 번호
+    width: 가운데 열에서 양쪽으로 잘라 낼 화소 수
     """
-    hdul = fits.open(str(fpath), unit="adu")
+    hdul = fits.open(str(fpath))
     data = hdul[0].data
-    row_data = data[row_number, conter-width:conter+width]
+    row_data = data[row_number, col_center-width:col_center+width]
 
     plt.figure(figsize=(8, 4.0))  # 가로 길이를 길게 설정
     plt.plot(row_data)
@@ -598,7 +599,7 @@ def plot_row_pixels_fwhm(fpath, row_number, conter, width):
     plt.ylim(0, peak_value*1.1)
     plt.xlabel("Column Number")
     plt.ylabel("Pixel Value")
-    plt.title(f"Pixel Values of Row {row_number}, center pixel {conter}\n {fpath.name}",
+    plt.title(f"Pixel Values of Row {row_number}, center pixel {col_center}\n {fpath.name}",
               fontsize = 10)
     plt.grid(True)  # 그리드 추가
 
@@ -611,21 +612,23 @@ def plot_row_pixels_fwhm(fpath, row_number, conter, width):
 
 plot_row_pixels_fwhm(fpaths[0], row_number, col_center, width)
 
-# %% code 110.
+# %% code 111.
 import matplotlib.pyplot as plt
 
-def plot_row_pixels_fwhm_from_background(fpath, row_number, conter, width):
+def plot_row_pixels_fwhm_from_background(fpath, row_number, col_center, width):
     """
-    FITS 파일에서 특정 행의 픽셀 값을 추출하여 가로 너비를 지정하여 세로축으로 plot합니다.
+    FITS 파일에서 한 행의 화소값을 꺼내 앞뒤 width 화소만 그리고,
+    하늘 배경(구간의 중앙값)을 기준으로 한 최댓값의 절반에서 FWHM(화소)을 재어 함께 표시합니다.
 
     Args:
     fpath: FITS 파일 경로
-    row_number: 추출할 행 번호
-    width: 그래프 가로 길이
+    row_number: 꺼낼 행 번호
+    col_center: 가운데에 둘 열 번호
+    width: 가운데 열에서 양쪽으로 잘라 낼 화소 수
     """
-    hdul = fits.open(str(fpath), unit="adu")
+    hdul = fits.open(str(fpath))
     data = hdul[0].data
-    row_data = data[row_number, conter-width:conter+width]
+    row_data = data[row_number, col_center-width:col_center+width]
 
     plt.figure(figsize=(8, 4.0))  # 가로 길이를 길게 설정
     plt.plot(row_data)
@@ -660,7 +663,7 @@ def plot_row_pixels_fwhm_from_background(fpath, row_number, conter, width):
     plt.ylim(0, peak_value*1.1)
     plt.xlabel("Column Number")
     plt.ylabel("Pixel Value")
-    plt.title(f"Pixel Values of Row {row_number}, center pixel {conter}\n {fpath.name}",
+    plt.title(f"Pixel Values of Row {row_number}, center pixel {col_center}\n {fpath.name}",
               fontsize = 10)
     plt.grid(True)  # 그리드 추가
 
@@ -673,13 +676,13 @@ def plot_row_pixels_fwhm_from_background(fpath, row_number, conter, width):
 
 plot_row_pixels_fwhm_from_background(fpaths[0], row_number, col_center, width)
 
-# %% code 111.
+# %% code 112.
 fpath = Path(fpaths[0])                     # 아래 그림 주석의 파일 이름
-hdul =  fits.open(str(fpath), unit="adu")
+hdul = fits.open(str(fpath))
 
 FWHM = 5
 
-# %% code 112.
+# %% code 113.
 from photutils.segmentation import detect_threshold
 thresh_snr = detect_threshold(data=hdul[0].data, n_sigma=3)   # 배경 + 3σ (절대 화소값)
 print('type(thresh_snr) :', type(thresh_snr))
@@ -687,8 +690,8 @@ print('thresh_snr.shape :', thresh_snr.shape)
 print('detect_threshold', thresh_snr)
 thresh_snr = thresh_snr[0][0]
 
-# %% code 113.
-from astropy.stats import sigma_clip, sigma_clipped_stats
+# %% code 114.
+from astropy.stats import sigma_clipped_stats
 
 avg, med, std = sigma_clipped_stats(hdul[0].data)  # 기본값은 3σ, 5회 반복
 print("avg, med, std :", avg, med, std)
@@ -697,43 +700,45 @@ thresh = 5.*std                                     # 배경 위 5σ
 print("thresh (배경 위 5σ) :", thresh)
 print("detect_threshold − 배경 (배경 위 3σ) :", thresh_snr - med)
 
-# %% code 114.
+# %% code 115.
 from photutils.detection import DAOStarFinder
 
 DAOfind = DAOStarFinder(
                         fwhm = FWHM,
                         threshold = thresh,
                         exclude_border = True,   # 가장자리 거짓 검출 제외
- # sharplo = 0.2, sharphi = 1.0, # default values: sharplo=0.2, sharphi=1.0,
- # roundlo = -1.0, roundhi = 1.0, # default values -1 and +1
- # sigma_radius = 1.5, # default values 1.5
- # ratio = 1.0, # 1.0: circular gaussian
+ # sharpness_range = (0.2, 1.0),   # 기본값
+ # roundness_range = (-1.0, 1.0),  # 기본값
+ # sigma_radius = 1.5,             # 기본값
+ # ratio = 1.0,                    # 1.0: 원형 가우스
                         )
 DAOfound = DAOfind(data_sub)   # 배경을 뺀 영상
+if "xcentroid" in DAOfound.colnames:   # photutils 3.0 전 판이면 열 이름을 새 판에 맞춤
+    DAOfound.rename_columns(["xcentroid", "ycentroid"], ["x_centroid", "y_centroid"])
 print("len(DAOfound) :",len(DAOfound))
 DAOfound
 
-# %% code 115.
+# %% code 116.
 print("type(DAOfound) :", type(DAOfound))
 print("DAOfound :", DAOfound)
 
-# %% code 116.
+# %% code 117.
 print(f"DAOfound.colnames : {DAOfound.colnames}")
 print(f"(type(DAOfound['x_centroid']) :", type(DAOfound['x_centroid']))
 print(f"DAOfound['x_centroid'] : {DAOfound['x_centroid']}")
 
-# %% code 117.
+# %% code 118.
 df = DAOfound.to_pandas()
 print(type(df))
 df
 
-# %% code 118.
+# %% code 119.
 pos = np.transpose((DAOfound['x_centroid'], DAOfound['y_centroid']))
 print(f"len(pos): {len(pos)}")
 print(f"pos[0]: {pos[0]}")
 pos  # DAOfound로 찾아낸 별의 픽셀 좌표
 
-# %% code 119.
+# %% code 120.
 from photutils.aperture import CircularAperture as CAp
 
 ap = CAp(pos, r=FWHM*4)
@@ -769,22 +774,22 @@ plt.colorbar(im1, ax=axs, fraction=0.0455, pad=0.04)
 plt.tight_layout()
 plt.show()
 
-# %% code 120.
+# %% code 121.
 DAOfound.sort(['flux'], reverse=True)
 DAOfound
 
-# %% code 121.
+# %% code 122.
 from astropy.nddata import Cutout2D
 
 def plot_star_cutout(data, daofound, idx, cutsize=51):
   """
-  Creates a cutout image around a detected star.
+  검출한 별 하나를 가운데 두고 영상을 잘라 그립니다.
 
   Args:
-      data: The 2D astronomical image data.
-      daofound: A dictionary containing star detection results from DAOStarFinder.
-      idx: The index of the star to plot.
-      cutsize: The size (width and height) of the cutout image (default: 51 pixels).
+      data: 2차원 천문 영상 데이터
+      daofound: DAOStarFinder가 돌려준 별 목록(표)
+      idx: 그릴 별의 행 번호
+      cutsize: 잘라 낼 정사각형의 한 변(기본값 51화소)
   """
 
  # 별의 중심 좌표 추출
@@ -811,7 +816,7 @@ def plot_star_cutout(data, daofound, idx, cutsize=51):
 # 사용 예(hdul과 DAOfound가 준비되어 있다고 가정)
 plot_star_cutout(hdul[0].data, DAOfound, 0)  # 첫 번째 별(idx=0)의 잘라낸 이미지 그리기
 
-# %% code 122.
+# %% code 123.
 import matplotlib.gridspec as gridspec
 
 def plot_star_cutouts(data, daofound, star_indices, cutsize=51):
@@ -822,7 +827,7 @@ def plot_star_cutouts(data, daofound, star_indices, cutsize=51):
         data: 2차원 천문 이미지 데이터
         daofound: DAOStarFinder를 통해 얻은 별 검출 결과
         star_indices: 출력할 별들의 인덱스 리스트 (최대 4개)
-        cutsize: cutout 이미지의 크기 (default: 51 pixels)
+        cutsize: 잘라 낼 정사각형의 한 변(기본값 51화소)
     """
     plt.figure(figsize=(7.5, 7.5))
  # 출력할 별의 개수 제한 (최대 4개)
@@ -855,21 +860,20 @@ def plot_star_cutouts(data, daofound, star_indices, cutsize=51):
 # 예시 사용법 (hdul과 DAOfound가 있다고 가정)
 plot_star_cutouts(hdul[0].data, DAOfound, [0, 100, 200, 250])  # 0 · 100 · 200 · 250번 별
 
-# %% code 123.
+# %% code 124.
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import pylab as pl
 from astropy.nddata import Cutout2D
 
 def plot_3D_star_cutout(data, daofound, idx, cutsize=31):
     """
-    Creates a cutout image around a detected star.
+    검출한 별 하나를 가운데 두고 잘라, 화소값을 높이로 삼은 3차원 곡면으로 그립니다.
 
     Args:
-    data: The 2D astronomical image data.
-    daofound: A dictionary containing star detection results from DAOStarFinder.
-    idx: The index of the star to plot.
-    cutsize: The size (width and height) of the cutout image (default: 51 pixels).
+    data: 2차원 천문 영상 데이터
+    daofound: DAOStarFinder가 돌려준 별 목록(표)
+    idx: 그릴 별의 행 번호
+    cutsize: 잘라 낼 정사각형의 한 변(기본값 31화소)
     """
 
  # 별의 중심 좌표 추출
@@ -887,7 +891,7 @@ def plot_3D_star_cutout(data, daofound, idx, cutsize=31):
 
  # Surface plot 생성
     im = ax.plot_surface(x, y, cut_hdu.data, rstride=1, cstride=1, linewidth=0, antialiased=False,
-                cmap=pl.cm.jet,)
+                cmap="viridis")
 
     ax.set_ylabel('pixels', fontsize=9)
     ax.tick_params(labelsize=8)
@@ -901,20 +905,20 @@ def plot_3D_star_cutout(data, daofound, idx, cutsize=31):
 # 사용 예(hdul과 DAOfound가 준비되어 있다고 가정)
 plot_3D_star_cutout(hdul[0].data, DAOfound, 0)  # 첫 번째 별(idx=0)의 잘라낸 이미지 그리기
 
-# %% code 124.
+# %% code 125.
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.nddata import Cutout2D
 
-def plot_3D_star_cutout(data, daofound, star_indices, cutsize=31):
+def plot_3D_star_cutouts(data, daofound, star_indices, cutsize=31):
     """
-    Creates a cutout image around a detected star.
+    여러 별(최대 4개)을 2×2 칸에 3차원 곡면으로 그립니다. 세로축 범위는 0~65,535로 같게 맞춥니다.
 
     Args:
-    data: The 2D astronomical image data.
-    daofound: A dictionary containing star detection results from DAOStarFinder.
-    idx: The index of the star to plot.
-    cutsize: The size (width and height) of the cutout image (default: 51 pixels).
+    data: 2차원 천문 영상 데이터
+    daofound: DAOStarFinder가 돌려준 별 목록(표)
+    star_indices: 그릴 별의 행 번호 목록(최대 4개)
+    cutsize: 잘라 낼 정사각형의 한 변(기본값 31화소)
     """
 
     fig, axes = plt.subplots(2, 2, figsize=(7.5, 7.5),
@@ -931,12 +935,9 @@ def plot_3D_star_cutout(data, daofound, star_indices, cutsize=31):
                            size=(cutsize, cutsize))
         x, y = np.mgrid[:cut_hdu.data.shape[0],:cut_hdu.data.shape[1]]
 
- # Surface plot 생성
-        axes[i].plot_surface(x, y, cut_hdu.data, rstride=1, cstride=1, linewidth=0, antialiased=False,
-                        cmap=pl.cm.jet)
-
+ # 곡면 그리기
         im = axes[i].plot_surface(x, y, cut_hdu.data, rstride=1, cstride=1, linewidth=0, antialiased=False,
-                    cmap=pl.cm.jet,)
+                                  cmap="viridis")
         axes[i].set_zlim(0, 65535)
         axes[i].set_ylabel('pixels')
         axes[i].grid(ls=':')
@@ -947,15 +948,12 @@ def plot_3D_star_cutout(data, daofound, star_indices, cutsize=31):
     plt.show()
 
 # 사용 예(hdul과 DAOfound가 준비되어 있다고 가정)
-plot_3D_star_cutout(hdul[0].data, DAOfound, [0, 1, 2, 3])
+plot_3D_star_cutouts(hdul[0].data, DAOfound, [0, 1, 2, 3])
 
-# %% code 125.
+# %% code 126.
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import pylab as pl
 from astropy.nddata import Cutout2D
-from astropy.io import fits
 
 def peak_label(peak):
     """원래 화소값(배경 포함)의 최댓값으로 노출 상태를 판정"""
@@ -985,7 +983,7 @@ def plot_3d_surfaces(data, DAOfound, sky, cutsize=31):
         )
 
         x, y = np.mgrid[:cut_hdu.data.shape[0], :cut_hdu.data.shape[1]]
-        im = ax.plot_surface(x, y, cut_hdu.data, cmap=pl.cm.jet,
+        im = ax.plot_surface(x, y, cut_hdu.data, cmap="viridis",
                              rstride=1, cstride=1, linewidth=0., antialiased=False)
 
         ax.set_xlabel('pixels')
@@ -999,20 +997,20 @@ def plot_3d_surfaces(data, DAOfound, sky, cutsize=31):
 # 함수 사용 예
 plot_3d_surfaces(hdul[0].data, DAOfound, sky=med)
 
-# %% code 126.
+# %% code 127.
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.nddata import Cutout2D
 
 def plot_star_profile_fwhm(data, daofound, idx, cutsize=31):
     """
-    Creates a cutout image around a detected star and plots horizontal and vertical profiles with FWHM.
+    검출한 별 하나를 잘라 가로 · 세로 방향의 평균 밝기 분포를 그리고, 배경을 기준으로 각 방향의 FWHM을 표시합니다.
 
     Args:
-    data: The 2D astronomical image data.
-    daofound: A dictionary containing star detection results from DAOStarFinder.
-    idx: The index of the star to plot.
-    cutsize: The size (width and height) of the cutout image (default: 31 pixels).
+    data: 2차원 천문 영상 데이터
+    daofound: DAOStarFinder가 돌려준 별 목록(표)
+    idx: 그릴 별의 행 번호
+    cutsize: 잘라 낼 정사각형의 한 변(기본값 31화소)
     """
 
  # 별의 중심 좌표 추출

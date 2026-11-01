@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | IV-03. 종관일기도 그리기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 451.
+# %% code 432.
 import warnings
 warnings.filterwarnings("ignore")           # 데이터 서버가 보내는 참고용 경고 숨기기
 
@@ -23,7 +23,7 @@ print("데이터 파일 :", file_name)
 print("제공 변수 :", len(ncss.variables), "개")
 print("사용 시각 :", valid_time, "UTC  =", valid_time + timedelta(hours=9), "KST")
 
-# %% code 452.
+# %% code 433.
 import numpy as np
 
 # 관심 영역(동아시아)과 연직면
@@ -56,7 +56,7 @@ lat = to_array(data_mslp, "latitude")
 lon = to_array(data_mslp, "longitude")
 print(f"격자 크기 : 위도 {lat.size}개 x 경도 {lon.size}개")
 
-# %% code 453.
+# %% code 434.
 from metpy.units import units
 import metpy.calc as mpcalc
 
@@ -81,7 +81,7 @@ print(f"500 hPa 고도: {z500.min():7.0f} ~ {z500.max():7.0f} m")
 iy, ix = np.abs(lat - 37.57).argmin(), np.abs(lon - 126.97).argmin()
 print(f"서울 상공 850 hPa 기온: {t850[iy, ix]:.1f} °C")
 
-# %% code 454.
+# %% code 435.
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
@@ -103,7 +103,7 @@ def make_map(ax):
 
 print("지도 바탕 함수 준비 완료")
 
-# %% code 455.
+# %% code 436.
 fig = plt.figure(figsize=(5.6, 4.9))
 ax = make_map(plt.axes(projection=PROJ))
 
@@ -128,7 +128,7 @@ ax.set_title(f"지상일기도  해면기압(hPa) + 850 hPa 기온\n"
 du.save_figure(fig, os.path.join(proj_dir, "surface_chart"))
 plt.show()
 
-# %% code 456.
+# %% code 437.
 from scipy.ndimage import maximum_filter, minimum_filter
 
 def find_extrema(field, lon, lat, kind="min", size=25, count=4,
@@ -158,7 +158,7 @@ print("고기압 중심 (경도, 위도, hPa)")
 for x, y, v in zip(high_lon, high_lat, high_val):
     print(f"  H  {x:6.1f}E {y:5.1f}N  {v:7.1f}")
 
-# %% code 457.
+# %% code 438.
 fig = plt.figure(figsize=(5.6, 4.9))
 ax = make_map(plt.axes(projection=PROJ))
 
@@ -179,7 +179,7 @@ ax.set_title(f"기압계 배치  {valid_time:%Y-%m-%d %H}UTC", fontsize=10)
 du.save_figure(fig, os.path.join(proj_dir, "pressure_systems"))
 plt.show()
 
-# %% code 458.
+# %% code 439.
 fig = plt.figure(figsize=(5.6, 4.9))
 ax = make_map(plt.axes(projection=PROJ))
 
@@ -193,7 +193,7 @@ ax.set_title(f"500 hPa 상층일기도  등고선 간격 60 m\n"
 du.save_figure(fig, os.path.join(proj_dir, "upper_chart"))
 plt.show()
 
-# %% code 459.
+# %% code 440.
 fig, axes = plt.subplots(1, 2, figsize=(7.5, 3.3),
                          subplot_kw={"projection": PROJ})
 
