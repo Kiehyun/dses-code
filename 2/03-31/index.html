@@ -92,14 +92,12 @@ dt_utc = dt_kst.astimezone(timezone.utc)
 print(&quot;한국 표준시:&quot;, dt_kst)
 print(&quot;세계시     :&quot;, dt_utc)
 
-
 def datetime_range(start_dt, end_dt, delta):
     &quot;&quot;&quot;start_dt부터 end_dt 앞까지 delta 간격의 datetime을 차례로 내놓음&quot;&quot;&quot;
     current = start_dt
     while current &lt; end_dt:
         yield current
         current += delta
-
 
 print([d.strftime(&quot;%m-%d&quot;) for d in datetime_range(datetime(2024, 12, 1),
                                                    datetime(2024, 12, 4),
@@ -198,9 +196,7 @@ start_dt    = datetime(2024, 12, 1, 12)
 end_dt      = datetime(2024, 12, 3, 12)
 dt = 1
 
-dts = [dt for dt in
-            datetime_range(start_dt, end_dt,
-            timedelta(days=dt))]
+dts = [dt for dt in datetime_range(start_dt, end_dt, timedelta(days=dt))]
 
 print(&quot;len(dts):&quot;, len(dts))
 print(&quot;dts&quot;, dts)
@@ -255,8 +251,7 @@ obs_date = df[&#x27;OBSdate(UT)&#x27;][0]</code></pre>
 eph = MPC.get_ephemeris(asteroid_id, location=&#x27;P64&#x27;, start=t_start, number=15,
                         ra_format={&#x27;sep&#x27;: &#x27;:&#x27;, &#x27;unit&#x27;: &#x27;hourangle&#x27;,
                                    &#x27;precision&#x27;: 1},
-                        dec_format={&#x27;sep&#x27;: &#x27;:&#x27;, &#x27;precision&#x27;: 0},
-                        step=&#x27;1h&#x27;)
+                        dec_format={&#x27;sep&#x27;: &#x27;:&#x27;, &#x27;precision&#x27;: 0}, step=&#x27;1h&#x27;)
 print(&quot;type(eph): &quot;, type(eph))
 print(&quot;eph: &quot;, eph)</code></pre>
 <h2 id="code-352">code 352. <button class="copy">복사</button></h2><pre><code>print(f&quot;Proper motion: {eph[&#x27;Proper motion&#x27;].quantity.to(&#x27;arcmin/h&#x27;).max():.03f}&quot;)</code></pre>

@@ -11,89 +11,74 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>IV-04. 대기 중의 수증기량</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/04-04/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-66">66</a> <a href="#code-67">67</a> <a href="#code-68">68</a> <a href="#code-69">69</a> <a href="#code-70">70</a> <a href="#code-71">71</a> <a href="#code-72">72</a> <a href="#code-73">73</a> <a href="#code-74">74</a> <a href="#code-75">75</a> <a href="#code-76">76</a> <a href="#code-77">77</a></p>
-<h2 id="code-66">code 66. <button class="copy">복사</button></h2><pre><code>fname = &quot;SURFACE_ASOS_116_MI_2019-08_2019-08_2019.csv&quot;
-fid = &quot;1NLHwhmqnikHC77DdkelYBPnpwkJv8_rb&quot;
+<p class="jump"><a href="#code-69">69</a> <a href="#code-70">70</a> <a href="#code-71">71</a> <a href="#code-72">72</a> <a href="#code-73">73</a> <a href="#code-74">74</a> <a href="#code-75">75</a> <a href="#code-76">76</a> <a href="#code-77">77</a> <a href="#code-78">78</a> <a href="#code-79">79</a> <a href="#code-80">80</a></p>
+<h2 id="code-69">code 69. <button class="copy">복사</button></h2><pre><code>fname = &quot;SURFACE_ASOS_116_MI_2019-08_2019-08_2019.csv&quot;
+fid = &quot;1NLHwhmqnikHC77DdkelYBPnpwkJv8_rb&quot;  # 구글 드라이브 파일 ID
 
-# 구글 드라이브에 공유해 둔 파일 내려받기
 from pathlib import Path
 
 du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={fid}&quot;, Path(proj_dir) / fname)</code></pre>
-<h2 id="code-67">code 67. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;csv&quot;)</code></pre>
-<h2 id="code-68">code 68. <button class="copy">복사</button></h2><pre><code>du.preview_text(fpaths[0], n=10)</code></pre>
-<h2 id="code-69">code 69. <button class="copy">복사</button></h2><pre><code>from metpy.units import units as u
+<h2 id="code-70">code 70. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;csv&quot;)</code></pre>
+<h2 id="code-71">code 71. <button class="copy">복사</button></h2><pre><code>du.preview_text(fpaths[0], n=10)</code></pre>
+<h2 id="code-72">code 72. <button class="copy">복사</button></h2><pre><code>from metpy.units import units as u
 
-# 거리(8미터)에 단위 부여
-v_distance = 8 * u.m
-# 시간(3초)에 단위 부여
-v_time = 3 * u.s
+v_distance = 8 * u.m  # 8 m
+v_time = 3 * u.s      # 3 s
 
-# 평균 속도 계산 (거리/시간)
-average_velocity = v_distance / v_time
+average_velocity = v_distance / v_time  # 단위도 m/s로 함께 계산
 
-# v_distance의 자료형 출력
 print(&quot;type(v_distance):{}&quot;.format(type(v_distance)))
-# 평균 속도 값과 단위 출력
 print(f&quot;average_velocity):{average_velocity:0.03f}&quot;)</code></pre>
-<h2 id="code-70">code 70. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-73">code 73. <button class="copy">복사</button></h2><pre><code>import numpy as np
 from metpy.units import units as u
 import metpy.calc as mpcalc
 import matplotlib.pyplot as plt
 
-# 온도 배열 생성 (-20°C ~ 40°C, 0.1°C 간격)
-temp_array = np.arange(-20, 40, 0.1) * u.degC
+temp_array = np.arange(-20, 40, 0.1) * u.degC  # -20~40 °C, 0.1 °C 간격
 
-# 포화수증기압 계산
 sat_vap_array = mpcalc.saturation_vapor_pressure(temp_array)
 
-# 10도 간격으로 표시할 온도와 해당 인덱스, 포화수증기압 값 추출
+# 10 °C마다 점을 찍을 온도와 그 포화수증기압
 tick_temps = np.arange(-20, 41, 10)
 tick_indices = [np.abs(temp_array.magnitude - t).argmin() for t in tick_temps]
 tick_pressures = sat_vap_array[tick_indices].to(u.hPa).magnitude
 
-# 그래프 그리기
 fig, ax = plt.subplots(figsize=(7, 5))
 ax.plot(temp_array.magnitude, sat_vap_array.to(u.hPa).magnitude, color=&#x27;tab:blue&#x27;, label=&#x27;포화수증기압&#x27;)
 
-# 10도 간격마다 점과 값 표시
 for t, p in zip(tick_temps, tick_pressures):
     ax.plot(t, p, &#x27;ro&#x27;)
     ax.annotate(f&#x27;{p:.1f}&#x27;, (t, p), textcoords=&quot;offset points&quot;, xytext=(0,8), ha=&#x27;center&#x27;, fontsize=10, color=&#x27;red&#x27;)
 
-# 그래프 제목, 축 이름, 격자, 범례 설정
 ax.set_title(&#x27;온도에 따른 포화수증기압 곡선&#x27;, fontsize=16)
 ax.set_xlabel(&#x27;온도 (°C)&#x27;, fontsize=14)
 ax.set_ylabel(&#x27;포화수증기압 (hPa)&#x27;, fontsize=14)
 ax.grid(True, linestyle=&#x27;--&#x27;, alpha=0.5)
 ax.legend(fontsize=12)
-# 그래프 저장
 plt.savefig(f&#x27;{proj_dir}/saturation_vapor_pressure_curve.pdf&#x27;, dpi=300, bbox_inches=&#x27;tight&#x27;)
 print(f&quot;&#x27;saturation_vapor_pressure_curve.pdf&#x27; saved in {proj_dir}&quot;)
-# 그래프 출력
 plt.show()</code></pre>
-<h2 id="code-71">code 71. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-74">code 74. <button class="copy">복사</button></h2><pre><code>import numpy as np
 from metpy.units import units as u
 import metpy.calc as mpcalc
 import matplotlib.pyplot as plt
 import platform
 
-# 온도 배열 생성 (-20°C ~ 40°C, 0.1°C 간격)
-temp_array = np.arange(-20, 40.1, 0.1) * u.degC
-press = 1000 * u.hPa  # 기준 기압 1000hPa
+temp_array = np.arange(-20, 40.1, 0.1) * u.degC  # -20~40 °C, 0.1 °C 간격
+press = 1000 * u.hPa                             # 기준 기압
 
-# 포화 혼합비, 포화 비습 계산
 sat_mr = mpcalc.saturation_mixing_ratio(press, temp_array)  # 포화 혼합비
-sat_sh = mpcalc.specific_humidity_from_mixing_ratio(sat_mr) # 포화 비습
+sat_sh = mpcalc.specific_humidity_from_mixing_ratio(sat_mr)  # 포화 비습
 
-# 10도 간격으로 표시할 온도와 해당 인덱스, 값 추출
+# 10 °C마다 점을 찍을 온도와 그 값
 tick_temps = np.arange(-20, 41, 10)
 tick_indices = [np.abs(temp_array.magnitude - t).argmin() for t in tick_temps]
-tick_mr = sat_mr[tick_indices].to_base_units().magnitude * 1000  # g/kg 단위 변환
-tick_sh = sat_sh[tick_indices].to_base_units().magnitude * 1000  # g/kg 단위 변환
+tick_mr = sat_mr[tick_indices].to_base_units().magnitude * 1000  # kg/kg → g/kg
+tick_sh = sat_sh[tick_indices].to_base_units().magnitude * 1000  # kg/kg → g/kg
 
 fig, axs = plt.subplots(1, 2, figsize=(12.0, 4.3))
 
-# (1) 포화 혼합비 곡선 그리기
+# 1) 포화 혼합비
 ax = axs[0]
 ax.plot(temp_array.magnitude, sat_mr.magnitude * 1000, color=&#x27;tab:green&#x27;, label=&#x27;포화 혼합비&#x27;)
 for t, mr in zip(tick_temps, tick_mr):
@@ -105,7 +90,7 @@ ax.set_ylabel(&#x27;포화 혼합비 (g/kg)&#x27;, fontsize=14)
 ax.grid(True, linestyle=&#x27;--&#x27;, alpha=0.5)
 ax.legend(fontsize=12)
 
-# (2) 포화 비습 곡선 그리기
+# 2) 포화 비습
 ax = axs[1]
 ax.plot(temp_array.magnitude, sat_sh.magnitude * 1000, color=&#x27;tab:purple&#x27;, label=&#x27;포화 비습&#x27;)
 for t, sh in zip(tick_temps, tick_sh):
@@ -119,84 +104,67 @@ ax.legend(fontsize=12)
 
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-72">code 72. <button class="copy">복사</button></h2><pre><code># pandas 라이브러리 불러오기
-import pandas as pd
+<h2 id="code-75">code 75. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 
-# CSV 파일을 데이터프레임으로 읽기
 df = pd.read_csv(fpaths[0],
-                 thousands=&#x27;,&#x27;,      # 천 단위 구분자 처리
-                 encoding=&#x27;euc-kr&#x27;)  # 한글 인코딩
+                 thousands=&#x27;,&#x27;,  # 천 단위 쉼표 처리
+                 encoding=&#x27;euc-kr&#x27;)
 
-# &#x27;일시&#x27; 컬럼 자료형 확인
 print(&quot;type(df[&#x27;일시&#x27;][0]):{}&quot;.format(type(df[&#x27;일시&#x27;][0])))
 
-# &#x27;일시&#x27; 컬럼을 날짜/시간 타입으로 변환
-df[&#x27;dt_YmdHM&#x27;] = pd.to_datetime(df[&#x27;일시&#x27;])
+df[&#x27;dt_YmdHM&#x27;] = pd.to_datetime(df[&#x27;일시&#x27;])  # 문자열 → datetime
 
-# 변환된 컬럼의 자료형 확인
 print(&quot;type(df[&#x27;dt_YmdHM&#x27;][0]):{}&quot;.format(type(df[&#x27;dt_YmdHM&#x27;][0])))
 
-# 인덱스를 날짜/시간 컬럼으로 설정
 df.index = df[&#x27;dt_YmdHM&#x27;]
 
-# timedelta 불러오기
 from datetime import timedelta
 
-# 1분 뺀 새로운 컬럼 생성
+# 직전 1분 측정값이므로 1분 당긴 시각을 인덱스로
 df[&#x27;dt_YmdHM-1min&#x27;] = df[&#x27;dt_YmdHM&#x27;] - timedelta(minutes=1)
 
-# 인덱스를 1분 뺀 컬럼으로 재설정
 df.index = df[&#x27;dt_YmdHM-1min&#x27;]
 
-# 데이터프레임 출력
 print(f&quot;df :\n{df}&quot;)</code></pre>
-<h2 id="code-73">code 73. <button class="copy">복사</button></h2><pre><code>print(&quot;df : \n&quot;, df)</code></pre>
-<h2 id="code-74">code 74. <button class="copy">복사</button></h2><pre><code># 현지기압(hPa) 값을 1000으로 설정 (관측값이 없으므로 임시로 입력)
+<h2 id="code-76">code 76. <button class="copy">복사</button></h2><pre><code>print(&quot;df : \n&quot;, df)</code></pre>
+<h2 id="code-77">code 77. <button class="copy">복사</button></h2><pre><code># 현지기압 관측값이 없으므로 1000 hPa로 가정
 df[&#x27;현지기압(hPa)&#x27;] = 1000
 
-# 이슬점온도(°C) 계산 (기온과 상대습도를 이용)
+# 기온 · 상대습도 → 이슬점온도
 df[&#x27;이슬점온도(°C)&#x27;] = mpcalc.dewpoint_from_relative_humidity(
-            df[&quot;기온(°C)&quot;].values * u.degC, 
-            df[&quot;습도(%)&quot;].values * u.percent
+            df[&quot;기온(°C)&quot;].values * u.degC, df[&quot;습도(%)&quot;].values * u.percent
         )
 
-# 습구온도(°C) 계산 (현지기압, 기온, 이슬점온도를 이용)
+# 기압 · 기온 · 이슬점온도 → 습구온도
 df[&#x27;습구온도(°C)&#x27;] = mpcalc.wet_bulb_temperature(
-            df[&quot;현지기압(hPa)&quot;].values * u.hPa, 
-            df[&quot;기온(°C)&quot;].values * u.degC, 
+            df[&quot;현지기압(hPa)&quot;].values * u.hPa,
+            df[&quot;기온(°C)&quot;].values * u.degC,
             df[&quot;이슬점온도(°C)&quot;].values * u.degC
         )
 
-# 주요 컬럼(기온, 습도, 이슬점온도, 습구온도) 출력
-print(&quot;df[[&#x27;기온(°C)&#x27;, &#x27;습도(%)&#x27;, &#x27;이슬점온도(°C)&#x27;, &#x27;습구온도(°C)&#x27;]] :\n&quot;, 
+print(&quot;df[[&#x27;기온(°C)&#x27;, &#x27;습도(%)&#x27;, &#x27;이슬점온도(°C)&#x27;, &#x27;습구온도(°C)&#x27;]] :\n&quot;,
       df[[&#x27;기온(°C)&#x27;, &#x27;습도(%)&#x27;, &#x27;이슬점온도(°C)&#x27;, &#x27;습구온도(°C)&#x27;]])</code></pre>
-<h2 id="code-75">code 75. <button class="copy">복사</button></h2><pre><code># 혼합비(kg/kg) 계산 (현지기압, 기온, 상대습도를 이용)
+<h2 id="code-78">code 78. <button class="copy">복사</button></h2><pre><code># 기압 · 기온 · 상대습도 → 혼합비
 df[&#x27;혼합비(kg/kg)&#x27;] = mpcalc.mixing_ratio_from_relative_humidity(
-            df[&quot;현지기압(hPa)&quot;].values * u.hPa, 
-            df[&quot;기온(°C)&quot;].values * u.degC, 
-            df[&quot;습도(%)&quot;].values * u.percent
+            df[&quot;현지기압(hPa)&quot;].values * u.hPa,
+            df[&quot;기온(°C)&quot;].values * u.degC, df[&quot;습도(%)&quot;].values * u.percent
         )
 
-# 비습(kg/kg) 계산 (현지기압, 이슬점온도를 이용)
+# 기압 · 이슬점온도 → 비습
 df[&#x27;비습(kg/kg)&#x27;] = mpcalc.specific_humidity_from_dewpoint(
-            df[&quot;현지기압(hPa)&quot;].values * u.hPa, 
+            df[&quot;현지기압(hPa)&quot;].values * u.hPa,
             df[&#x27;이슬점온도(°C)&#x27;].values * u.degC,
         )
 
-# 수증기압(hPa) 계산 (현지기압, 혼합비를 이용)
+# 기압 · 혼합비 → 수증기압
 df[&#x27;수증기압(hPa)&#x27;] = mpcalc.vapor_pressure(
-            df[&quot;현지기압(hPa)&quot;].values * u.hPa, 
+            df[&quot;현지기압(hPa)&quot;].values * u.hPa,
             df[&quot;혼합비(kg/kg)&quot;].values * u.kg / u.kg
         )
 
-# 주요 컬럼(현지기압, 혼합비, 비습, 수증기압) 출력
-print(&quot;df[[&#x27;현지기압(hPa)&#x27;, &#x27;혼합비(kg/kg)&#x27;, &#x27;비습(kg/kg)&#x27;, &#x27;수증기압(hPa)&#x27;]] :\n&quot;, 
+print(&quot;df[[&#x27;현지기압(hPa)&#x27;, &#x27;혼합비(kg/kg)&#x27;, &#x27;비습(kg/kg)&#x27;, &#x27;수증기압(hPa)&#x27;]] :\n&quot;,
       df[[&#x27;현지기압(hPa)&#x27;, &#x27;혼합비(kg/kg)&#x27;, &#x27;비습(kg/kg)&#x27;, &#x27;수증기압(hPa)&#x27;]])</code></pre>
-<h2 id="code-76">code 76. <button class="copy">복사</button></h2><pre><code># 절대습도(absolute humidity) 계산 함수
-# e: 수증기압(hPa), T: 기온(°C 또는 K)
-# 반환값: g/m^3 단위의 절대습도
-
-def absolute_humidity_from_vapor_pressure(e, T):
+<h2 id="code-79">code 79. <button class="copy">복사</button></h2><pre><code>def absolute_humidity_from_vapor_pressure(e, T):
     &quot;&quot;&quot;
     수증기압(e, hPa)과 기온(T, °C 또는 K)으로부터 절대습도(g/m^3)를 계산합니다.
     AH = 217 * e / T(K)
@@ -204,17 +172,15 @@ def absolute_humidity_from_vapor_pressure(e, T):
     from metpy.units import units as u
     import numpy as np
 
- # T가 섭씨 단위이면 켈빈으로 변환
+    # 기온을 켈빈으로
     if hasattr(T, &#x27;units&#x27;) and T.units == u.degC:
         T_K = T.to(u.kelvin)
     elif hasattr(T, &#x27;units&#x27;) and T.units == u.kelvin:
         T_K = T
     else:
- # 단위가 없는 경우(넘파이 배열 등)
-        T_K = T + 273.15
+        T_K = T + 273.15  # 단위 없는 배열은 °C로 간주
 
- # e가 pint.Quantity면 값만 추출
-    if hasattr(e, &#x27;magnitude&#x27;):
+    if hasattr(e, &#x27;magnitude&#x27;):  # 단위가 붙은 값이면 숫자만 꺼내기
         e_hPa = e.to(u.hPa)
         AH = 217 * e_hPa.magnitude / T_K.magnitude  # g/m^3
     else:
@@ -222,16 +188,13 @@ def absolute_humidity_from_vapor_pressure(e, T):
 
     return AH
 
-# 절대습도(g/m^3) 컬럼 계산 및 추가
 df[&#x27;절대습도(g/m^3)&#x27;] = absolute_humidity_from_vapor_pressure(
-    df[&quot;수증기압(hPa)&quot;].values * u.hPa, 
-    df[&quot;기온(°C)&quot;].values * u.degC
+    df[&quot;수증기압(hPa)&quot;].values * u.hPa, df[&quot;기온(°C)&quot;].values * u.degC
 )
 
-# 주요 컬럼(수증기압, 절대습도) 출력
-print(&quot;df[[&#x27;수증기압(hPa)&#x27;, &#x27;절대습도(g/m^3)&#x27;]] :\n&quot;, 
+print(&quot;df[[&#x27;수증기압(hPa)&#x27;, &#x27;절대습도(g/m^3)&#x27;]] :\n&quot;,
       df[[&#x27;수증기압(hPa)&#x27;, &#x27;절대습도(g/m^3)&#x27;]])</code></pre>
-<h2 id="code-77">code 77. <button class="copy">복사</button></h2><pre><code>df.to_csv(f&quot;{proj_dir}/{fpaths[0].stem}_result.csv&quot;, index=False)
+<h2 id="code-80">code 80. <button class="copy">복사</button></h2><pre><code>df.to_csv(f&quot;{proj_dir}/{fpaths[0].stem}_result.csv&quot;, index=False)
 print(f&quot;파일 저장 완료: {proj_dir}/{fpaths[0].stem}_result.csv&quot;)</code></pre>
 <script>
 document.querySelectorAll('button.copy').forEach(function (b) {

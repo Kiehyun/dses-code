@@ -37,7 +37,6 @@ LINE_STYLE = {
     'mixing':   ('blue',   (0, (6, 4)), 0.7, '포화 혼합비선'),
 }
 
-
 def draw_skewt_paper(skew, xlim=(-40, 40), ylim=(1050, 100), *,
                      isotherm_step=10, isobars=STANDARD_ISOBARS,
                      dry_step=10, moist_step=5, mixing_ratios=STANDARD_MIXING,
@@ -536,9 +535,7 @@ plt.show()
 import pandas as pd
 
 # CSV 파일을 데이터프레임으로 읽기
-df = pd.read_csv(str(fpaths[0]),
-                 thousands = ',',
-                 encoding= 'euc-kr')
+df = pd.read_csv(str(fpaths[0]), thousands = ',', encoding= 'euc-kr')
 print("행 · 열 :", df.shape)
 df.head()
 
@@ -738,7 +735,6 @@ add_moist_adiabats(skew, label_p=600, label_every=5)
 # 포화 혼합비선 — 라벨은 850 hPa 높이에
 add_mixing_lines(skew, label_p=850, label_every=2)
 
-
 # 기압에 따른 기온 값 찍기
 # 먼저 점을 찍고
 skew.plot(df_selected_time['기압(hPa)'].values * u.hPa,     #기압
@@ -764,7 +760,6 @@ skew.plot_barbs(df_selected_time['기압(hPa)'].values * u.hPa, #기압
         df_selected_time['u_wind'], 
         df_selected_time['v_wind'])
 
-
 # 공기덩이(parcel) 상승 경로를 계산해 검은 선으로 그리기
 #prof_0 = mpcalc.parcel_profile(p, T[0], Td[0]).to('degC')
 skew.plot(\
@@ -774,7 +769,6 @@ skew.plot(\
                                 df_selected_time['이슬점온도(°C)'].values[0] * u.degC     #초기 이슬점
                                 ).to(u.degC), 
         'k', linewidth=1.5)
-
 
 # CAPE 와 CIN 영역 음영 표시
 '''
@@ -797,7 +791,6 @@ skew.shade_cape(df_selected_time['기압(hPa)'].values * u.hPa,  #기압
                                 df_selected_time['기온(°C)'].values[0]* u.degC, #초기 온도 
                                 df_selected_time['이슬점온도(°C)'].values[0]* u.degC     #초기 이슬점
                                 ).to(u.degC))
-
 
 # 상승응결고도(LCL)·자유대류고도(LFC)·평형고도(EL) 계산
 # LCL 높이를 계산해 검은 점으로 표시
@@ -829,7 +822,6 @@ EL_pressure, EL_temperature = mpcalc.el(df_selected_time['기압(hPa)'].values *
 skew.plot(EL_pressure, EL_temperature, 'bo', 
           markersize = 8, fillstyle='none', label='EL')
 
-
 # 가장 불안정한 공기덩이와 가강수량 계산
 # 가장 불안정한 공기덩이 — 지면에서 300 hPa 두께 안에서 상당온위가 가장 높은 층
 mup_pressure, mup_temperature, mup_dewTemperature, mup_index = \
@@ -853,7 +845,6 @@ cape, cin = mpcalc.cape_cin(df_selected_time['기압(hPa)'].values * u.hPa,
 print(f'CAPE : {cape.m:.1f} J/kg,  CIN : {cin.m:.1f} J/kg')
 print(f'LCL : {lcl_pressure.m:.1f} hPa,  LFC : {LFC_pressure.m:.1f} hPa,  EL : {EL_pressure.m:.1f} hPa')
 print(f'가장 불안정한 공기덩이 : {mup_pressure.m:.1f} hPa,  가강수량 : {precipitable_water.m:.1f} mm')
-
 
 # 글자를 넣을 아래 여백 먼저 확보
 fig.subplots_adjust(bottom=0.27)
@@ -905,12 +896,10 @@ import metpy.calc as mpcalc
 from metpy.plots import SkewT
 from metpy.units import units as u
 
-
 def select_sounding(df, time_str):
     """시각(UTC 문자열) 하나의 관측만 골라 기압이 낮아지는 순서로 정렬"""
     sel = df[df['일시(UTC)'] == time_str]
     return sel.sort_values('기압(hPa)', ascending=False)
-
 
 def sounding_indices(sel):
     """지면 공기덩이의 상승 경로와 CAPE · CIN · LCL · LFC · EL · 가강수량 계산"""
@@ -927,7 +916,6 @@ def sounding_indices(sel):
                 CAPE=cape.m, CIN=cin.m, LCL=lcl_p.m, LCL_T=lcl_t.to('degC').m,
                 LFC=lfc_p.m, LFC_T=lfc_t.to('degC').m,
                 EL=el_p.m, EL_T=el_t.to('degC').m, PW=pw.to('mm').m)
-
 
 summer_time = '2018-08-28 12:00'
 sel_s = select_sounding(df, summer_time)

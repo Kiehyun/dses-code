@@ -64,8 +64,7 @@ from astropy import units as u
 #####################################################################
 # 관측 위치: 경기과학고등학교 관측소(수원, MPC 관측소 코드 P64)
 LOCATION = dict(lon=127.005, lat=37.308889, elevation=101)
-GSHS = EarthLocation(lon=127.005 * u.deg,
-                     lat=37.308889 * u.deg,
+GSHS = EarthLocation(lon=127.005 * u.deg, lat=37.308889 * u.deg,
                      height=101 * u.m)
 MPC_obscode = "P64"
 #######################################################
@@ -157,8 +156,7 @@ DAOfound
 
 # %% code 259.
 DAOfound.write(f"{proj_dir}/{fpath.stem}_DAOStarfinder_fwhm_{FWHM}_{thresh}.csv",
-                            overwrite = True,
-                            format='ascii.fast_csv')
+                            overwrite = True, format='ascii.fast_csv')
 
 # %% code 260.
 df = DAOfound.to_pandas()
@@ -349,11 +347,9 @@ im0 = du.zimshow(axs[0], skyimg,)
 
 im1 = du.zimshow(axs[1], skyimg, )
 im1 = du.zimshow(axs[1], sky_apply, alpha=0.5)
-ap = CAp(positions = (int(skyimg.shape[0]/2),int(skyimg.shape[1]/2)),
-        r=R_AP)
+ap = CAp(positions = (int(skyimg.shape[0]/2),int(skyimg.shape[1]/2)), r=R_AP)
 an = CAn(positions = (int(skyimg.shape[0]/2),int(skyimg.shape[1]/2)),
-        r_in=R_IN,
-        r_out=R_OUT)
+        r_in=R_IN, r_out=R_OUT)
 
 im0 = du.zimshow(axs[0], skyimg, )
 im1 = du.zimshow(axs[1], sky_apply, alpha=0.5)
@@ -392,12 +388,12 @@ def plot_cutouts(apert, data, indices, cols, figsize=(6.4, 6.6)):
         figsize: 그래프 크기 (default: (6.4, 6.6))
     """
 
-    ncols = min(len(indices), cols)      # 최대 cols열
-    nrows = -(-len(indices) // ncols)    # 필요한 행 수(올림)
+    ncols = min(len(indices), cols)    # 최대 cols열
+    nrows = -(-len(indices) // ncols)  # 필요한 행 수(올림)
 
     fig, axs = plt.subplots(nrows, ncols, figsize=figsize, squeeze=False)
-    axs = axs.flatten()  # 1차원 배열로 변환
-    for ax in axs[len(indices):]:        # 남는 칸은 지움
+    axs = axs.flatten()            # 1차원 배열로 변환
+    for ax in axs[len(indices):]:  # 남는 칸은 지움
         ax.axis('off')
 
     for i, idx in enumerate(indices):
@@ -411,8 +407,7 @@ def plot_cutouts(apert, data, indices, cols, figsize=(6.4, 6.6)):
         ap = CAp(positions = (int(skyimg.shape[0]/2),int(skyimg.shape[1]/2)),
                 r=R_AP)
         an = CAn(positions = (int(skyimg.shape[0]/2),int(skyimg.shape[1]/2)),
-                r_in=R_IN,
-                r_out=R_OUT)
+                r_in=R_IN, r_out=R_OUT)
 
         ap.plot(ax = axs[i], color='r', lw=1, alpha=0.5)
         an.plot(ax = axs[i], color='y', lw=1, alpha=0.7)

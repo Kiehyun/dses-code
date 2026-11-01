@@ -53,7 +53,6 @@ def decay(t, amplitude, tau, offset):
     """지수 감소 모형: 바닥값 위의 몫이 시간상수 tau마다 1/e(약 0.37)배로 줄어듦"""
     return amplitude * np.exp(-t / tau) + offset
 
-
 t = np.linspace(0, 20, 40)
 true_params = (100.0, 5.0, 10.0)                       # 진폭, 시간상수, 바닥값
 signal = decay(t, *true_params) + rng.normal(0, 3.0, t.size)
@@ -85,7 +84,6 @@ def r_squared(observed, predicted):
     ss_residual = np.sum((observed - predicted) ** 2)
     ss_total = np.sum((observed - observed.mean()) ** 2)
     return 1 - ss_residual / ss_total
-
 
 print("직선 맞춤 R^2      :", round(r_squared(y, y_fit), 4))
 print("지수 모형 R^2      :", round(r_squared(signal, decay(t, *params)), 4))

@@ -13,17 +13,14 @@ plt.rcParams.update({"axes.titlesize": 13, "axes.labelsize": 11,
 k_B = constants.k            # 볼츠만 상수 (J/K)
 amu = constants.atomic_mass  # 원자 질량 단위 (kg)
 
-
 def mb_speed_3d(v, m, T):
     """3차원 맥스웰-볼츠만 속력 분포 f(v) (단위: s/m)"""
     a = m / (2 * k_B * T)
     return 4 * np.pi * (a / np.pi) ** 1.5 * v**2 * np.exp(-a * v**2)
 
-
 def mb_speed_2d(v, m, T):
     """2차원 맥스웰-볼츠만 속력 분포 f(v) (단위: s/m)"""
     return m * v / (k_B * T) * np.exp(-m * v**2 / (2 * k_B * T))
-
 
 def char_speeds_3d(m, T):
     """3차원 최빈 속력, 평균 속력, 제곱평균제곱근 속력 (m/s)"""
@@ -32,8 +29,7 @@ def char_speeds_3d(m, T):
     v_rms = np.sqrt(3 * k_B * T / m)
     return v_p, v_mean, v_rms
 
-
-m_N2 = 28.014 * amu  # 질소 분자 하나의 질량
+m_N2 = 28.014 * amu             # 질소 분자 하나의 질량
 v = np.linspace(0, 3000, 1201)  # 속력 격자 (m/s)
 dv = v[1] - v[0]
 
@@ -130,7 +126,6 @@ print(f"\n[해수면 공기] 수 밀도 {n_air:.2e} /m^3, "
 
 # %% code 43.
 from scipy.spatial import cKDTree
-
 
 def step(pos, vel, dt):
     """원자를 dt 동안 움직이고 벽 · 원자 충돌을 처리 (pos, vel을 제자리에서 바꿈)"""
@@ -271,10 +266,8 @@ v_rms2 = np.sqrt(2 * k_B * T0 / m_Ar)
 counts, edges = np.histogram(eq_speed, bins=bins)
 v_mode_sim = 0.5 * (edges[counts.argmax()] + edges[counts.argmax() + 1])
 
-
 def lab(s, n=14):                                    # 한글은 두 칸 너비로 세어 맞춤
     return s + " " * (n - sum(2 if ord(ch) > 0x1100 else 1 for ch in s))
-
 
 print(lab("") + "시뮬레이션" + " " * 6 + "이론")
 print(f"{lab('최빈 속력')}{v_mode_sim:10.0f}{v_p2:10.0f}  m/s (막대 폭 25 m/s)")
@@ -334,12 +327,10 @@ bodies = {  # 이름: (질량 kg, 반지름 m, 대기 맨 위층 대표 온도 K
 }
 species = {"H": 1.008, "He": 4.003, "N2": 28.014, "CO2": 44.009}
 
-
 def log10_escape_fraction(v_esc, m, T):
     """속력이 v_esc보다 큰 분자 비율의 상용로그 (3차원 맥스웰-볼츠만)"""
     x = v_esc / np.sqrt(2 * k_B * T / m)
     return -x**2 * np.log10(np.e) + np.log10(erfcx(x) + 2 * x / np.sqrt(np.pi))
-
 
 v_esc_of = {}
 for body, (M, R, T_top) in bodies.items():

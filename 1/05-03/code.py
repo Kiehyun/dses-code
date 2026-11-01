@@ -11,20 +11,22 @@ import numpy as np
 import pandas as pd
 import requests
 
-EVENT_ID = "73990216"
-EVENT_URL = "https://service.ncedc.org/fdsnws/event/1/query"
-STATION_URL = "https://service.ncedc.org/fdsnws/station/1/query"
+# 1) NCEDC(북캘리포니아 지진 자료 센터)에서 지진 정보 XML 받기
+EVENT_ID = "73990216"  # NCEDC 지진 번호
+EVENT_URL = "https://service.ncedc.org/fdsnws/event/1/query"  # 지진 정보
+STATION_URL = "https://service.ncedc.org/fdsnws/station/1/query"  # 관측소 정보
 
 params = {
     "format": "xml",
     "eventid": EVENT_ID,
-    "includearrivals": "true",
+    "includearrivals": "true",  # P · S파 도착 시각 포함
 }
 
 response = requests.get(EVENT_URL, params=params, timeout=60)
 response.raise_for_status()
 xml_text = response.text
 
+# 2) 파일로 저장
 event_file = Path(proj_dir) / f"ncedc_event_{EVENT_ID}_arrivals.xml"
 event_file.write_text(xml_text, encoding="utf-8")
 
@@ -33,6 +35,7 @@ print(f"저장 위치: {event_file}")
 print(f"파일 크기: {event_file.stat().st_size:,} bytes")
 
 # %% code 25.
+# XML 도우미 함수(태그 이름 · 자식 요소 · 글자 읽기)
 def tag_name(element):
     return element.tag.split("}")[-1]
 
@@ -53,6 +56,7 @@ def child_text(element, path):
 def parse_time(value):
     return pd.to_datetime(value, utc=True)
 
+# 진원 정보(발생 시각 · 위치 · 깊이) 추출
 root = ET.fromstring(xml_text)
 event = next(elem for elem in root.iter() if tag_name(elem) == "event")
 origin = next(elem for elem in event.iter() if tag_name(elem) == "origin")
@@ -62,12 +66,13 @@ origin_info = {
     "origin_time": parse_time(child_text(origin, ["time", "value"])),
     "latitude": float(child_text(origin, ["latitude", "value"])),
     "longitude": float(child_text(origin, ["longitude", "value"])),
-    "depth_km": float(child_text(origin, ["depth", "value"])) / 1000,
+    "depth_km": float(child_text(origin, ["depth", "value"])) / 1000,  # m → km
 }
 
 origin_info
 
 # %% code 26.
+# 위상 판독(pick)마다 위상 · 시각 · 관측소 정보 모으기
 pick_rows = []
 
 for pick in [elem for elem in event.iter() if tag_name(elem) == "pick"]:
@@ -77,7 +82,7 @@ for pick in [elem for elem in event.iter() if tag_name(elem) == "pick"]:
 
     pick_rows.append({
         "pick_id": pick.attrib.get("publicID"),
-        "phase": child_text(pick, ["phaseHint"]),
+        "phase": child_text(pick, ["phaseHint"]),  # P 또는 S
         "pick_time": parse_time(child_text(pick, ["time", "value"])),
         "network": waveform.attrib.get("networkCode"),
         "station": waveform.attrib.get("stationCode"),
@@ -92,6 +97,7 @@ print(picks)
 picks["phase"].value_counts(dropna=False)
 
 # %% code 28.
+# 관측소마다 가장 이른 P · S 도착 시각을 한 행으로
 phase_table = (
     picks[picks["phase"].isin(["P", "S"])]
     .sort_values("pick_time")
@@ -102,6 +108,7 @@ phase_table = (
     .reset_index()
 )
 
+# S-P 시간 차(초), 0~120초 밖은 판독 오류로 보고 제외
 phase_table["s_minus_p_sec"] = (phase_table["S"] - phase_table["P"]).dt.total_seconds()
 phase_table = phase_table[(phase_table["s_minus_p_sec"] > 0) & (phase_table["s_minus_p_sec"] < 120)]
 phase_table = phase_table.sort_values("s_minus_p_sec").reset_index(drop=True)
@@ -109,6 +116,7 @@ phase_table = phase_table.sort_values("s_minus_p_sec").reset_index(drop=True)
 print(phase_table)
 
 # %% code 29.
+# 관측소 위치(위도 · 경도 · 고도) 조회
 def download_station_metadata(network, station, event_time):
     params = {
         "format": "text",
@@ -125,7 +133,7 @@ def download_station_metadata(network, station, event_time):
     if not lines:
         return None
 
-    values = lines[0].split("|")
+    values = lines[0].split("|")  # 관측망|관측소|위도|경도|고도(m)|이름 …
     return {
         "network": values[0],
         "station": values[1],
@@ -147,20 +155,23 @@ stations = pd.DataFrame(station_rows)
 print(stations)
 
 # %% code 30.
+# 도착 시각 + 관측소 위치
 data = phase_table.merge(stations, on=["network", "station"], how="inner")
 
-# 단순한 지각 평균 속도 가정
+# 지각 평균 속도 가정
 vp = 6.0  # km/s
 vs = 3.5  # km/s
 
+# 거리 d = (S-P) / (1/Vs - 1/Vp) ≈ 8.4 × (S-P)
 data["estimated_distance_km"] = data["s_minus_p_sec"] / (1 / vs - 1 / vp)
 data = data.sort_values("estimated_distance_km").reset_index(drop=True)
 
 print(data[["network", "station", "P", "S", "s_minus_p_sec", "estimated_distance_km", "station_latitude", "station_longitude"]])
 
 # %% code 31.
+# 두 지점 사이 대원 거리(km)
 def haversine_km(lat1, lon1, lat2, lon2):
-    radius = 6371.0
+    radius = 6371.0  # 지구 평균 반지름(km)
     lat1 = np.radians(lat1)
     lon1 = np.radians(lon1)
     lat2 = np.radians(lat2)
@@ -171,19 +182,22 @@ def haversine_km(lat1, lon1, lat2, lon2):
     a = np.sin(dlat / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2) ** 2
     return 2 * radius * np.arcsin(np.sqrt(a))
 
-# 가까운 관측소 위주로 사용하면 단순 속도 가정의 영향이 줄어듭니다.
+# 가까운 관측소 12곳만 사용(단순 속도 가정의 오차 줄이기)
 used = data.head(12).copy()
 
+# 관측소 범위 ±0.8° 안을 160 × 160 격자로 나눠 진앙 후보 탐색
 lat_grid = np.linspace(used["station_latitude"].min() - 0.8, used["station_latitude"].max() + 0.8, 160)
 lon_grid = np.linspace(used["station_longitude"].min() - 0.8, used["station_longitude"].max() + 0.8, 160)
 lon_mesh, lat_mesh = np.meshgrid(lon_grid, lat_grid)
 
+# 격자점마다 (격자점-관측소 거리 - 추정 거리)² 합
 misfit = np.zeros_like(lat_mesh, dtype=float)
 
 for _, row in used.iterrows():
     model_distance = haversine_km(lat_mesh, lon_mesh, row["station_latitude"], row["station_longitude"])
     misfit += (model_distance - row["estimated_distance_km"]) ** 2
 
+# RMS 잔차가 가장 작은 격자점을 진앙으로
 misfit = np.sqrt(misfit / len(used))
 best_index = np.unravel_index(np.argmin(misfit), misfit.shape)
 estimated_lat = lat_mesh[best_index]
@@ -207,6 +221,7 @@ ax.scatter(data["s_minus_p_sec"], data["true_distance_km"], s=70, color="tab:blu
            label="실제 거리(haversine)")
 ax.plot(data["s_minus_p_sec"], data["estimated_distance_km"], color="tab:red",
         label="추정 거리(S-P 시간 차이 × 8.4)")
+# 가까운 12곳에 관측소 이름 표시
 for _, row in data.head(12).iterrows():
     ax.text(row["s_minus_p_sec"] + 0.05, row["true_distance_km"], row["station"], fontsize=9)
 ax.set_xlabel("S-P 시간 차이 (초)")
@@ -220,35 +235,33 @@ plt.show()
 # %% code 33.
 import folium
 
+# 지도 중심: 추정 · 발표 진앙의 중간
 center_lat = np.mean([estimated_lat, origin_info["latitude"]])
 center_lon = np.mean([estimated_lon, origin_info["longitude"]])
 
 m = folium.Map(location=[center_lat, center_lon], zoom_start=7, tiles="CartoDB positron")
 
+# 발표 진앙(빨강) · 추정 진앙(파랑)
 folium.Marker(
-    [origin_info["latitude"], origin_info["longitude"]],
-    popup="발표 진앙",
+    [origin_info["latitude"], origin_info["longitude"]], popup="발표 진앙",
     icon=folium.Icon(color="red", icon="star"),
 ).add_to(m)
 
 folium.Marker(
-    [estimated_lat, estimated_lon],
-    popup="S-P 자료로 추정한 진앙",
+    [estimated_lat, estimated_lon], popup="S-P 자료로 추정한 진앙",
     icon=folium.Icon(color="blue", icon="info-sign"),
 ).add_to(m)
 
+# 관측소(흰 점)와 추정 거리를 반지름으로 한 원
 for _, row in used.iterrows():
     folium.CircleMarker(
-        [row["station_latitude"], row["station_longitude"]],
-        radius=5,
-        color="black",
-        fill=True,
-        fill_color="white",
+        [row["station_latitude"], row["station_longitude"]], radius=5,
+        color="black", fill=True, fill_color="white",
         popup=f"{row['network']}.{row['station']} / S-P={row['s_minus_p_sec']:.2f}s",
     ).add_to(m)
     folium.Circle(
         [row["station_latitude"], row["station_longitude"]],
-        radius=row["estimated_distance_km"] * 1000,
+        radius=row["estimated_distance_km"] * 1000,  # km → m
         color="steelblue",
         weight=1,
         fill=False,

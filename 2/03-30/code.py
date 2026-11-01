@@ -50,8 +50,7 @@ from astropy import units as u
 #####################################################################
 # 관측 위치: 경기과학고등학교 관측소(수원, MPC 관측소 코드 P64)
 LOCATION = dict(lon=127.005, lat=37.308889, elevation=101)
-GSHS = EarthLocation(lon=127.005 * u.deg,
-                     lat=37.308889 * u.deg,
+GSHS = EarthLocation(lon=127.005 * u.deg, lat=37.308889 * u.deg,
                      height=101 * u.m)
 MPC_obscode = "P64"
 #######################################################
@@ -154,7 +153,6 @@ R_AP = 1.5*FWHM_INIT  # 구경 반지름
 R_IN = 4*FWHM_INIT    # 고리(annulus) 안쪽 반지름
 R_OUT = 6*FWHM_INIT   # 고리(annulus) 바깥쪽 반지름
 
-
 Mag_Low = 11.5
 Mag_High = 15
 
@@ -211,7 +209,6 @@ def drop_ps1_flags(tab, drop_by_kron=True):
         tab = tab[~galaxy]
     return tab
 
-
 from scipy.spatial import cKDTree
 
 def drop_star_groups(tab, crit_sep):
@@ -223,7 +220,6 @@ def drop_star_groups(tab, crit_sep):
         grouped[[i, j]] = True
     print(f"group : {len(tab)} -> {(~grouped).sum()} ({crit_sep:.1f} px)")
     return tab[~grouped]
-
 
 def add_jc_mags(tab):
     """g, r 등급으로 B, V, R 등급과 g-r 색지수를 계산해 열로 더함."""
@@ -342,10 +338,8 @@ _phot_stars = []
 for i, row in df_stars.iterrows():
     pos_star = SkyCoord(row["RAJ2000"], row["DEJ2000"],
                         **SKYC_KW).to_pixel(wcs)
-    ap = CAp([pos_star[0], pos_star[1]],
-            r=R_AP)
-    an = CAn([pos_star[0], pos_star[1]],
-            r_in=R_IN, r_out=R_OUT)
+    ap = CAp([pos_star[0], pos_star[1]], r=R_AP)
+    an = CAn([pos_star[0], pos_star[1]], r_in=R_IN, r_out=R_OUT)
     _phot_star = du.apphot_annulus(hdul[0].data, ap, an,
                                 gain=gain, rdnoise=rdnoise)
     _phot_star[f"{flt}mag"] = row[f"{flt}mag"]

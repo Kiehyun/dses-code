@@ -51,15 +51,10 @@ norm = ImageNormalize(hdul[0].data, interval=MinMaxInterval(),
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 2.5),
                        sharex=False, sharey=False, gridspec_kw=None)
 
-im1 = axs[0].imshow(hdul[0].data,
-                origin='lower',
-                )
+im1 = axs[0].imshow(hdul[0].data, origin='lower')
 axs[0].set_title('Original', fontsize=8)
 
-im2 = axs[1].imshow(hdul[0].data,
-                origin='lower',
-                norm=norm,
-                )
+im2 = axs[1].imshow(hdul[0].data, origin='lower', norm=norm)
 axs[1].set_title('Normalization', fontsize=8)
 
 fig.suptitle(f'{str(fpaths[0])}', fontsize=8)
@@ -92,8 +87,7 @@ def checkPSolve(fpath,
     PSKeys = ["CRVAL1", "CRVAL2", "CRPIX1", "CRPIX2",
               "CD1_1", "CD1_2", "CD2_1", "CD2_2",
               "A_0_0", "A_0_1", "A_1_0","A_1_1",
-              "PC1_1", "PC1_2", "PC2_1", "PC2_2",
-              ]
+              "PC1_1", "PC1_2", "PC2_1", "PC2_2"]
 
     chk = 0
     SOLVE = False
@@ -163,8 +157,7 @@ elif not ast.api_key:
     print("API 키가 없어 위치 보정을 건너뜁니다.")
 else:
     wcs_header = ast.solve_from_image(str(fpaths[0]),
-                            solve_timeout = solve_timeout,
-                            )
+                            solve_timeout = solve_timeout)
     if wcs_header :
         with fits.open(str(fpaths[0]), mode='update') as hdul:
             for card in wcs_header :
@@ -280,7 +273,6 @@ def show_header(header, n_head=8):
         if card.keyword.startswith(wcs_keys):
             print(card)
 
-
 print("fpaths[0] :", fpaths[0])
 hdul0 = fits.open(str(fpaths[0]))
 show_header(hdul0[0].header)
@@ -356,15 +348,10 @@ plt.tight_layout(pad=0.4, w_pad=1, h_pad=1.0)
 plt.show()
 
 # %% code 212.
-fig, axs = plt.subplots(1, 1,
-                        sharex=False, sharey=False, gridspec_kw=None,
-                        subplot_kw={'projection': wcs0},
-                        )
+fig, axs = plt.subplots(1, 1, sharex=False, sharey=False, gridspec_kw=None,
+                        subplot_kw={'projection': wcs0})
 
-im = du.zimshow(axs, hdul0[0].data,
-                origin='lower',
-                cmap="viridis",
-             )
+im = du.zimshow(axs, hdul0[0].data, origin='lower', cmap="viridis")
 
 axs.coords['ra'].set_ticks(spacing=10 * u.arcmin, color='green')
 axs.coords['dec'].set_ticks(spacing=10 * u.arcmin, color='orange')
@@ -399,20 +386,13 @@ plt.show()
 # %% code 213.
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 2.5),
                         sharex=False, sharey=False, gridspec_kw=None,
-                        subplot_kw={'projection': wcs1},
-                        )
+                        subplot_kw={'projection': wcs1})
 
-im0 = du.zimshow(axs[0], hdul1[0].data,
-                origin='lower',
-                cmap="viridis",
-                )
+im0 = du.zimshow(axs[0], hdul1[0].data, origin='lower', cmap="viridis")
 
 axs[0].set_title('Image display using WCS', fontsize=10 , pad=30)
 
-im1 = du.zimshow(axs[1], hdul1[0].data,
-                origin='lower',
-                cmap="viridis",
-                )
+im1 = du.zimshow(axs[1], hdul1[0].data, origin='lower', cmap="viridis")
 
 axs[1].coords['ra'].set_auto_axislabel(True)
 axs[1].coords['dec'].set_auto_axislabel(True)
@@ -443,13 +423,9 @@ plt.show()
 # %% code 214.
 fig, axs = plt.subplots(2, 1, figsize=(5.3, 8),
                         sharex=False, sharey=False, gridspec_kw=None,
-                        subplot_kw={'projection': wcs2},
-                        )
+                        subplot_kw={'projection': wcs2})
 
-im0 = du.zimshow(axs[0], hdul2[0].data,
-                origin='lower',
-                cmap="viridis",
-                )
+im0 = du.zimshow(axs[0], hdul2[0].data, origin='lower', cmap="viridis")
 
 axs[0].coords['ra'].set_ticklabel_position('b')   #왼쪽, 오른쪽, 아래, 위
 axs[0].coords['dec'].set_ticklabel_position('l')  #왼쪽, 오른쪽, 아래, 위
@@ -466,10 +442,7 @@ overlay0[0].set_ticklabel_position('b')  #왼쪽, 오른쪽, 아래, 위
 overlay0[1].set_ticklabel_position('l')  #왼쪽, 오른쪽, 아래, 위
 axs[0].set_title('Image display using WCS (ICRS)', fontsize=12, pad=30)
 
-im1 = du.zimshow(axs[1], hdul2[0].data,
-                origin='lower',
-                cmap="viridis",
-                )
+im1 = du.zimshow(axs[1], hdul2[0].data, origin='lower', cmap="viridis")
 
 # axs[1].coords['ra'].set_axislabel('Right Ascension (J2000.0)')
 # axs[1].coords['dec'].set_axislabel('Declination (J2000.0)')

@@ -39,7 +39,6 @@ NORTH, SOUTH, EAST, WEST = 55, 20, 150, 100
 LEVEL_850 = 85000  # Pa 단위(850 hPa)
 LEVEL_500 = 50000  # 500 hPa
 
-
 def fetch(variable, level=None):
     &quot;&quot;&quot;GFS 분석장에서 필요한 영역·변수만 잘라 받는다.&quot;&quot;&quot;
     query = ncss.query()
@@ -51,17 +50,15 @@ def fetch(variable, level=None):
         query.vertical_level(level)
     return ncss.get_data(query)
 
-
 def to_array(dataset, name):
     &quot;&quot;&quot;결측이 표시된 배열을 계산하기 쉬운 실수 배열로 바꾼다.&quot;&quot;&quot;
     values = np.squeeze(dataset.variables[name][:])
     return np.ma.filled(values, np.nan).astype(float)
 
-
 data_mslp = fetch(&quot;Pressure_reduced_to_MSL_msl&quot;)      # 해면기압
 data_t850 = fetch(&quot;Temperature_isobaric&quot;, LEVEL_850)  # 850 hPa 기온
 data_z500 = fetch(&quot;Geopotential_height_isobaric&quot;, LEVEL_500)  # 500 hPa 고도
-data_zsfc = fetch(&quot;Geopotential_height_surface&quot;)                # 지형 높이
+data_zsfc = fetch(&quot;Geopotential_height_surface&quot;)      # 지형 높이
 
 lat = to_array(data_mslp, &quot;latitude&quot;)
 lon = to_array(data_mslp, &quot;longitude&quot;)
@@ -96,7 +93,6 @@ import cartopy.feature as cfeature
 PROJ = ccrs.LambertConformal(central_longitude=127.5, central_latitude=38)
 EXTENT = [105, 145, 22, 52]        # 지도에 실제로 보일 범위(경도, 위도)
 
-
 def make_map(ax):
     &quot;&quot;&quot;해안선과 국경을 그려 일기도 바탕을 만든다.&quot;&quot;&quot;
     ax.set_extent(EXTENT, crs=ccrs.PlateCarree())
@@ -108,7 +104,6 @@ def make_map(ax):
     gl.top_labels = gl.right_labels = False
     gl.xlabel_style = gl.ylabel_style = {&quot;size&quot;: 8}
     return ax
-
 
 print(&quot;지도 바탕 함수 준비 완료&quot;)</code></pre>
 <h2 id="code-455">code 455. <button class="copy">복사</button></h2><pre><code>fig = plt.figure(figsize=(5.6, 4.9))
@@ -136,14 +131,13 @@ du.save_figure(fig, os.path.join(proj_dir, &quot;surface_chart&quot;))
 plt.show()</code></pre>
 <h2 id="code-456">code 456. <button class="copy">복사</button></h2><pre><code>from scipy.ndimage import maximum_filter, minimum_filter
 
-
 def find_extrema(field, lon, lat, kind=&quot;min&quot;, size=25, count=4,
                  terrain=None, max_height=HIGH_TERRAIN):
     &quot;&quot;&quot;기압장에서 고기압(max) 또는 저기압(min) 중심 위치를 찾는다.&quot;&quot;&quot;
     filtered = (maximum_filter(field, size) if kind == &quot;max&quot;
                 else minimum_filter(field, size))
-    is_ext = field == filtered                        # 창 안에서 극값인 지점
-    margin = size // 2                                # 경계에서 창 절반 이내는 제외
+    is_ext = field == filtered  # 창 안에서 극값인 지점
+    margin = size // 2          # 경계에서 창 절반 이내는 제외
     is_ext[:margin, :] = is_ext[-margin:, :] = False
     is_ext[:, :margin] = is_ext[:, -margin:] = False
     if terrain is not None:                           # 높은 고원 위의 점 제외
@@ -153,7 +147,6 @@ def find_extrema(field, lon, lat, kind=&quot;min&quot;, size=25, count=4,
     order = np.argsort(values)[::-1] if kind == &quot;max&quot; else np.argsort(values)
     picked = order[:count]
     return lon[cols[picked]], lat[rows[picked]], values[picked]
-
 
 low_lon, low_lat, low_val = find_extrema(mslp_smooth, lon, lat, &quot;min&quot;, terrain=zsfc)
 high_lon, high_lat, high_val = find_extrema(mslp_smooth, lon, lat, &quot;max&quot;, terrain=zsfc)

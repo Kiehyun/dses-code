@@ -12,51 +12,45 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/03-05/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
 <p class="jump"><a href="#code-53">53</a> <a href="#code-54">54</a> <a href="#code-55">55</a> <a href="#code-56">56</a> <a href="#code-57">57</a> <a href="#code-58">58</a> <a href="#code-59">59</a> <a href="#code-60">60</a> <a href="#code-61">61</a> <a href="#code-62">62</a> <a href="#code-63">63</a> <a href="#code-64">64</a> <a href="#code-65">65</a> <a href="#code-66">66</a> <a href="#code-67">67</a> <a href="#code-68">68</a> <a href="#code-69">69</a> <a href="#code-70">70</a> <a href="#code-71">71</a> <a href="#code-72">72</a> <a href="#code-73">73</a> <a href="#code-74">74</a> <a href="#code-75">75</a></p>
-<h2 id="code-53">code 53. <button class="copy">복사</button></h2><pre><code># astropy 라이브러리에서 Time 클래스를 가져옴 (천문학적 시간 처리용)
-from astropy.time import Time
+<h2 id="code-53">code 53. <button class="copy">복사</button></h2><pre><code>from astropy.time import Time
 
-# 특정 시간을 설정 (2017년 1월 1일)
 specific_time = Time(&quot;2017-01-01&quot;)
 
-# NASA JPL Horizons 데이터베이스에서 천체 데이터를 가져오기 위한 라이브러리
+# NASA JPL Horizons 천체력 서비스
 from astroquery.jplhorizons import Horizons
 
-# 태양계 첫번째 행성(수성)의 위치와 속도 벡터 얻기
-obj1 = Horizons(id = 1,                    # 천체 ID (1 = 수성)
-                location=&quot;@sun&quot;,                # 관측 위치 (태양 중심)
-                epochs=specific_time.jd,        # 시간 (줄리안 데이 형식)
-                id_type=&#x27;majorbody&#x27;).vectors()  # 주요 천체 타입으로 벡터 데이터 요청
+# 수성의 위치 · 속도 벡터
+obj1 = Horizons(id = 1,                    # 1 = 수성
+                location=&quot;@sun&quot;,          # 태양 중심 기준
+                epochs=specific_time.jd,  # 줄리안 데이
+                id_type=&#x27;majorbody&#x27;).vectors()
 
-# 결과 자료형 출력
 print(&quot;type(obj1): &quot;, type(obj1))
 
-# 수성의 위치와 속도 벡터 데이터 출력
 print(&quot;obj1: &quot;,obj1)</code></pre>
 <h2 id="code-54">code 54. <button class="copy">복사</button></h2><pre><code>import numpy as np
 from astropy.time import Time, TimeDelta
 
-# 특정 시각을 문자열로 정의
 specific_time_str = &quot;2017-01-01&quot;
-print(&quot;type(specific_time_str):&quot;, type(specific_time_str))  # 문자열 타입 확인
+print(&quot;type(specific_time_str):&quot;, type(specific_time_str))
 print(&quot;specific_time_str&quot;, specific_time_str)
 
-# Time 함수를 이용하여 문자열을 astropy Time 객체로 변환
 specific_time = Time(specific_time_str)
 
-print(&quot;specific_time:&quot;, specific_time)               # Time 객체 출력
-print(&quot;type(specific_time): &quot;, type(specific_time))  # Time 객체 타입 확인
+print(&quot;specific_time:&quot;, specific_time)
+print(&quot;type(specific_time): &quot;, type(specific_time))
 
-# 줄리안 데이(Julian Day) 형식으로 시간 객체 생성
+# 줄리안 데이로 Time 객체 만들기
 specific_time_jd = Time(specific_time.jd, format=&quot;jd&quot;)
-print(&quot;type(specific_time.jd):&quot;, type(specific_time.jd))  # 줄리안 데이 값의 타입 확인
-print(&quot;specific_time.jd: &quot;, specific_time.jd)  # 줄리안 데이 값 출력
-print(&quot;specific_time_jd.iso: {}&quot;.format(specific_time_jd.iso))  # ISO 형식으로 변환하여 출력
+print(&quot;type(specific_time.jd):&quot;, type(specific_time.jd))
+print(&quot;specific_time.jd: &quot;, specific_time.jd)
+print(&quot;specific_time_jd.iso: {}&quot;.format(specific_time_jd.iso))
 
-# 시뮬레이션 시작 및 종료 시간 설정
-start_time_text = &quot;2017-01-01&quot;  # 시작 날짜
-end_time_text = &quot;2017-02-01&quot;    # 종료 날짜
+# 시뮬레이션 기간
+start_time_text = &quot;2017-01-01&quot;
+end_time_text = &quot;2017-02-01&quot;
 
-dt = 1  # 시간 간격 (1일)
+dt = 1  # 시간 간격(일)
 
 def astropyTime_range(start, end, delta):
     &quot;&quot;&quot;
@@ -67,209 +61,159 @@ def astropyTime_range(start, end, delta):
     end: 종료 시간 (astropy Time 객체)
     delta: 시간 간격 (TimeDelta 객체)
     &quot;&quot;&quot;
-    current = start       # 현재 시간을 시작 시간으로 초기화
-    while current &lt; end:  # 현재 시간이 종료 시간보다 작을 때까지 반복
-        yield current     # 현재 시간 반환
-        current += delta  # 시간 간격만큼 증가
+    current = start
+    while current &lt; end:
+        yield current
+        current += delta
 
-# 시작 시간부터 종료 시간까지 1일 간격으로 시간 목록 생성
+# 1일 간격 시각 목록(ISO 문자열)
 dts = [dt.iso for dt in 
        astropyTime_range(Time(start_time_text), Time(end_time_text), 
        TimeDelta(dt, format=&#x27;jd&#x27;))]
 
-print(&quot;len(dts) :&quot;, len(dts))  # 생성된 시간 목록의 길이 출력
-print(&quot;dts :&quot;, dts)            # 생성된 시간 목록 출력 (ISO 형식)</code></pre>
+print(&quot;len(dts) :&quot;, len(dts))
+print(&quot;dts :&quot;, dts)</code></pre>
 <h2 id="code-55">code 55. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
-# 4x4 인치 크기의 그림 생성
 fig = plt.figure(figsize=[4, 4])
 
-# 축 설정: 전체 영역 사용, x축과 y축 범위를 -1.8부터 1.8까지 설정
-ax = plt.axes([0., 0., 1., 1.], 
-              xlim=(-1.8, 1.8), 
-              ylim=(-1.8, 1.8))
+# 축이 그림 전체를 채우게, 범위 ±1.8 AU
+ax = plt.axes([0., 0., 1., 1.], xlim=(-1.8, 1.8), ylim=(-1.8, 1.8))
 
-# 축의 비율을 동일하게 설정 (원이 찌그러지지 않도록)
+# 원이 찌그러지지 않도록
 ax.set_aspect(&#x27;equal&#x27;)
 
-# x축과 y축 레이블 설정
 ax.set_xlabel(&#x27;x&#x27;)
 ax.set_ylabel(&#x27;y&#x27;)
 
-# 격자 표시
 ax.grid(True)
 
-# 태양을 원점(0, 0)에 그리기
-plot = ax.scatter(0, 0,                    # 위치: 원점 (0, 0)
-                  color = &quot;red&quot;,      # 색상: 빨간색 (태양을 상징)
-                  s = 28**2,          # 크기: 28의 제곱 (점의 크기는 제곱 단위)
-                  edgecolors = None,  # 테두리 색상: 없음
-                  zorder = 10)        # 그리기 순서: 10 (다른 객체보다 앞에 표시)</code></pre>
+# 태양(원점)
+plot = ax.scatter(0, 0,
+                  color = &quot;red&quot;,
+                  s = 28**2,          # 점 크기는 지름의 제곱
+                  edgecolors = None,
+                  zorder = 10)        # 다른 것보다 앞에 그리기</code></pre>
 <h2 id="code-56">code 56. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
-# 배경을 검게 만들기 위한 어두운 테마 적용
+# 검은 배경
 plt.style.use(&#x27;dark_background&#x27;)
 
-# 축 설정: 전체 영역 사용, x축과 y축 범위를 -1.8부터 1.8까지 설정
-ax = plt.axes([0., 0., 1., 1.], 
-              xlim=(-1.8, 1.8), 
-              ylim=(-1.8, 1.8))
+# 축이 그림 전체를 채우게, 범위 ±1.8 AU
+ax = plt.axes([0., 0., 1., 1.], xlim=(-1.8, 1.8), ylim=(-1.8, 1.8))
 
-# 축의 비율을 동일하게 설정 (원이 찌그러지지 않도록)
+# 원이 찌그러지지 않도록
 ax.set_aspect(&#x27;equal&#x27;)
 
-# x축과 y축 레이블 설정 (어두운 테마에서 자동으로 밝은 색으로 표시됨)
 ax.set_xlabel(&#x27;x&#x27;)
 ax.set_ylabel(&#x27;y&#x27;)
 
-# 격자선 제거 (우주 공간의 현실적인 표현을 위해)
 ax.grid(False)
 
-# 축과 축 레이블 완전히 제거 (순수한 우주 공간 효과)
 ax.axis(&#x27;off&#x27;)
 
-# 태양을 원점(0, 0)에 그리기
-plot = ax.scatter(0, 0,                    # 위치: 좌표계의 중심점 (0, 0)
-                  color = &quot;red&quot;,      # 색상: 빨간색 (태양의 특성을 상징)
-                  s = 28**2,          # 크기: 28의 제곱 (점의 크기는 제곱 단위로 지정)
-                  edgecolors = None,  # 테두리 색상: 없음 (깔끔한 표현)
-                  zorder = 10)        # 그리기 순서: 10 (다른 객체들보다 앞에 표시)</code></pre>
-<h2 id="code-57">code 57. <button class="copy">복사</button></h2><pre><code># astropy 라이브러리에서 Time 클래스를 가져옴 (천문학적 시간 처리용)
-from astropy.time import Time
-# 특정 시간을 설정 (2017년 1월 1일)
+# 태양(원점)
+plot = ax.scatter(0, 0,
+                  color = &quot;red&quot;,
+                  s = 28**2,          # 점 크기는 지름의 제곱
+                  edgecolors = None,
+                  zorder = 10)</code></pre>
+<h2 id="code-57">code 57. <button class="copy">복사</button></h2><pre><code>from astropy.time import Time
 specific_time = Time(&quot;2017-01-01&quot;)
 
-# NASA JPL Horizons 데이터베이스에서 천체 데이터를 가져오기 위한 라이브러리 import
 from astroquery.jplhorizons import Horizons
-# 수성(id=1)의 위치와 속도 벡터 데이터 요청
-obj1 = Horizons(id = 1,                    # 천체 ID (1 = 수성)
-                location=&quot;@sun&quot;,                # 관측 위치 (태양 중심)
-                epochs=specific_time.jd,        # 시간 (줄리안 데이 형식)
-                id_type=&#x27;majorbody&#x27;).vectors()  # 주요 천체 타입으로 벡터 데이터 요청
+# 수성의 위치 · 속도 벡터
+obj1 = Horizons(id = 1, location=&quot;@sun&quot;, epochs=specific_time.jd,
+                id_type=&#x27;majorbody&#x27;).vectors()
 
-# 결과 데이터의 타입 확인
 print(&quot;type(obj1): &quot;, type(obj1))
-# 수성의 전체 위치와 속도 벡터 데이터 출력
 print(&quot;obj1: &quot;, obj1)
 
-# 위치 벡터의 각 성분 출력 (천문단위 AU)
-print(&quot;obj1[&#x27;x&#x27;]: &quot;, obj1[&#x27;x&#x27;])  # x축 방향 위치 성분
-print(&quot;obj1[&#x27;y&#x27;]: &quot;, obj1[&#x27;y&#x27;])  # y축 방향 위치 성분
-print(&quot;obj1[&#x27;z&#x27;]: &quot;, obj1[&#x27;z&#x27;])  # z축 방향 위치 성분
+# 위치(AU)
+print(&quot;obj1[&#x27;x&#x27;]: &quot;, obj1[&#x27;x&#x27;])
+print(&quot;obj1[&#x27;y&#x27;]: &quot;, obj1[&#x27;y&#x27;])
+print(&quot;obj1[&#x27;z&#x27;]: &quot;, obj1[&#x27;z&#x27;])
 
-# 속도 벡터의 각 성분 출력 (AU/day)
-print(&quot;obj1[&#x27;vx&#x27;]: &quot;, obj1[&#x27;vx&#x27;])  # x축 방향 속도 성분
-print(&quot;obj1[&#x27;vy&#x27;]: &quot;, obj1[&#x27;vy&#x27;])  # y축 방향 속도 성분
-print(&quot;obj1[&#x27;vz&#x27;]: &quot;, obj1[&#x27;vz&#x27;])  # z축 방향 속도 성분</code></pre>
-<h2 id="code-58">code 58. <button class="copy">복사</button></h2><pre><code># astropy 라이브러리에서 Time 클래스를 가져옴 (천문학적 시간 처리용)
-from astropy.time import Time
-# 특정 시간을 설정 (2017년 1월 1일)
+# 속도(AU/day)
+print(&quot;obj1[&#x27;vx&#x27;]: &quot;, obj1[&#x27;vx&#x27;])
+print(&quot;obj1[&#x27;vy&#x27;]: &quot;, obj1[&#x27;vy&#x27;])
+print(&quot;obj1[&#x27;vz&#x27;]: &quot;, obj1[&#x27;vz&#x27;])</code></pre>
+<h2 id="code-58">code 58. <button class="copy">복사</button></h2><pre><code>from astropy.time import Time
 specific_time = Time(&quot;2017-01-01&quot;)
 
-# matplotlib 라이브러리 가져오기 (그래프 그리기용)
 import matplotlib.pyplot as plt
-# 어두운 배경 테마 적용 (우주 공간 느낌 연출)
 plt.style.use(&#x27;dark_background&#x27;)
-# 축 설정: 전체 영역 사용, x축과 y축 범위를 -1.8부터 1.8까지 설정
-ax = plt.axes([0., 0., 1., 1.],
-              xlim=(-1.8, 1.8), 
-              ylim=(-1.8, 1.8))
+ax = plt.axes([0., 0., 1., 1.], xlim=(-1.8, 1.8), ylim=(-1.8, 1.8))
 
-# 축의 비율을 동일하게 설정 (원이 찌그러지지 않도록)
 ax.set_aspect(&#x27;equal&#x27;)
-# 격자선 제거 (우주 공간의 현실적인 표현을 위해)
 ax.grid(False)
-# 축과 축 레이블 완전히 제거 (순수한 우주 공간 효과)
 ax.axis(&#x27;off&#x27;)
 
-# 태양을 원점(0, 0)에 그리기
-plot = ax.scatter(0, 0,                    # 위치: 좌표계의 중심점 (0, 0)
-                  color=&quot;red&quot;,      # 색상: 빨간색 (태양의 특성을 상징)
-                  s=28**2,          # 크기: 28의 제곱 (점의 크기는 제곱 단위로 지정)
-                  edgecolors=None,  # 테두리 색상: 없음 (깔끔한 표현)
-                  zorder=10)        # 그리기 순서: 10 (다른 객체들보다 앞에 표시)
+# 태양(원점)
+plot = ax.scatter(0, 0, color=&quot;red&quot;, s=28**2, edgecolors=None, zorder=10)
 
-# 현재 날짜를 화면 왼쪽 상단에 표시
-ax.text(.03, .94,                          # 위치: x=0.03, y=0.94 (축 좌표 기준)
-        &#x27;Date: {}&#x27;.format(specific_time),  # 표시할 텍스트: 날짜 정보
-        color=&#x27;w&#x27;,                         # 글자 색상: 흰색
-        transform=ax.transAxes,            # 좌표 변환: 축 좌표계 사용
-        fontsize=&#x27;x-large&#x27;)                # 글자 크기: 매우 큰 크기
+# 왼쪽 위에 날짜
+ax.text(.03, .94,                          # 축 좌표(0~1) 기준 위치
+        &#x27;Date: {}&#x27;.format(specific_time),
+        color=&#x27;w&#x27;,
+        transform=ax.transAxes,
+        fontsize=&#x27;x-large&#x27;)
 
-# 수성, 금성, 지구, 화성 추가하기
-from astroquery.jplhorizons import Horizons    # NASA JPL Horizons 데이터베이스 접근용
-sizes = [0.38, 0.95, 1., 0.53]                 # 행성들의 상대적 크기 (지구=1.0 기준)
-names = [&#x27;Mercury&#x27;, &#x27;Venus&#x27;, &#x27;Earth&#x27;, &#x27;Mars&#x27;]  # 행성 이름 목록
-for i in range(4):                             # 4개 행성에 대해 반복
- # NASA JPL Horizons에서 행성 데이터 가져오기
-    obj = Horizons(id = i+1,               # 천체 ID (1=수성, 2=금성, 3=지구, 4=화성)
-                   location = &quot;@sun&quot;,                # 관측 위치 (태양 중심)
-                   epochs = specific_time.jd,        # 시간 (줄리안 데이 형식)
-                   id_type = &#x27;majorbody&#x27;).vectors()  # 주요 천체 타입으로 벡터 데이터 요청
+# 수성 · 금성 · 지구 · 화성
+from astroquery.jplhorizons import Horizons
+sizes = [0.38, 0.95, 1., 0.53]                 # 상대 크기(지구 = 1)
+names = [&#x27;Mercury&#x27;, &#x27;Venus&#x27;, &#x27;Earth&#x27;, &#x27;Mars&#x27;]
+for i in range(4):
+    obj = Horizons(id = i+1,               # 1 수성, 2 금성, 3 지구, 4 화성
+                   location = &quot;@sun&quot;,
+                   epochs = specific_time.jd,
+                   id_type = &#x27;majorbody&#x27;).vectors()
 
- # 행성을 x, y 좌표에 점으로 그리기
-    plot = ax.scatter(obj[&quot;x&quot;], obj[&quot;y&quot;],  # 위치: 행성의 x, y 좌표
-                      s = (10 * sizes[i])**2,  # 크기: 상대적 크기에 비례하여 설정
-                      edgecolors = None,       # 테두리 색상: 없음
-                      zorder = 10)             # 그리기 순서: 10 (앞에 표시)
+    plot = ax.scatter(obj[&quot;x&quot;], obj[&quot;y&quot;], s = (10 * sizes[i])**2,
+                      edgecolors = None, zorder = 10)
     
- # 행성 이름을 행성 위쪽에 표시
-    ax.text(obj[&quot;x&quot;], obj[&quot;y&quot;]+0.1,        # 위치: 행성 좌표에서 y축으로 0.1만큼 위
-            names[i],          # 표시할 텍스트: 행성 이름
-            zorder=1000,       # 그리기 순서: 1000 (가장 앞에 표시)
-            ha=&#x27;center&#x27;,       # 수평 정렬: 중앙 정렬
-            fontsize=&#x27;large&#x27;)  # 글자 크기: 큰 크기</code></pre>
-<h2 id="code-59">code 59. <button class="copy">복사</button></h2><pre><code># astropy 라이브러리에서 Time 클래스를 가져와서 특정 시간 객체 생성
-from astropy.time import Time
-specific_time = Time(&quot;2017-01-01&quot;)  # 2017년 1월 1일로 시간 설정
+    # 행성 위에 이름
+    ax.text(obj[&quot;x&quot;], obj[&quot;y&quot;]+0.1, names[i], zorder=1000, ha=&#x27;center&#x27;,
+            fontsize=&#x27;large&#x27;)</code></pre>
+<h2 id="code-59">code 59. <button class="copy">복사</button></h2><pre><code>from astropy.time import Time
+specific_time = Time(&quot;2017-01-01&quot;)
 
-# matplotlib을 이용한 그래프 생성 및 설정
 import matplotlib.pyplot as plt
-plt.style.use(&#x27;dark_background&#x27;)  # 어두운 배경 테마 적용 (우주 공간 효과)
+plt.style.use(&#x27;dark_background&#x27;)
 
-# 그래프 축 설정: 전체 화면 사용, x와 y 축 범위를 -1.8에서 1.8로 설정
 ax = plt.axes([0., 0., 1., 1.], xlim=(-1.8, 1.8), ylim=(-1.8, 1.8))
-ax.set_aspect(&#x27;equal&#x27;)  # 축 비율을 1:1로 설정 (원이 찌그러지지 않도록)
-ax.grid(False)          # 격자선 제거
-ax.axis(&#x27;off&#x27;)          # 축과 축 레이블 완전히 제거
+ax.set_aspect(&#x27;equal&#x27;)
+ax.grid(False)
+ax.axis(&#x27;off&#x27;)
 
-# 태양을 좌표 원점(0, 0)에 빨간색 점으로 표시
+# 태양(원점)
 sun = ax.scatter(0, 0, color=&quot;red&quot;, s=28**2, edgecolors=None, zorder=10)
 
-# 화면 왼쪽 상단에 현재 날짜 표시
 ax.text(.03, .94, &#x27;Date: {}&#x27;.format(specific_time), color=&#x27;w&#x27;, 
         transform=ax.transAxes, fontsize=&#x27;x-large&#x27;)
 
-# NASA JPL Horizons 데이터베이스에서 지구 데이터 가져오기
 from astroquery.jplhorizons import Horizons
-# 지구(id=3)의 2017년 1월 1일 위치와 속도 벡터 정보 요청
-obj = Horizons(id=3,                    # 천체 ID: 3은 지구
-               location=&quot;@sun&quot;,          # 관측 위치: 태양 중심
-               epochs=specific_time.jd,  # 시간: 줄리안 데이 형식
-               id_type=&#x27;id&#x27;).vectors()   # 벡터 데이터 요청
+# 지구(id=3)의 위치 · 속도 벡터
+obj = Horizons(id=3, location=&quot;@sun&quot;, epochs=specific_time.jd,
+               id_type=&#x27;id&#x27;).vectors()
 
-# 지구를 그래프에 점으로 표시 (x, y 좌표 사용)
 plot = ax.scatter(obj[&quot;x&quot;], obj[&quot;y&quot;], s=10**2, edgecolors=None, zorder=10)
 
-# 지구 위치 위쪽에 &quot;Earth&quot; 라벨 표시
 ax.text(obj[&quot;x&quot;], obj[&quot;y&quot;]+0.1, &quot;Earth&quot;, zorder=1000, ha=&#x27;center&#x27;, fontsize=&#x27;large&#x27;)
 
-# 시간 객체 재정의 (중복이지만 명확성을 위해)
+# 시각 다시 정의(중복이지만 명확성을 위해)
 from astropy.time import Time
 specific_time = Time(&quot;2017-01-01&quot;)
 
-# 지구의 위치 벡터 정보 다시 가져오기
 from astroquery.jplhorizons import Horizons
 obj = Horizons(id=3, location=&quot;@sun&quot;, epochs=specific_time.jd, id_type=&#x27;id&#x27;).vectors()
 
-# 지구의 x, y, z 좌표 출력 (3차원 위치 벡터 확인)
 print([obj[xi] for xi in [&#x27;x&#x27;, &#x27;y&#x27;, &#x27;z&#x27;]])
 
-# numpy를 이용하여 위치 벡터를 배열로 변환
 import numpy as np
-# 지구의 3차원 위치 벡터를 float64 형태의 numpy 배열로 생성
+# 위치 벡터 r(AU)
 r = np.array([np.double(obj[xi]) for xi in [&#x27;x&#x27;, &#x27;y&#x27;, &#x27;z&#x27;]], dtype=np.float64)
-r  # 위치 벡터 r 출력</code></pre>
+r</code></pre>
 <h2 id="code-60">code 60. <button class="copy">복사</button></h2><pre><code>import numpy as np
 from astropy.time import Time, TimeDelta
 
@@ -288,10 +232,7 @@ dts = [dt.iso for dt in
        astropyTime_range(Time(start_time_text), Time(end_time_text), 
        TimeDelta(dt, format=&#x27;jd&#x27;))]
 
-#print(len(dts))
-#print(dts)
-
-# 지구 위치 계산하기
+# 지구의 처음 위치 · 속도
 from astroquery.jplhorizons import Horizons
 obj = Horizons(id=3, location=&quot;@sun&quot;, epochs=Time(start_time_text).jd, id_type=&#x27;id&#x27;).vectors()
 
@@ -304,42 +245,34 @@ rs, vs, accs = [], [], []
 i = 0
 while i &lt; (len(dts)) :    
     r = r + v * dt
-    acc = -2.959e-4 * r / np.sum(r**2)**(3./2)  # 단위: AU/day²
+    acc = -2.959e-4 * r / np.sum(r**2)**(3./2)  # 태양 GM = 2.959e-4 AU³/day²
     v = v + acc * dt
     rs.append(r)
     vs.append(v)
     accs.append(acc)
     xs.append(r[0])
     ys.append(r[1])
- #print(&quot;i: {}, r: {}, v: {}, acc: {}&quot;.format(i, r, v, acc))
     i += 1
-# print(&quot;i: {}, r: {}, v: {}, acc: {}&quot;.format(i, r, v, acc))
 
 print(&quot;len(xs): {}&quot;.format(len(xs)))
-# print(&quot;xs: {}&quot;.format(xs))
 print(&quot;len(ys): {}&quot;.format(len(ys)))
-# print(&quot;ys: {}&quot;.format(ys))
 print(&quot;len(rs): {}&quot;.format(len(rs)))
-# print(&quot;rs: {}&quot;.format(rs))
 
 print(&quot;len(vs): {}&quot;.format(len(vs)))
-# print(&quot;vs: {}&quot;.format(vs))
 
 print(&quot;len(accs): {}&quot;.format(len(accs)))
-# print(&quot;accs: {}&quot;.format(accs))
 
 print(&quot;rs[5][:2]: {}&quot;.format(rs[5][:2]))
 print(&quot;rs[4]: {}&quot;.format(rs[4]))
-print(&quot;rs[5]: {}&quot;.format(rs[5]))
-#print(&quot;[item[:2] for item in rs[2]]: {}&quot;.format([item[:2] for item in rs[2]]))</code></pre>
+print(&quot;rs[5]: {}&quot;.format(rs[5]))</code></pre>
 <h2 id="code-61">code 61. <button class="copy">복사</button></h2><pre><code>import numpy as np
 from astropy.time import Time, TimeDelta
 
-# 시뮬레이션 시작 시간과 종료 시간 설정
-start_time_text = &quot;2017-01-01&quot;  # 시뮬레이션 시작일 (2017년 1월 1일)
-end_time_text = &quot;2020-01-01&quot;    # 시뮬레이션 종료일 (2020년 1월 1일)
+# 시뮬레이션 기간
+start_time_text = &quot;2017-01-01&quot;
+end_time_text = &quot;2020-01-01&quot;
 
-dt = 1  # 시간 간격 (1일)
+dt = 1  # 시간 간격(일)
 
 def astropyTime_range(start, end, delta):
     &quot;&quot;&quot;
@@ -350,99 +283,82 @@ def astropyTime_range(start, end, delta):
     end: 종료 시간 (astropy Time 객체)  
     delta: 시간 간격 (TimeDelta 객체)
     &quot;&quot;&quot;
-    current = start       # 현재 시간을 시작 시간으로 초기화
-    while current &lt; end:  # 현재 시간이 종료 시간보다 작을 때까지 반복
-        yield current     # 현재 시간을 반환
-        current += delta  # 시간 간격만큼 증가
+    current = start
+    while current &lt; end:
+        yield current
+        current += delta
 
-# 시작 시간부터 종료 시간까지 1일 간격으로 시간 목록 생성
+# 1일 간격 시각 목록
 dts = [dt.iso for dt in 
        astropyTime_range(Time(start_time_text), Time(end_time_text), 
        TimeDelta(dt, format=&#x27;jd&#x27;))]
-
-#print(len(dts)) # 생성된 시간 목록의 길이 출력 (주석 처리됨)
-#print(dts) # 생성된 시간 목록 출력 (주석 처리됨)
 
 plt.style.use(&#x27;dark_background&#x27;)
 fig = plt.figure(figsize=[6, 6])
 ax = plt.axes([0., 0., 1., 1.], xlim=(-1.8, 1.8), ylim=(-1.8, 1.8))
 ax.set_aspect(&#x27;equal&#x27;)
 ax.axis(&#x27;off&#x27;)
-sun = ax.scatter(0, 0, color=&quot;red&quot;, s=28**2,
-                 edgecolors=None, zorder=10)
+sun = ax.scatter(0, 0, color=&quot;red&quot;, s=28**2, edgecolors=None, zorder=10)
 
-# NASA JPL Horizons 데이터베이스에서 지구 위치 데이터 가져오기
+# 지구의 처음 위치 · 속도(Horizons)
 from astroquery.jplhorizons import Horizons
-obj = Horizons(id=3,                         # 천체 ID (3 = 지구)
-               location=&quot;@sun&quot;,                  # 관측 위치 (태양 중심)
-               epochs=Time(start_time_text).jd,  # 시간 (줄리안 데이 형식)
-               id_type=&#x27;id&#x27;).vectors()           # 벡터 데이터 요청
+obj = Horizons(id=3, location=&quot;@sun&quot;, epochs=Time(start_time_text).jd,
+               id_type=&#x27;id&#x27;).vectors()
 
 ax.text(obj[&quot;x&quot;], obj[&quot;y&quot;]+0.1,
         &quot;Earth&quot;, zorder=1000, ha=&#x27;center&#x27;, fontsize=&#x27;large&#x27;)
-plot = ax.scatter(obj[&quot;x&quot;], obj[&quot;y&quot;],
-                  s=10**2, edgecolors=None, zorder=10)
+plot = ax.scatter(obj[&quot;x&quot;], obj[&quot;y&quot;], s=10**2, edgecolors=None, zorder=10)
 line, = ax.plot([], [], linewidth=1.4)
 timestamp = ax.text(.03, .94, &#x27;Date: &#x27;, color=&#x27;w&#x27;, transform=ax.transAxes, fontsize=&#x27;x-large&#x27;)
 
-
-# 지구의 초기 위치 벡터를 numpy 배열로 변환 (x, y, z 좌표)
+# 처음 위치(AU)
 r = np.array([np.double(obj[xi]) for xi in [&#x27;x&#x27;, &#x27;y&#x27;, &#x27;z&#x27;]], dtype=np.float64)
-# 지구의 초기 속도 벡터를 numpy 배열로 변환 (vx, vy, vz 성분)
+# 처음 속도(AU/day)
 v = np.array([np.double(obj[vxi]) for vxi in [&#x27;vx&#x27;, &#x27;vy&#x27;, &#x27;vz&#x27;]], dtype=np.float64)
-print(&quot;r: {}, v: {}&quot;.format(r, v))  # 초기 위치와 속도 벡터 출력
+print(&quot;r: {}, v: {}&quot;.format(r, v))
 
-# 시뮬레이션 결과를 저장할 리스트들 초기화
-xs, ys = [], []            # x, y 좌표를 별도로 저장하는 리스트
-rs, vs, accs = [], [], []  # 위치 벡터, 속도 벡터, 가속도 벡터를 저장하는 리스트
+xs, ys = [], []
+rs, vs, accs = [], [], []
 
-i = 0  # 반복 횟수 카운터 초기화
+i = 0
 
-# 오일러 방법을 사용한 궤도 시뮬레이션 루프
+# 오일러 방법으로 궤도 계산
 while i &lt; (len(dts)):    
- # 위치 업데이트: 새로운 위치 = 이전 위치 + 속도 × 시간간격
+    # 위치 갱신: r ← r + v·dt
     r = r + v * dt
     
- # 태양의 중력에 의한 가속도 계산 (뉴턴의 만유인력 법칙)
- # acc = -GM/r² × (r/|r|) 형태로, 태양을 향하는 방향의 가속도
-    acc = -2.959e-4 * r / np.sum(r**2)**(3./2)  # 단위: AU/day²
+    # 태양 중력 가속도: a = -GM·r/|r|³
+    acc = -2.959e-4 * r / np.sum(r**2)**(3./2)  # 태양 GM = 2.959e-4 AU³/day²
     
- # 속도 업데이트: 새로운 속도 = 이전 속도 + 가속도 × 시간간격
+    # 속도 갱신: v ← v + a·dt
     v = v + acc * dt
     
- # 계산 결과를 리스트에 저장
-    rs.append(r)      # 위치 벡터 저장
-    vs.append(v)      # 속도 벡터 저장  
-    accs.append(acc)  # 가속도 벡터 저장
-    xs.append(r[0])   # x 좌표만 별도 저장
-    ys.append(r[1])   # y 좌표만 별도 저장
+    rs.append(r)
+    vs.append(v)
+    accs.append(acc)
+    xs.append(r[0])
+    ys.append(r[1])
     
- #print(&quot;i: {}, r: {}, v: {}, acc: {}&quot;.format(i, r, v, acc)) # 각 단계별 결과 출력 (주석 처리됨)
-    i += 1  # 반복 횟수 증가
+    i += 1
 
-# 최종 결과 출력
-# print(&quot;i: {}, r: {}, v: {}, acc: {}&quot;.format(i, r, v, acc))
+print(&quot;len(xs): {}&quot;.format(len(xs)))
+print(&quot;xs: {}&quot;.format(xs))
+print(&quot;len(ys): {}&quot;.format(len(ys)))
+print(&quot;ys: {}&quot;.format(ys))
 
-# 계산된 데이터의 크기 및 내용 확인
-print(&quot;len(xs): {}&quot;.format(len(xs)))  # x 좌표 리스트 길이
-print(&quot;xs: {}&quot;.format(xs))            # x 좌표 전체 데이터
-print(&quot;len(ys): {}&quot;.format(len(ys)))  # y 좌표 리스트 길이  
-print(&quot;ys: {}&quot;.format(ys))            # y 좌표 전체 데이터
+print(&quot;len(rs): {}&quot;.format(len(rs)))
+print(&quot;rs: {}&quot;.format(rs))
 
-print(&quot;len(rs): {}&quot;.format(len(rs)))  # 위치 벡터 리스트 길이
-print(&quot;rs: {}&quot;.format(rs))            # 위치 벡터 전체 데이터
+print(&quot;len(vs): {}&quot;.format(len(vs)))
+print(&quot;vs: {}&quot;.format(vs))
 
-print(&quot;len(vs): {}&quot;.format(len(vs)))  # 속도 벡터 리스트 길이
-print(&quot;vs: {}&quot;.format(vs))            # 속도 벡터 전체 데이터
+print(&quot;len(accs): {}&quot;.format(len(accs)))
+print(&quot;accs: {}&quot;.format(accs))
 
-print(&quot;len(accs): {}&quot;.format(len(accs)))  # 가속도 벡터 리스트 길이
-print(&quot;accs: {}&quot;.format(accs))            # 가속도 벡터 전체 데이터
-
-# 특정 시점의 데이터 확인 (검증용)
-print(&quot;rs[5][:2]: {}&quot;.format(rs[5][:2]))  # 6번째 위치 벡터의 x, y 성분
-print(&quot;rs[4]: {}&quot;.format(rs[4]))          # 5번째 위치 벡터 전체
-print(&quot;rs[5]: {}&quot;.format(rs[5]))          # 6번째 위치 벡터 전체
-#print(&quot;[item[:2] for item in rs[2]]: {}&quot;.format([item[:2] for item in rs[2]])) # 주석 처리됨</code></pre>
+# 특정 시점 확인(검증용)
+print(&quot;rs[5][:2]: {}&quot;.format(rs[5][:2]))
+print(&quot;rs[4]: {}&quot;.format(rs[4]))
+print(&quot;rs[5]: {}&quot;.format(rs[5]))</code></pre>
 <h2 id="code-62">code 62. <button class="copy">복사</button></h2><pre><code>def animate(i):
     plot.set_offsets(rs[i][:2])
     line.set_xdata(xs[:i])
@@ -451,18 +367,15 @@ print(&quot;rs[5]: {}&quot;.format(rs[5]))          # 6번째 위치 벡터 전�
     return plot, line, timestamp
 
 from matplotlib.animation import FuncAnimation
-ani = FuncAnimation(fig, animate, 
-                     frames=len(dts), 
-                     blit=True)</code></pre>
+ani = FuncAnimation(fig, animate, frames=len(dts), blit=True)</code></pre>
 <h2 id="code-63">code 63. <button class="copy">복사</button></h2><pre><code>import matplotlib
 import matplotlib.pyplot as plt
 
-# 애니메이션 용량 한도를 50MB 로 올리기(기본값 약 20MB)
-matplotlib.rcParams[&#x27;animation.embed_limit&#x27;] = 50  # 단위: MB
+# 애니메이션 용량 한도 50 MB로(기본 약 20 MB)
+matplotlib.rcParams[&#x27;animation.embed_limit&#x27;] = 50
 
-# 선택: 성능을 위해 다른 애니메이션 설정도 조정
-matplotlib.rcParams[&#x27;animation.html&#x27;] = &#x27;jshtml&#x27;    # 자바스크립트 HTML 사용
-matplotlib.rcParams[&#x27;animation.writer&#x27;] = &#x27;ffmpeg&#x27;  # ffmpeg 이 있으면 사용
+matplotlib.rcParams[&#x27;animation.html&#x27;] = &#x27;jshtml&#x27;
+matplotlib.rcParams[&#x27;animation.writer&#x27;] = &#x27;ffmpeg&#x27;  # ffmpeg이 있을 때
 
 print(f&quot;Animation embed limit set to: {matplotlib.rcParams[&#x27;animation.embed_limit&#x27;]} MB&quot;)
 print(f&quot;Animation HTML format: {matplotlib.rcParams[&#x27;animation.html&#x27;]}&quot;)
@@ -478,128 +391,109 @@ import matplotlib.pyplot as plt
 from astropy.time import Time
 from astroquery.jplhorizons import Horizons
 
-# 시뮬레이션 매개변수 설정
-sim_start_date = &quot;2018-01-01&quot;     # 태양계 시뮬레이션 시작 날짜
-sim_duration = 2 * 365            # 시뮬레이션 기간 (일 단위, 2년)
-m_earth = 5.9722e24 / 1.98847e30  # 태양 질량 대비 지구 질량 비율
-m_moon = 7.3477e22 / 1.98847e30   # 태양 질량 대비 달 질량 비율
+sim_start_date = &quot;2018-01-01&quot;
+sim_duration = 2 * 365            # 2년(일)
+m_earth = 5.9722e24 / 1.98847e30  # 지구 질량(태양 질량 단위)
+m_moon = 7.3477e22 / 1.98847e30   # 달 질량(태양 질량 단위)
 
-class Object:                     # 태양계 천체 객체 클래스 정의 (태양, 지구, 수성 등)
+class Object:                     # 천체 하나(태양, 행성)
     def __init__(self, name, rad, color, r, v):
-        self.name = name                           # 천체 이름
-        self.r    = np.array(r, dtype=np.float64)  # 위치 벡터 (x, y, z 좌표)
-        self.v    = np.array(v, dtype=np.float64)  # 속도 벡터 (vx, vy, vz 성분)
-        self.xs = []                               # x 좌표 이력 저장 리스트
-        self.ys = []                               # y 좌표 이력 저장 리스트
- # matplotlib 산점도 객체 생성 (천체의 현재 위치 표시)
+        self.name = name
+        self.r    = np.array(r, dtype=np.float64)  # 위치(AU)
+        self.v    = np.array(v, dtype=np.float64)  # 속도(AU/day)
+        self.xs = []                               # 궤적 기록
+        self.ys = []
+        # 현재 위치 점
         self.plot = ax.scatter(r[0], r[1], color=color, s=rad**2, edgecolors=None, zorder=10)
- # matplotlib 선 객체 생성 (천체의 궤도 경로 표시)
+        # 궤도 선
         self.line, = ax.plot([], [], color=color, linewidth=1.4)
 
-class SolarSystem:                # 태양계 전체를 관리하는 클래스
+class SolarSystem:                # 태양계 전체
     def __init__(self, thesun):
-        self.thesun = thesun  # 중심별(태양) 객체
-        self.planets = []     # 행성들을 저장하는 리스트
-        self.time = None      # 현재 시뮬레이션 시간
- # 화면에 날짜 표시를 위한 텍스트 객체 생성
+        self.thesun = thesun
+        self.planets = []
+        self.time = None      # 줄리안 데이
         self.timestamp = ax.text(.03, .94, &#x27;Date: &#x27;, color=&#x27;w&#x27;, transform=ax.transAxes, fontsize=&#x27;x-large&#x27;)
     
-    def add_planet(self, planet): # 태양계에 행성 추가 메서드
+    def add_planet(self, planet):
         self.planets.append(planet)
     
-    def evolve(self):             # 시간에 따른 궤도 진화 계산 메서드
-        dt = 1.0         # 시간 간격 (1일)
-        self.time += dt  # 시뮬레이션 시간 증가
-        plots = []       # 갱신할 산점도 객체들을 저장할 리스트
-        lines = []       # 갱신할 선 객체들을 저장할 리스트
+    def evolve(self):             # 하루씩 궤도 계산
+        dt = 1.0
+        self.time += dt
+        plots = []
+        lines = []
         
-        for p in self.planets:    # 모든 행성에 대해 반복
- # 위치 업데이트: 새로운 위치 = 이전 위치 + 속도 × 시간간격
+        for p in self.planets:
+            # 위치 갱신: r ← r + v·dt
             p.r += p.v * dt
- # 태양의 중력에 의한 가속도 계산 (뉴턴의 만유인력 법칙)
- # acc = -GM/r² × (r/|r|), 단위: AU/day²
+            # 태양 중력 가속도(GM = 2.959e-4 AU³/day²)
             acc = -2.959e-4 * p.r / np.sum(p.r**2)**(3./2)
- # 속도 업데이트: 새로운 속도 = 이전 속도 + 가속도 × 시간간격
+            # 속도 갱신: v ← v + a·dt
             p.v += acc * dt
- # 좌표 이력에 현재 위치 추가
             p.xs.append(p.r[0])
             p.ys.append(p.r[1])
- # 화면상의 천체 위치 업데이트
             p.plot.set_offsets(p.r[:2])
- # 궤도 경로 선 업데이트
             p.line.set_xdata(p.xs)
             p.line.set_ydata(p.ys)
- # 갱신할 객체들을 리스트에 추가
             plots.append(p.plot)
             lines.append(p.line)
         
- # 화면에 표시되는 날짜 업데이트
         self.timestamp.set_text(&#x27;Date: &#x27; + Time(self.time, format=&#x27;jd&#x27;).iso)
- # 애니메이션을 위해 갱신된 모든 객체들 반환
+        # blit용으로 바뀐 객체 반환
         return plots + lines + [self.timestamp]
 
-# matplotlib 그래프 설정
-fig = plt.figure(facecolor=&#x27;black&#x27;)  # 검은색 배경의 그림 생성
-plt.style.use(&#x27;dark_background&#x27;)     # 어두운 테마 적용
+fig = plt.figure(facecolor=&#x27;black&#x27;)
+plt.style.use(&#x27;dark_background&#x27;)
 
-# 축 설정: 전체 화면 사용, x축과 y축 범위를 -1.8에서 1.8로 설정
 ax = plt.axes([0., 0., 1., 1.], xlim=(-1.8, 1.8), ylim=(-1.8, 1.8))
-ax.set_aspect(&#x27;equal&#x27;)  # 축 비율을 1:1로 설정 (원이 찌그러지지 않도록)
-ax.axis(&#x27;off&#x27;)          # 축과 축 레이블을 숨김 (우주 공간 느낌 연출)
+ax.set_aspect(&#x27;equal&#x27;)
+ax.axis(&#x27;off&#x27;)
 
-# 태양계 시스템 초기화 (태양을 원점에 생성)
+# 태양을 원점에 둔 태양계
 ss = SolarSystem(Object(&quot;Sun&quot;, 28, &#x27;red&#x27;, [0, 0, 0], [0, 0, 0]))
-ss.time = Time(sim_start_date).jd  # 시뮬레이션 시작 시간을 줄리안 데이로 설정
+ss.time = Time(sim_start_date).jd
 
-# 행성들의 시각적 속성 정의
-colors = [&#x27;gray&#x27;, &#x27;orange&#x27;, &#x27;blue&#x27;, &#x27;chocolate&#x27;]  # 각 행성의 색상
-sizes = [0.38, 0.95, 1., 0.53]                    # 각 행성의 상대적 크기
-names = [&#x27;Mercury&#x27;, &#x27;Venus&#x27;, &#x27;Earth&#x27;, &#x27;Mars&#x27;]     # 행성 이름들
-texty = [.47, .73, 1, 1.5]                        # 행성 이름 표시 위치 (y좌표)
+colors = [&#x27;gray&#x27;, &#x27;orange&#x27;, &#x27;blue&#x27;, &#x27;chocolate&#x27;]
+sizes = [0.38, 0.95, 1., 0.53]                    # 상대 크기(지구 = 1)
+names = [&#x27;Mercury&#x27;, &#x27;Venus&#x27;, &#x27;Earth&#x27;, &#x27;Mars&#x27;]
+texty = [.47, .73, 1, 1.5]                        # 이름 표시 y 위치
 
-# 4개 행성 (수성, 금성, 지구, 화성) 추가
-for i, nasaid in enumerate([1, 2, 3, 4]):  # NASA JPL ID: 1=수성, 2=금성, 3=지구, 4=화성
- # NASA JPL Horizons 데이터베이스에서 해당 행성의 위치와 속도 데이터 가져오기
+# 수성~화성 추가
+for i, nasaid in enumerate([1, 2, 3, 4]):  # Horizons ID: 1 수성, 2 금성, 3 지구, 4 화성
     obj = Horizons(id=nasaid, location=&quot;@sun&quot;, epochs=ss.time, id_type=&#x27;id&#x27;).vectors()
     
- # 행성 객체 생성 및 태양계에 추가
-    ss.add_planet(Object(nasaid,                    # 행성 ID
-                         20 * sizes[i],  # 크기 (기본값에 상대적 크기 곱함)
-                         colors[i],      # 색상
- # 위치 벡터 (x, y, z 좌표)
+    ss.add_planet(Object(nasaid,
+                         20 * sizes[i],
+                         colors[i],
                          [np.double(obj[xi]) for xi in [&#x27;x&#x27;, &#x27;y&#x27;, &#x27;z&#x27;]], 
- # 속도 벡터 (vx, vy, vz 성분)
                          [np.double(obj[vxi]) for vxi in [&#x27;vx&#x27;, &#x27;vy&#x27;, &#x27;vz&#x27;]]))
     
- # 각 행성의 이름을 화면 하단에 표시
+    # 아래쪽에 이름
     ax.text(0, - (texty[i] + 0.1), names[i], color=colors[i], 
             zorder=1000, ha=&#x27;center&#x27;, fontsize=&#x27;large&#x27;)
 
-# 그래프 화면에 표시
 plt.show()</code></pre>
-<h2 id="code-66">code 66. <button class="copy">복사</button></h2><pre><code># 애니메이션 함수 정의 - 각 프레임마다 호출되어 태양계 상태를 한 단계씩 진화시킴
+<h2 id="code-66">code 66. <button class="copy">복사</button></h2><pre><code># 프레임마다 하루씩 진행
 def animate(i):
-    return ss.evolve()  # 태양계 시스템의 evolve() 메서드를 호출하여 행성들의 위치와 속도 업데이트
+    return ss.evolve()
     
-# matplotlib의 애니메이션 모듈 import
 import matplotlib.animation as animation
 
-# FuncAnimation 객체 생성 - 태양계 시뮬레이션 애니메이션 설정
-ani = animation.FuncAnimation(fig,                # 그래프 figure 객체
-                              animate,              # 각 프레임마다 호출할 함수
-                              repeat=False,         # 애니메이션 반복 재생 안함
-                              frames=sim_duration,  # 총 프레임 수 (시뮬레이션 기간과 동일)
-                              blit=True,            # 블리팅 사용 (성능 향상을 위해)
-                              interval=20)          # 프레임 간 간격 (밀리초 단위)</code></pre>
+ani = animation.FuncAnimation(fig,
+                              animate,
+                              repeat=False,
+                              frames=sim_duration,  # 프레임 수 = 시뮬레이션 일수
+                              blit=True,
+                              interval=20)          # ms</code></pre>
 <h2 id="code-67">code 67. <button class="copy">복사</button></h2><pre><code>import matplotlib
 import matplotlib.pyplot as plt
 
-# 애니메이션 용량 한도를 50MB 로 올리기(기본값 약 20MB)
-matplotlib.rcParams[&#x27;animation.embed_limit&#x27;] = 50  # 단위: MB
+# 애니메이션 용량 한도 50 MB로(기본 약 20 MB)
+matplotlib.rcParams[&#x27;animation.embed_limit&#x27;] = 50
 
-# 선택: 성능을 위해 다른 애니메이션 설정도 조정
-matplotlib.rcParams[&#x27;animation.html&#x27;] = &#x27;jshtml&#x27;    # 자바스크립트 HTML 사용
-matplotlib.rcParams[&#x27;animation.writer&#x27;] = &#x27;ffmpeg&#x27;  # ffmpeg 이 있으면 사용
+matplotlib.rcParams[&#x27;animation.html&#x27;] = &#x27;jshtml&#x27;
+matplotlib.rcParams[&#x27;animation.writer&#x27;] = &#x27;ffmpeg&#x27;  # ffmpeg이 있을 때
 
 print(f&quot;Animation embed limit set to: {matplotlib.rcParams[&#x27;animation.embed_limit&#x27;]} MB&quot;)
 print(f&quot;Animation HTML format: {matplotlib.rcParams[&#x27;animation.html&#x27;]}&quot;)
@@ -610,26 +504,23 @@ HTML(ani.to_jshtml())</code></pre>
 matplotlib.rcParams[&#x27;animation.html&#x27;] = &#x27;html5&#x27;
 print(f&quot;Animation HTML format: {matplotlib.rcParams[&#x27;animation.html&#x27;]}&quot;)
 HTML(ani.to_html5_video())</code></pre>
-<h2 id="code-69">code 69. <button class="copy">복사</button></h2><pre><code># 파일명 설정
-fname = &#x27;Solar_System_2D_Animation_Class_Based&#x27;
+<h2 id="code-69">code 69. <button class="copy">복사</button></h2><pre><code>fname = &#x27;Solar_System_2D_Animation_Class_Based&#x27;
 
 try:
- # MP4 형식으로 저장
-    ani.save(f&#x27;{proj_dir}/{fname}.mp4&#x27;, 
-             fps=60, dpi=150, writer=&#x27;ffmpeg&#x27;)
+    # MP4 저장(ffmpeg 필요)
+    ani.save(f&#x27;{proj_dir}/{fname}.mp4&#x27;, fps=60, dpi=150, writer=&#x27;ffmpeg&#x27;)
     print(f&quot;동영상이 저장되었습니다: {proj_dir}/{fname}.mp4&quot;)
 except Exception as e:
     print(f&quot;MP4 저장 중 오류 발생: {e}&quot;)
     
- # 대안: GIF 형식으로 저장
+    # 안 되면 GIF
     try:
-        ani.save(f&#x27;{proj_dir}/{fname}.gif&#x27;, 
-                 fps=30, dpi=100, writer=&#x27;pillow&#x27;)
+        ani.save(f&#x27;{proj_dir}/{fname}.gif&#x27;, fps=30, dpi=100, writer=&#x27;pillow&#x27;)
         print(f&quot;GIF 파일이 저장되었습니다: {proj_dir}/{fname}.gif&quot;)
     except Exception as e2:
         print(f&quot;GIF 저장 중 오류 발생: {e2}&quot;)
         
- # 최종 대안: HTML 파일로 저장
+        # 그래도 안 되면 HTML
         try:
             with open(f&#x27;{proj_dir}/{fname}.html&#x27;, &#x27;w&#x27;) as f:
                 f.write(ani.to_jshtml())
@@ -642,33 +533,28 @@ from astropy.time import Time
 from astroquery.jplhorizons import Horizons
 import mpl_toolkits.mplot3d.axes3d as p3
 
-# 시뮬레이션 기본 설정
 sim_start_date = &quot;2018-01-01&quot;
 sim_duration = 2 * 365
 m_earth = 5.9722e24 / 1.98847e30
 m_moon = 7.3477e22 / 1.98847e30
 
-# matplotlib 기본 설정
 plt.style.use(&#x27;dark_background&#x27;)
 fig = plt.figure(figsize=(12, 10), facecolor=&#x27;black&#x27;)
 
-# 3D 축 설정
 ax = fig.add_subplot(111, projection=&#x27;3d&#x27;)
 ax.set_facecolor(&#x27;black&#x27;)
 ax.grid(False)
 
-# 3D 축 범위 설정
+# 범위(AU)
 ax.set_xlim3d([-1.8, 1.8])
 ax.set_ylim3d([-1.8, 1.8])
 ax.set_zlim3d([-1.0, 1.0])
 
-# 축 레이블 및 제목 설정
 ax.set_xlabel(&#x27;X (AU)&#x27;, color=&#x27;white&#x27;)
 ax.set_ylabel(&#x27;Y (AU)&#x27;, color=&#x27;white&#x27;)
 ax.set_zlabel(&#x27;Z (AU)&#x27;, color=&#x27;white&#x27;)
 ax.set_title(&#x27;The Solar System (3D)&#x27;, color=&#x27;white&#x27;, fontsize=16)
 
-# 시뮬레이션 시작 시간 객체 생성
 specific_time = Time(sim_start_date)
 
 class Object:
@@ -679,10 +565,8 @@ class Object:
         self.xs = []
         self.ys = []
         self.zs = []
- # 3D 산점도 객체 생성
         self.plot = ax.scatter(r[0], r[1], r[2], color=color, s=rad**2, 
                                edgecolors=None, zorder=10)
- # 3D 선 객체 생성
         self.line, = ax.plot([], [], [], color=color, linewidth=1.4)
 
 class SolarSystem:
@@ -690,7 +574,6 @@ class SolarSystem:
         self.thesun = thesun
         self.planets = []
         self.time = None
- # 화면에 날짜 표시
         self.timestamp = ax.text2D(.03, .94, &#x27;Date: &#x27;, color=&#x27;white&#x27;, 
                                    transform=ax.transAxes, fontsize=&#x27;x-large&#x27;)
     
@@ -704,45 +587,39 @@ class SolarSystem:
         lines = []
         
         for p in self.planets:
- # 위치 업데이트
+            # 위치 갱신(오일러 방법, 앞과 같음)
             p.r += p.v * dt
- # 태양의 중력에 의한 가속도 계산
+            # 태양 중력 가속도(AU/day²)
             acc = -2.959e-4 * p.r / np.sum(p.r**2)**(3./2)
- # 속도 업데이트
+            # 속도 갱신
             p.v += acc * dt
- # 좌표 이력 추가
             p.xs.append(p.r[0])
             p.ys.append(p.r[1])
             p.zs.append(p.r[2])
- # 3D 위치 업데이트
+            # 3D 점 위치 갱신(내부 속성 사용)
             p.plot._offsets3d = ([p.r[0]], [p.r[1]], [p.r[2]])
- # 궤도 경로 업데이트
             p.line.set_data_3d(p.xs, p.ys, p.zs)
             plots.append(p.plot)
             lines.append(p.line)
         
- # 날짜 정보 업데이트
         self.timestamp.set_text(&#x27;Date: &#x27; + Time(self.time, format=&#x27;jd&#x27;).iso)
         return plots + lines + [self.timestamp]
 
-# 태양 추가
+# 태양(원점)
 sun = ax.scatter(0, 0, 0, color=&quot;red&quot;, s=28**2, edgecolors=None, zorder=10)
 
-# 시작 시간 표시
 ax.text2D(.03, .94, &#x27;Date: {}&#x27;.format(specific_time.iso), color=&#x27;white&#x27;, 
           transform=ax.transAxes, fontsize=&#x27;x-large&#x27;)
 
-# 태양계 시스템 초기화
 ss = SolarSystem(Object(&quot;Sun&quot;, 28, &#x27;red&#x27;, [0, 0, 0], [0, 0, 0]))
 ss.time = Time(sim_start_date).jd
 
-# 행성들의 시각적 속성
 colors = [&#x27;gray&#x27;, &#x27;orange&#x27;, &#x27;blue&#x27;, &#x27;chocolate&#x27;]
 sizes = [0.38, 0.95, 1., 0.53]
 names = [&#x27;Mercury&#x27;, &#x27;Venus&#x27;, &#x27;Earth&#x27;, &#x27;Mars&#x27;]
 texty = [.47, .73, 1, 1.5]
 
-# 행성 추가
+# 수성~화성 추가(Horizons ID 1~4)
 print(&quot;행성 데이터를 가져오는 중...&quot;)
 for i, nasaid in enumerate([1, 2, 3, 4]):
     try:
@@ -755,7 +632,6 @@ for i, nasaid in enumerate([1, 2, 3, 4]):
                              [np.double(obj[xi]) for xi in [&#x27;x&#x27;, &#x27;y&#x27;, &#x27;z&#x27;]], 
                              [np.double(obj[vxi]) for vxi in [&#x27;vx&#x27;, &#x27;vy&#x27;, &#x27;vz&#x27;]]))
         
- # 행성 이름 표시
         ax.text(0, -(texty[i] + 0.1), 0, names[i], color=colors[i], 
                 zorder=1000, ha=&#x27;center&#x27;, fontsize=&#x27;large&#x27;)
         
@@ -766,27 +642,24 @@ for i, nasaid in enumerate([1, 2, 3, 4]):
 print(&quot;태양계 시뮬레이션 초기화 완료!&quot;)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-71">code 71. <button class="copy">복사</button></h2><pre><code># 애니메이션 함수 정의 - 각 프레임마다 호출되어 태양계 상태를 진화시킴
+<h2 id="code-71">code 71. <button class="copy">복사</button></h2><pre><code># 프레임마다 하루씩 진행
 def animate(i):
-    return ss.evolve()  # 태양계 시스템의 evolve() 메서드 호출하여 행성들 위치 업데이트
+    return ss.evolve()
     
-# matplotlib 애니메이션 모듈에서 FuncAnimation 클래스 import
 from matplotlib.animation import FuncAnimation
 
-# FuncAnimation 객체 생성 - 3D 태양계 애니메이션 설정
-ani = FuncAnimation(fig, animate,           # figure 객체와 애니메이션 함수 지정
-                    frames=len(dts),  # 총 프레임 수 (시간 데이터 목록의 길이)
-                    blit=True)        # 블리팅 활성화 (렌더링 성능 향상)
+ani = FuncAnimation(fig, animate,
+                    frames=len(dts),  # 앞에서 만든 dts 길이만큼
+                    blit=True)
                     </code></pre>
 <h2 id="code-72">code 72. <button class="copy">복사</button></h2><pre><code>import matplotlib
 import matplotlib.pyplot as plt
 
-# 애니메이션 용량 한도를 50MB 로 올리기(기본값 약 20MB)
-matplotlib.rcParams[&#x27;animation.embed_limit&#x27;] = 100  # 단위: MB
+# 애니메이션 용량 한도 100 MB로(기본 약 20 MB)
+matplotlib.rcParams[&#x27;animation.embed_limit&#x27;] = 100
 
-# 선택: 성능을 위해 다른 애니메이션 설정도 조정
-matplotlib.rcParams[&#x27;animation.html&#x27;] = &#x27;jshtml&#x27;    # 자바스크립트 HTML 사용
-matplotlib.rcParams[&#x27;animation.writer&#x27;] = &#x27;ffmpeg&#x27;  # ffmpeg 이 있으면 사용
+matplotlib.rcParams[&#x27;animation.html&#x27;] = &#x27;jshtml&#x27;
+matplotlib.rcParams[&#x27;animation.writer&#x27;] = &#x27;ffmpeg&#x27;  # ffmpeg이 있을 때
 
 print(f&quot;Animation embed limit set to: {matplotlib.rcParams[&#x27;animation.embed_limit&#x27;]} MB&quot;)
 print(f&quot;Animation HTML format: {matplotlib.rcParams[&#x27;animation.html&#x27;]}&quot;)
@@ -797,18 +670,15 @@ HTML(ani.to_jshtml())</code></pre>
 matplotlib.rcParams[&#x27;animation.html&#x27;] = &#x27;html5&#x27;
 print(f&quot;Animation HTML format: {matplotlib.rcParams[&#x27;animation.html&#x27;]}&quot;)
 HTML(ani.to_html5_video())</code></pre>
-<h2 id="code-74">code 74. <button class="copy">복사</button></h2><pre><code># 저장할 파일명 설정
-fname = &#x27;Solar_System_3D_Animation_Class_Based&#x27;  # 3D 태양계 애니메이션 파일명
+<h2 id="code-74">code 74. <button class="copy">복사</button></h2><pre><code>fname = &#x27;Solar_System_3D_Animation_Class_Based&#x27;
 
-ani.save(f&#x27;{proj_dir}/{fname}.mp4&#x27;,  # 저장 경로와 파일명
-            fps=60,           # 초당 프레임 수 (60fps)
-            dpi=150,          # 해상도 (인치당 도트 수)
-            writer=&#x27;ffmpeg&#x27;)  # 동영상 인코더 (ffmpeg 사용)
+ani.save(f&#x27;{proj_dir}/{fname}.mp4&#x27;, fps=60, dpi=150,
+         writer=&#x27;ffmpeg&#x27;)  # ffmpeg 필요
 print(f&quot;동영상이 저장되었습니다: {proj_dir}/{fname}.mp4&quot;)</code></pre>
-<h2 id="code-75">code 75. <button class="copy">복사</button></h2><pre><code>ani.save(f&#x27;{proj_dir}/{fname}.gif&#x27;,  # GIF 파일로 저장
-            fps=30,           # 초당 프레임 수 (30fps, MP4보다 낮음)
-            dpi=100,          # 해상도 (MP4보다 낮음)
-            writer=&#x27;pillow&#x27;)  # GIF 작성기 (Pillow 라이브러리 사용)
+<h2 id="code-75">code 75. <button class="copy">복사</button></h2><pre><code>ani.save(f&#x27;{proj_dir}/{fname}.gif&#x27;,
+            fps=30,           # MP4보다 낮춰 용량 줄이기
+            dpi=100,
+            writer=&#x27;pillow&#x27;)
 print(f&quot;GIF 파일이 저장되었습니다: {proj_dir}/{fname}.gif&quot;)</code></pre>
 <script>
 document.querySelectorAll('button.copy').forEach(function (b) {

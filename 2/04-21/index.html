@@ -12,18 +12,27 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/04-21/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
 <p class="jump"><a href="#code-392">392</a> <a href="#code-393">393</a> <a href="#code-394">394</a> <a href="#code-395">395</a> <a href="#code-396">396</a> <a href="#code-397">397</a> <a href="#code-398">398</a> <a href="#code-399">399</a> <a href="#code-400">400</a> <a href="#code-401">401</a> <a href="#code-402">402</a> <a href="#code-403">403</a> <a href="#code-404">404</a> <a href="#code-405">405</a> <a href="#code-406">406</a> <a href="#code-407">407</a> <a href="#code-408">408</a> <a href="#code-409">409</a> <a href="#code-410">410</a> <a href="#code-411">411</a> <a href="#code-412">412</a> <a href="#code-413">413</a> <a href="#code-414">414</a> <a href="#code-415">415</a> <a href="#code-416">416</a> <a href="#code-417">417</a></p>
-<h2 id="code-392">code 392. <button class="copy">복사</button></h2><pre><code># 파일 ID와 저장 경로를 리스트로 정의
-files = [
+<h2 id="code-392">code 392. <button class="copy">복사</button></h2><pre><code>gd = &quot;https://docs.google.com/uc?export=download&amp;id=&quot;   # 구글 드라이브 사본
+psl = &quot;https://downloads.psl.noaa.gov/Datasets/noaa.oisst.v2/&quot;
+
+# OISST·마스크: NOAA PSL에서 직접 받기(실패하면 구글 드라이브 사본으로 대체)
+oisst = [
     (&quot;1E5TZgqXhh73i0VZLcY-xh7CNR3OJgB8K&quot;, &quot;sst.wkmean.1990-present.nc&quot;),
-    (&quot;1gxp1wK1JBhD215gQgVHPauTJnrfKv9Zi&quot;, &quot;lsmask.nc&quot;),
+    (&quot;1gxp1wK1JBhD215gQgVHPauTJnrfKv9Zi&quot;, &quot;lsmask.nc&quot;)
+]
+for file_id, output_path in oisst:
+    try:
+        du.download(psl + output_path, PROJ / output_path)
+    except Exception:
+        du.download(gd + file_id, PROJ / output_path)
+
+# MODIS 장면: Earthdata 로그인이 필요하므로 구글 드라이브 사본을 받음
+modis = [
     (&quot;1txeMeu4dVESAQj0AcKdOBAtduH3MaiX3&quot;, &quot;T2008168030500.L2_LAC_SST.x.zip&quot;),
     (&quot;1vf01dzj_qkeY4PG_5VXRCxO-RhkBvYfH&quot;, &quot;T2008170025000.L2_LAC_SST.x.zip&quot;)
 ]
-
-# for 루프를 사용하여 파일 다운로드
-for file_id, output_path in files:
-    du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={file_id}&quot;,
-                PROJ / output_path)</code></pre>
+for file_id, output_path in modis:
+    du.download(gd + file_id, PROJ / output_path)</code></pre>
 <h2 id="code-393">code 393. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(PROJ, pattern=&quot;*.*&quot;)</code></pre>
 <h2 id="code-394">code 394. <button class="copy">복사</button></h2><pre><code>import shutil
 
@@ -253,16 +262,14 @@ plt.title(&#x27;SST product using MODIS&#x27;, fontsize=10)
 
 x1, y1 = m(100, 7.5)
 plt.text(x1, y1, &#x27;Maximum value: {0:.1f}\nMean value: {1:.1f}\nMin value: {2:.1f}\n&#x27;\
-            .format(sst.max(), sst.mean(), sst.min()), 
-            horizontalalignment=&#x27;left&#x27;,
-            verticalalignment=&#x27;top&#x27;, 
+            .format(sst.max(), sst.mean(), sst.min()),
+            horizontalalignment=&#x27;left&#x27;, verticalalignment=&#x27;top&#x27;,
             fontsize=7, style=&#x27;italic&#x27;, wrap=True)
 
 x2, y2 = m(149.5, 7.5)
-plt.text(x2, y2, &quot;{}\nMODIS SST product from Ocean Color Web\n&quot;.format(sst_l2.stem), 
-            horizontalalignment=&#x27;right&#x27;,
-            verticalalignment=&#x27;top&#x27;, 
-            fontsize=7, style=&#x27;italic&#x27;, wrap=True)         
+plt.text(x2, y2, &quot;{}\nMODIS SST product from Ocean Color Web\n&quot;.format(sst_l2.stem),
+            horizontalalignment=&#x27;right&#x27;, verticalalignment=&#x27;top&#x27;,
+            fontsize=7, style=&#x27;italic&#x27;, wrap=True)
 
 plt.savefig(f&quot;{PROJ}/{sst_l2.stem}_{DATAFIELD_NAME}.pdf&quot;, bbox_inches=&#x27;tight&#x27;)
 print(f&quot;savefig: {PROJ}/{sst_l2.stem}_{DATAFIELD_NAME}.pdf&quot;)

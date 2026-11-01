@@ -129,9 +129,7 @@ fig.subplots_adjust(hspace=0.35)   # 아랫줄 제목이 윗줄 눈금과 겹치
 axes = axes.flatten()
 
 titles = [
-    '1st image',
-    '2nd image',
-    '2nd image(aligned to 1st image)',
+    '1st image', '2nd image', '2nd image(aligned to 1st image)',
     '1st image(aligned to 2nd image)'
 ]
 images = [
@@ -243,9 +241,7 @@ import matplotlib.pyplot as plt
 
 # 서브플롯에 쓸 제목과 이미지 정의
 titles = [
-    '1st image',
-    '2nd image',
-    '2nd image(aligned to 1st image)',
+    '1st image', '2nd image', '2nd image(aligned to 1st image)',
     '1st image(aligned to 2nd image)'
 ]
 images = [
@@ -456,10 +452,8 @@ vmax = int(np.median(np_average[:100, :100])*1.1)
 ax1.grid()
 ax2.grid()
 #FITS 파일 표시 
-im1 = ax1.imshow(np_average[:100, :100], 
-                vmax=vmax)
-im2 = ax2.imshow(np_median[:100, :100], 
-                vmax=vmax)
+im1 = ax1.imshow(np_average[:100, :100], vmax=vmax)
+im2 = ax2.imshow(np_median[:100, :100], vmax=vmax)
 
 cbar_ax12 = fig.add_axes([0.92, 0.221, 0.022, 0.56]) # 왼쪽, 아래, 너비, 높이
 fig.colorbar(im1, cax=cbar_ax12)
@@ -483,16 +477,13 @@ aligned_ccds = [CCDData(data, mask=mask, unit='adu')
 combined_light_avg_sigma_False = ccdp.combine(aligned_ccds,
                             method = 'average')
 
-combined_light_avg_sigma_True = ccdp.combine(aligned_ccds,
-                            method = 'average',
+combined_light_avg_sigma_True = ccdp.combine(aligned_ccds, method = 'average',
                             sigma_clip=True, sigma_clip_low_thresh=5, sigma_clip_high_thresh=5,
                             sigma_clip_func=np.ma.median, sigma_clip_dev_func=mad_std)
 
-combined_light_med_sigma_False = ccdp.combine(aligned_ccds,
-                            method='median')
+combined_light_med_sigma_False = ccdp.combine(aligned_ccds, method='median')
 
-combined_light_med_sigma_True = ccdp.combine(aligned_ccds,
-                            method = 'median',
+combined_light_med_sigma_True = ccdp.combine(aligned_ccds, method = 'median',
                             sigma_clip=True, sigma_clip_low_thresh=5, sigma_clip_high_thresh=5,
                             sigma_clip_func=np.ma.median, sigma_clip_dev_func=mad_std)
 

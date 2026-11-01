@@ -228,8 +228,7 @@ plt.figure()
 
 #####
 # 지도
-m = Basemap(projection='mbtfpq',
-            lon_0 = 0)
+m = Basemap(projection='mbtfpq', lon_0 = 0)
 
 # 대륙 채우기
 m.fillcontinents()
@@ -245,8 +244,7 @@ plt.figure()
 
 #####
 # 지도
-m = Basemap(projection='sinu', 
-            lon_0 = 180)
+m = Basemap(projection='sinu', lon_0 = 180)
 
 # 대륙 채우기
 m.fillcontinents()
@@ -262,11 +260,8 @@ plt.figure(figsize=(6.4, 4.2))
 
 #####
 # 지도
-m = Basemap(projection = 'lcc',
-            lat_1=20.,lat_2=40.,
-            lon_0=120.,
-            llcrnrlon=100.,llcrnrlat=10.,
-            urcrnrlon=180.,urcrnrlat=50.)
+m = Basemap(projection = 'lcc', lat_1=20.,lat_2=40., lon_0=120.,
+            llcrnrlon=100.,llcrnrlat=10., urcrnrlon=180.,urcrnrlat=50.)
 
 # 대륙 채우기
 m.fillcontinents()
@@ -282,10 +277,7 @@ plt.figure(figsize=(6.4, 4.2))
 
 #####
 # 지도
-m = Basemap(projection='laea', 
-            lat_ts=37,
-            lat_0 = 37, 
-            lon_0 = 127,\
+m = Basemap(projection='laea', lat_ts=37, lat_0 = 37, lon_0 = 127,\
             width=1.5e7, height=1.5e7)
 
 # 대륙 채우기
@@ -322,10 +314,8 @@ plt.figure(figsize=(4.6, 4.2))
 
 #####
 # 지도
-m = Basemap(projection='laea', resolution='l', \
-            lat_ts=37,
-            lat_0 = 37, lon_0 = 127,\
-            width=1.5e7, height=1.5e7)
+m = Basemap(projection='laea', resolution='l', lat_ts=37,
+            lat_0 = 37, lon_0 = 127, width=1.5e7, height=1.5e7)
 
 # 해안선 · 국경 그리기, 대륙 채우기
 m.drawcoastlines(linewidth=0.25)
@@ -533,10 +523,7 @@ Wlon, Elon, Slat, Nlat, Clon, Clat = findRangeOfMap(longitude, latitude, 1)
 
 #####
 # 지도
-m = Basemap(projection='laea', 
-            lat_ts = Clat,
-            lat_0 = Clat, 
-            lon_0 = Clon,\
+m = Basemap(projection='laea', lat_ts = Clat, lat_0 = Clat, lon_0 = Clon,\
             width=4e6, height=4e6, resolution='i')
 
 # 해안선 · 국경 그리기, 대륙 채우기

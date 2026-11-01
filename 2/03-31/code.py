@@ -86,14 +86,12 @@ dt_utc = dt_kst.astimezone(timezone.utc)
 print("한국 표준시:", dt_kst)
 print("세계시     :", dt_utc)
 
-
 def datetime_range(start_dt, end_dt, delta):
     """start_dt부터 end_dt 앞까지 delta 간격의 datetime을 차례로 내놓음"""
     current = start_dt
     while current < end_dt:
         yield current
         current += delta
-
 
 print([d.strftime("%m-%d") for d in datetime_range(datetime(2024, 12, 1),
                                                    datetime(2024, 12, 4),
@@ -212,9 +210,7 @@ start_dt    = datetime(2024, 12, 1, 12)
 end_dt      = datetime(2024, 12, 3, 12)
 dt = 1
 
-dts = [dt for dt in
-            datetime_range(start_dt, end_dt,
-            timedelta(days=dt))]
+dts = [dt for dt in datetime_range(start_dt, end_dt, timedelta(days=dt))]
 
 print("len(dts):", len(dts))
 print("dts", dts)
@@ -275,8 +271,7 @@ t_start = Time(f"{obs_date[:4]}-{obs_date[4:6]}-{obs_date[6:]} 09:00:00")   # KS
 eph = MPC.get_ephemeris(asteroid_id, location='P64', start=t_start, number=15,
                         ra_format={'sep': ':', 'unit': 'hourangle',
                                    'precision': 1},
-                        dec_format={'sep': ':', 'precision': 0},
-                        step='1h')
+                        dec_format={'sep': ':', 'precision': 0}, step='1h')
 print("type(eph): ", type(eph))
 print("eph: ", eph)
 

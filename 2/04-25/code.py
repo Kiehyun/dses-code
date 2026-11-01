@@ -12,16 +12,14 @@ from matplotlib.patches import FancyArrow, Rectangle
 
 # %% code 471.
 # 상수
-S = 1361.0          # 태양 상수 [W/m^2]
-albedo = 0.30       # 지구 전체의 알베도 (무차원)
-sigma = 5.670374419e-8   # 슈테판-볼츠만 상수 [W/(m^2·K^4)]
-
+S = 1361.0              # 태양 상수 [W/m^2]
+albedo = 0.30           # 지구 전체의 알베도 (무차원)
+sigma = 5.670374419e-8  # 슈테판-볼츠만 상수 [W/(m^2·K^4)]
 
 def radiative_equilibrium_T(S=S, albedo=albedo):
     """복사 평형 온도 구하기(단위: K)"""
     absorbed = S * (1 - albedo) / 4          # 단위 면적당 흡수량 [W/m^2]
     return (absorbed / sigma) ** 0.25
-
 
 T_e = radiative_equilibrium_T()
 
@@ -88,8 +86,8 @@ plt.show()
 # (Trenberth 등(2009)의 W/m^2 값을 341.3 = 100으로 환산, 잠열만 23.4 → 24로 조정)
 budget = {
     "입사": 100,
-    "대기 반사·산란": 23, "지표면 반사": 7,      # 합 30 = 반사
-    "대기 흡수(태양)": 23, "지표면 흡수": 47,     # 합 70 = 흡수
+    "대기 반사·산란": 23, "지표면 반사": 7,    # 합 30 = 반사
+    "대기 흡수(태양)": 23, "지표면 흡수": 47,  # 합 70 = 흡수
     "지표면 방출": 116,
     "대기의 창(우주로)": 12, "대기 흡수(지구복사)": 104,
     "물의 증발(잠열)": 24, "대류·전도(현열)": 5,
@@ -110,7 +108,6 @@ for y, t, c in [(TOP - 4, "우주", "#1b2440"), (ATM_TOP - 4, "대기", "#12406b
     ax.text(97, y, t, fontsize=12, ha="right", va="center", color=c,
             bbox=dict(boxstyle="round,pad=0.3", fc="white", alpha=.9, ec="none"))
 
-
 def arw(x, y, dx, dy, w, c, val=None, vx=0, vy=0, fs=12):
     """화살표 하나와 그 옆의 숫자 그리기"""
     ax.add_patch(FancyArrow(x, y, dx, dy, width=w, head_width=w * 2.1, head_length=2.4,
@@ -120,10 +117,8 @@ def arw(x, y, dx, dy, w, c, val=None, vx=0, vy=0, fs=12):
                 ha="center", va="center", fontweight="bold",
                 bbox=dict(boxstyle="round,pad=0.2", fc="white", alpha=.92, ec="none"))
 
-
 def lab(x, y, t, fs=10, c="#111"):
     ax.text(x, y, t, fontsize=fs, ha="center", va="center", color=c, zorder=6)
-
 
 # 태양 복사 (노랑)
 ax.scatter([6], [TOP - 7], s=2300, c="#ffd94a", zorder=3,
@@ -175,7 +170,6 @@ def check(name, incoming, outgoing):
     ok = "균형" if abs(incoming - outgoing) < 1e-9 else "★ 어긋남"
     print(f"{name:12} 들어옴 {incoming:6.1f}   나감 {outgoing:6.1f}   → {ok}")
 
-
 b = budget
 
 # ① 지구 전체 (대기 위쪽 경계)
@@ -210,13 +204,11 @@ import urllib.request, io
 
 headers = {"User-Agent": "Mozilla/5.0 (DSES textbook notebook)"}
 
-
 def fetch(url):
     """공개 데이터를 내려받아 문자열로 돌려주기"""
     req = urllib.request.Request(url, headers=headers)
     with urllib.request.urlopen(req, timeout=30) as res:
         return res.read().decode("utf-8", errors="replace")
-
 
 # ── 이산화 탄소 연평균 (NOAA, 마우나로아) ──
 co2_txt = fetch("https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_mlo.txt")

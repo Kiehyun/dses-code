@@ -11,32 +11,28 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>IV-07. 엘니뇨와 남방진동</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/04-07/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-99">99</a> <a href="#code-100">100</a> <a href="#code-101">101</a> <a href="#code-102">102</a> <a href="#code-103">103</a> <a href="#code-104">104</a> <a href="#code-105">105</a> <a href="#code-106">106</a> <a href="#code-107">107</a> <a href="#code-108">108</a> <a href="#code-109">109</a></p>
-<h2 id="code-99">code 99. <button class="copy">복사</button></h2><pre><code>import cartopy.crs as ccrs
+<p class="jump"><a href="#code-112">112</a> <a href="#code-113">113</a> <a href="#code-114">114</a> <a href="#code-115">115</a> <a href="#code-116">116</a> <a href="#code-117">117</a> <a href="#code-118">118</a> <a href="#code-119">119</a> <a href="#code-120">120</a> <a href="#code-121">121</a> <a href="#code-122">122</a> <a href="#code-123">123</a> <a href="#code-124">124</a> <a href="#code-125">125</a></p>
+<h2 id="code-112">code 112. <button class="copy">복사</button></h2><pre><code>import cartopy.crs as ccrs
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 import matplotlib.ticker as mticker
 import matplotlib.pyplot as plt
 import numpy as np
 
-# 1행 2행으로 subplot 생성 (1행: 전체 세계지도, 2행: ENSO 영역 지도)
 fig = plt.figure(figsize=(10, 10))
 
-# 1행: 전체 세계 지도
+# 1) 위: 세계 지도
 ax1 = fig.add_subplot(2, 1, 1, projection=ccrs.PlateCarree(central_longitude=180))
 ax1.set_global()
 ax1.stock_img()
 ax1.set_title(&quot;세계 지도&quot;, fontsize=14)
 
-# 2행: ENSO 영역 지도
+# 2) 아래: 적도 태평양(ENSO 해역)
 ax2 = fig.add_subplot(2, 1, 2, projection=ccrs.PlateCarree(central_longitude=180))
 ax2.set_extent([120, 300, -30, 30], crs=ccrs.PlateCarree())
 ax2.stock_img()
 
-# 격자선 및 레이블 설정
 gl = ax2.gridlines(
-    crs=ccrs.PlateCarree(),
-    draw_labels=True,
-    linewidth=0.5, color=&#x27;gray&#x27;,
+    crs=ccrs.PlateCarree(), draw_labels=True, linewidth=0.5, color=&#x27;gray&#x27;,
     alpha=0.5, linestyle=&#x27;--&#x27;
 )
 gl.top_labels = False
@@ -47,7 +43,7 @@ gl.yformatter = LatitudeFormatter()
 gl.xlabel_style = {&#x27;size&#x27;: 8, &#x27;color&#x27;: &#x27;k&#x27;}
 gl.ylabel_style = {&#x27;size&#x27;: 8, &#x27;color&#x27;: &#x27;k&#x27;}
 
-# 주요 도시(Darwin, Tahiti) 위치 표시
+# 다윈 · 타히티: SOI를 계산하는 두 지점
 latDarwin, lonDarwin = -12, 130
 latTahiti, lonTahiti = -17, -149
 
@@ -57,7 +53,7 @@ ax2.text(lonDarwin, latDarwin-5, &quot;Darwin&quot;, color=&#x27;red&#x27;, font
 ax2.scatter(lonTahiti, latTahiti, color=&#x27;red&#x27;, marker=&#x27;o&#x27;, transform=ccrs.PlateCarree())
 ax2.text(lonTahiti, latTahiti-5, &quot;Tahiti&quot;, color=&#x27;red&#x27;, fontsize=8, transform=ccrs.PlateCarree())
 
-# ENSO 관련 해역(니뇨 영역) 경계선 좌표 정의
+# 3) 니뇨 영역 경계(꼭짓점 위도 · 경도, 서경은 음수)
 latsNino1 = [0, -10, -10, 0, 0]
 lonsNino1 = [-90, -90, -80, -80, -90]
 latsNino3 = [5, -5, -5, 5, 5]
@@ -65,9 +61,8 @@ lonsNino3 = [-150, -150, -90, -90, -150]
 latsNino34 = [5, -5, -5, 5, 5]
 lonsNino34 = [-170, -170, -120, -120, -170]
 latsNino4 = [5, -5, -5, 5, 5]
-lonsNino4 = [-200, -200, -150, -150, -200]
+lonsNino4 = [-200, -200, -150, -150, -200]  # -200° = 160°E
 
-# 각 영역 경계선 및 라벨 표시
 ax2.plot(lonsNino1, latsNino1, color=&#x27;black&#x27;, linewidth=0.75, transform=ccrs.Geodetic())
 ax2.text(lonsNino1[0], latsNino1[1]-4, &quot;NINO 1+2&quot;, color=&#x27;black&#x27;, fontsize=8, transform=ccrs.PlateCarree())
 
@@ -80,41 +75,49 @@ ax2.text((lonsNino34[0]+lonsNino34[2])/2, latsNino34[0]+3, &quot;NINO 3.4&quot;,
 ax2.plot(lonsNino4, latsNino4, color=&#x27;blue&#x27;, linewidth=0.75, transform=ccrs.Geodetic())
 ax2.text((lonsNino4[0]+lonsNino4[2])/2, latsNino4[1]-3.5, &quot;NINO 4&quot;, color=&#x27;blue&#x27;, fontsize=8, transform=ccrs.PlateCarree())
 
-ax2.set_title(&quot;ENSO 관련 해역(니뇨 영역)&quot;, fontsize=14) 
-# 그래프 레이아웃 조정
-plt.tight_layout()          
+ax2.set_title(&quot;ENSO 관련 해역(니뇨 영역)&quot;, fontsize=14)
+plt.tight_layout()
 
-plt.savefig(f&quot;{proj_dir}/ENSO_map.png&quot;, dpi=300, bbox_inches=&#x27;tight&#x27;)  # 저장
-plt.show()  # 그래프 출력</code></pre>
-<h2 id="code-100">code 100. <button class="copy">복사</button></h2><pre><code>fname1 = &quot;ENSO.csv&quot;
-fid1 = &quot;1QkkjxaXMhiaurtA2RxV7XUxonZoDwmIr&quot;
-
-fname2 = &quot;SOI.signal.txt&quot;
-fid2 = &quot;1n2ZOOvFh6gm0VGc70j3OlzfCkgOvbuKr&quot;
-
-# 구글 드라이브에 공유해 둔 파일 내려받기
+plt.savefig(f&quot;{proj_dir}/ENSO_map.png&quot;, dpi=300, bbox_inches=&#x27;tight&#x27;)
+plt.show()</code></pre>
+<h2 id="code-113">code 113. <button class="copy">복사</button></h2><pre><code>import re
+import requests
 from pathlib import Path
 
-# ENSO/SOI는 주기적으로 갱신되는 피드이므로 항상 최신으로 새로 받습니다.
-du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={fid1}&quot;, Path(proj_dir) / fname1, overwrite=True)
-du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={fid2}&quot;, Path(proj_dir) / fname2, overwrite=True)</code></pre>
-<h2 id="code-101">code 101. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, [&quot;csv&quot;, &quot;txt&quot;])</code></pre>
-<h2 id="code-102">code 102. <button class="copy">복사</button></h2><pre><code>n_lines = 10  # 출력할 줄 수
+# ONI: NOAA CPC 공식 파일
+url1 = &quot;https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt&quot;
+oni_path = Path(proj_dir) / &quot;oni.ascii.txt&quot;
+
+# SOI: 갱신 때마다 폴더(연-월)가 바뀌므로 안내 페이지에서 현재 주소 찾기
+base = &quot;https://climatedataguide.ucar.edu&quot;
+page = base + &quot;/climate-data/southern-oscillation-indices-signal-noise-and-tahitidarwin-slp-soi&quot;
+try:
+    html = requests.get(page, headers={&quot;User-Agent&quot;: &quot;Mozilla/5.0&quot;}, timeout=60).text
+    url2 = base + re.search(r&quot;/sites/default/files/[\w-]+/SOI\.signal\.txt&quot;, html).group(0)
+except Exception:
+    url2 = base + &quot;/sites/default/files/2026-04/SOI.signal.txt&quot;  # 2026년 11월 확인한 주소
+soi_path = Path(proj_dir) / &quot;SOI.signal.txt&quot;
+print(&quot;SOI 주소:&quot;, url2)
+
+# 주기적으로 갱신되는 데이터라 늘 새로 받기(overwrite)
+du.download(url1, oni_path, overwrite=True)
+du.download(url2, soi_path, overwrite=True)</code></pre>
+<h2 id="code-114">code 114. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;txt&quot;)</code></pre>
+<h2 id="code-115">code 115. <button class="copy">복사</button></h2><pre><code>n_lines = 10  # 출력할 줄 수
 
 print(f&quot;파일 내용 출력 (처음 {n_lines}줄):&quot;)
 print(&quot;=&quot;*40)
 
-# 순수 파이썬으로 구현 (운영체제 무관)
 try:
-    with open(fpaths[0], encoding=&#x27;utf-8&#x27;) as f:
+    with open(oni_path, encoding=&#x27;utf-8&#x27;) as f:
         for i, line in enumerate(f):
             if i &gt;= n_lines:
                 break
             print(f&quot;{i+1:3d}: {line.rstrip()}&quot;)
 except UnicodeDecodeError:
- # UTF-8로 읽기 실패시 다른 인코딩 시도
+    # UTF-8로 못 읽으면 CP949로 다시 시도
     try:
-        with open(fpaths[0], encoding=&#x27;cp949&#x27;) as f:
+        with open(oni_path, encoding=&#x27;cp949&#x27;) as f:
             for i, line in enumerate(f):
                 if i &gt;= n_lines:
                     break
@@ -125,22 +128,21 @@ except Exception as e:
     print(f&quot;파일 읽기 실패: {e}&quot;)
 
 print(&quot;=&quot;*60)</code></pre>
-<h2 id="code-103">code 103. <button class="copy">복사</button></h2><pre><code>n_lines = 10  # 출력할 줄 수
+<h2 id="code-116">code 116. <button class="copy">복사</button></h2><pre><code>n_lines = 10  # 출력할 줄 수
 
 print(f&quot;파일 내용 출력 (처음 {n_lines}줄):&quot;)
 print(&quot;=&quot;*40)
 
-# 순수 파이썬으로 구현 (운영체제 무관)
 try:
-    with open(fpaths[1], encoding=&#x27;utf-8&#x27;) as f:
+    with open(soi_path, encoding=&#x27;utf-8&#x27;) as f:
         for i, line in enumerate(f):
             if i &gt;= n_lines:
                 break
             print(f&quot;{i+1:3d}: {line.rstrip()}&quot;)
 except UnicodeDecodeError:
- # UTF-8로 읽기 실패시 다른 인코딩 시도
+    # UTF-8로 못 읽으면 CP949로 다시 시도
     try:
-        with open(fpaths[0], encoding=&#x27;cp949&#x27;) as f:
+        with open(soi_path, encoding=&#x27;cp949&#x27;) as f:
             for i, line in enumerate(f):
                 if i &gt;= n_lines:
                     break
@@ -151,35 +153,30 @@ except Exception as e:
     print(f&quot;파일 읽기 실패: {e}&quot;)
 
 print(&quot;=&quot;*60)</code></pre>
-<h2 id="code-104">code 104. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+<h2 id="code-117">code 117. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 import numpy as np
 
-#파일 인코딩을 확인해 보자.
-with open(fpaths[0]) as f:
-    print(&quot;f.encoding:&quot;, f.encoding)
-    encoding = f.encoding
+# 공백으로 나뉜 표: SEAS(3개월 묶음), YR(연도), TOTAL(수온), ANOM(편차 = ONI)
+df_ONI = pd.read_csv(oni_path, sep=r&quot;\s+&quot;)
 
-# 일반적인 csv 파일 불러오기
-df_Kaggle = pd.read_csv(fpaths[0],
- # encoding = encoding,
-                encoding = &quot;euc_kr&quot;, 
-                )
+# 3개월 묶음 이름 → 가운데 달
+SEAS_MID = {&quot;DJF&quot;: 1, &quot;JFM&quot;: 2, &quot;FMA&quot;: 3, &quot;MAM&quot;: 4, &quot;AMJ&quot;: 5, &quot;MJJ&quot;: 6,
+            &quot;JJA&quot;: 7, &quot;JAS&quot;: 8, &quot;ASO&quot;: 9, &quot;SON&quot;: 10, &quot;OND&quot;: 11, &quot;NDJ&quot;: 12}
 
-df_Kaggle[&#x27;dt_date&#x27;] = pd.to_datetime(df_Kaggle[&#x27;Date&#x27;])
-df_Kaggle.index = df_Kaggle[&#x27;dt_date&#x27;]
+df_ONI[&#x27;dt_date&#x27;] = pd.to_datetime(dict(year=df_ONI[&#x27;YR&#x27;],
+                                        month=df_ONI[&#x27;SEAS&#x27;].map(SEAS_MID),
+                                        day=1))
+df_ONI[&#x27;ONI&#x27;] = df_ONI[&#x27;ANOM&#x27;]
+df_ONI.index = df_ONI[&#x27;dt_date&#x27;]
 
-df_Kaggle = df_Kaggle.mask(df_Kaggle[&#x27;ONI&#x27;] == -99.9, np.nan)
+print(&quot;df_ONI : \n&quot;, df_ONI)</code></pre>
+<h2 id="code-118">code 118. <button class="copy">복사</button></h2><pre><code>import numpy as np
 
-print(&quot;df_Kaggle : \n&quot;, df_Kaggle)</code></pre>
-<h2 id="code-105">code 105. <button class="copy">복사</button></h2><pre><code>import numpy as np
-
-arr = np.loadtxt(fpaths[1],
- #delimiter=&#x27; &#x27;, 
-			    )
+arr = np.loadtxt(soi_path)
 print(&quot;arr.shape :&quot;, arr.shape)
 print(&quot;arr : \n&quot;, arr)
 
-arr1 = arr[:,1:]
+arr1 = arr[:,1:]  # 첫 열(연도)을 빼고 12개월 값만
 print(&quot;arr1.shape :&quot;, arr1.shape)
 print(&quot;arr1 : \n&quot;, arr1)
 
@@ -190,8 +187,9 @@ print(&quot;arr2 : \n&quot;, arr2)
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
-StartDtStr = &quot;1866-01-01&quot;
-EndDTStr = &quot;2023-1-1&quot;
+# 파일의 첫해 1월부터 한 달씩 날짜 목록
+StartDtStr = f&quot;{int(arr[0, 0])}-01-01&quot;
+EndDTStr = f&quot;{int(arr[-1, 0]) + 1}-01-01&quot;
 
 StartDT = datetime.strptime(StartDtStr, &quot;%Y-%m-%d&quot;)
 EndDT = datetime.strptime(EndDTStr, &quot;%Y-%m-%d&quot;)
@@ -204,69 +202,59 @@ while date1 &lt; EndDT:
 
 print(&quot;len(proc_dates): {}&quot;.format(len(proc_dates)))
 print(f&quot;proc_dates: {proc_dates}&quot;)</code></pre>
-<h2 id="code-106">code 106. <button class="copy">복사</button></h2><pre><code># import pandas as pd
-import pandas as pd
- 
-# 리스트로 DataFrame 만들기
-df_SOI = pd.DataFrame(list(zip(proc_dates, arr2)),
-                  columns = [&quot;date&quot;, &quot;SOI&quot;],
-              )
+<h2 id="code-119">code 119. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+
+# (날짜, SOI) 쌍으로 DataFrame 만들기
+df_SOI = pd.DataFrame(list(zip(proc_dates, arr2)), columns = [&quot;date&quot;, &quot;SOI&quot;])
 df_SOI[&#x27;dt_date&#x27;] = pd.to_datetime(df_SOI[&#x27;date&#x27;])
 df_SOI.index = df_SOI[&#x27;dt_date&#x27;]
-df_SOI[&#x27;SOI&#x27;] = df_SOI[&#x27;SOI&#x27;].replace(-99.9, np.nan)
+df_SOI[&#x27;SOI&#x27;] = df_SOI[&#x27;SOI&#x27;].replace(-99.9, np.nan)  # -99.9는 결측값
 print(&quot;df_SOI :&quot;, df_SOI)</code></pre>
-<h2 id="code-107">code 107. <button class="copy">복사</button></h2><pre><code># 필요한 라이브러리 불러오기
-import matplotlib.pyplot as plt
+<h2 id="code-120">code 120. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 from matplotlib import rc
 
-# 예시 그래프
 fig, ax = plt.subplots(figsize=(12.0, 4.0))
-ax.plot(df_Kaggle[&#x27;dt_date&#x27;], df_Kaggle[&#x27;ONI&#x27;].astype(float), label=&#x27;ONI&#x27;)
+ax.plot(df_ONI[&#x27;dt_date&#x27;], df_ONI[&#x27;ONI&#x27;].astype(float), label=&#x27;ONI&#x27;)
 ax.set_title(&#x27;니뇨 3.4 지역의 해양 엘니뇨 지수(ONI)&#x27;, fontsize=18, fontweight=&#x27;bold&#x27;)
 ax.set_xlabel(&#x27;시간(년)&#x27;, fontsize=14)
 ax.set_ylabel(&#x27;수온 편차 (°C)&#x27;, fontsize=14)
 plt.show()</code></pre>
-<h2 id="code-108">code 108. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-121">code 121. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
-# 그림 사이즈를 가로로 길게 지정
 fig, ax = plt.subplots(figsize=(12.0, 4.0))
 
-ax.plot(df_Kaggle[&#x27;dt_date&#x27;], df_Kaggle[&#x27;ONI&#x27;].astype(float), &quot;k-&quot;, linewidth=0.5)
-#ax.plot(df_Kaggle[&#x27;dt_date&#x27;], df_Kaggle[&#x27;SOI&#x27;], &quot;k-&quot;)
+ax.plot(df_ONI[&#x27;dt_date&#x27;], df_ONI[&#x27;ONI&#x27;].astype(float), &quot;k-&quot;, linewidth=0.5)
 
-ax.set_xlim([df_Kaggle[&#x27;dt_date&#x27;].min(), df_Kaggle[&#x27;dt_date&#x27;].max()])
+ax.set_xlim([df_ONI[&#x27;dt_date&#x27;].min(), df_ONI[&#x27;dt_date&#x27;].max()])
 ax.set_ylim([-3, 3])
 
 ax.axhline(y = 0, color = &#x27;black&#x27;, linestyle = &#x27;-&#x27;)
 
-ax.fill_between(df_Kaggle[&#x27;dt_date&#x27;], df_Kaggle[&#x27;ONI&#x27;].astype(float), 1,
-                where=df_Kaggle[&#x27;ONI&#x27;].astype(float) &gt; 1,
-                color=&#x27;red&#x27;, alpha=0.7,
-                )
+# ONI가 +1 °C보다 크면 빨강, -1 °C보다 작으면 파랑으로 채우기
+ax.fill_between(df_ONI[&#x27;dt_date&#x27;], df_ONI[&#x27;ONI&#x27;].astype(float), 1,
+                where=df_ONI[&#x27;ONI&#x27;].astype(float) &gt; 1,
+                color=&#x27;red&#x27;, alpha=0.7)
 
-ax.fill_between(df_Kaggle[&#x27;dt_date&#x27;], df_Kaggle[&#x27;ONI&#x27;].astype(float), -1,
-                where= df_Kaggle[&#x27;ONI&#x27;].astype(float) &lt; -1,
-                color=&#x27;blue&#x27;, alpha=0.7,
-                )
+ax.fill_between(df_ONI[&#x27;dt_date&#x27;], df_ONI[&#x27;ONI&#x27;].astype(float), -1,
+                where= df_ONI[&#x27;ONI&#x27;].astype(float) &lt; -1,
+                color=&#x27;blue&#x27;, alpha=0.7)
 ax.grid()
 ax.set_xlabel(r&#x27;시간(년)&#x27;, fontsize = 14)
 ax.set_ylabel(r&#x27;수온 편차 ($\rm{^{\circ C}}$)&#x27;, fontsize = 14)
 
 ax.set_title(&#x27;니뇨 3.4 지역의 해양 엘니뇨 지수(ONI)&#x27;,
-          y=1.05,   # 제목 아래 여백
+          y=1.05,  # 제목 아래 여백
           fontdict={&#x27;fontsize&#x27;:18,&#x27;fontweight&#x27;:&#x27;bold&#x27;})
 
 fig.tight_layout()
 fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0.1)
 
 plt.show()</code></pre>
-<h2 id="code-109">code 109. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-122">code 122. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
-# 그림 사이즈를 가로로 길게 지정
 fig, ax = plt.subplots(figsize=(12.0, 4.0))
 
 ax.plot(df_SOI[&#x27;dt_date&#x27;], df_SOI[&#x27;SOI&#x27;].astype(float), &quot;k-&quot;, linewidth=0.5)
-#ax.plot(dfSubset[&#x27;dt_date&#x27;], dfSubset[&#x27;SOI&#x27;], &quot;k-&quot;)
 
 ax.set_xlabel(r&#x27;시간(년)&#x27;, fontsize = 16)
 ax.set_ylabel(r&#x27;기압 편차 ($\rm{hPa}$)&#x27;, fontsize = 16)
@@ -276,18 +264,17 @@ ax.set_ylim([-6, 6])
 
 ax.axhline(y = 0, color = &#x27;black&#x27;, linestyle = &#x27;-&#x27;)
 
-ax.fill_between(df_SOI[&#x27;dt_date&#x27;], df_SOI[&#x27;SOI&#x27;].astype(float), 0, 
+# SOI 양수(라니냐 쪽)는 파랑, 음수(엘니뇨 쪽)는 빨강
+ax.fill_between(df_SOI[&#x27;dt_date&#x27;], df_SOI[&#x27;SOI&#x27;].astype(float), 0,
                 where= df_SOI[&#x27;SOI&#x27;].astype(float) &gt; 0,
-                color=&#x27;blue&#x27;, alpha=0.7,
-                )
+                color=&#x27;blue&#x27;, alpha=0.7)
 
-ax.fill_between(df_SOI[&#x27;dt_date&#x27;], df_SOI[&#x27;SOI&#x27;].astype(float), 0, 
+ax.fill_between(df_SOI[&#x27;dt_date&#x27;], df_SOI[&#x27;SOI&#x27;].astype(float), 0,
                 where= df_SOI[&#x27;SOI&#x27;].astype(float) &lt; 0,
-                color=&#x27;red&#x27;, alpha=0.7,
-                )
+                color=&#x27;red&#x27;, alpha=0.7)
 ax.grid()
-ax.set_title(&#x27;다윈과 타히티의 기압 편차(SOI)&#x27;, 
-          y=1.05,   # 제목 아래 여백
+ax.set_title(&#x27;다윈과 타히티의 기압 편차(SOI)&#x27;,
+          y=1.05,  # 제목 아래 여백
           fontdict={&#x27;fontsize&#x27;:18,&#x27;fontweight&#x27;:&#x27;bold&#x27;})
 
 plt.setp(ax.get_xticklabels(), fontsize=16)
@@ -296,6 +283,57 @@ plt.setp(ax.get_yticklabels(), fontsize=16)
 fig.tight_layout()
 fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0.1)
 
+plt.show()</code></pre>
+<h2 id="code-123">code 123. <button class="copy">복사</button></h2><pre><code># 달마다 상태 표시: 1(엘니뇨 쪽), -1(라니냐 쪽), 0(중립)
+oni = df_ONI[&#x27;ONI&#x27;].astype(float)
+state = pd.Series(np.select([oni &gt;= 0.5, oni &lt;= -0.5], [1, -1], 0), index=oni.index)
+
+# 같은 상태가 이어지는 구간마다 번호 붙이기
+run_id = (state != state.shift()).cumsum()
+
+rows = []
+for _, seg in state.groupby(run_id):
+    if seg.iloc[0] == 0 or len(seg) &lt; 5:  # 중립이거나 5개월 미만이면 제외
+        continue
+    vals = oni.loc[seg.index]
+    rows.append({&quot;구분&quot;: &quot;엘니뇨&quot; if seg.iloc[0] == 1 else &quot;라니냐&quot;,
+                 &quot;시작&quot;: seg.index[0].to_period(&quot;M&quot;),
+                 &quot;끝&quot;: seg.index[-1].to_period(&quot;M&quot;),
+                 &quot;개월 수&quot;: len(seg),
+                 &quot;최댓값&quot;: vals.max() if seg.iloc[0] == 1 else vals.min()})
+events = pd.DataFrame(rows)
+
+# 최댓값(절댓값)에 따른 강도 구분
+events[&quot;강도&quot;] = pd.cut(events[&quot;최댓값&quot;].abs(), bins=[0.5, 1.0, 1.5, 2.0, np.inf],
+                      right=False, labels=[&quot;약함&quot;, &quot;보통&quot;, &quot;강함&quot;, &quot;매우 강함&quot;])
+
+print(f&quot;ONI 기간: {oni.index.min():%Y-%m} ~ {oni.index.max():%Y-%m}&quot;)
+print(events.groupby([&quot;구분&quot;, &quot;강도&quot;], observed=False).size().unstack())
+print()
+print(&quot;최근 사례 5개&quot;)
+print(events.tail(5).to_string(index=False))</code></pre>
+<h2 id="code-124">code 124. <button class="copy">복사</button></h2><pre><code># 최댓값의 절댓값이 큰 순서로 상위 8개 사례
+top = events.sort_values(&quot;최댓값&quot;, key=abs, ascending=False).head(8)
+print(top.to_string(index=False))</code></pre>
+<h2 id="code-125">code 125. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(12.0, 4.0))
+ax.plot(df_ONI[&#x27;dt_date&#x27;], oni, &quot;k-&quot;, linewidth=0.7)
+
+# 사례 기간마다 색 띠(끝 달은 그달 말일까지)
+for _, ev in events.iterrows():
+    ax.axvspan(ev[&quot;시작&quot;].to_timestamp(), ev[&quot;끝&quot;].to_timestamp(how=&quot;end&quot;),
+               color=&#x27;red&#x27; if ev[&quot;구분&quot;] == &quot;엘니뇨&quot; else &#x27;blue&#x27;, alpha=0.25, linewidth=0)
+
+ax.axhline(y=0, color=&#x27;black&#x27;, linewidth=0.8)
+for y in (0.5, -0.5):  # 판정 기준선
+    ax.axhline(y=y, color=&#x27;gray&#x27;, linestyle=&#x27;--&#x27;, linewidth=0.8)
+
+ax.set_xlim([df_ONI[&#x27;dt_date&#x27;].min(), df_ONI[&#x27;dt_date&#x27;].max()])
+ax.set_ylim([-3, 3])
+ax.set_xlabel(&#x27;시간(년)&#x27;, fontsize=14)
+ax.set_ylabel(r&#x27;수온 편차 ($\rm{^{\circ}C}$)&#x27;, fontsize=14)
+ax.set_title(&#x27;판정 기준(±0.5 °C, 5개월 이상)으로 골라낸 엘니뇨 · 라니냐 사례&#x27;,
+             fontsize=16, fontweight=&#x27;bold&#x27;)
+fig.tight_layout()
 plt.show()</code></pre>
 <script>
 document.querySelectorAll('button.copy').forEach(function (b) {

@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>IV-03. 에어코리아 자료 시각화하기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/04-03/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-37">37</a> <a href="#code-38">38</a> <a href="#code-39">39</a> <a href="#code-40">40</a> <a href="#code-41">41</a> <a href="#code-42">42</a> <a href="#code-43">43</a> <a href="#code-44">44</a> <a href="#code-45">45</a> <a href="#code-46">46</a> <a href="#code-47">47</a> <a href="#code-48">48</a> <a href="#code-49">49</a> <a href="#code-50">50</a> <a href="#code-51">51</a> <a href="#code-52">52</a> <a href="#code-53">53</a> <a href="#code-54">54</a> <a href="#code-55">55</a> <a href="#code-56">56</a> <a href="#code-57">57</a> <a href="#code-58">58</a> <a href="#code-59">59</a> <a href="#code-60">60</a> <a href="#code-61">61</a> <a href="#code-62">62</a> <a href="#code-63">63</a> <a href="#code-64">64</a> <a href="#code-65">65</a></p>
-<h2 id="code-37">code 37. <button class="copy">복사</button></h2><pre><code># 파일 ID와 파일 이름을 튜플 목록으로 묶기
+<p class="jump"><a href="#code-40">40</a> <a href="#code-41">41</a> <a href="#code-42">42</a> <a href="#code-43">43</a> <a href="#code-44">44</a> <a href="#code-45">45</a> <a href="#code-46">46</a> <a href="#code-47">47</a> <a href="#code-48">48</a> <a href="#code-49">49</a> <a href="#code-50">50</a> <a href="#code-51">51</a> <a href="#code-52">52</a> <a href="#code-53">53</a> <a href="#code-54">54</a> <a href="#code-55">55</a> <a href="#code-56">56</a> <a href="#code-57">57</a> <a href="#code-58">58</a> <a href="#code-59">59</a> <a href="#code-60">60</a> <a href="#code-61">61</a> <a href="#code-62">62</a> <a href="#code-63">63</a> <a href="#code-64">64</a> <a href="#code-65">65</a> <a href="#code-66">66</a> <a href="#code-67">67</a> <a href="#code-68">68</a></p>
+<h2 id="code-40">code 40. <button class="copy">복사</button></h2><pre><code># (구글 드라이브 파일 ID, 저장할 이름)
 files = [
     (&#x27;146hh8byBZ7r-afm8FgbjNWrSLfFC2juV&#x27;, &#x27;2016-01.zip&#x27;),
     (&#x27;1iHzRAIDmhjN_W7QgVh8kzk1MNJk4GUj8&#x27;, &#x27;2016-02.zip&#x27;),
@@ -20,65 +20,63 @@ files = [
     (&#x27;1NN3-VAfAgUOAW01dYk8wBMm4N6PDe5Cc&#x27;, &#x27;2016-04.zip&#x27;)
 ]
 
-# 튜플 목록으로 파일 내려받기
 for file_id, file_name in files:
     du.download(
         f&quot;https://docs.google.com/uc?export=download&amp;id={file_id}&quot;,
         proj_dir / file_name
     )</code></pre>
-<h2 id="code-38">code 38. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;zip&quot;)</code></pre>
-<h2 id="code-39">code 39. <button class="copy">복사</button></h2><pre><code>import shutil
+<h2 id="code-41">code 41. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;zip&quot;)</code></pre>
+<h2 id="code-42">code 42. <button class="copy">복사</button></h2><pre><code>import shutil
 for fpath in fpaths:
     shutil.unpack_archive(str(fpath), str(proj_dir))
     print(f&quot;Unzip {fpath} to {proj_dir}&quot;)  </code></pre>
-<h2 id="code-40">code 40. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;csv&quot;)</code></pre>
-<h2 id="code-41">code 41. <button class="copy">복사</button></h2><pre><code>du.preview_text(fpaths[0], n=10)</code></pre>
-<h2 id="code-42">code 42. <button class="copy">복사</button></h2><pre><code>#package 불러오기
-import pandas as pd
+<h2 id="code-43">code 43. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;csv&quot;)</code></pre>
+<h2 id="code-44">code 44. <button class="copy">복사</button></h2><pre><code>du.preview_text(fpaths[0], n=10)</code></pre>
+<h2 id="code-45">code 45. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 
-# 빈 DataFrame 생성
 df = pd.DataFrame()
 
 for fpath in fpaths :
-    # 파일은 UTF-8로 저장되어 있습니다(윈도우 기본 인코딩 cp949로 읽으면 오류).
-    df_month = pd.read_csv(str(fpath),
-                encoding = &#x27;utf-8&#x27;,
-                sep=&#x27;,&#x27;)
+    # 파일은 UTF-8(윈도우 기본 cp949로 읽으면 오류)
+    df_month = pd.read_csv(str(fpath), encoding = &#x27;utf-8&#x27;, sep=&#x27;,&#x27;)
     df = pd.concat([df, df_month], ignore_index=True)
 display(df)</code></pre>
-<h2 id="code-43">code 43. <button class="copy">복사</button></h2><pre><code>print(&quot;df[&#x27;측정일시&#x27;].dtype: {}&quot;.format(df[&#x27;측정일시&#x27;].dtype))
+<h2 id="code-46">code 46. <button class="copy">복사</button></h2><pre><code>print(&quot;df[&#x27;측정일시&#x27;].dtype: {}&quot;.format(df[&#x27;측정일시&#x27;].dtype))
+# 정수 YYYYMMDDHH(1~24시)에서 1을 빼 0~23시로
 df[&#x27;O_datetime-1hr&#x27;] = df[&#x27;측정일시&#x27;] - 1
 
+# &#x27;YYYYMMDD HH:00:00&#x27; 문자열로 바꾼 뒤 datetime으로
 df[&#x27;YMdh-1hr_str&#x27;] = df[&#x27;O_datetime-1hr&#x27;].astype(str)
 df[&#x27;YMdhms-1hr_str&#x27;] = df[&#x27;YMdh-1hr_str&#x27;].str.slice(start=0, stop=8) + &quot; &quot; + df[&#x27;YMdh-1hr_str&#x27;].str.slice(start=8, stop=10) + &quot;:00:00&quot;
 df[&#x27;YMdhms-1hr_dt&#x27;] = pd.to_datetime(df[&#x27;YMdhms-1hr_str&#x27;])
 print(df)</code></pre>
-<h2 id="code-44">code 44. <button class="copy">복사</button></h2><pre><code>print(&quot;len(df[&#x27;측정소코드&#x27;].unique()):\n {}&quot;.format(len(df[&#x27;측정소코드&#x27;].unique())))
+<h2 id="code-47">code 47. <button class="copy">복사</button></h2><pre><code>print(&quot;len(df[&#x27;측정소코드&#x27;].unique()):\n {}&quot;.format(len(df[&#x27;측정소코드&#x27;].unique())))
 df = df.set_index([&#x27;측정소코드&#x27;], drop=False)
 print(df)</code></pre>
-<h2 id="code-45">code 45. <button class="copy">복사</button></h2><pre><code>print(&quot;len(df[&#x27;YMdhms-1hr_dt&#x27;].unique()):\n {}&quot;.format(len(df[&#x27;YMdhms-1hr_dt&#x27;].unique())))
+<h2 id="code-48">code 48. <button class="copy">복사</button></h2><pre><code>print(&quot;len(df[&#x27;YMdhms-1hr_dt&#x27;].unique()):\n {}&quot;.format(len(df[&#x27;YMdhms-1hr_dt&#x27;].unique())))
 df = df.set_index([&#x27;YMdhms-1hr_dt&#x27;], drop=False)
 print(df)</code></pre>
-<h2 id="code-46">code 46. <button class="copy">복사</button></h2><pre><code>df_MI = df.set_index([&#x27;측정소코드&#x27;,&#x27;YMdhms-1hr_dt&#x27;], drop=False)
+<h2 id="code-49">code 49. <button class="copy">복사</button></h2><pre><code>df_MI = df.set_index([&#x27;측정소코드&#x27;,&#x27;YMdhms-1hr_dt&#x27;], drop=False)
 print(df_MI)</code></pre>
-<h2 id="code-47">code 47. <button class="copy">복사</button></h2><pre><code>print(&quot;len(df_MI[&#x27;측정소코드&#x27;].unique()): {}&quot;.format(len(df_MI[&#x27;측정소코드&#x27;].unique())))
+<h2 id="code-50">code 50. <button class="copy">복사</button></h2><pre><code>print(&quot;len(df_MI[&#x27;측정소코드&#x27;].unique()): {}&quot;.format(len(df_MI[&#x27;측정소코드&#x27;].unique())))
 print(&quot;df_MI[&#x27;측정소코드&#x27;].unique(): \n{}&quot;.format(df_MI[&#x27;측정소코드&#x27;].unique()))</code></pre>
-<h2 id="code-48">code 48. <button class="copy">복사</button></h2><pre><code>Ocode = 632151 
+<h2 id="code-51">code 51. <button class="copy">복사</button></h2><pre><code>Ocode = 632151  # 측정소 코드
 
 print(&quot;len(df_MI[(df_MI[&#x27;측정소코드&#x27;] == Ocode)]: {}&quot;.\
       format(len(df_MI[(df_MI[&#x27;측정소코드&#x27;] == Ocode)])))
 
 print(df_MI[(df_MI[&quot;측정소코드&quot;] == Ocode)])</code></pre>
-<h2 id="code-49">code 49. <button class="copy">복사</button></h2><pre><code>print(&quot;len(df_MI[(df_MI[&#x27;YMdhms-1hr_dt&#x27;] &gt;= &#x27;2016-01-01 00:00:00&#x27;) &amp; (df_MI[&#x27;YMdhms-1hr_dt&#x27;] &lt; &#x27;2016-02-01 00:00:00&#x27;)]): {}&quot;.\
+<h2 id="code-52">code 52. <button class="copy">복사</button></h2><pre><code>print(&quot;len(df_MI[(df_MI[&#x27;YMdhms-1hr_dt&#x27;] &gt;= &#x27;2016-01-01 00:00:00&#x27;) &amp; (df_MI[&#x27;YMdhms-1hr_dt&#x27;] &lt; &#x27;2016-02-01 00:00:00&#x27;)]): {}&quot;.\
       format(len(df_MI[(df_MI[&#x27;YMdhms-1hr_dt&#x27;] &gt;= &#x27;2016-01-01 00:00:00&#x27;) &amp; (df_MI[&#x27;YMdhms-1hr_dt&#x27;] &lt; &#x27;2016-02-01 00:00:00&#x27;)])))
 
 print(df_MI[(df_MI[&quot;YMdhms-1hr_dt&quot;] &gt;= &#x27;2016-01-01 00:00:00&#x27;) &amp; (df_MI[&quot;YMdhms-1hr_dt&quot;] &lt; &#x27;2016-02-01 00:00:00&#x27;)])</code></pre>
-<h2 id="code-50">code 50. <button class="copy">복사</button></h2><pre><code>print(df_MI[[&quot;NO2&quot;, &quot;O3&quot;]])</code></pre>
-<h2 id="code-51">code 51. <button class="copy">복사</button></h2><pre><code>print(&quot;type(df_MI.xs(632151)): {}&quot;.format(type(df_MI.xs(632151))))
+<h2 id="code-53">code 53. <button class="copy">복사</button></h2><pre><code>print(df_MI[[&quot;NO2&quot;, &quot;O3&quot;]])</code></pre>
+<h2 id="code-54">code 54. <button class="copy">복사</button></h2><pre><code>print(&quot;type(df_MI.xs(632151)): {}&quot;.format(type(df_MI.xs(632151))))
 print(df_MI.xs(632151))</code></pre>
-<h2 id="code-52">code 52. <button class="copy">복사</button></h2><pre><code>print(&quot;type(df_MI.xs(&#x27;2016-01-01 00:00:00&#x27;, level=1)):{}&quot;.format(type(df_MI.xs(&#x27;2016-01-01 00:00:00&#x27;, level=1))))
+<h2 id="code-55">code 55. <button class="copy">복사</button></h2><pre><code>print(&quot;type(df_MI.xs(&#x27;2016-01-01 00:00:00&#x27;, level=1)):{}&quot;.format(type(df_MI.xs(&#x27;2016-01-01 00:00:00&#x27;, level=1))))
 print(df_MI.xs(&quot;2016-01-01 00:00:00&quot;, level=1))</code></pre>
-<h2 id="code-53">code 53. <button class="copy">복사</button></h2><pre><code>Ocode = 632151
+<h2 id="code-56">code 56. <button class="copy">복사</button></h2><pre><code># 측정소 · 오염 물질 · 기간 고르기
+Ocode = 632151
 DATA_column1 = &quot;O3&quot;
 DATA_column2 = &quot;NO2&quot;
 
@@ -88,18 +86,19 @@ end_datetime_str = &#x27;2016-05-01 00:00:00&#x27;
 df_MI_selected1 = df_MI[(df_MI[&#x27;YMdhms-1hr_dt&#x27;] &gt;= begin_datetime_str) &amp;\
       (df_MI[&#x27;YMdhms-1hr_dt&#x27;] &lt; end_datetime_str) &amp;\
       (df_MI[&quot;측정소코드&quot;] == Ocode)][[DATA_column1, DATA_column2]]</code></pre>
-<h2 id="code-54">code 54. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-57">code 57. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
 plt.figure(figsize=(12, 8))
 
 plt.title(&quot;Histogram of {0} concentration (측정소코드 : {1})&quot;.\
         format(DATA_column1, str(Ocode)), fontsize=20, pad=20)
-  
+
 plt.hist(df_MI_selected1[DATA_column1])
 plt.grid(True)
 
-plt.annotate(&#x27;created by guitar79@gs.hs.kr\nAir quality procuct using AirKorea data&#x27;,
+# 그림 아래에 출처 · 기간 · 통계 쓰기
+plt.annotate(&#x27;Air quality product using AirKorea data&#x27;,
         xy=(1, 0), xytext=(12, -28), va=&#x27;top&#x27;, ha=&#x27;right&#x27;,
         xycoords=&#x27;axes fraction&#x27;, textcoords=&#x27;offset points&#x27;)
 
@@ -109,58 +108,47 @@ plt.annotate(&#x27;period : {} ~ {}&#x27;\
         xycoords=&#x27;axes fraction&#x27;, textcoords=&#x27;offset points&#x27;)
 
 plt.annotate(&#x27;mean : {0:.02f}, max: {1:.02f}, min: {2:.02f}&#x27;\
-        .format(np.nanmean(df_MI_selected1[DATA_column1]), 
+        .format(np.nanmean(df_MI_selected1[DATA_column1]),
         np.nanmax(df_MI_selected1[DATA_column1]),
         np.nanmin(df_MI_selected1[DATA_column1])),
         xy=(0, 0), xytext=(12, -44), va=&#x27;top&#x27;, ha=&#x27;left&#x27;,
-        xycoords=&#x27;axes fraction&#x27;, textcoords=&#x27;offset points&#x27;)
-
-# plt.savefig(&quot;{0}_{1}_{2}_hist.png&quot;\
-# .format(fpath[0][-4], Ocode, DATA_column1)) 
-# print(&quot;{0}_{1}_{2}_hist.png is created...&quot;\
-# .format(fullname[-4], Ocode, DATA_column1))</code></pre>
-<h2 id="code-55">code 55. <button class="copy">복사</button></h2><pre><code>print(&quot;type(df_MI_selected1.xs(Ocode).index) : {}&quot;.format(type(df_MI_selected1.xs(Ocode).index)))
+        xycoords=&#x27;axes fraction&#x27;, textcoords=&#x27;offset points&#x27;)</code></pre>
+<h2 id="code-58">code 58. <button class="copy">복사</button></h2><pre><code>print(&quot;type(df_MI_selected1.xs(Ocode).index) : {}&quot;.format(type(df_MI_selected1.xs(Ocode).index)))
 print(&quot;df_MI_selected1.xs(Ocode).index) :\n {}&quot;.format(df_MI_selected1.xs(Ocode).index))</code></pre>
-<h2 id="code-56">code 56. <button class="copy">복사</button></h2><pre><code>from datetime import timedelta
+<h2 id="code-59">code 59. <button class="copy">복사</button></h2><pre><code>from datetime import timedelta
 import matplotlib.dates as dates
 import matplotlib.ticker as ticker
 
-#그래프를 그려보자.
 fig, ax1 = plt.subplots(figsize=(12.0, 3.3))
 
-#x축 레이블
 ax1.set_xlabel(&#x27;time (year-month-day)&#x27;, fontsize = 14)
 
-# 달마다 날수가 달라 약간의 근사가 들어간다
+# 큰 눈금은 달마다, 작은 눈금은 날마다
 ax1.xaxis.set_major_locator(dates.MonthLocator())
 ax1.xaxis.set_minor_locator(dates.DayLocator())
 
-#ax1.xaxis.set_major_formatter(ticker.NullFormatter())
-#ax1.xaxis.set_minor_formatter(dates.DateFormatter(&#x27;%d&#x27;))
 ax1.xaxis.set_major_formatter(dates.DateFormatter(&#x27;%Y-%m-%d&#x27;))
 ax1.xaxis.set_minor_formatter(ticker.NullFormatter())
 
 ax1.set_xlim(np.nanmin(df_MI_selected1[DATA_column1].xs(Ocode).index), np.nanmax(df_MI_selected1[DATA_column1].xs(Ocode).index))
-ax1.set_xticks(np.arange(np.nanmin(df_MI_selected1[DATA_column1].xs(Ocode).index), np.nanmax(df_MI_selected1[DATA_column1].xs(Ocode).index), 
+ax1.set_xticks(np.arange(np.nanmin(df_MI_selected1[DATA_column1].xs(Ocode).index), np.nanmax(df_MI_selected1[DATA_column1].xs(Ocode).index),
         timedelta(days=1)), minor = False)
 
 ax2 = ax1.twinx()
 
-#그림
 line1 = ax1.plot(df_MI_selected1[DATA_column1].xs(Ocode).index, df_MI_selected1[DATA_column1].xs(Ocode), &#x27;r-&#x27;, label=DATA_column1)
 line2 = ax1.plot(df_MI_selected1[DATA_column2].xs(Ocode).index, df_MI_selected1[DATA_column2].xs(Ocode), &#x27;b-&#x27;, label=DATA_column2)
 
-# y축 이름·눈금·눈금값 색을 선 색과 맞추기
 ax1.set_ylabel(&#x27;{} concentration ({})&#x27;.format(DATA_column1, &quot;ppm&quot;), fontsize = 14)
 ax1.tick_params(&#x27;y&#x27;)
 ax2.set_ylabel(&#x27;{} concentration ({})&#x27;.format(DATA_column2, &quot;ppm&quot;), fontsize = 14)
 ax2.tick_params(&#x27;y&#x27;)
 
-ax1.set_title(&#x27;Variation of {} and {} concentraion&#x27;.format(DATA_column1, DATA_column2), 
-          y=1.05,   # 제목 아래 여백
+ax1.set_title(&#x27;Variation of {} and {} concentraion&#x27;.format(DATA_column1, DATA_column2),
+          y=1.05,  # 제목 아래 여백
           fontdict={&#x27;fontsize&#x27;:18,&#x27;fontweight&#x27;:&#x27;bold&#x27;})
 
-# 이 줄들을 추가했다
+# 두 선의 범례를 하나로
 lns = line1 + line2
 labs = [l.get_label() for l in lns]
 
@@ -171,12 +159,7 @@ plt.grid(True)
 fig.tight_layout()
 fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0.1)
 
-# plt.savefig(&quot;{0}_{1}_{2}_{3}_plot.png&quot;\
-# .format(fullname[-4], Ocode, DATA_column1, DATA_column2)) 
-# print(&quot;{0}_{1}_{2}_{3}_plot.png is created...&quot;\
-# .format(fullname[-4], Ocode, DATA_column1, DATA_column2))
-
-plt.annotate(&#x27;created by guitar79@gs.hs.kr\nAir quality procuct using AirKorea data&#x27;,
+plt.annotate(&#x27;Air quality product using AirKorea data&#x27;,
         xy=(1, 0), xytext=(12, -28), va=&#x27;top&#x27;, ha=&#x27;right&#x27;,
         xycoords=&#x27;axes fraction&#x27;, textcoords=&#x27;offset points&#x27;)
 
@@ -186,94 +169,70 @@ plt.annotate(&#x27;period : {} ~ {}&#x27;\
         xycoords=&#x27;axes fraction&#x27;, textcoords=&#x27;offset points&#x27;)
 
 plt.annotate(&#x27;mean : {0:.02f}, max: {1:.02f}, min: {2:.02f}&#x27;\
-        .format(np.nanmean(df_MI_selected1[DATA_column1]), 
+        .format(np.nanmean(df_MI_selected1[DATA_column1]),
         np.nanmax(df_MI_selected1[DATA_column1]),
         np.nanmin(df_MI_selected1[DATA_column1])),
         xy=(0, 0), xytext=(12, -44), va=&#x27;top&#x27;, ha=&#x27;left&#x27;,
-        xycoords=&#x27;axes fraction&#x27;, textcoords=&#x27;offset points&#x27;)
+        xycoords=&#x27;axes fraction&#x27;, textcoords=&#x27;offset points&#x27;)</code></pre>
+<h2 id="code-60">code 60. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
-# plt.savefig(&quot;{0}_{1}_{2}_hist.png&quot;\
-# .format(fullname[-4], Ocode, DATA_column1)) 
-# print(&quot;{0}_{1}_{2}_hist.png is created...&quot;\
-# .format(fullname[-4], Ocode, DATA_column1))</code></pre>
-<h2 id="code-57">code 57. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
-
-# df_MI 전체 숫자 컬럼에 대한 상관계수 계산
-corr = df_MI.corr(numeric_only=True)
+corr = df_MI.corr(numeric_only=True)  # 숫자 열끼리의 피어슨 상관계수
 
 fig, ax = plt.subplots(figsize=(10, 8))
 
 im = ax.imshow(corr, cmap=&#x27;coolwarm&#x27;, vmin=-1, vmax=1)
 
-# 컬러바 추가
 cbar = plt.colorbar(im, ax=ax)
 cbar.set_label(&#x27;Pearson correlation coefficient&#x27;, fontsize=12)
 
-# 축 눈금 설정
 ax.set_xticks(range(len(corr.columns)))
 ax.set_yticks(range(len(corr.index)))
 
 ax.set_xticklabels(corr.columns, rotation=45, ha=&#x27;right&#x27;, fontsize=11)
 ax.set_yticklabels(corr.index, fontsize=11)
 
-# 각 칸에 상관계수 값 표시
+# 각 칸에 상관계수 값 쓰기
 for i in range(len(corr.index)):
     for j in range(len(corr.columns)):
         ax.text(
-            j, i,
-            f&#x27;{corr.iloc[i, j]:.2f}&#x27;,
-            ha=&#x27;center&#x27;,
-            va=&#x27;center&#x27;,
-            color=&#x27;black&#x27;,
-            fontsize=10
+            j, i, f&#x27;{corr.iloc[i, j]:.2f}&#x27;, ha=&#x27;center&#x27;, va=&#x27;center&#x27;,
+            color=&#x27;black&#x27;, fontsize=10
         )
 
-ax.set_title(
-    &#x27;Correlation Matrix of df_MI&#x27;,
-    fontsize=15,
-    fontweight=&#x27;bold&#x27;
-)
+ax.set_title(&#x27;Correlation Matrix of df_MI&#x27;, fontsize=15, fontweight=&#x27;bold&#x27;)
 
 plt.tight_layout()
 plt.show()
 
 cbar.set_label(&#x27;Pearson correlation coefficient&#x27;, fontsize=12)
 
-# 축 눈금 설정
 ax.set_xticks(range(len(corr.columns)))
 ax.set_yticks(range(len(corr.index)))
 
 ax.set_xticklabels(corr.columns, rotation=45, ha=&#x27;right&#x27;, fontsize=11)
 ax.set_yticklabels(corr.index, fontsize=11)
 
-# 각 칸에 상관계수 값 표시
 for i in range(len(corr.index)):
     for j in range(len(corr.columns)):
         ax.text(
-            j, i,
-            f&#x27;{corr.iloc[i, j]:.2f}&#x27;,
-            ha=&#x27;center&#x27;,
-            va=&#x27;center&#x27;,
-            color=&#x27;black&#x27;,
-            fontsize=10
+            j, i, f&#x27;{corr.iloc[i, j]:.2f}&#x27;, ha=&#x27;center&#x27;, va=&#x27;center&#x27;,
+            color=&#x27;black&#x27;, fontsize=10
         )
 
 ax.set_title(&#x27;Correlation Matrix of Air Pollutants&#x27;, fontsize=15, fontweight=&#x27;bold&#x27;)
 
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-58">code 58. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-61">code 61. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
-#그래프를 그려보자.
 fig, ax1 = plt.subplots(figsize=(5, 5))
 
-#그림
 ax1.scatter(df_MI_selected1[DATA_column1].xs(Ocode),
             df_MI_selected1[DATA_column2].xs(Ocode), s=2)
 
-ax1.set_title(&#x27;{} vs {}&#x27;.format(DATA_column1, DATA_column2), 
-          y=1.05,   # 제목 아래 여백
+ax1.set_title(&#x27;{} vs {}&#x27;.format(DATA_column1, DATA_column2),
+          y=1.05,  # 제목 아래 여백
           fontdict={&#x27;fontsize&#x27;:18,&#x27;fontweight&#x27;:&#x27;bold&#x27;})
 
 ax1.set_xlabel(&#x27;{} concentration ({})&#x27;.format(DATA_column1, &quot;ppm&quot;), fontsize = 14)
@@ -282,43 +241,38 @@ ax1.set_ylabel(&#x27;{} concentration ({})&#x27;.format(DATA_column2, &quot;ppm&
 fig.tight_layout()
 fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0.1)
 
-plt.annotate(&#x27;created by guitar79@gs.hs.kr\nAir quality procuct using AirKorea data&#x27;,
+plt.annotate(&#x27;Air quality product using AirKorea data&#x27;,
         xy=(1, 0), xytext=(12, -28), va=&#x27;top&#x27;, ha=&#x27;right&#x27;,
-        xycoords=&#x27;axes fraction&#x27;, textcoords=&#x27;offset points&#x27;)
-
-# plt.savefig(&quot;{0}_{1}_{2}_{3}_scatter.png&quot;\
-# .format(fullname[-4], Ocode, DATA_column1, DATA_column2)) 
-# print(&quot;{0}_{1}_{2}_{3}_scatter.png is created...&quot;\
-# .format(fullname[-4], Ocode, DATA_column1, DATA_column2))</code></pre>
-<h2 id="code-59">code 59. <button class="copy">복사</button></h2><pre><code># &#x27;W-MON&#x27; 월요일, &#x27;W-TUE&#x27; 화요일, &#x27;W-WED&#x27; 수요일, &#x27;W-THU&#x27; 목요일, &#x27;W-FRI&#x27; 금요일, &#x27;W-SAT&#x27; 토요일, &#x27;W-SUN&#x27; 일요일
+        xycoords=&#x27;axes fraction&#x27;, textcoords=&#x27;offset points&#x27;)</code></pre>
+<h2 id="code-62">code 62. <button class="copy">복사</button></h2><pre><code># &#x27;W-MON&#x27;: 월요일을 기준으로 한 주 단위(&#x27;W-TUE&#x27; ~ &#x27;W-SUN&#x27;도 같은 방식)
 
 print(df_MI[[&quot;SO2&quot;, &quot;CO&quot;, &quot;O3&quot;, &quot;NO2&quot;, &quot;PM10&quot;, &quot;PM25&quot;]].xs(632151).resample(&#x27;W-MON&#x27;).mean())</code></pre>
-<h2 id="code-60">code 60. <button class="copy">복사</button></h2><pre><code>df_MI[[&quot;SO2&quot;, &quot;CO&quot;, &quot;O3&quot;, &quot;NO2&quot;, &quot;PM10&quot;, &quot;PM25&quot;]].xs(632151).resample(&#x27;W-MON&#x27;).mean().mean()</code></pre>
-<h2 id="code-61">code 61. <button class="copy">복사</button></h2><pre><code>df_MI[&quot;NO2&quot;].xs(632151).resample(&#x27;W-MON&#x27;).mean().mean()</code></pre>
-<h2 id="code-62">code 62. <button class="copy">복사</button></h2><pre><code>Weekday_lst = [&quot;Monday&quot;, &quot;Tuesday&quot;, &quot;Wednesday&quot;, &quot;Thursday&quot;, &quot;Friday&quot;, &quot;Saturday&quot;, &quot;Sunday&quot;]
+<h2 id="code-63">code 63. <button class="copy">복사</button></h2><pre><code>df_MI[[&quot;SO2&quot;, &quot;CO&quot;, &quot;O3&quot;, &quot;NO2&quot;, &quot;PM10&quot;, &quot;PM25&quot;]].xs(632151).resample(&#x27;W-MON&#x27;).mean().mean()</code></pre>
+<h2 id="code-64">code 64. <button class="copy">복사</button></h2><pre><code>df_MI[&quot;NO2&quot;].xs(632151).resample(&#x27;W-MON&#x27;).mean().mean()</code></pre>
+<h2 id="code-65">code 65. <button class="copy">복사</button></h2><pre><code>Weekday_lst = [&quot;Monday&quot;, &quot;Tuesday&quot;, &quot;Wednesday&quot;, &quot;Thursday&quot;, &quot;Friday&quot;, &quot;Saturday&quot;, &quot;Sunday&quot;]
 
-import pandas as pd 
+import pandas as pd
 
-df_weekday = pd.DataFrame(data=None, columns = Weekday_lst) 
+df_weekday = pd.DataFrame(data=None, columns = Weekday_lst)
 print(df_weekday)
 
 Wday_lst = [&quot;W-MON&quot;, &quot;W-TUE&quot;, &quot;W-WED&quot;, &quot;W-THU&quot;, &quot;W-FRI&quot;, &quot;W-SAT&quot;, &quot;W-SUN&quot;]
 Ocode = 632151
 
+# 주의 기준 요일을 바꿔 가며 물질별 평균
 for i in range(len(Weekday_lst)):
     df_weekday[Weekday_lst[i]] = df_MI[[&quot;SO2&quot;, &quot;CO&quot;, &quot;O3&quot;, &quot;NO2&quot;, &quot;PM10&quot;, &quot;PM25&quot;]].xs(Ocode).resample(Wday_lst[i]).mean().mean()
 print(df_weekday)</code></pre>
-<h2 id="code-63">code 63. <button class="copy">복사</button></h2><pre><code>DATA_column3 = &quot;SO2&quot;
+<h2 id="code-66">code 66. <button class="copy">복사</button></h2><pre><code>DATA_column3 = &quot;SO2&quot;
 print(&quot;df_weekday.columns: {}&quot;.format(df_weekday.columns))
 
 print(&quot;df_weekday.loc[DATA_column3,:]: {}\n&quot;.format(df_weekday.loc[DATA_column3,:]))</code></pre>
-<h2 id="code-64">code 64. <button class="copy">복사</button></h2><pre><code>#그래프를 그려보자.
-fig, ax1 = plt.subplots(figsize=(10, 10))
+<h2 id="code-67">code 67. <button class="copy">복사</button></h2><pre><code>fig, ax1 = plt.subplots(figsize=(10, 10))
 
 ax1.bar(df_weekday.columns, df_weekday.loc[DATA_column3,:])
 
-ax1.set_title(&quot;Concentration of {}&quot;.format(DATA_column3), 
-          y=1.05,   # 제목 아래 여백
+ax1.set_title(&quot;Concentration of {}&quot;.format(DATA_column3),
+          y=1.05,  # 제목 아래 여백
           fontdict={&#x27;fontsize&#x27;:18,&#x27;fontweight&#x27;:&#x27;bold&#x27;})
 
 ax1.set_ylabel(&quot;{} concentration {}&quot;.format(DATA_column3, &quot;ppm&quot;), fontsize = 14)
@@ -328,33 +282,27 @@ ax1.set_xlabel(&quot;Weekday&quot;, fontsize = 14)
 fig.tight_layout()
 fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0.1)
 
-plt.annotate(&#x27;created by guitar79@gs.hs.kr\nAir quality procuct using AirKorea data&#x27;,
+plt.annotate(&#x27;Air quality product using AirKorea data&#x27;,
         xy=(1, 0), xytext=(12, -28), va=&#x27;top&#x27;, ha=&#x27;right&#x27;,
-        xycoords=&#x27;axes fraction&#x27;, textcoords=&#x27;offset points&#x27;)
-
-# plt.savefig(&quot;{0}_{1}_bar.png&quot;\
-# .format(fullname[-4], Ocode)) 
-# print(&quot;{0}_{1}_bar.png is created...&quot;\
-# .format(fullname[-4], Ocode))</code></pre>
-<h2 id="code-65">code 65. <button class="copy">복사</button></h2><pre><code>#(과제) 아래에 코딩을 완성하여 제출하시오.
+        xycoords=&#x27;axes fraction&#x27;, textcoords=&#x27;offset points&#x27;)</code></pre>
+<h2 id="code-68">code 68. <button class="copy">복사</button></h2><pre><code># (과제) 아래에 코딩을 완성하여 제출하시오
 
 DATA_column3 = &quot;SO2&quot;
 
 import numpy as np
 import matplotlib.pyplot as plt
 
-y_ax_ratio_var = 0.01
+y_ax_ratio_var = 0.01  # y축 범위를 최솟값 · 최댓값의 ±1%로 좁혀 차이 강조
 
-#그래프를 그려보자.
 fig, ax1 = plt.subplots(figsize=(10, 10))
 
 ax1.bar(df_weekday.columns, df_weekday.loc[DATA_column3,:])
 
-ax1.set_ylim(np.min(df_weekday.loc[DATA_column3,:]) * (1 - y_ax_ratio_var), 
+ax1.set_ylim(np.min(df_weekday.loc[DATA_column3,:]) * (1 - y_ax_ratio_var),
              np.max(df_weekday.loc[DATA_column3,:]) * (1 + y_ax_ratio_var))
 
-ax1.set_title(&quot;Concentration of {}&quot;.format(DATA_column3), 
-          y=1.05,   # 제목 아래 여백
+ax1.set_title(&quot;Concentration of {}&quot;.format(DATA_column3),
+          y=1.05,  # 제목 아래 여백
           fontdict={&#x27;fontsize&#x27;:18,&#x27;fontweight&#x27;:&#x27;bold&#x27;})
 
 ax1.set_ylabel(&quot;{} concentration {}&quot;.format(DATA_column3, &quot;ppm&quot;), fontsize = 14)
@@ -364,14 +312,9 @@ ax1.set_xlabel(&quot;Weekday&quot;, fontsize = 14)
 fig.tight_layout()
 fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0.1)
 
-plt.annotate(&#x27;created by guitar79@gs.hs.kr\nAir quality procuct using AirKorea data&#x27;,
+plt.annotate(&#x27;Air quality product using AirKorea data&#x27;,
         xy=(1, 0), xytext=(12, -28), va=&#x27;top&#x27;, ha=&#x27;right&#x27;,
-        xycoords=&#x27;axes fraction&#x27;, textcoords=&#x27;offset points&#x27;)
-
-# plt.savefig(&quot;{0}_{1}_bar.png&quot;\
-# .format(fullname[-4], Ocode)) 
-# print(&quot;{0}_{1}_bar.png is created...&quot;\
-# .format(fullname[-4], Ocode))</code></pre>
+        xycoords=&#x27;axes fraction&#x27;, textcoords=&#x27;offset points&#x27;)</code></pre>
 <script>
 document.querySelectorAll('button.copy').forEach(function (b) {
   b.addEventListener('click', function () {

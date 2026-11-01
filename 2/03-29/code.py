@@ -212,7 +212,6 @@ print(f"qfit 중앙값  가우스 {np.median(tab_g['qfit']):.3f}, ePSF {np.media
 dm_ge = -2.5 * np.log10(np.asarray(tab_g["flux_fit"]) / np.asarray(tab_e["flux_fit"]))
 print(f"등급 차 (가우스 - ePSF) 중앙값 {np.median(dm_ge):+.3f} mag")
 
-
 # 별마다 잔차를 밝기로 나눠 잘라 낸 뒤 중앙값으로 겹침(잡음을 줄여 공통 무늬만 남김)
 def stack_cut(img, tab, h=9):
     cuts = []

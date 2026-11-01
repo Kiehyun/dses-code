@@ -97,7 +97,6 @@ def format_result(value, error, sig=1):
         return f"{value_r:.0f} +/- {error_r:.0f}"
     return f"{value_r:.{digits}f} +/- {error_r:.{digits}f}"
 
-
 print("g       :", format_result(g, g_err))
 print("주기    :", format_result(mean, sem))
 print("예시 1  :", format_result(1234.5678, 12.3))

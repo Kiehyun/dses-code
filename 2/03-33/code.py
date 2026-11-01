@@ -53,7 +53,6 @@ print("gain, rdnoise :", gain, rdnoise, "/ 소행성 번호 :", OBJID)
 from astroquery.jplhorizons import Horizons
 from astroquery.mpc import MPC
 
-
 def asteroid_ephem(objid, times):
     """소행성의 예보 위치(Horizons, 응답하지 않으면 MPC 천체력을 1분 간격으로 받아 보간)"""
     try:
@@ -72,7 +71,6 @@ def asteroid_ephem(objid, times):
                              "datetime_str": times.isot,
                              "RA": np.interp(x, dt, eph["RA"]),
                              "DEC": np.interp(x, dt, eph["Dec"])})
-
 
 # 모든 영상의 노출 중앙 시각과 그 시각의 소행성 예보 위치
 t_mids = []

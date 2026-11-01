@@ -102,12 +102,8 @@ m = folium.Map(location=[20, 0], zoom_start=2, tiles="CartoDB positron")
 for row in map_data.itertuples(index=False):
     popup = f"{row.accepted_name}<br>{row.early_interval}<br>{row.max_ma}-{row.min_ma} Ma"
     folium.CircleMarker(
-        [row.lat, row.lng],
-        radius=3,
-        color="darkred",
-        fill=True,
-        fill_opacity=0.6,
-        popup=popup,
+        [row.lat, row.lng], radius=3, color="darkred", fill=True,
+        fill_opacity=0.6, popup=popup,
     ).add_to(m)
 
 map_file = DATA_DIR / "pbdb_trilobita_map.html"

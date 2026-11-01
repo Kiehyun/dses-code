@@ -13,24 +13,42 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
 <p class="jump"><a href="#code-87">87</a> <a href="#code-88">88</a> <a href="#code-89">89</a> <a href="#code-90">90</a> <a href="#code-91">91</a> <a href="#code-92">92</a> <a href="#code-93">93</a> <a href="#code-94">94</a> <a href="#code-95">95</a> <a href="#code-96">96</a> <a href="#code-97">97</a> <a href="#code-98">98</a> <a href="#code-99">99</a> <a href="#code-100">100</a> <a href="#code-101">101</a> <a href="#code-102">102</a></p>
 <h2 id="code-87">code 87. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
+import requests
 
 fname = &quot;asu.tsv&quot;
-fid = &quot;1e-LMG8Q3HBIRphwxiLabUs9bkB5dQODE&quot;
+fpath = Path(proj_dir) / fname
 
-# 구글 드라이브에 미리 저장해 둔 파일 내려받기
-url = f&quot;https://docs.google.com/uc?export=download&amp;id={fid}&quot;
-du.download(url, Path(proj_dir) / fname)</code></pre>
-<h2 id="code-88">code 88. <button class="copy">복사</button></h2><pre><code># pathlib을 사용하여 지정한 폴더 내의 .tsv 파일 목록을 확인하는 코드입니다.
-from pathlib import Path 
+# VizieR 질의: 히파르코스 본표(I/239/hip_main)의 다섯 열, 행 수 제한 없음
+params = {&quot;-source&quot;: &quot;I/239/hip_main&quot;,
+          &quot;-out&quot;: [&quot;HIP&quot;, &quot;Vmag&quot;, &quot;Plx&quot;, &quot;B-V&quot;, &quot;SpType&quot;],
+          &quot;-out.max&quot;: &quot;unlimited&quot;, &quot;-oc.form&quot;: &quot;dec&quot;}
+
+if not fpath.exists():
+    for host in [&quot;vizier.cds.unistra.fr&quot;, &quot;vizier.cfa.harvard.edu&quot;]:  # CDS, 미러
+        try:
+            r = requests.get(f&quot;https://{host}/viz-bin/asu-tsv&quot;, params=params, timeout=300)
+            r.raise_for_status()
+            if r.text.count(&quot;\n&quot;) &lt; 118218:  # 별 118,218개보다 적으면 덜 받은 것
+                raise IOError(&quot;받은 행 수가 모자랍니다&quot;)
+            fpath.write_bytes(r.content)
+            print(f&quot;{host}에서 내려받음: {fpath}&quot;)
+            break
+        except Exception as e:
+            print(f&quot;{host} 실패: {e}&quot;)
+    else:  # 두 서버 모두 안 되면 구글 드라이브 사본
+        du.download(&quot;https://docs.google.com/uc?export=download&amp;id=1e-LMG8Q3HBIRphwxiLabUs9bkB5dQODE&quot;, fpath)
+
+print(f&quot;{fpath} ({fpath.stat().st_size:,} 바이트)&quot;)</code></pre>
+<h2 id="code-88">code 88. <button class="copy">복사</button></h2><pre><code>from pathlib import Path 
 fpaths = sorted(list(Path(proj_dir).glob(&#x27;*.tsv&#x27;)))
-print(f&quot;fpaths: {fpaths}&quot;)            # .tsv 파일들의 전체 경로 리스트를 출력합니다.
-print(f&quot;len(fpaths): {len(fpaths)}&quot;)  # .tsv 파일의 개수를 출력합니다.</code></pre>
-<h2 id="code-89">code 89. <button class="copy">복사</button></h2><pre><code>n_lines = 40  # 출력할 줄 수
+print(f&quot;fpaths: {fpaths}&quot;)
+print(f&quot;len(fpaths): {len(fpaths)}&quot;)</code></pre>
+<h2 id="code-89">code 89. <button class="copy">복사</button></h2><pre><code>n_lines = 40
 
 print(f&quot;파일 내용 출력 (처음 {n_lines}줄):&quot;)
 print(&quot;=&quot;*40)
 
-# 순수 파이썬으로 구현 (운영체제 무관)
+# 운영체제와 상관없이 읽기
 try:
     with open(fpaths[0], encoding=&#x27;utf-8&#x27;) as f:
         for i, line in enumerate(f):
@@ -38,7 +56,7 @@ try:
                 break
             print(f&quot;{i+1:3d}: {line.rstrip()}&quot;)
 except UnicodeDecodeError:
-    # UTF-8로 읽기 실패시 다른 인코딩 시도
+    # UTF-8이 안 되면 CP949
     try:
         with open(fpaths[0], encoding=&#x27;cp949&#x27;) as f:
             for i, line in enumerate(f):
@@ -54,93 +72,83 @@ print(&quot;=&quot;*60)</code></pre>
 <h2 id="code-90">code 90. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import pandas as pd
 
-# HIP catalogue 파일을 읽어서 Pandas DataFrame으로 만듭니다.
-# - 파일의 앞부분 35행은 설명이므로 skiprows=35로 건너뜁니다.
-# - 데이터 구분자는 세미콜론(;)입니다.
-# - 컬럼 이름은 &#x27;HIP&#x27;, &#x27;Vmag&#x27;, &#x27;Plx&#x27;, &#x27;B-V&#x27;, &#x27;SpType&#x27;로 지정합니다.
-# - 첫 번째 컬럼(HIP)을 인덱스로 사용합니다.
-df = pd.read_table(fpaths[0], skiprows=35, sep=&#x27;;&#x27;, header=None, index_col=0,
+# 구분선(------) 줄까지가 설명 · 열 이름 · 단위
+with open(fpaths[0], encoding=&#x27;utf-8&#x27;) as f:
+    n_skip = next(i for i, line in enumerate(f) if line.startswith(&#x27;---&#x27;)) + 1
+
+# 구분자: 탭(VizieR 직접 받기) 또는 세미콜론(웹 양식 · 드라이브 사본)
+# 열: HIP 번호, V 등급, 연주시차(mas), B-V 색지수, 분광형
+df = pd.read_table(fpaths[0], skiprows=n_skip, sep=r&#x27;[;\t]&#x27;, header=None, index_col=0,
                    names = [&#x27;HIP&#x27;, &#x27;Vmag&#x27;, &#x27;Plx&#x27;, &#x27;B-V&#x27;, &#x27;SpType&#x27;],
-                   engine=&#x27;python&#x27;)
+                   dtype={&#x27;Vmag&#x27;: str, &#x27;Plx&#x27;: str, &#x27;B-V&#x27;: str, &#x27;SpType&#x27;: str},  # 값은 문자열로
+                   engine=&#x27;python&#x27;).sort_index()
 
 print(f&quot;df.shape:\n{df.shape}&quot;)
 print(f&quot;df:\n&quot;, df)</code></pre>
-<h2 id="code-91">code 91. <button class="copy">복사</button></h2><pre><code># 한 컬럼씩 시리즈로 반환하여 확인 데이터 확인
-print(&quot;df[[&#x27;Vmag&#x27;, &#x27;Plx&#x27;, &#x27;B-V&#x27;]]:\n&quot;, df[[&#x27;Vmag&#x27;, &#x27;Plx&#x27;, &#x27;B-V&#x27;]])
-# 자료형 확인
+<h2 id="code-91">code 91. <button class="copy">복사</button></h2><pre><code>print(&quot;df[[&#x27;Vmag&#x27;, &#x27;Plx&#x27;, &#x27;B-V&#x27;]]:\n&quot;, df[[&#x27;Vmag&#x27;, &#x27;Plx&#x27;, &#x27;B-V&#x27;]])
 print(&quot;type(df[&#x27;Vmag&#x27;][1]), type(df[&#x27;Plx&#x27;][1]), type(df_clean[&#x27;B-V&#x27;][1]):&quot;, 
         type(df[&#x27;Vmag&#x27;][1]), type(df[&#x27;Plx&#x27;][1]), type(df[&#x27;B-V&#x27;][1])) </code></pre>
-<h2 id="code-92">code 92. <button class="copy">복사</button></h2><pre><code># 데이터프레임의 요약 통계(describe) 출력
-print(&quot;df.describe() :&quot;, df.describe())
+<h2 id="code-92">code 92. <button class="copy">복사</button></h2><pre><code>print(&quot;df.describe() :&quot;, df.describe())
 
-# 각 셀의 문자열 양쪽 공백을 제거하는 람다 함수 정의
+# 문자열 양쪽 공백 제거
 f = lambda x: x.str.strip()
 print(&quot;type(f)&quot;, type(f))
 print(&quot;f&quot;, f)
 
-# 데이터프레임의 모든 셀에 공백 제거 함수 적용
 df_clean = df.apply(f)
 
-# 빈 문자열을 np.nan으로 변환
+# 빈 문자열 → NaN
 df_clean = df_clean.replace(&#x27;&#x27;, np.nan)
 
-# NaN이 포함된 행 제거
 df_clean = df_clean.dropna()
 
 print(&#x27;***NaN 값이 제거된 후 df_clean에 대한 describe 결과***&#x27;)
-# NaN이 제거된 데이터프레임의 요약 통계 출력
 print(&quot;df_clean.describe():\n&quot;, df_clean.describe())
 
-# 문자열을 실수형(float64)으로 변환 (빈 문자열/공백/NaN 처리 후 변환)
+# 문자열 → 실수
 df_clean[&#x27;Vmag&#x27;] = df_clean[&#x27;Vmag&#x27;].astype(np.float64)
 df_clean[&#x27;Plx&#x27;] = df_clean[&#x27;Plx&#x27;].astype(np.float64)
 df_clean[&#x27;B-V&#x27;] = df_clean[&#x27;B-V&#x27;].astype(np.float64)
 
-# 변환된 자료형 확인 (float64로 잘 변환되었는지 확인)
 print(&quot;type(df_clean[&#x27;Vmag&#x27;][1]), type(df_clean[&#x27;Plx&#x27;][1]), type(df_clean[&#x27;B-V&#x27;][1]) :&quot;, 
       type(df_clean[&#x27;Vmag&#x27;][1]), type(df_clean[&#x27;Plx&#x27;][1]), type(df_clean[&#x27;B-V&#x27;][1]))</code></pre>
-<h2 id="code-93">code 93. <button class="copy">복사</button></h2><pre><code># 절대등급(M_V) 계산하여 새로운 컬럼으로 추가
+<h2 id="code-93">code 93. <button class="copy">복사</button></h2><pre><code># 절대등급: M = V + 5 log(p/100), p는 연주시차(mas)
 df_clean[&#x27;M_V&#x27;] = df_clean[&#x27;Vmag&#x27;] + 5 * np.log10(df_clean[&#x27;Plx&#x27;]/100.)
 
-# df_clean 데이터프레임 전체 출력
 print(&quot;df_clean:\n&quot;, df_clean)</code></pre>
-<h2 id="code-94">code 94. <button class="copy">복사</button></h2><pre><code># 알파벳+숫자(예: G8, F5) 형태가 아닌 행은 제거합니다.
-f = lambda s: (len(s) &gt;= 2) and (s[0].isalpha()) and (s[1].isdigit())  # 첫 글자가 알파벳이고 두 번째 글자가 숫자인지 확인
-i = df_clean[&#x27;SpType&#x27;].apply(f)  # 조건을 만족하는 행만 True로 반환
-df_clean = df_clean[i]           # 조건을 만족하는 행만 남김
-print(&quot;df_clean after SpType filtering:\n&quot;, df_clean)  # 필터링 후 데이터프레임 출력</code></pre>
-<h2 id="code-95">code 95. <button class="copy">복사</button></h2><pre><code># &#x27;SpType&#x27; 컬럼에서 앞 두 글자를 추출하여 &#x27;SpType2&#x27;라는 새로운 컬럼에 저장합니다.
+<h2 id="code-94">code 94. <button class="copy">복사</button></h2><pre><code># G8, F5처럼 「알파벳+숫자」로 시작하는 분광형만 남기기
+f = lambda s: (len(s) &gt;= 2) and (s[0].isalpha()) and (s[1].isdigit())
+i = df_clean[&#x27;SpType&#x27;].apply(f)
+df_clean = df_clean[i]
+print(&quot;df_clean after SpType filtering:\n&quot;, df_clean)</code></pre>
+<h2 id="code-95">code 95. <button class="copy">복사</button></h2><pre><code># 분광형 앞 두 글자(예: G8)
 f = lambda s: s[0:2]
 df_clean[&#x27;SpType2&#x27;] = df_clean[&#x27;SpType&#x27;].apply(f)
 
 print(&quot;df_clean:\n&quot;, df_clean)
 
-# &#x27;SpType&#x27; 컬럼에서 첫 번째 글자(분광형)를 추출하여 분류합니다.
+# 첫 글자 = 분광형(O, B, A, …)
 f = lambda s: s[0]
 clases = df_clean[&#x27;SpType&#x27;].map(f)
 
-# 각 분광형별로 별의 개수를 세어 출력합니다.
 print(&#x27;***df_clean에서 각 분광형별 개수 세기***&#x27;)
 print(clases.value_counts())</code></pre>
-<h2 id="code-96">code 96. <button class="copy">복사</button></h2><pre><code># &#x27;SpType&#x27; 컬럼의 첫 글자가 OBAFGKM에 해당하는 별만 남깁니다.
+<h2 id="code-96">code 96. <button class="copy">복사</button></h2><pre><code># OBAFGKM 분광형만 남기기
 f = lambda s: s[0] in &#x27;OBAFGKM&#x27;
 df_clean = df_clean[df_clean[&#x27;SpType&#x27;].map(f)]
 
-# &#x27;SpType&#x27; 컬럼의 첫 글자(분광형)만 추출합니다.
 f = lambda s: s[0]
 clases = df_clean[&#x27;SpType&#x27;].map(f)
 
-# 각 분광형별로 별의 개수를 출력합니다.
 print(&#x27;***df_clean에서 각 분광형별 개수 세기***&#x27;)
 print(clases.value_counts())</code></pre>
-<h2 id="code-97">code 97. <button class="copy">복사</button></h2><pre><code># df_clean을 &quot;HIP_clean.csv&quot; 파일로 저장합니다.
-df_clean.to_csv(Path(proj_dir) / &quot;HIP_clean.csv&quot;)
+<h2 id="code-97">code 97. <button class="copy">복사</button></h2><pre><code>df_clean.to_csv(Path(proj_dir) / &quot;HIP_clean.csv&quot;)
 print(f&quot;df_clean is saved to {Path(proj_dir) / &#x27;HIP_clean.csv&#x27;}&quot;)
 
-# 분광형의 순서를 정렬하기 위한 딕셔너리입니다.
+# 분광형 순서 → 숫자
 orden = {&#x27;O&#x27;:&#x27;0&#x27;, &#x27;B&#x27;:&#x27;1&#x27;, &#x27;A&#x27;:&#x27;2&#x27;, &#x27;F&#x27;:&#x27;3&#x27;, &#x27;G&#x27;:&#x27;4&#x27;, &#x27;K&#x27;:&#x27;5&#x27;, &#x27;M&#x27;:&#x27;6&#x27;}
 
-# &#x27;SpType2&#x27; 컬럼의 첫 글자를 분광형 순서에 맞는 숫자로 변환하고, 두 번째 글자(숫자)와 결합합니다.
+# 예: G8 → &#x27;48&#x27;(가로축 값)
 f = lambda s: orden[s[0]]+s[1]
 df_clean[&#x27;SpType2&#x27;] = df_clean[&#x27;SpType2&#x27;].apply(f)
 
@@ -148,86 +156,78 @@ print(&quot;df_clean:\n&quot;, df_clean)</code></pre>
 <h2 id="code-98">code 98. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 fig, ax = plt.subplots(figsize=(6,8))
 
-# 분광형(SpType2)을 가로축, 절대등급(M_V)을 세로축으로 산점도 그리기
+# 가로축: 분광형, 세로축: 절대등급
 ax.scatter(df_clean[&#x27;SpType2&#x27;].astype(np.int32), df_clean[&#x27;M_V&#x27;],
            s=50, edgecolors=&#x27;none&#x27;, alpha=0.015, c=&#x27;k&#x27;)
 
-# 가로축, 세로축 범위 설정
+# 세로축 뒤집기(밝을수록 위)
 ax.set_xlim(0, 70)
 ax.set_ylim(15, -10)
 ax.grid()
 ax.tick_params(axis=&#x27;both&#x27;, labelsize=14)
 
-# 분광형에 맞는 x축 눈금과 레이블 설정
+# O~M 눈금(10칸씩)
 ax.set_xticks(range(5,75,10))
 ax.set_xticklabels([&#x27;O&#x27;, &#x27;B&#x27;, &#x27;A&#x27;, &#x27;F&#x27;, &#x27;G&#x27;, &#x27;K&#x27;, &#x27;M&#x27;])
 
-# 그래프 제목 및 축 레이블 설정
-ax.set_title(&#x27;H-R Diagram \n (Hipparcos catalog)&#x27;,
-             fontsize=16)
-ax.set_xlabel(&#x27;spectral class&#x27;,
-             fontsize=16)
-ax.set_ylabel(&#x27;Absolute magnitude (M_v)&#x27;,
-             fontsize=16)
+ax.set_title(&#x27;H-R Diagram \n (Hipparcos catalog)&#x27;, fontsize=16)
+ax.set_xlabel(&#x27;spectral class&#x27;, fontsize=16)
+ax.set_ylabel(&#x27;Absolute magnitude (M_v)&#x27;, fontsize=16)
 
 plt.show()</code></pre>
 <h2 id="code-99">code 99. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 fig, ax = plt.subplots(figsize=(6,8))
 
-# 산점도 그리기: x축은 색지수(B-V), y축은 절대등급(M_V)
-ax.scatter(df_clean[&#x27;B-V&#x27;], df_clean[&#x27;M_V&#x27;],
-           # 점 크기 50, 테두리 없음, 투명도 0.015, 색상 검정
-           #s=50, edgecolors=&#x27;none&#x27;, alpha=0.015, c=&#x27;k&#x27;)
-           s=1, edgecolors=&#x27;none&#x27;, c=&#x27;k&#x27;)  # 점 크기 1, 테두리 없음, 색상 검정
+# 가로축: 색지수(B-V), 세로축: 절대등급
+ax.scatter(df_clean[&#x27;B-V&#x27;], df_clean[&#x27;M_V&#x27;], s=1, edgecolors=&#x27;none&#x27;, c=&#x27;k&#x27;)
 
-# x축, y축 범위 설정
+# 세로축 뒤집기(밝을수록 위)
 ax.set_xlim(-0.5, 2.5)
 ax.set_ylim(15, -10)
-ax.grid()                                  # 격자 표시
-ax.tick_params(axis=&#x27;both&#x27;, labelsize=14)  # 축 눈금 폰트 크기
+ax.grid()
+ax.tick_params(axis=&#x27;both&#x27;, labelsize=14)
 
-# 그래프 제목 및 축 레이블 설정
 ax.set_title(&#x27;H-R Diagram \n (Hipparcos catalog)&#x27;, fontsize=16)
 ax.set_xlabel(&#x27;Color index(B-V)&#x27;, fontsize=12)
 ax.set_ylabel(&#x27;Absolute magnitude (M_v)&#x27;, fontsize=12)
 
 plt.show()</code></pre>
-<h2 id="code-100">code 100. <button class="copy">복사</button></h2><pre><code># &#x27;SpType&#x27; 컬럼에 &#x27;I&#x27; 또는 &#x27;V&#x27;가 포함된 별을 찾는 람다 함수입니다.
+<h2 id="code-100">code 100. <button class="copy">복사</button></h2><pre><code># 광도 계급(I, V 등)이 적힌 별
 f = lambda s: (&#x27;I&#x27; in s) or (&#x27;V&#x27; in s)
-b = df_clean[&#x27;SpType&#x27;].map(f)  # 각 별의 분광형에 대해 조건을 적용하여 불리언 시리즈 생성
-print(&quot;b:&quot;, b)                 # 조건에 해당하는지 여부를 출력
-print(&quot;sum(b):&quot;, sum(b))       # 조건에 해당하는 별의 개수를 출력</code></pre>
-<h2 id="code-101">code 101. <button class="copy">복사</button></h2><pre><code># Class VII: 백색왜성(white dwarfs) 개수 출력
+b = df_clean[&#x27;SpType&#x27;].map(f)
+print(&quot;b:&quot;, b)
+print(&quot;sum(b):&quot;, sum(b))</code></pre>
+<h2 id="code-101">code 101. <button class="copy">복사</button></h2><pre><code># VII: 백색왜성
 f = lambda s: &#x27;VII&#x27; in s
 b = df_clean[&#x27;SpType&#x27;].map(f)
 print (&quot;Class VII: white dwarfs, there are %d stars&quot; %sum(b))
 
-# Class VI: 준왜성(subdwarfs) 개수 출력 (&#x27;VI&#x27;는 포함, &#x27;VII&#x27;는 제외)
+# VI: 준왜성(VII 제외)
 f = lambda s: (&#x27;VI&#x27; in s) and (&#x27;VII&#x27; not in s)
 b = df_clean[&#x27;SpType&#x27;].map(f)
 print (&quot;Class VI: subdwarfs, there are %d stars&quot; %sum(b))
 
-# Class V: 주계열성(main-sequence) 개수 출력 (&#x27;V&#x27;는 포함, &#x27;VI&#x27;, &#x27;IV&#x27;는 제외)
+# V: 주계열성(VI, IV 제외)
 f = lambda s: (&#x27;V&#x27; in s) and (&#x27;VI&#x27; not in s) and (&#x27;IV&#x27; not in s)
 b = df_clean[&#x27;SpType&#x27;].map(f)
 print (&quot;Class V: main-sequence, there are %d stars&quot; %sum(b))
 
-# Class IV: 준거성(subgiants) 개수 출력
+# IV: 준거성
 f = lambda s: &#x27;IV&#x27; in s
 b = df_clean[&#x27;SpType&#x27;].map(f)
 print (&quot;Class IV: subgiants, there are %d stars&quot; %sum(b))
 
-# Class III: 거성(giants) 개수 출력
+# III: 거성
 f = lambda s: &#x27;III&#x27; in s
 b = df_clean[&#x27;SpType&#x27;].map(f)
 print (&quot;Class III: giants, there are %d stars&quot; %sum(b))
 
-# Class II: 밝은 거성(bright giants) 개수 출력 (&#x27;II&#x27;는 포함, &#x27;III&#x27;, &#x27;VII&#x27;는 제외)
+# II: 밝은 거성(III, VII 제외)
 f = lambda s: (&#x27;II&#x27; in s) and (&#x27;III&#x27; not in s) and (&#x27;VII&#x27; not in s)
 b = df_clean[&#x27;SpType&#x27;].map(f)
 print (&quot;Class II:  bright giants, there are %d stars&quot; %sum(b))
 
-# Class I: 초거성(supergiants) 개수 출력 (&#x27;I&#x27;는 포함, &#x27;II&#x27;, &#x27;V&#x27;는 제외)
+# I: 초거성(II, V 제외)
 f = lambda s: (&#x27;I&#x27; in s) and (&#x27;II&#x27; not in s) and (&#x27;V&#x27; not in s)
 b = df_clean[&#x27;SpType&#x27;].map(f)
 print (&quot;Class I: supergiants, there are %d stars&quot; %sum(b))</code></pre>
@@ -243,20 +243,15 @@ print (&quot;Class I: supergiants, there are %d stars&quot; %sum(b))</code></pre
 fig = plt.figure(figsize=(6,8))
 ax = fig.add_subplot(111)
 
-# x축, y축 범위 설정
 ax.set_xlim(-0.5, 2.5)
 ax.set_ylim(15, -15)
 ax.grid()
 
-# 그래프 제목 및 축 레이블 설정
-ax.set_title(&#x27;H-R Diagram \n (Hipparcos catalog)&#x27;,
-             fontsize=16)
-ax.set_xlabel(&#x27;Color index (B-V)&#x27;,
-             fontsize=12)
-ax.set_ylabel(&#x27;Absolute magnitude (M)&#x27;,
-             fontsize=12)
+ax.set_title(&#x27;H-R Diagram \n (Hipparcos catalog)&#x27;, fontsize=16)
+ax.set_xlabel(&#x27;Color index (B-V)&#x27;, fontsize=12)
+ax.set_ylabel(&#x27;Absolute magnitude (M)&#x27;, fontsize=12)
 
-# 각 광도 계급별로 별을 그리기
+# 광도 계급별로 그리기
 f = lambda s: &#x27;VII&#x27; in s
 b = df_clean[&#x27;SpType&#x27;].map(f)
 plot_lum_class(b,&#x27;magenta&#x27;, &#x27;VII: white dwarfs&#x27;)
@@ -285,13 +280,12 @@ f = lambda s: (&#x27;I&#x27; in s) and (&#x27;II&#x27; not in s) and (&#x27;V&#x
 b = df_clean[&#x27;SpType&#x27;].map(f)
 plot_lum_class(b,&#x27;yellow&#x27;, &#x27;I: supergiants&#x27;)
 
-# 축 눈금 폰트 크기 설정
 ax.tick_params(axis=&#x27;both&#x27;, labelsize=14)
 legend = ax.legend(scatterpoints=1, markerscale = 5, shadow=True)
 frame = legend.get_frame()
 
-frame.set_facecolor(&#x27;0.90&#x27;)  # 범례 배경색 설정
-frame.set_edgecolor(&#x27;0.50&#x27;)  # 범례 테두리 색상 설정
+frame.set_facecolor(&#x27;0.90&#x27;)
+frame.set_edgecolor(&#x27;0.50&#x27;)
 plt.show()</code></pre>
 <script>
 document.querySelectorAll('button.copy').forEach(function (b) {

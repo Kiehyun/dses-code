@@ -90,15 +90,9 @@ hdul = fits.open(fpath)
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.4),
                         sharex=False, sharey=False, gridspec_kw=None)
 
-im1 = axs[0].imshow(hdul[0].data,
-            origin='lower',
-            cmap='viridis',
-                    )
+im1 = axs[0].imshow(hdul[0].data, origin='lower', cmap='viridis')
 
-im2 = du.zimshow(axs[1],
-            hdul[0].data,
-            cmap='viridis',
-            )
+im2 = du.zimshow(axs[1], hdul[0].data, cmap='viridis')
 
 axs[0].set_title(f'{fpath.name}', fontsize=10)
 axs[1].set_title('zimshow', fontsize=10)
@@ -150,11 +144,9 @@ REDUCEDDIR.mkdir(parents=True, exist_ok=True)
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.4),
                         sharex=False, sharey=False, gridspec_kw=None)
 
-im1 = du.zimshow(axs[0], bias.data,
-            origin='lower',)
+im1 = du.zimshow(axs[0], bias.data, origin='lower')
 
-im2 = axs[1].hist(bias.data,
-                )
+im2 = axs[1].hist(bias.data)
 
 axs[0].set_title(f'The master bias by median combine', fontsize=10)
 axs[1].set_title('The histrogram of pixel value', fontsize=10)
@@ -169,14 +161,10 @@ plt.show()
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.4),
                         sharex=False, sharey=False, gridspec_kw=None)
 
-im1 = du.zimshow(axs[0],
-            bias.data,
-            cmap='viridis',
-            origin='lower',)
+im1 = du.zimshow(axs[0], bias.data, cmap='viridis', origin='lower')
 
 im2 = axs[1].hist(bias.data,
-                  range=(bias.data.mean()*.9, bias.data.mean()*1.1),
-                  )
+                  range=(bias.data.mean()*.9, bias.data.mean()*1.1))
 
 axs[0].set_title(f'The master bias by median combine', fontsize=10)
 axs[1].set_title('The histrogram of pixel value', fontsize=10)
@@ -195,14 +183,10 @@ hdul = fits.open(fpath)
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.4),
                         sharex=False, sharey=False, gridspec_kw=None)
 
-im1 = du.zimshow(axs[0],
-            hdul[0].data,
-            cmap='viridis',
-            origin='lower',)
+im1 = du.zimshow(axs[0], hdul[0].data, cmap='viridis', origin='lower')
 
 im2 = axs[1].hist(hdul[0].data,
-                  range=(hdul[0].data.mean()*.9, hdul[0].data.mean()*1.1),
-                  )
+                  range=(hdul[0].data.mean()*.9, hdul[0].data.mean()*1.1))
 
 axs[0].set_title(f'The bias image (one file)', fontsize=10)
 axs[1].set_title('The histrogram of pixel value', fontsize=10)
@@ -219,103 +203,67 @@ from astropy.nddata import Cutout2D
 
 fig_set = plt.figure(figsize=(7.5, 3.8))
 
-ax1 = plt.subplot2grid((2,4), (0,0),
-                    colspan=2, rowspan=2,
-                    fig=fig_set)
-im1 = du.zimshow(ax1,
-            bias.data,
-            origin='lower',
-            cmap='viridis',
-            )
-plt.colorbar(im1,
-             ax = ax1,
-             fraction=0.0455, pad=0.04)
+ax1 = plt.subplot2grid((2,4), (0,0), colspan=2, rowspan=2, fig=fig_set)
+im1 = du.zimshow(ax1, bias.data, origin='lower', cmap='viridis')
+plt.colorbar(im1, ax = ax1, fraction=0.0455, pad=0.04)
 
 cutsizes = 101
 # 1/4 영역
-ax20 = plt.subplot2grid((2,4), (0,2),
-                       fig=fig_set)
+ax20 = plt.subplot2grid((2,4), (0,2), fig=fig_set)
 
 cut_hdu = Cutout2D(
             data = bias.data,
             position = (500, 500),
             size=(cutsizes, cutsizes)  # CCD 영역 잘라 내기
             )
-im20 = du.zimshow(ax20,
-        cut_hdu.data,
-        origin='lower',
-        cmap='viridis',
-    )
+im20 = du.zimshow(ax20, cut_hdu.data, origin='lower', cmap='viridis')
 ax20.set_ylabel('pixels')
 ax20.grid(ls=':')
 ax20.set_title(f'1/4 image area', fontsize=9)
-plt.colorbar(im20,
-            ax=ax20,
-            fraction=0.0455, pad=0.04)
+plt.colorbar(im20, ax=ax20, fraction=0.0455, pad=0.04)
 
 # 2/4 영역
-ax21 = plt.subplot2grid((2,4), (0,3),
-                       fig=fig_set)
+ax21 = plt.subplot2grid((2,4), (0,3), fig=fig_set)
 
 cut_hdu = Cutout2D(
             data = bias.data,
             position = (bias.data.shape[1] - 500, 500),
             size=(cutsizes, cutsizes)  # CCD 영역 잘라 내기
             )
-im21 = du.zimshow(ax21,
-        cut_hdu.data,
-        origin='lower',
-        cmap='viridis',
-    )
+im21 = du.zimshow(ax21, cut_hdu.data, origin='lower', cmap='viridis')
 
 ax21.set_ylabel('pixels')
 ax21.grid(ls=':')
 ax21.set_title(f'2/4 image area', fontsize=9)
-plt.colorbar(im21,
-            ax=ax21,
-            fraction=0.0455, pad=0.04)
+plt.colorbar(im21, ax=ax21, fraction=0.0455, pad=0.04)
 
 # 3/4 영역
-ax30 = plt.subplot2grid((2,4), (1,2),
-                       fig=fig_set)
+ax30 = plt.subplot2grid((2,4), (1,2), fig=fig_set)
 
 cut_hdu = Cutout2D(
             data = bias.data,
             position = (500, bias.data.shape[0] - 500),
             size=(cutsizes, cutsizes)  # CCD 영역 잘라 내기
             )
-im30 = du.zimshow(ax30,
-        cut_hdu.data,
-        origin='lower',
-        cmap='viridis',
-    )
+im30 = du.zimshow(ax30, cut_hdu.data, origin='lower', cmap='viridis')
 ax30.set_ylabel('pixels')
 ax30.grid(ls=':')
 ax30.set_title(f'3/4 image area', fontsize=9)
-plt.colorbar(im30,
-            ax=ax30,
-            fraction=0.0455, pad=0.04)
+plt.colorbar(im30, ax=ax30, fraction=0.0455, pad=0.04)
 
 # 4/4 영역
-ax31 = plt.subplot2grid((2,4), (1,3),
-                       fig=fig_set)
+ax31 = plt.subplot2grid((2,4), (1,3), fig=fig_set)
 
 cut_hdu = Cutout2D(
             data = bias.data,
             position = (bias.data.shape[1] - 500, bias.data.shape[0] - 500),
             size=(cutsizes, cutsizes)  # CCD 영역 잘라 내기
             )
-im31 = du.zimshow(ax31,
-        cut_hdu.data,
-        origin='lower',
-        cmap='viridis',
-    )
+im31 = du.zimshow(ax31, cut_hdu.data, origin='lower', cmap='viridis')
 ax31.set_ylabel('pixels')
 ax31.grid(ls=':')
 ax31.set_title(f'4/4 image area', fontsize=9)
-plt.colorbar(im31,
-            ax=ax31,
-            fraction=0.0455, pad=0.04)
+plt.colorbar(im31, ax=ax31, fraction=0.0455, pad=0.04)
 
 plt.tight_layout()
 plt.show()
@@ -336,8 +284,7 @@ def plot_image_with_cutouts(all_data, cutsizes=101):
         return im
 
     def add_rectangle(x, y, label):
-        rect = patches.Rectangle((x, y), cutsizes,
-                                cutsizes, linewidth=1,
+        rect = patches.Rectangle((x, y), cutsizes, cutsizes, linewidth=1,
                                 edgecolor='r', facecolor='none')
         ax1.add_patch(rect)
         ax1.text(x, y, label)
@@ -423,16 +370,11 @@ print(f"{MASTERDIR}/master_dark0_30sec_{method}.fits is created...")
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.4),
                         sharex=False, sharey=False, gridspec_kw=None)
 
-im1 = du.zimshow(axs[0],
-            dark0_150sec.data,
-            origin='lower',
-            cmap='viridis',
-            )
+im1 = du.zimshow(axs[0], dark0_150sec.data, origin='lower', cmap='viridis')
 
 im2 = axs[1].hist(dark0_150sec.data,
                 range=(dark0_150sec.data.mean()*.9,
-                       dark0_150sec.data.mean()*1.1),
-                )
+                       dark0_150sec.data.mean()*1.1))
 
 axs[0].set_title(f'The master dark0_150sec by median combine', fontsize=10)
 axs[1].set_title('The histrogram of pixel value', fontsize=10)
@@ -447,16 +389,11 @@ plt.show()
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.4),
                         sharex=False, sharey=False, gridspec_kw=None)
 
-im1 = du.zimshow(axs[0],
-            dark0_30sec.data,
-            origin='lower',
-            cmap='viridis',
-            )
+im1 = du.zimshow(axs[0], dark0_30sec.data, origin='lower', cmap='viridis')
 
 im2 = axs[1].hist(dark0_30sec.data,
                 range=(dark0_30sec.data.mean()*.9,
-                       dark0_30sec.data.mean()*1.1),
-                )
+                       dark0_30sec.data.mean()*1.1))
 
 axs[0].set_title(f'The master dark0_30sec by median combine', fontsize=10)
 axs[1].set_title('The histrogram of pixel value', fontsize=10)
@@ -475,14 +412,10 @@ hdul = fits.open(fpath)
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.4),
                         sharex=False, sharey=False, gridspec_kw=None)
 
-im1 = du.zimshow(axs[0],
-            hdul[0].data,
-            cmap='viridis',
-            origin='lower',)
+im1 = du.zimshow(axs[0], hdul[0].data, cmap='viridis', origin='lower')
 
 im2 = axs[1].hist(hdul[0].data,
-                  range=(hdul[0].data.mean()*.9, hdul[0].data.mean()*1.1),
-                  )
+                  range=(hdul[0].data.mean()*.9, hdul[0].data.mean()*1.1))
 
 axs[0].set_title(f'The dark image 150sec(one file)', fontsize=10)
 axs[1].set_title('The histrogram of pixel value', fontsize=10)
@@ -501,14 +434,10 @@ hdul = fits.open(fpath)
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.4),
                         sharex=False, sharey=False, gridspec_kw=None)
 
-im1 = du.zimshow(axs[0],
-            hdul[0].data,
-            cmap='viridis',
-            origin='lower',)
+im1 = du.zimshow(axs[0], hdul[0].data, cmap='viridis', origin='lower')
 
 im2 = axs[1].hist(hdul[0].data,
-                  range=(hdul[0].data.mean()*.9, hdul[0].data.mean()*1.1),
-                  )
+                  range=(hdul[0].data.mean()*.9, hdul[0].data.mean()*1.1))
 
 axs[0].set_title(f'The dark image 30sec(one file)', fontsize=10)
 axs[1].set_title('The histrogram of pixel value', fontsize=10)
@@ -532,15 +461,10 @@ dark_30sec.data = dark_30sec.data.astype(np.float32)
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.4),
                         sharex=False, sharey=False, gridspec_kw=None)
 
-im1 = du.zimshow(axs[0],
-            dark_150sec.data,
-            origin='lower',
-            cmap='viridis',
-            )
+im1 = du.zimshow(axs[0], dark_150sec.data, origin='lower', cmap='viridis')
 
 im2 = axs[1].hist(dark_150sec.data,
-            range=(dark_150sec.data.mean()*.9, dark_150sec.data.mean()*1.1),
-            )
+            range=(dark_150sec.data.mean()*.9, dark_150sec.data.mean()*1.1))
 
 axs[0].set_title(f'The master dark_150sec by median combine', fontsize=10)
 axs[1].set_title('The histrogram of pixel value', fontsize=10)
@@ -555,15 +479,10 @@ plt.show()
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.4),
                         sharex=False, sharey=False, gridspec_kw=None)
 
-im1 = du.zimshow(axs[0],
-            dark_30sec.data,
-            origin='lower',
-            cmap='viridis',
-            )
+im1 = du.zimshow(axs[0], dark_30sec.data, origin='lower', cmap='viridis')
 
 im2 = axs[1].hist(dark_30sec.data,
-            range=(dark_30sec.data.mean()*.9, dark_30sec.data.mean()*1.1),
-            )
+            range=(dark_30sec.data.mean()*.9, dark_30sec.data.mean()*1.1))
 
 axs[0].set_title(f'The master dark_30sec by median combine', fontsize=10)
 axs[1].set_title('The histrogram of pixel value', fontsize=10)
@@ -607,14 +526,10 @@ print(f"{MASTERDIR}/master_flat0_{method}.fits is created...")
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.4),
                         sharex=False, sharey=False, gridspec_kw=None)
 
-im1 = du.zimshow(axs[0], flat0.data,
-            origin='lower',
-            cmap='viridis',
-            )
+im1 = du.zimshow(axs[0], flat0.data, origin='lower', cmap='viridis')
 
 im2 = axs[1].hist(flat0.data,
-                range=(flat0.data.mean()*.7, flat0.data.mean()*1.3),
-                )
+                range=(flat0.data.mean()*.7, flat0.data.mean()*1.3))
 
 axs[0].set_title(f'The master flat0 by median combine', fontsize=10)
 axs[1].set_title('The histrogram of pixel value', fontsize=10)
@@ -633,14 +548,10 @@ hdul = fits.open(fpath)
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.4),
                         sharex=False, sharey=False, gridspec_kw=None)
 
-im1 = du.zimshow(axs[0],
-            hdul[0].data,
-            cmap='viridis',
-            origin='lower',)
+im1 = du.zimshow(axs[0], hdul[0].data, cmap='viridis', origin='lower')
 
 im2 = axs[1].hist(hdul[0].data,
-                  range=(hdul[0].data.mean()*.9, hdul[0].data.mean()*1.1),
-                  )
+                  range=(hdul[0].data.mean()*.9, hdul[0].data.mean()*1.1))
 
 axs[0].set_title(f'The flat image (one file)', fontsize=10)
 axs[1].set_title('The histrogram of pixel value', fontsize=10)
@@ -681,14 +592,10 @@ print(f"{MASTERDIR}/master_flat_{method}.fits is created...")
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.4),
                         sharex=False, sharey=False, gridspec_kw=None)
 
-im1 = du.zimshow(axs[0], flat.data,
-            origin='lower',
-            cmap='viridis',
-            )
+im1 = du.zimshow(axs[0], flat.data, origin='lower', cmap='viridis')
 
 im2 = axs[1].hist(flat.data,
-                range=(flat.data.mean()*.8, flat.data.mean()*1.2),
-                )
+                range=(flat.data.mean()*.8, flat.data.mean()*1.2))
 
 axs[0].set_title(f'The master Flat by median combine', fontsize=10)
 axs[1].set_title('The histrogram of pixel value', fontsize=10)
@@ -713,14 +620,10 @@ print(f"{(MASTERDIR)}/master_flat_norm_{method}.fits is created...")
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.4),
                         sharex=False, sharey=False, gridspec_kw=None)
 
-im1 = du.zimshow(axs[0], flat_norm.data,
-            origin='lower',
-            cmap='viridis',
-            )
+im1 = du.zimshow(axs[0], flat_norm.data, origin='lower', cmap='viridis')
 
 im2 = axs[1].hist(flat_norm.data,
-                range=(flat_norm.data.mean()*.8, flat_norm.data.mean()*1.2),
-                )
+                range=(flat_norm.data.mean()*.8, flat_norm.data.mean()*1.2))
 
 axs[0].set_title(f'The master nomalized Flat by median combine', fontsize=10)
 axs[1].set_title('The histrogram of pixel value', fontsize=10)
@@ -773,10 +676,7 @@ hdul_bf = fits.open(fpath)
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.4),
                         sharex=False, sharey=False, gridspec_kw=None)
 
-im1 = du.zimshow(axs[0], hdul_bf[0].data,
-            origin='lower',
-            cmap='viridis',
-            )
+im1 = du.zimshow(axs[0], hdul_bf[0].data, origin='lower', cmap='viridis')
 
 im2 = axs[1].hist(hdul_bf[0].data,
                 range=(hdul_bf[0].data.mean()*.9, hdul_bf[0].data.mean()*1.1),
@@ -799,10 +699,7 @@ hdul_af = fits.open(str(reduced_fpath))
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.4),
                         sharex=False, sharey=False, gridspec_kw=None)
 
-im1 = du.zimshow(axs[0], hdul_af[0].data,
-            origin='lower',
-            cmap='viridis',
-            )
+im1 = du.zimshow(axs[0], hdul_af[0].data, origin='lower', cmap='viridis')
 
 im2 = axs[1].hist(hdul_af[0].data,
                 range=(hdul_af[0].data.mean()*.9, hdul_af[0].data.mean()*1.1),
@@ -845,15 +742,12 @@ hdul_af_darksc = fits.open(str(reduced_darksc_fpath))
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.4),
                         sharex=False, sharey=False, gridspec_kw=None)
 
-im1 = du.zimshow(axs[0], hdul_af_darksc[0].data,
-            origin='lower',
-            cmap='viridis',
-            )
+im1 = du.zimshow(axs[0], hdul_af_darksc[0].data, origin='lower',
+            cmap='viridis')
 
 im2 = axs[1].hist(hdul_af_darksc[0].data,
                 range=(hdul_af_darksc[0].data.mean()*.9,
-                       hdul_af_darksc[0].data.mean()*1.1),
-                )
+                       hdul_af_darksc[0].data.mean()*1.1))
 
 axs[0].set_title(f'After preprocessing (dark scale)', fontsize=10)
 axs[1].set_title('The histrogram of pixel value', fontsize=10)

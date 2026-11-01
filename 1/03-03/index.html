@@ -12,15 +12,14 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/03-03/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
 <p class="jump"><a href="#code-31">31</a> <a href="#code-32">32</a> <a href="#code-33">33</a> <a href="#code-34">34</a> <a href="#code-35">35</a> <a href="#code-36">36</a> <a href="#code-37">37</a> <a href="#code-38">38</a> <a href="#code-39">39</a> <a href="#code-40">40</a></p>
-<h2 id="code-31">code 31. <button class="copy">복사</button></h2><pre><code># geopy를 이용하여 도시의 위치 정보(위도, 경도) 얻기
-from geopy.geocoders import Nominatim
+<h2 id="code-31">code 31. <button class="copy">복사</button></h2><pre><code>from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderInsufficientPrivileges, GeocoderTimedOut
 
-geolocator = Nominatim(user_agent=&quot;ESDS&quot;) # 위치 정보 검색 객체 생성
+geolocator = Nominatim(user_agent=&quot;ESDS&quot;)
 
-place_Suwon = &quot;Suwon&quot; # 검색할 도시 이름
+place_Suwon = &quot;Suwon&quot;
 try:
-    location_Suwon = geolocator.geocode(place_Suwon) # 도시 위치 정보 검색
+    location_Suwon = geolocator.geocode(place_Suwon)
     if location_Suwon is None:
         raise ValueError(&quot;Location not found. Please check the place name.&quot;)
     print(&quot;location_Suwon: {}&quot;.format(location_Suwon))
@@ -31,21 +30,19 @@ except GeocoderTimedOut:
 except Exception as e:
     print(f&quot;Unexpected error: {e}&quot;)
 
-# 위치 정보의 세부 내용 출력
 location_Suwon = geolocator.geocode(place_Suwon)
-print(&quot;location.raw: {}&quot;.format(location_Suwon.raw))  # 원시 데이터
-print(&quot;location.point: {}&quot;.format(location_Suwon.point))  # 위도, 경도, 고도 정보
+print(&quot;location.raw: {}&quot;.format(location_Suwon.raw))
+print(&quot;location.point: {}&quot;.format(location_Suwon.point))  # 위도 · 경도 · 고도
 
-print(f&quot;latitude: {location_Suwon.latitude}&quot;)    # 위도
-print(f&quot;longitude: {location_Suwon.longitude}&quot;)  # 경도</code></pre>
-<h2 id="code-32">code 32. <button class="copy">복사</button></h2><pre><code># astral 패키지의 LocationInfo를 이용하여 위치 정보 객체 생성
-from astral import LocationInfo
+print(f&quot;latitude: {location_Suwon.latitude}&quot;)
+print(f&quot;longitude: {location_Suwon.longitude}&quot;)</code></pre>
+<h2 id="code-32">code 32. <button class="copy">복사</button></h2><pre><code>from astral import LocationInfo
 
-city_London = LocationInfo(&quot;London&quot;, &quot;England&quot;, &quot;Europe/London&quot;, 51.5, -0.116)
+city_London = LocationInfo(&quot;London&quot;, &quot;England&quot;, &quot;Europe/London&quot;, 51.5, -0.116)  # 이름, 지역, 시간대, 위도, 경도
 
 print(f&quot;type(city_London): {type(city_London)}&quot;)
 print(f&quot;city_London: {city_London}&quot;)</code></pre>
-<h2 id="code-33">code 33. <button class="copy">복사</button></h2><pre><code># geopy로 얻은 위치 정보를 이용하여 수원 LocationInfo 객체 생성
+<h2 id="code-33">code 33. <button class="copy">복사</button></h2><pre><code># geopy로 얻은 수원의 위도 · 경도 사용
 from astral import LocationInfo
 
 city_Suwon = LocationInfo(place_Suwon, &quot;Korea&quot;, &quot;Asia/Seoul&quot;, location_Suwon.latitude, location_Suwon.longitude)
@@ -53,75 +50,64 @@ city_Suwon = LocationInfo(place_Suwon, &quot;Korea&quot;, &quot;Asia/Seoul&quot;
 print(f&quot;type(city_Suwon): {type(city_Suwon)}&quot;)
 print(f&quot;city_Suwon: {city_Suwon}&quot;)
 
-# LocationInfo 객체의 세부 정보 출력
 print(f&quot;city_Suwon.name: {city_Suwon.name}&quot;)
 print(f&quot;city_Suwon.region: {city_Suwon.region}&quot;)
 print(f&quot;city_Suwon.timezone: {city_Suwon.timezone}&quot;)
 print(f&quot;city_Suwon.latitude: {city_Suwon.latitude}&quot;)
 print(f&quot;city_Suwon.longitude: {city_Suwon.longitude}&quot;)</code></pre>
-<h2 id="code-34">code 34. <button class="copy">복사</button></h2><pre><code># astral.sun 함수를 이용하여 일출, 일몰 등 태양 관련 시각 계산
-from datetime import date
+<h2 id="code-34">code 34. <button class="copy">복사</button></h2><pre><code>from datetime import date
 from astral.sun import sun
 
-s = sun(city_Suwon.observer, 
-        date = date(2009, 3, 23), 
+s = sun(city_Suwon.observer, date = date(2009, 3, 23),
         tzinfo=city_Suwon.timezone)
 
-print(f&quot;type(s): {type(s)}&quot;)  # 결과 타입 출력
-print(f&quot;s : {s}&quot;)             # 전체 딕셔너리 출력
-print(s)                      # 전체 딕셔너리 출력</code></pre>
-<h2 id="code-35">code 35. <button class="copy">복사</button></h2><pre><code># 일출, 일몰, 새벽, 황혼 시각 및 낮의 길이 출력
-print(&quot;s[&#x27;sunrise&#x27;]: {}&quot;.format(s[&#x27;sunrise&#x27;]))  # 일출 시각
-print(&quot;s[&#x27;sunset&#x27;]: {}&quot;.format(s[&#x27;sunset&#x27;]))    # 일몰 시각
+print(f&quot;type(s): {type(s)}&quot;)
+print(f&quot;s : {s}&quot;)
+print(s)</code></pre>
+<h2 id="code-35">code 35. <button class="copy">복사</button></h2><pre><code>print(&quot;s[&#x27;sunrise&#x27;]: {}&quot;.format(s[&#x27;sunrise&#x27;]))
+print(&quot;s[&#x27;sunset&#x27;]: {}&quot;.format(s[&#x27;sunset&#x27;]))
 
-print(&quot;s[&#x27;dawn&#x27;]: {}&quot;.format(s[&#x27;dawn&#x27;]))  # 새벽 시각
-print(&quot;s[&#x27;dusk&#x27;]: {}&quot;.format(s[&#x27;dusk&#x27;]))  # 황혼 시각
+print(&quot;s[&#x27;dawn&#x27;]: {}&quot;.format(s[&#x27;dawn&#x27;]))  # 새벽(박명 시작)
+print(&quot;s[&#x27;dusk&#x27;]: {}&quot;.format(s[&#x27;dusk&#x27;]))  # 황혼(박명 끝)
 
-print(&quot;type(s[&#x27;sunset&#x27;]-s[&#x27;sunrise&#x27;]): {}&quot;.format(type(s[&#x27;sunset&#x27;]-s[&#x27;sunrise&#x27;]))) # 낮의 길이 타입
-print(&quot;daytime: {}&quot;.format(s[&#x27;sunset&#x27;]-s[&#x27;sunrise&#x27;])) # 낮의 길이</code></pre>
-<h2 id="code-36">code 36. <button class="copy">복사</button></h2><pre><code># astral의 moon 모듈로 월출/월몰 시각 계산
-from datetime import date
+print(&quot;type(s[&#x27;sunset&#x27;]-s[&#x27;sunrise&#x27;]): {}&quot;.format(type(s[&#x27;sunset&#x27;]-s[&#x27;sunrise&#x27;])))
+print(&quot;daytime: {}&quot;.format(s[&#x27;sunset&#x27;]-s[&#x27;sunrise&#x27;]))</code></pre>
+<h2 id="code-36">code 36. <button class="copy">복사</button></h2><pre><code>from datetime import date
 from astral import moon
 from astral import LocationInfo
 
-# 관측 지역 설정
 city = LocationInfo(&quot;Seoul&quot;, &quot;South Korea&quot;, &quot;Asia/Seoul&quot;, 37.5665, 126.9780)
 
-# 오늘 날짜 기준
 today = date.today()
 
-# 달의 일출(월출)과 일몰(월몰) 시각 계산
+# 월출 · 월몰 시각
 moonrise_time = moon.moonrise(city.observer, date=today)
 moonset_time = moon.moonset(city.observer, date=today)
 
-# 결과 출력
 print(f&quot;날짜: {today}&quot;)
 print(f&quot;달이 뜨는 시각 (Moonrise): {moonrise_time}&quot;)
 print(f&quot;달이 지는 시각 (Moonset): {moonset_time}&quot;)</code></pre>
-<h2 id="code-37">code 37. <button class="copy">복사</button></h2><pre><code># suntime 패키지로 태양 객체 생성 및 정보 출력
-from datetime import datetime
+<h2 id="code-37">code 37. <button class="copy">복사</button></h2><pre><code>from datetime import datetime
 from suntime import Sun
 
-print(&quot;city_Suwon.latitude: {}&quot;.format(city_Suwon.latitude)) # 위도
-print(&quot;city_Suwon.longitude: {}&quot;.format(city_Suwon.longitude)) # 경도
+print(&quot;city_Suwon.latitude: {}&quot;.format(city_Suwon.latitude))
+print(&quot;city_Suwon.longitude: {}&quot;.format(city_Suwon.longitude))
 
-sun = Sun(city_Suwon.latitude, city_Suwon.longitude) # 태양 객체 생성
+sun = Sun(city_Suwon.latitude, city_Suwon.longitude)
 
-print(&quot;type(sun): {}&quot;.format(type(sun)))  # 객체 타입 출력
-print(&quot;sun: {}&quot;.format(sun))              # 객체 정보 출력
+print(&quot;type(sun): {}&quot;.format(type(sun)))
+print(&quot;sun: {}&quot;.format(sun))
 
-# 일출/일몰 시각을 한국 표준시(LST)로 변환하여 출력 (이전 날짜 일출, 다음 날짜 일몰 사용)
+# 이전 날짜 일출, 다음 날짜 일몰 사용(한국 표준시)
 from datetime import datetime, date, timedelta
 import pytz
 
 tz = pytz.timezone(&#x27;Asia/Seoul&#x27;)
 today_date = date.today()
 
-# 이전 날짜와 다음 날짜의 0시 datetime 객체 생성
 yesterday_datetime = datetime.combine(today_date - timedelta(days=1), datetime.min.time())
 tomorrow_datetime = datetime.combine(today_date + timedelta(days=1), datetime.min.time())
 
-# 일출/일몰 시각 계산 및 변환
 sunrise = sun.get_sunrise_time(yesterday_datetime).astimezone(tz)
 sunset = sun.get_sunset_time(tomorrow_datetime).astimezone(tz)
 daytime = sunset - sunrise
@@ -129,13 +115,13 @@ daytime = sunset - sunrise
 print(f&quot;이전 날짜({yesterday_datetime.date()}) 일출 시각(LST): {sunrise}&quot;)
 print(f&quot;다음 날짜({tomorrow_datetime.date()}) 일몰 시각(LST): {sunset}&quot;)
 print(f&quot;낮의 길이 (일몰-일출): {daytime}&quot;)</code></pre>
-<h2 id="code-38">code 38. <button class="copy">복사</button></h2><pre><code># 1년 동안 (이전 날짜 일출, 다음 날짜 일몰 기준) 낮의 길이 변화 시각화 (24시간 이상 방지)
+<h2 id="code-38">code 38. <button class="copy">복사</button></h2><pre><code># 1년 동안 낮의 길이(이전 날짜 일출, 다음 날짜 일몰 기준)
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta, date
 import pytz
 
 tz = pytz.timezone(&#x27;Asia/Seoul&#x27;)
-year = 2021           # 원하는 연도
+year = 2021
 latitude = 37.2636    # 수원 위도
 longitude = 127.0286  # 수원 경도
 
@@ -151,17 +137,15 @@ delta = timedelta(days=1)
 current_date = start_date
 
 while current_date &lt;= end_date:
- # 이전 날짜와 다음 날짜의 0시 datetime 객체
     yesterday_datetime = datetime.combine(current_date - timedelta(days=1), datetime.min.time())
     tomorrow_datetime = datetime.combine(current_date + timedelta(days=1), datetime.min.time())
- # 일출/일몰 시각 계산 및 변환
     sunrise = sun.get_sunrise_time(yesterday_datetime).astimezone(tz)
     sunset = sun.get_sunset_time(tomorrow_datetime).astimezone(tz)
     day_length_sec = (sunset - sunrise).total_seconds()
- # 0보다 작거나 24시간(86400초)보다 크면 나머지 값으로 처리
+    # 24시간(86400초)을 넘으면 나머지만 사용
     if day_length_sec &gt; 86400:
         day_length_sec %= 86400
-    day_length = day_length_sec / 3600  # 시간 단위
+    day_length = day_length_sec / 3600  # 초 → 시간
     dates.append(current_date)
     day_lengths.append(day_length)
     current_date += delta
@@ -175,13 +159,13 @@ plt.ylabel(&#x27;낮의 길이 (시간)&#x27;)
 plt.grid(True)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-39">code 39. <button class="copy">복사</button></h2><pre><code># 1년 동안 (이전 날짜 일출, 다음 날짜 일몰 기준) 월별 낮의 총합(시간) 그래프
+<h2 id="code-39">code 39. <button class="copy">복사</button></h2><pre><code># 월별 낮의 총합(이전 날짜 일출, 다음 날짜 일몰 기준)
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta, date
 import pytz
 
 tz = pytz.timezone(&#x27;Asia/Seoul&#x27;)
-year = 2021           # 원하는 연도
+year = 2021
 latitude = 37.2636    # 수원 위도
 longitude = 127.0286  # 수원 경도
 
@@ -193,7 +177,6 @@ monthly_daytime_totals = []
 
 for month in range(1, 13):
     total_daytime = 0
- # 월의 시작일과 종료일 계산
     start_date = date(year, month, 1)
     if month == 12:
         end_date = date(year, 12, 31)
@@ -206,12 +189,12 @@ for month in range(1, 13):
         sunrise = sun.get_sunrise_time(yesterday_datetime).astimezone(tz)
         sunset = sun.get_sunset_time(tomorrow_datetime).astimezone(tz)
         day_length_sec = (sunset - sunrise).total_seconds()
- # 0보다 작거나 24시간(86400초)보다 크면 나머지 값으로 처리
+        # 24시간(86400초)을 넘으면 나머지만 사용
         if day_length_sec &gt; 86400:
             day_length_sec %= 86400
         total_daytime += day_length_sec
         current_date += timedelta(days=1)
-    monthly_daytime_totals.append(total_daytime / 3600)  # 시간 단위
+    monthly_daytime_totals.append(total_daytime / 3600)  # 초 → 시간
 
 # 그래프 그리기
 plt.figure(figsize=(10, 5))
@@ -222,8 +205,7 @@ plt.ylabel(&#x27;월별 낮의 총합 (시간)&#x27;)
 plt.grid(axis=&#x27;y&#x27;)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-40">code 40. <button class="copy">복사</button></h2><pre><code># 수원과 모스코바의 월별 낮의 총합(시간) 비교 그래프
-import matplotlib.pyplot as plt
+<h2 id="code-40">code 40. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 from datetime import datetime, timedelta, date
 import pytz
 from suntime import Sun
@@ -246,12 +228,12 @@ def get_monthly_daytime_totals(year, latitude, longitude, tz_str):
             sunrise = sun.get_sunrise_time(yesterday_datetime).astimezone(tz)
             sunset = sun.get_sunset_time(tomorrow_datetime).astimezone(tz)
             day_length_sec = (sunset - sunrise).total_seconds()
- # 0보다 작거나 24시간(86400초)보다 크면 나머지 값으로 처리
+            # 24시간(86400초)을 넘으면 나머지만 사용
             if day_length_sec &gt; 86400:
                 day_length_sec %= 86400
             total_daytime += day_length_sec
             current_date += timedelta(days=1)
-        monthly_totals.append(total_daytime / 3600)  # 시간 단위
+        monthly_totals.append(total_daytime / 3600)  # 초 → 시간
     return monthly_totals
 
 year = 2021

@@ -21,8 +21,9 @@ import numpy as np
 import pandas as pd
 import requests
 
-MACROSTRAT_URL = &quot;https://macrostrat.org/api/v2/geologic_units/map&quot;
+MACROSTRAT_URL = &quot;https://macrostrat.org/api/v2/geologic_units/map&quot;  # 지질도 API
 
+# 지질 단위를 조회할 지점(위도 · 경도, °)
 places = pd.DataFrame([
     {&quot;name&quot;: &quot;서울&quot;, &quot;lat&quot;: 37.5665, &quot;lng&quot;: 126.9780},
     {&quot;name&quot;: &quot;대전&quot;, &quot;lat&quot;: 36.3504, &quot;lng&quot;: 127.3845},
@@ -32,16 +33,18 @@ places = pd.DataFrame([
     {&quot;name&quot;: &quot;제주&quot;, &quot;lat&quot;: 33.4996, &quot;lng&quot;: 126.5312},
 ])
 
+# 지도 중심: 지점들의 평균 위치
 map_center = {
     &quot;name&quot;: &quot;대한민국&quot;,
     &quot;lat&quot;: places[&quot;lat&quot;].mean(),
     &quot;lng&quot;: places[&quot;lng&quot;].mean(),
 }
 
-features_by_map_id = {}
-refs = {}
+features_by_map_id = {}  # map_id → 지질 단위(중복 제거)
+refs = {}                # source_id → 출처 문헌
 download_log = []
 
+# 지점마다 그 위치의 지질 단위 조회
 for row in places.itertuples(index=False):
     params = {&quot;lat&quot;: row.lat, &quot;lng&quot;: row.lng, &quot;format&quot;: &quot;geojson&quot;}
     response = requests.get(MACROSTRAT_URL, params=params, timeout=60)
@@ -59,6 +62,7 @@ for row in places.itertuples(index=False):
         &quot;feature_count&quot;: len(geojson_data[&quot;success&quot;][&quot;data&quot;].get(&quot;features&quot;, [])),
     })
 
+# 하나의 GeoJSON으로 모아 저장
 feature_collection = {
     &quot;type&quot;: &quot;FeatureCollection&quot;,
     &quot;features&quot;: list(features_by_map_id.values()),
@@ -74,23 +78,26 @@ print(f&quot;파일 크기: {geojson_file.stat().st_size:,} bytes&quot;)
 print(download_log)</code></pre>
 <h2 id="code-35">code 35. <button class="copy">복사</button></h2><pre><code>clean_geojson_file = Path(proj_dir) / &quot;macrostrat_geologic_units_clean.geojson&quot;
 clean_geojson_file.write_text(
-    json.dumps(feature_collection),
-    encoding=&quot;utf-8&quot;,
+    json.dumps(feature_collection), encoding=&quot;utf-8&quot;,
 )
 
 gdf = gpd.read_file(clean_geojson_file)
-gdf = gdf.set_crs(&quot;EPSG:4326&quot;, allow_override=True)
+gdf = gdf.set_crs(&quot;EPSG:4326&quot;, allow_override=True)  # WGS84 경위도
 
 print(gdf.shape)
 gdf.head()
 
+# lith: 암상, best_int_name: 대표 시대
+# t_ · b_int_name: 가장 젊은 · 오래된 시대
+# t_ · b_age: 연대(Ma, 백만 년 전)
 columns_to_show = [
     &quot;map_id&quot;, &quot;source_id&quot;, &quot;name&quot;, &quot;lith&quot;, &quot;t_int_name&quot;, &quot;b_int_name&quot;,
     &quot;best_int_name&quot;, &quot;t_age&quot;, &quot;b_age&quot;, &quot;color&quot;
 ]
 
 print(gdf[columns_to_show].head(10))</code></pre>
-<h2 id="code-36">code 36. <button class="copy">복사</button></h2><pre><code>age_summary = (
+<h2 id="code-36">code 36. <button class="copy">복사</button></h2><pre><code># 대표 시대별 다각형 수
+age_summary = (
     gdf.groupby(&quot;best_int_name&quot;, dropna=False)
     .size()
     .sort_values(ascending=False)
@@ -98,6 +105,7 @@ print(gdf[columns_to_show].head(10))</code></pre>
     .reset_index()
 )
 
+# 암상별 다각형 수
 lith_summary = (
     gdf.groupby(&quot;lith&quot;, dropna=False)
     .size()
@@ -111,11 +119,12 @@ print(lith_summary)</code></pre>
 <h2 id="code-37">code 37. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 plot_gdf = gdf.copy()
-plot_gdf[&quot;plot_color&quot;] = plot_gdf[&quot;color&quot;].fillna(&quot;#cccccc&quot;)
+plot_gdf[&quot;plot_color&quot;] = plot_gdf[&quot;color&quot;].fillna(&quot;#cccccc&quot;)  # 색 없으면 회색
 
 fig, ax = plt.subplots(figsize=(8, 9))
 plot_gdf.plot(ax=ax, color=plot_gdf[&quot;plot_color&quot;], edgecolor=&quot;black&quot;, linewidth=0.4, alpha=0.85)
 
+# 조회 지점과 이름
 ax.scatter(places[&quot;lng&quot;], places[&quot;lat&quot;], color=&quot;red&quot;, marker=&quot;*&quot;, s=120, label=&quot;예시 지점&quot;, zorder=5)
 for row in places.itertuples(index=False):
     ax.text(row.lng + 0.08, row.lat, row.name, fontsize=10, zorder=6)
@@ -124,11 +133,12 @@ ax.set_title(&quot;Macrostrat 자료로 그린 대한민국 주변 지질 단위
 ax.set_xlabel(&quot;경도&quot;)
 ax.set_ylabel(&quot;위도&quot;)
 ax.legend(loc=&quot;upper right&quot;)
-ax.set_aspect(&quot;equal&quot;)
+ax.set_aspect(&quot;equal&quot;)  # 경도 · 위도 1° 길이를 같게
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;05_04_Geologic_map_basics_01&quot;))
 plt.show()</code></pre>
 <h2 id="code-38">code 38. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
+# 대표 시대와 색의 짝(중복 제거)
 legend_df = (
     plot_gdf[[&quot;best_int_name&quot;, &quot;plot_color&quot;]]
     .dropna()
@@ -139,13 +149,14 @@ legend_df = (
 fig, ax = plt.subplots(figsize=(6, max(2, len(legend_df) * 0.35)))
 ax.axis(&quot;off&quot;)
 
+# 시대마다 색 상자 + 이름
 for i, row in enumerate(legend_df.itertuples(index=False)):
     ax.add_patch(plt.Rectangle((0, i), 0.5, 0.25, color=row.plot_color, ec=&quot;black&quot;, lw=0.4))
     ax.text(0.65, i + 0.12, row.best_int_name, va=&quot;center&quot;, fontsize=10)
 
 ax.set_xlim(0, 3)
 ax.set_ylim(-0.2, len(legend_df))
-ax.invert_yaxis()
+ax.invert_yaxis()  # 위에서 아래로 나열
 ax.set_title(&quot;지질 시대 범례&quot;, loc=&quot;left&quot;)
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;05_04_Geologic_map_basics_02&quot;))
 plt.show()</code></pre>
@@ -153,12 +164,14 @@ plt.show()</code></pre>
 
 m = folium.Map(location=[map_center[&quot;lat&quot;], map_center[&quot;lng&quot;]], zoom_start=6, tiles=&quot;CartoDB positron&quot;)
 
+# 마우스를 올리면 보일 속성과 한글 이름
 tooltip = folium.GeoJsonTooltip(
     fields=[&quot;name&quot;, &quot;lith&quot;, &quot;best_int_name&quot;, &quot;t_int_name&quot;, &quot;b_int_name&quot;],
     aliases=[&quot;이름&quot;, &quot;암상&quot;, &quot;대표 시대&quot;, &quot;상한 시대&quot;, &quot;하한 시대&quot;],
     localize=True,
 )
 
+# 지질 단위 다각형(Macrostrat 지정 색으로 채움)
 folium.GeoJson(
     feature_collection,
     name=&quot;Macrostrat geologic units&quot;,
@@ -171,6 +184,7 @@ folium.GeoJson(
     tooltip=tooltip,
 ).add_to(m)
 
+# 조회 지점 마커
 for row in places.itertuples(index=False):
     folium.Marker([row.lat, row.lng], popup=row.name).add_to(m)
 
@@ -180,7 +194,8 @@ map_file = Path(proj_dir) / &quot;macrostrat_geologic_map_korea.html&quot;
 m.save(map_file)
 print(f&quot;지도 저장 위치: {map_file}&quot;)
 m</code></pre>
-<h2 id="code-40">code 40. <button class="copy">복사</button></h2><pre><code>source_summary = (
+<h2 id="code-40">code 40. <button class="copy">복사</button></h2><pre><code># 자료 출처(source_id)별 다각형 수와 문헌
+source_summary = (
     gdf.groupby(&quot;source_id&quot;)
     .size()
     .sort_values(ascending=False)

@@ -58,8 +58,7 @@ from astropy.coordinates import SkyCoord, EarthLocation, AltAz
 
 # 관측소
 LOCATION = dict(lon=127.005, lat=37.308889, elevation=101)
-Suwon = EarthLocation(lon=127.005 * u.deg,
-                                 lat=37.308889 * u.deg,
+Suwon = EarthLocation(lon=127.005 * u.deg, lat=37.308889 * u.deg,
                                  height=101 * u.m)
 observatory_code = "P64"
 
@@ -163,7 +162,6 @@ import pandas as pd
 from astropy.coordinates import Angle
 from astroquery.imcce import Skybot
 
-
 def jpl_sb_ident(center, half_width, epoch, mpc_code="P64", vmag_lim=20):
     """JPL SB Ident API로 시야 안 소행성 목록을 받아 SkyBoT과 같은 열 이름으로 돌려줌"""
     ra = center.ra.to_string(unit=u.hourangle, sep="-", precision=1, pad=True)
@@ -194,7 +192,6 @@ def jpl_sb_ident(center, half_width, epoch, mpc_code="P64", vmag_lim=20):
     })
     return out
 
-
 try:
     results_ast = Skybot.cone_search(cent_coord, 30*u.arcmin, t_middle,
                                      find_comets=False)   # 혜성은 빼고 소행성만
@@ -217,7 +214,6 @@ df_targ[["Number", "Name", "RA", "DEC", "V"]]
 import pandas as pd
 from astroquery.jplhorizons import Horizons
 
-
 def small_body_ephem(number, epochs, centers):
     """Horizons 천체력 표. Horizons가 응답하지 않으면 JPL SB Ident로 위치·밝기·빠르기만 받음"""
     try:
@@ -236,7 +232,6 @@ def small_body_ephem(number, epochs, centers):
                          "RA": r["RA"], "DEC": r["DEC"], "V": r["V"],
                          "RA_rate": r["RA_rate"], "DEC_rate": r["DEC_rate"]})
         return pd.DataFrame(rows)
-
 
 if df_targ.empty:
     pass
@@ -310,21 +305,15 @@ axs.tick_params(labelsize=9)
 if df_targ.empty:
     pass
 else:
-    targ_ap = CAp(pos_pix_targ_init,
-            r=R_AP,
-            )
-    targ_an = CAn(pos_pix_targ_init,
-            r_in=R_IN,
-            r_out=R_OUT)
+    targ_ap = CAp(pos_pix_targ_init, r=R_AP)
+    targ_an = CAn(pos_pix_targ_init, r_in=R_IN, r_out=R_OUT)
 
     # targ_ap.plot(axs, color="r")
     targ_an.plot(axs, color="r")
 
     axs.annotate(f"{df_targ_eph[['Number', 'RA', 'DEC', 'V']]}",
-            xy=(0, 0), xytext=(0, -0.1),
-            xycoords='axes fraction',
-            va='top', ha='left',
-            fontsize = 8)
+            xy=(0, 0), xytext=(0, -0.1), xycoords='axes fraction',
+            va='top', ha='left', fontsize = 8)
 plt.colorbar(im, ax = axs, fraction=val_fraction, pad=0.04)
 plt.suptitle(f"fname: {fpath.name}", fontsize=10)
 
@@ -333,11 +322,8 @@ info = (f"image center (RA, DEC): ({cent_coord.ra:.03f}, "
         f"telescope center (RA, DEC): ({tel_ra:.03f}, {tel_dec:.03f})\n"
         f"offset (RA, DEC): ({offset_RA:.03f}, {offset_DEC:.03f})\n"
         f"offset (AZ, ALT): ({offset_AZ:.03f}, {offset_ALT:.03f})")
-axs.annotate(info,
-            xy=(0, 0), xytext=(0.6, -0.1),
-            xycoords='axes fraction',
-            va='top', ha='left',
-            fontsize = 8)
+axs.annotate(info, xy=(0, 0), xytext=(0.6, -0.1), xycoords='axes fraction',
+            va='top', ha='left', fontsize = 8)
 plt.tight_layout()
 plt.savefig(f"{proj_dir}/{fpath.stem}_AST_Mag{Mag_UP}.png")
 plt.show()
@@ -372,44 +358,29 @@ else:
             axs[0].grid(ls=':')
             axs[0].set_title(f'Asteroid area image', fontsize=9)
             axs[0].annotate(   f"mean: {np.mean(cut_hdu.data):.01f}, std: {np.std(cut_hdu.data):.01f} \nmax: {np.max(cut_hdu.data):.01f}, min: {np.min(cut_hdu.data):.01f} \nNumber of Pixel: {np.shape(cut_hdu.data)[0]:.0f}x{np.shape(cut_hdu.data)[1]:.0f}",
-                xy=(0, 0), xytext=(0.1, -0.30),
-                xycoords='axes fraction',
-                va='top', ha='left',
-                fontsize=8)
-            plt.colorbar(im0,
-                        ax=axs[0],
-                        label="ADU",
+                xy=(0, 0), xytext=(0.1, -0.30), xycoords='axes fraction',
+                va='top', ha='left', fontsize=8)
+            plt.colorbar(im0, ax=axs[0], label="ADU",
                         fraction=0.0455, pad=0.04)
 
             # 2. 중심의 dx, dy 구하기
             thresh_3sig = med + 3 * std
             mask_3sig = (cut_hdu.data < thresh_3sig)
-            center = centroid_com(
-                        data = cut_hdu.data,
-                        mask = mask_3sig
-                        )
+            center = centroid_com(data = cut_hdu.data, mask = mask_3sig)
 
             centerdx = center[0] - ((cutsizes-1)/2)
             centerdy = center[1] - ((cutsizes-1)/2)
 
-
             axs[1].grid(ls=':')
             axs[1].set_title(f'The new center of asteroid', fontsize=9)
-            im1 = axs[1].imshow(mask_3sig.astype(int),
-                origin="lower")
-            axs[1].imshow(cut_hdu.data,
-                    alpha=0.4,
-                    origin="lower")
+            im1 = axs[1].imshow(mask_3sig.astype(int), origin="lower")
+            axs[1].imshow(cut_hdu.data, alpha=0.4, origin="lower")
             axs[0].plot(*center, 'rx')
             axs[1].annotate(f"center: {center[0]:.02f}, {center[1]:.02f}\ncenter dx, dy: {centerdx:.02f}, {centerdy:.02f}",
-                    xy=(0, 0), xytext=(0.01, -0.30),
-                    xycoords='axes fraction',
-                    va='top', ha='left',
-                    fontsize=8)
+                    xy=(0, 0), xytext=(0.01, -0.30), xycoords='axes fraction',
+                    va='top', ha='left', fontsize=8)
 
-            plt.colorbar(im1,
-                        ax=axs[1],
-                        label="mask",
+            plt.colorbar(im1, ax=axs[1], label="mask",
                         fraction=0.0455, pad=0.04)
             plt.suptitle(f"{fpath.name}\nasteroid No.{i}: {row['targetname']}, \n{row['datetime_str']}, V_mag {row['V']}",
                         fontsize=9)

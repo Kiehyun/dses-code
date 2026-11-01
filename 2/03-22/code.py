@@ -102,8 +102,7 @@ x_line = np.linspace(0, 100, 100)
 ax.plot(x_line, H0_local * x_line, color="tab:red", lw=2,
         label=f"맞춘 직선: $H_0$ = {H0_local:.1f} km/s/Mpc")
 ax.set(xlim=(0, 105), ylim=(0, 10500), xlabel="거리 (Mpc)",
-       ylabel="후퇴속도 $cz$ (km/s)",
-       title="(a) 간단한 범위 필터")
+       ylabel="후퇴속도 $cz$ (km/s)", title="(a) 간단한 범위 필터")
 ax.text(0.03, 0.97,
         f"$H_0$ = {H0_local:.1f} km/s/Mpc\nr = {r_local:.3f}\n$R^2$ = {r2_local:.3f}\nN = {mask_local.sum():,}",
         transform=ax.transAxes, va="top", fontsize=10,
@@ -217,8 +216,7 @@ for ax, col, title in zip(axes, ["v_approx", "v_rel"],
             f"$R^2$ = {r2_i:.3f}\nN = {len(gal):,}",
             transform=ax.transAxes, va="top", fontsize=10,
             bbox=dict(boxstyle="round", fc="white", ec="0.3", alpha=0.9))
-    ax.set(xlim=(0, 210), ylim=(0, 16000), xlabel="거리 (Mpc)",
-           title=title)
+    ax.set(xlim=(0, 210), ylim=(0, 16000), xlabel="거리 (Mpc)", title=title)
     ax.legend(loc="lower right")
     ax.grid(alpha=0.3)
 axes[0].set_ylabel("후퇴속도 (km/s)")

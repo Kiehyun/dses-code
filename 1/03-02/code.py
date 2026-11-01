@@ -3,14 +3,16 @@
 
 # %% code 23.
 import re
+import time
+from functools import lru_cache
 from io import StringIO
 
 import numpy as np
 import pandas as pd
 import requests
 
-# 위키 요청 차단을 줄이기 위한 사용자 에이전트
-headers = {"User-Agent": "Mozilla/5.0"}
+# 위키백과 API 정책: 연락처가 담긴 사용자 에이전트를 쓴다
+headers = {"User-Agent": "DSES-book/1.0 (https://github.com/Kiehyun/dses-code)"}
 
 # 각주/특수 공백을 제거해 비교 가능한 문자열로 정리
 def clean_text(text):
@@ -40,19 +42,27 @@ def parse_flattening(text):
         return 1.0 / float(reciprocal.group(1))
     return first_float(s)
 
-
 def get_row_key(df, prefix):
     return next(i for i in df.index if clean_text(i).startswith(prefix))
 
+# 행성 문서는 한 번만 받아 둔다 — 같은 문서를 거듭 요청하면 API가 429(요청 과다)로 막는다
+@lru_cache(maxsize=None)
+def get_page_html(page):
+    for wait in (0, 5, 15, 30):
+        time.sleep(wait)
+        r = requests.get(
+            "https://en.wikipedia.org/w/api.php",
+            params={"action": "parse", "page": page, "prop": "text", "format": "json", "redirects": 1},
+            headers=headers, timeout=20,
+        )
+        if r.status_code != 429:
+            break
+    r.raise_for_status()
+    return r.json()["parse"]["text"]["*"]
+
 # 행성 개별 문서의 infobox에서 원하는 항목 값을 읽음
 def get_infobox_value(page, aliases):
-    js = requests.get(
-        "https://en.wikipedia.org/w/api.php",
-        params={"action": "parse", "page": page, "prop": "text", "format": "json", "redirects": 1},
-        headers=headers,
-        timeout=20,
-    ).json()
-    info = pd.read_html(StringIO(js["parse"]["text"]["*"]))[0].fillna("")
+    info = pd.read_html(StringIO(get_page_html(page)))[0].fillna("")
     kcol = info.columns[0]
     for _, row in info.iterrows():
         key = clean_text(row[kcol]).lower()
@@ -125,13 +135,8 @@ mass_key = get_row_key(w, "Mass")
 
 # 수집한 원본 데이터 확인
 preview_keys = [
-    radius_key,
-    mass_key,
-    distance_key,
-    inclination_key,
-    eccentricity_key,
-    rotation_key,
-    moons_key,
+    radius_key, mass_key, distance_key, inclination_key, eccentricity_key,
+    rotation_key, moons_key,
 ]
 
 print("행성 순서:", planet_order)
@@ -141,7 +146,7 @@ display(w.loc[preview_keys, planet_order])
 # %% code 24.
 import pandas as pd
 
-# JSON에서 바로 행성별 레코드를 만들고 DataFrame 생성
+# 행성별 레코드 만들기
 rows = []
 for en in planet_order:
     flattening_text = get_infobox_value(planet_pages[en], ["flattening"])
@@ -170,25 +175,13 @@ for en in planet_order:
     )
 
 columns = [
-    "행성",
-    "영어이름",
-    "적도반지름(km)",
-    "편평도",
-    "질량(kg)",
-    "장반경(AU)",
-    "알베도",
-    "태양 적도에 대한 경사각(도)",
-    "궤도 이심률",
-    "자전 주기(days)",
-    "확인된 위성 수",
-    "축 경사각(도)",
-    "고리",
-    "대기",
+    "행성", "영어이름", "적도반지름(km)", "편평도", "질량(kg)", "장반경(AU)",
+    "알베도", "태양 적도에 대한 경사각(도)", "궤도 이심률", "자전 주기(days)",
+    "확인된 위성 수", "축 경사각(도)", "고리", "대기",
 ]
 
 df = pd.DataFrame(rows, columns=columns)
 
-# 행성의 물리량 정보 csv 파일로 저장
 df.to_csv("planet_attributes.csv", index=False)
 
 df = df.set_index("행성")
@@ -213,7 +206,7 @@ import astropy.units as u
 import astropy.constants as const
 import numpy as np
 
-# 공전주기 계산 (케플러 제3법칙)
+# 공전주기 계산(케플러 제3법칙)
 df['공전주기(년)'] = (2 * np.pi * ((df["장반경(AU)"].values * u.AU)**3 / const.GM_sun)**0.5).to(u.year).value
 
 # 평균 밀도 계산
@@ -222,13 +215,13 @@ df['평균 밀도 (g cm^-3)'] = (3 * (df["질량(kg)"].values * u.kg) / (4 * np.
 # 적도 중력 계산
 df['적도 중력(m s^-2)'] = (const.G * (df["질량(kg)"].values * u.kg) / (df["적도반지름(km)"].values * u.km)**2).to(u.m / u.s**2).value
 
-# 평균반지름 계산 (편평도를 고려한 구의 반지름)
+# 평균반지름 계산(편평도 고려)
 df['평균반지름(km)'] = df["적도반지름(km)"] * (1 - df["편평도"])**(1/3)
 
 print("df[['공전주기(년)', '평균 밀도 (g cm^-3)', '적도 중력(m s^-2)', '평균반지름(km)']]:\n", df[['공전주기(년)', '평균 밀도 (g cm^-3)', '적도 중력(m s^-2)', '평균반지름(km)']] )
 
 # %% code 28.
-# 지구의 태양상수 (Solar constant)
+# 지구의 태양상수
 solar_constant0 = const.L_sun / (4 * np.pi * const.au**2)
 print(f"Solar constant (Earth): {solar_constant0.value:.2f} {solar_constant0.unit}")
 

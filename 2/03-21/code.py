@@ -13,7 +13,6 @@ from PIL import Image
 
 SKY = "https://skyserver.sdss.org/dr18/SkyServerWS"
 
-
 def get(url, params=None, tries=3):
     for k in range(tries):
         try:
@@ -25,7 +24,6 @@ def get(url, params=None, tries=3):
                 raise
             time.sleep(5)
 
-
 def sql(query, name):
     """SDSS SkyServer에 SQL을 보내 결과를 DataFrame으로 받기(name.csv로 저장)."""
     f = Path(proj_dir) / f"{name}.csv"
@@ -34,7 +32,6 @@ def sql(query, name):
                    {"cmd": query, "format": "csv"}).text
         f.write_text(text, encoding="utf-8")
     return pd.read_csv(f, skiprows=1)
-
 
 def cutout(ra, dec, scale, name, size=400):
     """SDSS 컬러 사진(gri 합성) 받기. scale은 픽셀당 각초."""
@@ -169,7 +166,6 @@ def rule(df, cut_color, cut_conc):
     return np.where((df["u_r"] > cut_color) & (df["conc"] > cut_conc), "타원",
                     "나선")
 
-
 results = []
 for cc in np.arange(1.8, 3.01, 0.1):
     for ck in np.arange(2.2, 3.21, 0.1):
@@ -200,7 +196,6 @@ spectra = [  # (이름, plate, mjd, fiber, z)
 LINES = {"Hβ": 4861, "[OIII]": 5007, "Hα": 6563, "[NII]": 6584, "Mg II": 2798,
          "Hγ": 4341}
 
-
 def spectrum(plate, mjd, fiber):
     f = Path(proj_dir) / f"spec-{plate:04d}-{mjd}-{fiber:04d}.fits"
     if not f.exists():
@@ -210,7 +205,6 @@ def spectrum(plate, mjd, fiber):
     with fits.open(f) as h:
         d = h[1].data
         return 10 ** d["loglam"], d["flux"]
-
 
 fig, axes = plt.subplots(4, 1, figsize=(7.5, 6.6), sharex=False)
 for ax, (name, plate, mjd, fiber, z) in zip(axes, spectra):

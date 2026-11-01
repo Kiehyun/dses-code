@@ -39,7 +39,6 @@ def moving_average(values, window):
                     mode="edge")
     return np.convolve(padded, kernel, mode="valid")
 
-
 fig, ax = plt.subplots(figsize=(8.5, 3.8))
 ax.plot(time, series, color="lightgray", lw=1, label="원시 데이터")
 for window, color in zip((3, 12, 36), ("orange", "red", "green")):

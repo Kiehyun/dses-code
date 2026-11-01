@@ -14,6 +14,7 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <p class="jump"><a href="#code-1">1</a> <a href="#code-2">2</a> <a href="#code-3">3</a> <a href="#code-4">4</a> <a href="#code-5">5</a> <a href="#code-6">6</a> <a href="#code-7">7</a> <a href="#code-8">8</a> <a href="#code-9">9</a> <a href="#code-10">10</a> <a href="#code-11">11</a></p>
 <h2 id="code-1">code 1. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
 
+# 세계 화산 목록(VAAC용) 엑셀 파일, 구글 드라이브 파일 ID
 fname = &quot;List_of_Volcanoes_of_the_World_for_VAAC_Use.xls&quot;
 fid = &quot;1dmJpAd1RI6LCaoV_iRR72HMeVP8vDoV-&quot;
 
@@ -24,7 +25,7 @@ du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={fid}&quot;
 print(f&quot;파일 내용 출력 (처음 {n_lines}줄):&quot;)
 print(&quot;=&quot;*40)
 
-# 순수 파이썬으로 구현 (운영체제 무관)
+# UTF-8로 읽고, 안 되면 CP949로 다시 시도
 try:
     with open(fpaths[0], encoding=&#x27;utf-8&#x27;) as f:
         for i, line in enumerate(f):
@@ -32,7 +33,6 @@ try:
                 break
             print(f&quot;{i+1:3d}: {line.rstrip()}&quot;)
 except UnicodeDecodeError:
- # UTF-8로 읽기 실패시 다른 인코딩 시도
     try:
         with open(fpaths[0], encoding=&#x27;cp949&#x27;) as f:
             for i, line in enumerate(f):
@@ -48,34 +48,33 @@ print(&quot;=&quot;*60)</code></pre>
 <h2 id="code-4">code 4. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 import lxml.etree as ET
 
-# XML 파싱
-tree = ET.parse(fpaths[0])  # fpaths[0]은 XML 파일 경로입니다.
-ns = {&quot;ss&quot;: &quot;urn:schemas-microsoft-com:office:spreadsheet&quot;}
+# 1) 엑셀 2003 XML(SpreadsheetML) 파일 파싱
+tree = ET.parse(fpaths[0])
+ns = {&quot;ss&quot;: &quot;urn:schemas-microsoft-com:office:spreadsheet&quot;}  # 엑셀 XML 이름공간
 
-# Row 추출
+# 2) 행(Row)마다 셀 값 추출
 rows = tree.xpath(&quot;//ss:Row&quot;, namespaces=ns)
 
-# Row별 Cell의 Data 추출
 data = []
 for row in rows:
     row_data = [cell.text for cell in row.xpath(&quot;.//ss:Cell/ss:Data&quot;, namespaces=ns)]
     data.append(row_data)
 
-# DataFrame 생성
+# 3) DataFrame으로 변환
 df_vol = pd.DataFrame(data)
 
-# 두 번째 Row를 컬럼명으로 지정하고, 메타 데이터와 헤더 Row 제거
+# 둘째 행을 열 이름으로, 앞 두 행(메타 정보 · 머리글)은 제거
 df_vol.columns = df_vol.iloc[1]
 df_vol = df_vol.drop([0, 1]).reset_index(drop=True)
 
-# 자료형 변환 시도 (예: 숫자형으로 변환 가능한 경우 변환)
+# 4) 숫자로 바꿀 수 있는 열은 숫자형으로
 for col in df_vol.columns:
     df_vol[col] = pd.to_numeric(df_vol[col], errors=&#x27;coerce&#x27;).fillna(df_vol[col])
 
-# 데이터 확인
 print(&quot;df_vol :&quot;, df_vol)</code></pre>
 <h2 id="code-5">code 5. <button class="copy">복사</button></h2><pre><code>df_vol.columns</code></pre>
-<h2 id="code-6">code 6. <button class="copy">복사</button></h2><pre><code>df_vol[&#x27;Latitude&#x27;] = df_vol[&#x27;LatitudeDecimal&#x27;]
+<h2 id="code-6">code 6. <button class="copy">복사</button></h2><pre><code># 십진 도(°) 단위 위도 · 경도를 짧은 열 이름으로
+df_vol[&#x27;Latitude&#x27;] = df_vol[&#x27;LatitudeDecimal&#x27;]
 df_vol[&#x27;Longitude&#x27;] = df_vol[&#x27;LongitudeDecimal&#x27;]
 print(df_vol[[&#x27;Latitude&#x27;, &#x27;Longitude&#x27;]])</code></pre>
 <h2 id="code-7">code 7. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
@@ -86,19 +85,17 @@ plt.scatter(df_vol[&#x27;Longitude&#x27;], df_vol[&#x27;Latitude&#x27;],
             c=&#x27;red&#x27;, s=15, alpha=0.6, marker=&#x27;^&#x27;, 
             edgecolors=&#x27;darkred&#x27;, linewidth=0.3)
 
-# 지도 설정
-plt.xlim(-180, 180)  # 경도 범위 설정 (-180도 ~ 180도)
-plt.ylim(-90, 90)    # 위도 범위 설정 (-90도 ~ 90도)
+# 축 범위 · 기준선
+plt.xlim(-180, 180)  # 경도(°)
+plt.ylim(-90, 90)    # 위도(°)
 plt.xlabel(&#x27;경도&#x27;, fontsize=12)
 plt.ylabel(&#x27;위도&#x27;, fontsize=12)
 plt.title(&#x27;전 세계 화산 분포&#x27;, fontsize=16, fontweight=&#x27;bold&#x27;)
-plt.grid(True, alpha=0.3)  # 격자 표시
+plt.grid(True, alpha=0.3)
+plt.axhline(y=0, color=&#x27;k&#x27;, linestyle=&#x27;-&#x27;, alpha=0.3)  # 적도(위도 0°)
+plt.axvline(x=0, color=&#x27;k&#x27;, linestyle=&#x27;-&#x27;, alpha=0.3)  # 본초자오선(경도 0°)
 
-# 기준선 추가 (적도와 본초자오선)
-plt.axhline(y=0, color=&#x27;k&#x27;, linestyle=&#x27;-&#x27;, alpha=0.3)  # 적도 (위도 0도)
-plt.axvline(x=0, color=&#x27;k&#x27;, linestyle=&#x27;-&#x27;, alpha=0.3)  # 본초자오선 (경도 0도)
-
-plt.tight_layout()  # 레이아웃 자동 조정
+plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;05_01_Plotting_ring_of_fire_01&quot;))
 plt.show()</code></pre>
 <h2 id="code-8">code 8. <button class="copy">복사</button></h2><pre><code>import pandas as pd
@@ -106,36 +103,31 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 
-# 데이터 확인
 print(&quot;데이터 샘플:&quot;)
 print(f&quot;\n총 화산 개수: {len(df_vol)}&quot;)
 
-# 그래프 크기 설정
 plt.figure(figsize=(12.0, 8.0))
 
-# 원통형 투영법으로 세계지도 생성
+# 원통 도법(cyl) 세계 지도
 m = Basemap(projection=&#x27;cyl&#x27;, resolution=&#x27;c&#x27;,
-            llcrnrlat=-90, urcrnrlat=90,    # 위도 범위: -90도 ~ 90도
-            llcrnrlon=-180, urcrnrlon=180)  # 경도 범위: -180도 ~ 180도
+            llcrnrlat=-90, urcrnrlat=90,    # 왼쪽 아래 · 오른쪽 위 모서리의 위도
+            llcrnrlon=-180, urcrnrlon=180)  # 같은 모서리의 경도
 
 # 지도 기본 요소 그리기
-m.drawcoastlines(linewidth=0.5)            # 해안선 그리기
-m.drawcountries(linewidth=0.5)             # 국경선 그리기
-m.drawmapboundary(fill_color=&#x27;lightblue&#x27;)  # 지도 경계 및 바다 색상
-m.fillcontinents(color=&#x27;lightgray&#x27;, lake_color=&#x27;lightblue&#x27;)  # 대륙과 호수 색상
+m.drawcoastlines(linewidth=0.5)
+m.drawcountries(linewidth=0.5)
+m.drawmapboundary(fill_color=&#x27;lightblue&#x27;)  # 바다 색
+m.fillcontinents(color=&#x27;lightgray&#x27;, lake_color=&#x27;lightblue&#x27;)
 
-# 경위도 격자선 그리기
-m.drawparallels(np.arange(-90, 91, 30), labels=[1,0,0,0], fontsize=8)  # 위도선 (30도 간격)
-m.drawmeridians(np.arange(-180, 181, 60), labels=[0,0,0,1], fontsize=8) # 경도선 (60도 간격)
+m.drawparallels(np.arange(-90, 91, 30), labels=[1,0,0,0], fontsize=8)  # 30° 간격, 왼쪽 눈금
+m.drawmeridians(np.arange(-180, 181, 60), labels=[0,0,0,1], fontsize=8)  # 60° 간격, 아래 눈금
 
-# 화산 위치를 지도 좌표계로 변환
+# 경위도 → 지도 좌표
 x, y = m(df_vol[&#x27;Longitude&#x27;].values, df_vol[&#x27;Latitude&#x27;].values)
 
-# 화산 위치 표시
 m.scatter(x, y, c=&#x27;red&#x27;, s=20, alpha=0.7, marker=&#x27;^&#x27;, 
             edgecolors=&#x27;darkred&#x27;, linewidth=0.5, label=&#x27;화산&#x27;)
 
-# 그래프 제목 및 범례 설정
 plt.title(&#x27;전 세계 화산 분포도&#x27;, fontsize=16, fontweight=&#x27;bold&#x27;)
 plt.legend(loc=&#x27;lower left&#x27;)
 plt.tight_layout()
@@ -146,8 +138,8 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 
 plt.figure(figsize=(12.0, 6.4))
-ax = plt.axes(projection=ccrs.PlateCarree())
-ax.set_global()
+ax = plt.axes(projection=ccrs.PlateCarree())  # 정거 원통 도법
+ax.set_global()                               # 지구 전체
 ax.coastlines()
 ax.add_feature(cfeature.LAND, facecolor=&#x27;lightgray&#x27;)
 ax.add_feature(cfeature.OCEAN, facecolor=&#x27;lightblue&#x27;)
@@ -155,7 +147,7 @@ ax.add_feature(cfeature.BORDERS, linestyle=&#x27;:&#x27;)
 plt.scatter(df_vol[&#x27;Longitude&#x27;], df_vol[&#x27;Latitude&#x27;], 
             c=&#x27;red&#x27;, s=15, alpha=0.6, marker=&#x27;^&#x27;, 
             edgecolors=&#x27;darkred&#x27;, linewidth=0.3, 
-            transform=ccrs.PlateCarree(), label=&#x27;Volcano&#x27;)
+            transform=ccrs.PlateCarree(), label=&#x27;Volcano&#x27;)  # 자료 좌표: 경위도
 plt.title(&#x27;World Volcanoes Distribution (Cartopy)&#x27;, fontsize=16, fontweight=&#x27;bold&#x27;)
 plt.legend(loc=&#x27;lower left&#x27;)
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;05_01_Plotting_ring_of_fire_03&quot;))
@@ -164,14 +156,14 @@ plt.show()</code></pre>
 from folium.plugins import MarkerCluster
 import pandas as pd
 
-# 지도 중심 좌표 (예: 서울 근처)
+# 지도 중심: 서울 부근(위도 37.5°, 경도 127°)
 m = folium.Map(location=[37.5, 127], zoom_start=2, tiles=&#x27;cartodbpositron&#x27;)
-marker_cluster = MarkerCluster().add_to(m)
+marker_cluster = MarkerCluster().add_to(m)  # 가까운 마커끼리 묶어 표시
 for idx, row in df_vol.iterrows():
     lat = row[&#x27;Latitude&#x27;]
     lon = row[&#x27;Longitude&#x27;]
     name = row[&#x27;VolcanoName&#x27;] if &#x27;VolcanoName&#x27; in df_vol.columns else &#x27;&#x27;
- # NaN 값이 있으면 건너뜀
+    # 위경도가 없는 화산은 건너뜀
     if pd.isna(lat) or pd.isna(lon):
         continue
     folium.Marker([lat, lon], popup=name, icon=folium.Icon(color=&#x27;red&#x27;, icon=&#x27;fire&#x27;)).add_to(marker_cluster)
@@ -184,41 +176,41 @@ fig = go.Figure()
 
 # 화산 위치 추가
 fig.add_trace(go.Scattergeo(
-            lon=df_vol[&#x27;Longitude&#x27;],  # 경도 데이터
-            lat=df_vol[&#x27;Latitude&#x27;],   # 위도 데이터
-            mode=&#x27;markers&#x27;,           # 마커 모드로 설정
+            lon=df_vol[&#x27;Longitude&#x27;],
+            lat=df_vol[&#x27;Latitude&#x27;],
+            mode=&#x27;markers&#x27;,
             marker=dict(
-                size=8,                              # 마커 크기
-                color=&#x27;red&#x27;,                         # 마커 색상 (빨간색)
-                symbol=&#x27;triangle-up&#x27;,                # 마커 모양 (위쪽 삼각형)
-                line=dict(width=1, color=&#x27;darkred&#x27;)  # 마커 테두리 설정
+                size=8,
+                color=&#x27;red&#x27;,
+                symbol=&#x27;triangle-up&#x27;,
+                line=dict(width=1, color=&#x27;darkred&#x27;)
             ),
- # 화산 이름이 있으면 텍스트로 표시
+            # 화산 이름(없으면 생략)
             text=df_vol[&#x27;VolcanoName&#x27;] if &#x27;VolcanoName&#x27; in df_vol.columns else None,
- # 마우스 호버 시 표시할 정보 템플릿
+            # 마우스를 올렸을 때 보일 정보
             hovertemplate=&#x27;&lt;b&gt;%{text}&lt;/b&gt;&lt;br&gt;&#x27; +
                             &#x27;Latitude: %{lat}&lt;br&gt;&#x27; +
                             &#x27;Longitude: %{lon}&lt;br&gt;&#x27; +
                             &#x27;&lt;extra&gt;&lt;/extra&gt;&#x27;,
-            name=&#x27;Volcanoes&#x27;  # 범례에 표시될 이름
+            name=&#x27;Volcanoes&#x27;
         ))
 
 # 지도 레이아웃 설정
 fig.update_layout(
-        title=&#x27;World Volcanoes Distribution&#x27;,  # 지도 제목
+        title=&#x27;World Volcanoes Distribution&#x27;,
         geo=dict(
-            showland=True,                        # 육지 표시
-            landcolor=&#x27;rgb(243, 243, 243)&#x27;,       # 육지 색상 (연한 회색)
-            coastlinecolor=&#x27;rgb(204, 204, 204)&#x27;,  # 해안선 색상 (회색)
-            showocean=True,                       # 바다 표시
-            oceancolor=&#x27;rgb(230, 245, 255)&#x27;,      # 바다 색상 (연한 파란색)
-            projection_type=&#x27;natural earth&#x27;       # 지도 투영법 (자연적 지구 투영)
+            showland=True,
+            landcolor=&#x27;rgb(243, 243, 243)&#x27;,
+            coastlinecolor=&#x27;rgb(204, 204, 204)&#x27;,
+            showocean=True,
+            oceancolor=&#x27;rgb(230, 245, 255)&#x27;,
+            projection_type=&#x27;natural earth&#x27;  # 지도 도법
         ),
-        width=800,  # 지도 너비
-        height=450  # 지도 높이
+        width=800,  # 그림 크기(픽셀)
+        height=450
     )
 
-fig.show()  # 지도 출력</code></pre>
+fig.show()</code></pre>
 <script>
 document.querySelectorAll('button.copy').forEach(function (b) {
   b.addEventListener('click', function () {

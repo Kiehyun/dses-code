@@ -106,13 +106,11 @@ def design(lags):
     ok = X.notna().all(axis=1) & df["temp"].notna()
     return X[ok], df["temp"][ok]
 
-
 def fit(lags):
     X, y = design(lags)
     coef, *_ = np.linalg.lstsq(X.values, y.values, rcond=None)
     resid = y.values - X.values @ coef
     return coef, X, y, (resid ** 2).mean()
-
 
 best = min(((l1, l2, l3) for l1 in range(7) for l2 in range(13) for l3 in range(4)),
            key=lambda lags: fit(lags)[3])
@@ -220,8 +218,8 @@ cards = pd.DataFrame([
 cards
 
 # %% code 487.
-pre = temp.loc["1880":"1900"].mean()   # 산업화 이전 기준(GISTEMP는 1880년부터)
-offset = -pre                          # 1951~1980년 기준 → 산업화 이전 기준
+pre = temp.loc["1880":"1900"].mean()  # 산업화 이전 기준(GISTEMP는 1880년부터)
+offset = -pre                         # 1951~1980년 기준 → 산업화 이전 기준
 base = (coef[0] + coef[2] * df["enso"].mean()
         + coef[3] * volc.loc["1979":].mean() + coef[4] * sun.loc["1979":].mean())
 
@@ -229,14 +227,12 @@ last_year = df.index[-1].year
 c_now = df["co2"].iloc[-12:].mean()
 fy = np.arange(last_year, 2061)
 
-
 def scenario(stop_year):
     if stop_year is None:                   # 지금처럼: 해마다 2.5 ppm
         rate = np.full(len(fy), 2.5)
     else:                                   # stop_year까지 증가 폭을 0으로 줄임
         rate = 2.5 * np.clip((stop_year - fy) / (stop_year - last_year), 0, 1)
     return c_now + np.concatenate([[0], np.cumsum(rate[1:])])
-
 
 scen = {"지금처럼": scenario(None),
         "점진 안정(2050)": scenario(2050),

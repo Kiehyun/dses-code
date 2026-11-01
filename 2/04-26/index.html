@@ -110,13 +110,11 @@ plt.show()</code></pre>
     ok = X.notna().all(axis=1) &amp; df[&quot;temp&quot;].notna()
     return X[ok], df[&quot;temp&quot;][ok]
 
-
 def fit(lags):
     X, y = design(lags)
     coef, *_ = np.linalg.lstsq(X.values, y.values, rcond=None)
     resid = y.values - X.values @ coef
     return coef, X, y, (resid ** 2).mean()
-
 
 best = min(((l1, l2, l3) for l1 in range(7) for l2 in range(13) for l3 in range(4)),
            key=lambda lags: fit(lags)[3])
@@ -214,8 +212,8 @@ cards = pd.DataFrame([
     (&quot;E9&quot;, &quot;모형의 설명력&quot;, f&quot;R² = {r2:.2f}&quot;),
 ], columns=[&quot;번호&quot;, &quot;증거&quot;, &quot;값&quot;])
 cards</code></pre>
-<h2 id="code-487">code 487. <button class="copy">복사</button></h2><pre><code>pre = temp.loc[&quot;1880&quot;:&quot;1900&quot;].mean()   # 산업화 이전 기준(GISTEMP는 1880년부터)
-offset = -pre                          # 1951~1980년 기준 → 산업화 이전 기준
+<h2 id="code-487">code 487. <button class="copy">복사</button></h2><pre><code>pre = temp.loc[&quot;1880&quot;:&quot;1900&quot;].mean()  # 산업화 이전 기준(GISTEMP는 1880년부터)
+offset = -pre                         # 1951~1980년 기준 → 산업화 이전 기준
 base = (coef[0] + coef[2] * df[&quot;enso&quot;].mean()
         + coef[3] * volc.loc[&quot;1979&quot;:].mean() + coef[4] * sun.loc[&quot;1979&quot;:].mean())
 
@@ -223,14 +221,12 @@ last_year = df.index[-1].year
 c_now = df[&quot;co2&quot;].iloc[-12:].mean()
 fy = np.arange(last_year, 2061)
 
-
 def scenario(stop_year):
     if stop_year is None:                   # 지금처럼: 해마다 2.5 ppm
         rate = np.full(len(fy), 2.5)
     else:                                   # stop_year까지 증가 폭을 0으로 줄임
         rate = 2.5 * np.clip((stop_year - fy) / (stop_year - last_year), 0, 1)
     return c_now + np.concatenate([[0], np.cumsum(rate[1:])])
-
 
 scen = {&quot;지금처럼&quot;: scenario(None),
         &quot;점진 안정(2050)&quot;: scenario(2050),

@@ -31,7 +31,6 @@ NORTH, SOUTH, EAST, WEST = 55, 20, 150, 100
 LEVEL_850 = 85000  # Pa 단위(850 hPa)
 LEVEL_500 = 50000  # 500 hPa
 
-
 def fetch(variable, level=None):
     """GFS 분석장에서 필요한 영역·변수만 잘라 받는다."""
     query = ncss.query()
@@ -43,17 +42,15 @@ def fetch(variable, level=None):
         query.vertical_level(level)
     return ncss.get_data(query)
 
-
 def to_array(dataset, name):
     """결측이 표시된 배열을 계산하기 쉬운 실수 배열로 바꾼다."""
     values = np.squeeze(dataset.variables[name][:])
     return np.ma.filled(values, np.nan).astype(float)
 
-
 data_mslp = fetch("Pressure_reduced_to_MSL_msl")      # 해면기압
 data_t850 = fetch("Temperature_isobaric", LEVEL_850)  # 850 hPa 기온
 data_z500 = fetch("Geopotential_height_isobaric", LEVEL_500)  # 500 hPa 고도
-data_zsfc = fetch("Geopotential_height_surface")                # 지형 높이
+data_zsfc = fetch("Geopotential_height_surface")      # 지형 높이
 
 lat = to_array(data_mslp, "latitude")
 lon = to_array(data_mslp, "longitude")
@@ -92,7 +89,6 @@ import cartopy.feature as cfeature
 PROJ = ccrs.LambertConformal(central_longitude=127.5, central_latitude=38)
 EXTENT = [105, 145, 22, 52]        # 지도에 실제로 보일 범위(경도, 위도)
 
-
 def make_map(ax):
     """해안선과 국경을 그려 일기도 바탕을 만든다."""
     ax.set_extent(EXTENT, crs=ccrs.PlateCarree())
@@ -104,7 +100,6 @@ def make_map(ax):
     gl.top_labels = gl.right_labels = False
     gl.xlabel_style = gl.ylabel_style = {"size": 8}
     return ax
-
 
 print("지도 바탕 함수 준비 완료")
 
@@ -136,14 +131,13 @@ plt.show()
 # %% code 456.
 from scipy.ndimage import maximum_filter, minimum_filter
 
-
 def find_extrema(field, lon, lat, kind="min", size=25, count=4,
                  terrain=None, max_height=HIGH_TERRAIN):
     """기압장에서 고기압(max) 또는 저기압(min) 중심 위치를 찾는다."""
     filtered = (maximum_filter(field, size) if kind == "max"
                 else minimum_filter(field, size))
-    is_ext = field == filtered                        # 창 안에서 극값인 지점
-    margin = size // 2                                # 경계에서 창 절반 이내는 제외
+    is_ext = field == filtered  # 창 안에서 극값인 지점
+    margin = size // 2          # 경계에서 창 절반 이내는 제외
     is_ext[:margin, :] = is_ext[-margin:, :] = False
     is_ext[:, :margin] = is_ext[:, -margin:] = False
     if terrain is not None:                           # 높은 고원 위의 점 제외
@@ -153,7 +147,6 @@ def find_extrema(field, lon, lat, kind="min", size=25, count=4,
     order = np.argsort(values)[::-1] if kind == "max" else np.argsort(values)
     picked = order[:count]
     return lon[cols[picked]], lat[rows[picked]], values[picked]
-
 
 low_lon, low_lat, low_val = find_extrema(mslp_smooth, lon, lat, "min", terrain=zsfc)
 high_lon, high_lat, high_val = find_extrema(mslp_smooth, lon, lat, "max", terrain=zsfc)

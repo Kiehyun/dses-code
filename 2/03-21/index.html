@@ -23,7 +23,6 @@ from PIL import Image
 
 SKY = &quot;https://skyserver.sdss.org/dr18/SkyServerWS&quot;
 
-
 def get(url, params=None, tries=3):
     for k in range(tries):
         try:
@@ -35,7 +34,6 @@ def get(url, params=None, tries=3):
                 raise
             time.sleep(5)
 
-
 def sql(query, name):
     &quot;&quot;&quot;SDSS SkyServer에 SQL을 보내 결과를 DataFrame으로 받기(name.csv로 저장).&quot;&quot;&quot;
     f = Path(proj_dir) / f&quot;{name}.csv&quot;
@@ -44,7 +42,6 @@ def sql(query, name):
                    {&quot;cmd&quot;: query, &quot;format&quot;: &quot;csv&quot;}).text
         f.write_text(text, encoding=&quot;utf-8&quot;)
     return pd.read_csv(f, skiprows=1)
-
 
 def cutout(ra, dec, scale, name, size=400):
     &quot;&quot;&quot;SDSS 컬러 사진(gri 합성) 받기. scale은 픽셀당 각초.&quot;&quot;&quot;
@@ -163,7 +160,6 @@ plt.show()</code></pre>
     return np.where((df[&quot;u_r&quot;] &gt; cut_color) &amp; (df[&quot;conc&quot;] &gt; cut_conc), &quot;타원&quot;,
                     &quot;나선&quot;)
 
-
 results = []
 for cc in np.arange(1.8, 3.01, 0.1):
     for ck in np.arange(2.2, 3.21, 0.1):
@@ -192,7 +188,6 @@ spectra = [  # (이름, plate, mjd, fiber, z)
 LINES = {&quot;Hβ&quot;: 4861, &quot;[OIII]&quot;: 5007, &quot;Hα&quot;: 6563, &quot;[NII]&quot;: 6584, &quot;Mg II&quot;: 2798,
          &quot;Hγ&quot;: 4341}
 
-
 def spectrum(plate, mjd, fiber):
     f = Path(proj_dir) / f&quot;spec-{plate:04d}-{mjd}-{fiber:04d}.fits&quot;
     if not f.exists():
@@ -202,7 +197,6 @@ def spectrum(plate, mjd, fiber):
     with fits.open(f) as h:
         d = h[1].data
         return 10 ** d[&quot;loglam&quot;], d[&quot;flux&quot;]
-
 
 fig, axes = plt.subplots(4, 1, figsize=(7.5, 6.6), sharex=False)
 for ax, (name, plate, mjd, fiber, z) in zip(axes, spectra):

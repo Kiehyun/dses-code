@@ -2,18 +2,27 @@
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
 # %% code 392.
-# 파일 ID와 저장 경로를 리스트로 정의
-files = [
+gd = "https://docs.google.com/uc?export=download&id="   # 구글 드라이브 사본
+psl = "https://downloads.psl.noaa.gov/Datasets/noaa.oisst.v2/"
+
+# OISST·마스크: NOAA PSL에서 직접 받기(실패하면 구글 드라이브 사본으로 대체)
+oisst = [
     ("1E5TZgqXhh73i0VZLcY-xh7CNR3OJgB8K", "sst.wkmean.1990-present.nc"),
-    ("1gxp1wK1JBhD215gQgVHPauTJnrfKv9Zi", "lsmask.nc"),
+    ("1gxp1wK1JBhD215gQgVHPauTJnrfKv9Zi", "lsmask.nc")
+]
+for file_id, output_path in oisst:
+    try:
+        du.download(psl + output_path, PROJ / output_path)
+    except Exception:
+        du.download(gd + file_id, PROJ / output_path)
+
+# MODIS 장면: Earthdata 로그인이 필요하므로 구글 드라이브 사본을 받음
+modis = [
     ("1txeMeu4dVESAQj0AcKdOBAtduH3MaiX3", "T2008168030500.L2_LAC_SST.x.zip"),
     ("1vf01dzj_qkeY4PG_5VXRCxO-RhkBvYfH", "T2008170025000.L2_LAC_SST.x.zip")
 ]
-
-# for 루프를 사용하여 파일 다운로드
-for file_id, output_path in files:
-    du.download(f"https://docs.google.com/uc?export=download&id={file_id}",
-                PROJ / output_path)
+for file_id, output_path in modis:
+    du.download(gd + file_id, PROJ / output_path)
 
 # %% code 393.
 fpaths = du.list_files(PROJ, pattern="*.*")
@@ -279,16 +288,14 @@ plt.title('SST product using MODIS', fontsize=10)
 
 x1, y1 = m(100, 7.5)
 plt.text(x1, y1, 'Maximum value: {0:.1f}\nMean value: {1:.1f}\nMin value: {2:.1f}\n'\
-            .format(sst.max(), sst.mean(), sst.min()), 
-            horizontalalignment='left',
-            verticalalignment='top', 
+            .format(sst.max(), sst.mean(), sst.min()),
+            horizontalalignment='left', verticalalignment='top',
             fontsize=7, style='italic', wrap=True)
 
 x2, y2 = m(149.5, 7.5)
-plt.text(x2, y2, "{}\nMODIS SST product from Ocean Color Web\n".format(sst_l2.stem), 
-            horizontalalignment='right',
-            verticalalignment='top', 
-            fontsize=7, style='italic', wrap=True)         
+plt.text(x2, y2, "{}\nMODIS SST product from Ocean Color Web\n".format(sst_l2.stem),
+            horizontalalignment='right', verticalalignment='top',
+            fontsize=7, style='italic', wrap=True)
 
 plt.savefig(f"{PROJ}/{sst_l2.stem}_{DATAFIELD_NAME}.pdf", bbox_inches='tight')
 print(f"savefig: {PROJ}/{sst_l2.stem}_{DATAFIELD_NAME}.pdf")

@@ -5,18 +5,17 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# 1행 2열의 subplot 생성
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
 
-length = 1 
+length = 1  # 진자 길이
 
-x = 1/np.sqrt(2)
+x = 1/np.sqrt(2)  # 45° 기울어진 추의 위치
 y = -1/np.sqrt(2)
 
-# 첫 번째 subplot (왼쪽)
+# 왼쪽 그림
 ax1.grid(True, linestyle='--')
 ax2.set_aspect('equal', 
- # adjustable='box'
+               # adjustable='box'
                )
 ax1.set(xlim=[-length-0.5, length+0.5], ylim=[-length-0.5, length-0.5])
 line1, = ax1.plot([], [], color='b', linewidth=2)
@@ -25,10 +24,10 @@ line1.set_data([0, x], [0, y])
 obj1.set_data([x], [y])
 ax1.set_title('First Plot')
 
-# 두 번째 subplot (오른쪽)
+# 오른쪽 그림
 ax2.set(xlim=[-length-0.5, length+0.5], ylim=[-length-0.5, length-0.5])
 ax2.set_aspect('equal', 
- # adjustable='box'
+               # adjustable='box'
                )
 line2, = ax2.plot([], [], color='b', linewidth=2)
 center, = ax2.plot(0, 0, 'ko', markersize=5)
@@ -37,16 +36,16 @@ line2.set_data([0, x], [0, y])
 obj2.set_data([x], [y])
 ax2.set_title('Second Plot')
 
-plt.tight_layout()  # subplot 간격 조정
+plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "02_04_Simple_pendulum_motion_01"))
 plt.show()
 
 # %% code 40.
 fig, ax = plt.subplots(figsize=(8,8))
 
-#단진자의 추의 (x, y) 좌표를 구하기 위한 변수
+# 단진자 추의 (x, y) 좌표
 length = 1 
-angle = 45 #도(°)
+angle = 45  # 도(°)
 x = length*np.sin(45*np.pi/180)
 y = -length*np.cos(45*np.pi/180)
 
@@ -54,7 +53,6 @@ ax.set(xlim=[-length-0.5, length+0.5], ylim=[-length-0.5, length-0.5])
 ax.set_aspect('equal', adjustable='box')
 ax.grid(True, linestyle='--')
 
-# x축과 y축 눈금을 0.5 간격으로 설정
 ax.set_xticks(np.arange(-1.5, 2.0, 0.5))
 ax.set_yticks(np.arange(-1.5, 1.0, 0.5))
 
@@ -62,7 +60,7 @@ line, = ax.plot([], [], color='b', linewidth=2)
 center, = ax.plot(0, 0, 'ko', markersize=5)
 obj, = ax.plot([], [], 'ro', markersize=18)
 
-time_text = ax.text(-length-0.2, -length-0.2, '')
+time_text = ax.text(-length-0.2, -length-0.2, '')  # 시간 표시 자리(애니메이션에서 사용)
 line.set_data([0, x], [0, y])
 obj.set_data([x], [y])
 
@@ -85,104 +83,88 @@ def odefun(Z, t, k):
     dZdt[1] = -k * np.sin(Z[0])  # d²θ/dt² = -(g/L)sin(θ)
     return dZdt
 
-# 매개변수 설정
-init_angle = 45    # 초기 각도 (도 단위)
-length = 1.0       # 진자의 길이 (미터)
-k = 9.81 / length  # 중력가속도/길이 비율
+init_angle = 45    # 도
+length = 1.0       # m
+k = 9.81 / length  # g/L
 
-# 시간 배열과 초기 조건 설정
-t = np.linspace(0, 10, 100)                   # 0초부터 10초까지 100개 점
-Z0 = np.array([init_angle * np.pi / 180, 0])  # 초기조건: [각도(라디안), 각속도]
+t = np.linspace(0, 10, 100)                   # 0 ~ 10 s, 100개 시점
+Z0 = np.array([init_angle * np.pi / 180, 0])  # 초기 조건 [각도(라디안), 각속도]
 
-# 미분방정식 해결
-Z = odeint(odefun, Z0, t, args=(k,))
+Z = odeint(odefun, Z0, t, args=(k,))  # 미분방정식 수치 적분
 
-# 결과 출력
 print(f"해의 개수: {len(Z)}")
-print(f"각도 변화 (처음 5개): {Z[:12, 0] * 180 / np.pi}")  # 라디안을 도로 변환
+print(f"각도 변화 (처음 5개): {Z[:12, 0] * 180 / np.pi}")  # 라디안 → 도
 print(f"각속도 변화 (처음 5개): {Z[:12, 1]}")
 
 # %% code 42.
-fig, ax = plt.subplots(figsize=(8,8))  # 8x8 크기의 그림과 축 생성
+fig, ax = plt.subplots(figsize=(8,8))
 
-# 단진자의 추의 (x, y) 좌표를 구하기 위한 변수
-length = 1                        # 진자의 길이
-angle = 45                        # 각도 (도 단위)
-x = length*np.sin(45*np.pi/180)   # x 좌표 계산 (sin 함수 사용, 도를 라디안으로 변환)
-y = -length*np.cos(45*np.pi/180)  # y 좌표 계산 (cos 함수 사용, 음수는 아래쪽 방향)
+# 단진자 추의 (x, y) 좌표
+length = 1  # 진자 길이
+angle = 45  # 도
+x = length*np.sin(45*np.pi/180)
+y = -length*np.cos(45*np.pi/180)  # 음수: 고정점 아래쪽
 
-# 축의 범위 설정 (x축: -1.5~1.5, y축: -1.5~0.5)
 ax.set(xlim=[-length-0.5, length+0.5], ylim=[-length-0.5, length-0.5])
-ax.set_aspect('equal', adjustable='box')  # 가로세로 비율을 1:1로 설정
-ax.grid(True, linestyle='--')             # 격자 표시 (점선 스타일)
+ax.set_aspect('equal', adjustable='box')
+ax.grid(True, linestyle='--')
 
-# x축과 y축 눈금을 0.5 간격으로 설정
-ax.set_xticks(np.arange(-1.5, 2.0, 0.5))  # x축 눈금 설정
-ax.set_yticks(np.arange(-1.5, 1.0, 0.5))  # y축 눈금 설정
+ax.set_xticks(np.arange(-1.5, 2.0, 0.5))
+ax.set_yticks(np.arange(-1.5, 1.0, 0.5))
 
-# 그래프 요소들 생성 (빈 상태로 초기화)
-line, = ax.plot([], [], color='b', linewidth=2)  # 진자 줄 (파란색, 굵기 2)
-center, = ax.plot(0, 0, 'ko', markersize=5)      # 중심점 (검은색 원, 크기 5)
-obj, = ax.plot([], [], 'ro', markersize=18)      # 진자 추 (빨간색 원, 크기 18)
+line, = ax.plot([], [], color='b', linewidth=2)  # 진자 줄
+center, = ax.plot(0, 0, 'ko', markersize=5)      # 고정점
+obj, = ax.plot([], [], 'ro', markersize=18)      # 추
 
-# 시간 텍스트 표시 위치 설정
 time_text = ax.text(-length-0.2, -length-0.2, '')
-# 진자 줄과 추의 데이터 설정
-line.set_data([0, x], [0, y])  # 원점에서 추까지의 선 데이터
-obj.set_data([x], [y])         # 추의 위치 데이터
+line.set_data([0, x], [0, y])
+obj.set_data([x], [y])
 
-plt.show()  # 그래프 표시
+plt.show()
 
-# 진자의 좌표값들을 저장할 리스트 초기화
+# 처음 12개 시점의 추 좌표
 x_values = []
 y_values = []
 
-# Z 배열의 처음 12개 데이터에 대해 좌표 계산
 for j in Z[:12] :
-    theta = j[0]                            # 각 시점의 각도 값
-    x_values.append(length*np.sin(theta))   # x 좌표 계산 후 리스트에 추가
-    y_values.append(-length*np.cos(theta))  # y 좌표 계산 후 리스트에 추가
-print("x_values :", x_values)  # x 좌표 값들 출력
-print("y_values :", y_values)  # y
+    theta = j[0]  # 각도(라디안)
+    x_values.append(length*np.sin(theta))
+    y_values.append(-length*np.cos(theta))
+print("x_values :", x_values)
+print("y_values :", y_values)
 
 # %% code 43.
 import matplotlib.pyplot as plt
 import numpy as np
 
-# # 데이터 설정
 frames = range(1, 13)
 
-# 서브플롯 생성 (3행 4열)
 fig, axes = plt.subplots(3, 4, figsize=(12, 9))
 fig.suptitle('Coordinate Tracking Across Frames', fontsize=16, fontweight='bold')
 
-# 각 프레임에 대한 그래프 생성
 for i, (frame, x, y) in enumerate(zip(frames, x_values, y_values)):
     row = i // 4
     col = i % 4
     ax = axes[row, col]
     
- # 원점에서 해당 좌표까지의 벡터 그리기
+    # 고정점(원점)에서 추까지 화살표
     ax.arrow(0, 0, x, y, head_width=0.05, head_length=0.05, fc='red', ec='red', linewidth=2)
     ax.plot(x, y, 'ro', markersize=8)
     
- # 좌표계 설정
     ax.set_xlim(-1.2, 1.2)
     ax.set_ylim(-1.2, 0.3)
     ax.axhline(y=0, color='k', linestyle='-', alpha=0.3)
     ax.axvline(x=0, color='k', linestyle='-', alpha=0.3)
- # ax.grid(False, alpha=0.3)
+    # ax.grid(False, alpha=0.3)
     ax.set_aspect('equal')
     
- # 제목 설정
     ax.set_title(f'Frame {frame}', fontweight='bold')
     
- # 각 그래프 아래에 좌표값 텍스트 표시
+    # 그림 아래에 좌표값 표시
     ax.text(0, -1.6, f'x = {x:.3f}, y = {y:.3f}', 
             ha='center', va='top', fontsize=10, 
             bbox=dict(boxstyle='round,pad=0.3', facecolor='lightblue', alpha=0.7))
 
-# 레이아웃 조정
 plt.tight_layout()
 plt.subplots_adjust(top=0.93, bottom=0.1)
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "02_04_Simple_pendulum_motion_03"))
@@ -193,14 +175,15 @@ length = 1
 init_angle = 30
 k = 9.81/length
 
-tf, dt = 10, 0.05
+tf, dt = 10, 0.05  # 끝 시각 · 시간 간격(s)
 t = np.arange(0, tf+dt, dt)
 
-Z = odeint(odefun, Z0, t, args=(9.81/length,))
+Z0 = np.array([init_angle * np.pi / 180, 0])  # 초기 각도 30°로 다시 정함
+Z = odeint(odefun, Z0, t, args=(k,))
 
 fig, ax = plt.subplots(figsize=(8,8))
 
-# 초기 각도로 x, y 좌표 계산
+# 초기 각도의 추 위치
 theta_initial = init_angle * np.pi / 180
 x = length * np.sin(theta_initial)
 y = -length * np.cos(theta_initial)
@@ -208,10 +191,10 @@ y = -length * np.cos(theta_initial)
 ax.set(xlim=[-length-0.5, length+0.5], ylim=[-length-0.5, length-0.5])
 ax.set_aspect('equal', adjustable='box')
 
-# 축 레이블과 틱 제거
+# 축 숨기기
 ax.set_xticks([])
 ax.set_yticks([])
-ax.axis('off')  # 모든 축 요소 제거
+ax.axis('off')
 
 center, = ax.plot(0, 0, 'ko', markersize=5)
 line, = ax.plot([], [], color='b', linewidth=2)
@@ -226,55 +209,49 @@ plt.show()
 # %% code 45.
 def animate(i):
     """애니메이션의 각 프레임을 업데이트하는 함수"""
-    theta = Z[i, 0]                                   # i번째 시간 단계의 각도 값
-    x = length*np.sin(theta)                          # 진자 추의 x 좌표 계산 (삼각함수 사용)
-    y = -length*np.cos(theta)                         # 진자 추의 y 좌표 계산 (음수는 아래쪽 방향)
-    line.set_data([0, x], [0, y])                     # 진자 줄 데이터 업데이트 (원점에서 추까지)
-    obj.set_data([x], [y])                            # 진자 추의 위치 데이터 업데이트
-    time_text.set_text('time = {:.1f}'.format(t[i]))  # 현재 시간 텍스트 업데이트
-    return line, obj, time_text                       # 업데이트된 그래픽 객체들 반환
+    theta = Z[i, 0]  # i번째 시각의 각도
+    x = length*np.sin(theta)
+    y = -length*np.cos(theta)
+    line.set_data([0, x], [0, y])
+    obj.set_data([x], [y])
+    time_text.set_text('time = {:.1f}'.format(t[i]))
+    return line, obj, time_text  # 다시 그릴 객체(blit=True)
 
 from matplotlib.animation import FuncAnimation
-# 애니메이션 객체 생성
 ani = FuncAnimation(fig, animate, frames=len(Z), 
                     interval=int(dt*1000), blit=True)
-# fig: 그래프 객체
-# animate: 각 프레임을 그리는 함수
-# frames: 총 프레임 수 (Z 배열의 길이)
-# interval: 프레임 간 시간 간격 (밀리초 단위)
-# blit: 성능 최적화 옵션 (변경된 부분만 다시 그리기)
+# interval: 프레임 간격(ms), blit: 바뀐 부분만 다시 그리기
 
 import matplotlib
 import matplotlib.pyplot as plt
 
-# 애니메이션 임베드 제한을 50MB로 설정 (기본값은 약 20MB)
-matplotlib.rcParams['animation.embed_limit'] = 50   # MB 단위로 크기 제한
-matplotlib.rcParams['animation.writer'] = 'ffmpeg'  # 비디오 생성 도구 설정
+matplotlib.rcParams['animation.embed_limit'] = 50  # MB(기본값 약 20 MB)
+matplotlib.rcParams['animation.writer'] = 'ffmpeg'
 
 print(f"애니메이션 임베드 제한 설정값: {matplotlib.rcParams['animation.embed_limit']} MB")
 
 from IPython.display import HTML
-# 1. JavaScript 기반 애니메이션 (가볍고 대화형이지만 JavaScript 필요)
-matplotlib.rcParams['animation.html'] = 'jshtml'  # HTML 출력 형식을 JavaScript로 설정
+# 1) JavaScript 애니메이션: 가볍고 대화형
+matplotlib.rcParams['animation.html'] = 'jshtml'
 print(f"애니메이션 HTML 형식: {matplotlib.rcParams['animation.html']}")
-HTML(ani.to_jshtml())  # JavaScript 기반 HTML 애니메이션으로 변환하여 출력
+HTML(ani.to_jshtml())
 
-# 2. HTML5 비디오 기반 애니메이션 (안정적이지만 파일 크기가 큼)
-# matplotlib.rcParams['animation.html'] = 'html5' # HTML 출력 형식을 비디오로 설정
+# 2) HTML5 비디오: 안정적이지만 파일이 큼
+# matplotlib.rcParams['animation.html'] = 'html5'
 # print(f"애니메이션 HTML 형식: {matplotlib.rcParams['animation.html']}")
-# HTML(ani.to_html5_video()) # HTML5 비디오로 변환하여 출력
+# HTML(ani.to_html5_video())
 
 # %% code 46.
 class Pendulum(object):
     def __init__(self, length=1, init_angle=30, tf=10, dt=0.05):
         self.length = length
-        self.init_angle = init_angle*np.pi/180
+        self.init_angle = init_angle*np.pi/180  # 도 → 라디안
         self.dt = dt
         self.t = np.arange(0, tf+dt, dt)
  
         Z0 = np.array([self.init_angle, 0])
  
-        self.Z = odeint(self.odefun, Z0, self.t, args=(9.81/length,))
+        self.Z = odeint(self.odefun, Z0, self.t, args=(9.81/length,))  # [각도, 각속도] 시계열
  
     def odefun(self, Z, t, k):
         dZdt = np.zeros(2)
@@ -289,10 +266,10 @@ length = pend.length
 ax.set(xlim=[-length-0.5, length+0.5], ylim=[-length-0.5, length-0.5])
 ax.set_aspect('equal', adjustable='box')
 
-# 축 레이블과 틱 제거
+# 축 숨기기
 ax.set_xticks([])
 ax.set_yticks([])
-ax.axis('off')  # 모든 축 요소 제거
+ax.axis('off')
  
 center, = ax.plot(0, 0, 'ko', markersize=5)
 line, = ax.plot([], [], color='b', linewidth=2)
@@ -302,7 +279,7 @@ time_text = ax.text(-length-0.2, -length-0.2, '')
 line.set_data([0, x], [0, y])
 obj.set_data([x], [y])
 
-plt.tight_layout()  # subplot 간격 조정
+plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "02_04_Simple_pendulum_motion_05"))
 plt.show()
 
@@ -323,22 +300,21 @@ ani = FuncAnimation(fig, animate, frames=len(Z),
 import matplotlib
 import matplotlib.pyplot as plt
 
-# 애니메이션 임베드 제한을 50MB로 설정 (기본값은 약 20MB)
-matplotlib.rcParams['animation.embed_limit'] = 50   # MB 단위로 크기 제한
-matplotlib.rcParams['animation.writer'] = 'ffmpeg'  # 비디오 생성 도구 설정
+matplotlib.rcParams['animation.embed_limit'] = 50  # MB(기본값 약 20 MB)
+matplotlib.rcParams['animation.writer'] = 'ffmpeg'
 
 print(f"애니메이션 임베드 제한 설정값: {matplotlib.rcParams['animation.embed_limit']} MB")
 
 from IPython.display import HTML
-# 1. JavaScript 기반 애니메이션 (가볍고 대화형이지만 JavaScript 필요)
-matplotlib.rcParams['animation.html'] = 'jshtml'  # HTML 출력 형식을 JavaScript로 설정
+# 1) JavaScript 애니메이션: 가볍고 대화형
+matplotlib.rcParams['animation.html'] = 'jshtml'
 print(f"애니메이션 HTML 형식: {matplotlib.rcParams['animation.html']}")
-HTML(ani.to_jshtml())  # JavaScript 기반 HTML 애니메이션으로 변환하여 출력
+HTML(ani.to_jshtml())
 
-# 2. HTML5 비디오 기반 애니메이션 (안정적이지만 파일 크기가 큼)
-# matplotlib.rcParams['animation.html'] = 'html5' # HTML 출력 형식을 비디오로 설정
+# 2) HTML5 비디오: 안정적이지만 파일이 큼
+# matplotlib.rcParams['animation.html'] = 'html5'
 # print(f"애니메이션 HTML 형식: {matplotlib.rcParams['animation.html']}")
-# HTML(ani.to_html5_video()) # HTML5 비디오로 변환하여 출력
+# HTML(ani.to_html5_video())
 
 # %% code 48.
 # 애니메이션 저장

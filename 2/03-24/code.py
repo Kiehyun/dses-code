@@ -94,17 +94,11 @@ fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.8),
                        sharex=False, sharey=False, gridspec_kw=None)
 
 # 제곱근 정규화
-im0 = axs[0].imshow(hdul[0].data,
-                   origin='lower',
-                   norm=norm_sqrt,
-                   )
+im0 = axs[0].imshow(hdul[0].data, origin='lower', norm=norm_sqrt)
 axs[0].set_title('Square Root Normalization', fontsize=10)
 
 # 로그 정규화
-im1 = axs[1].imshow(hdul[0].data,
-                   origin='lower',
-                   norm=norm_log,
-                   )
+im1 = axs[1].imshow(hdul[0].data, origin='lower', norm=norm_log)
 axs[1].set_title('Log Normalization', fontsize=10)
 
 # 컬러바 추가
@@ -117,10 +111,7 @@ plt.show()
 # %% code 96.
 from warnings import warn
 from astropy.visualization import (
-    ImageNormalize,
-    LinearStretch,
-    ZScaleInterval,
-    simple_norm,
+    ImageNormalize, LinearStretch, ZScaleInterval, simple_norm,
 )
 
 # %% code 97.
@@ -181,11 +172,8 @@ def zimshow(
         matplotlib imshow 객체
     """
     im = ax.imshow(
-        image,
-        norm=znorm(image, stretch=stretch, **zscale_kw),
-        origin=origin,
-        cmap=cmap,
-        **kwargs
+        image, norm=znorm(image, stretch=stretch, **zscale_kw), origin=origin,
+        cmap=cmap, **kwargs
     )
     return im
 
@@ -294,22 +282,15 @@ def norm_imshow(
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 2.5),
                        sharex=False, sharey=False, gridspec_kw=None)
 
-
 # ImageNormalize 객체 만들기
 norm = ImageNormalize(hdul[0].data, interval=MinMaxInterval(),
                       stretch=SqrtStretch())
 
-im0 = axs[0].imshow(hdul[0].data,
-                origin='lower',
-                norm=norm,
-                )
+im0 = axs[0].imshow(hdul[0].data, origin='lower', norm=norm)
 
 axs[0].set_title('Normalization', fontsize=9)
 
-
-im1 = zimshow(axs[1], hdul[0].data,
-                origin='lower',
-                )
+im1 = zimshow(axs[1], hdul[0].data, origin='lower')
 
 axs[1].set_title(f'Zimshow', fontsize=9)
 
@@ -325,16 +306,10 @@ hdul2 = fits.open(str(fpaths[2]))
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 2.5),
                        sharex=False, sharey=False, gridspec_kw=None)
 
-im0 = zimshow(axs[0], hdul2[0].data,
-                origin='lower',
-                cmap='coolwarm',
-                )
+im0 = zimshow(axs[0], hdul2[0].data, origin='lower', cmap='coolwarm')
 axs[0].set_title('coolwarm colormap', fontsize=8)
 
-im1 = zimshow(axs[1], hdul2[0].data,
-                origin='lower',
-                cmap='gray',
-                )
+im1 = zimshow(axs[1], hdul2[0].data, origin='lower', cmap='gray')
 axs[1].set_title('gray colormap', fontsize=8)
 
 fig.suptitle(f'{str(fpaths[2])}', fontsize=8)
@@ -352,91 +327,65 @@ hdul =  fits.open(str(fpaths[0]), unit="adu")
 
 fig_set = plt.figure(figsize=(7.5, 3.8))
 
-ax0 = plt.subplot2grid((2,4), (0,0),
-                    colspan=2, rowspan=2,
-                    fig=fig_set)
-im0 = zimshow(ax0, hdul[0].data,
-            origin='lower',
-            )
-plt.colorbar(im0,
-             ax = ax0,
-             fraction=0.0345, pad=0.04)
+ax0 = plt.subplot2grid((2,4), (0,0), colspan=2, rowspan=2, fig=fig_set)
+im0 = zimshow(ax0, hdul[0].data, origin='lower')
+plt.colorbar(im0, ax = ax0, fraction=0.0345, pad=0.04)
 ax0.set_title(textwrap.fill(fpaths[0].name, 40), fontsize=9)   # 긴 파일 이름은 두 줄로
 
 cutsizes = 101
 
 # 1/4 영역
-ax20 = plt.subplot2grid((2,4), (0,2),
-                       fig=fig_set)
+ax20 = plt.subplot2grid((2,4), (0,2), fig=fig_set)
 cut_hdu = Cutout2D(
             data = hdul[0].data,
             position = (500, 500),
             size=(cutsizes, cutsizes)  # CCD 영역 잘라 내기
             )
-im20 = zimshow(ax20, cut_hdu.data,
-    origin='lower'
-    )
+im20 = zimshow(ax20, cut_hdu.data, origin='lower')
 ax20.set_ylabel('pixels')
 ax20.grid(ls=':')
 ax20.set_title(f'1/4 image area', fontsize=9)
-plt.colorbar(im20,
-            ax=ax20,
-            fraction=0.0455, pad=0.04)
+plt.colorbar(im20, ax=ax20, fraction=0.0455, pad=0.04)
 
 # 2/4 영역
-ax21 = plt.subplot2grid((2,4), (0,3),
-                       fig=fig_set)
+ax21 = plt.subplot2grid((2,4), (0,3), fig=fig_set)
 cut_hdu = Cutout2D(
             data = hdul[0].data,
             position = (hdul[0].data.shape[1] - 500, 500),
             size=(cutsizes, cutsizes)  # CCD 영역 잘라 내기
             )
-im21 = zimshow(ax21 ,cut_hdu.data,
-    origin='lower'
-    )
+im21 = zimshow(ax21 ,cut_hdu.data, origin='lower')
 ax21.set_ylabel('pixels')
 ax21.grid(ls=':')
 ax21.set_title(f'2/4 image area', fontsize=9)
-plt.colorbar(im21,
-            ax=ax21,
-            fraction=0.0455, pad=0.04)
+plt.colorbar(im21, ax=ax21, fraction=0.0455, pad=0.04)
 
 # 3/4 영역
-ax30 = plt.subplot2grid((2,4), (1,2),
-                       fig=fig_set)
+ax30 = plt.subplot2grid((2,4), (1,2), fig=fig_set)
 cut_hdu = Cutout2D(
             data = hdul[0].data,
             position = (500, hdul[0].data.shape[0] - 500),
             size=(cutsizes, cutsizes)  # CCD 영역 잘라 내기
             )
-im30 = zimshow(ax30, cut_hdu.data,
-    origin='lower'
-    )
+im30 = zimshow(ax30, cut_hdu.data, origin='lower')
 ax30.set_ylabel('pixels')
 ax30.grid(ls=':')
 ax30.set_title(f'3/4 image area', fontsize=9)
-plt.colorbar(im30,
-            ax=ax30,
-            fraction=0.0455, pad=0.04)
+plt.colorbar(im30, ax=ax30, fraction=0.0455, pad=0.04)
 
 # 4/4 영역
-ax31 = plt.subplot2grid((2,4), (1,3),
-                       fig=fig_set)
+ax31 = plt.subplot2grid((2,4), (1,3), fig=fig_set)
 cut_hdu = Cutout2D(
             data = hdul[0].data,
             position = (hdul[0].data.shape[1] - 500,
                         hdul[0].data.shape[0] - 500),
             size=(cutsizes, cutsizes)  # CCD 영역 잘라 내기
             )
-im31 = zimshow(ax31, cut_hdu.data,
-    origin='lower'
-    )
+im31 = zimshow(ax31, cut_hdu.data, origin='lower')
 ax31.set_ylabel('pixels')
 ax31.grid(ls=':')
 ax31.set_title(f'4/4 image area', fontsize=9)
-plt.colorbar(im31,
-            ax=ax31,
-            fraction=0.0455, pad=0.04)
+plt.colorbar(im31, ax=ax31, fraction=0.0455, pad=0.04)
 
 plt.tight_layout()
 plt.show()
@@ -473,7 +422,6 @@ def plot_image_with_cutouts(fpath, location, cutsizes=101):
     im1 = zimshow(ax1, data, origin='lower')
     plt.colorbar(im1, ax=ax1, fraction=0.0345, pad=0.04)
     ax1.set_title(textwrap.fill(fpath.name, 40), fontsize=9)   # 긴 파일 이름은 두 줄로
-
 
  # 4개의 부분 이미지
     positions = [(0,2), (0,3), (1,2), (1,3)]
@@ -517,7 +465,6 @@ x       = np.arange(0,8,0.1)
 sigma   = np.array([1, 2])
 width   = np.array([2, 5])
 power   = np.array([1.5, 2.5])
-
 
 plt.figure(figsize=(7.5, 3.6))
 ax1 = plt.subplot(1,2,1)
@@ -662,7 +609,6 @@ def plot_row_pixels_fwhm(fpath, row_number, conter, width):
 
     plt.show()
 
-
 plot_row_pixels_fwhm(fpaths[0], row_number, col_center, width)
 
 # %% code 110.
@@ -724,7 +670,6 @@ def plot_row_pixels_fwhm_from_background(fpath, row_number, conter, width):
     plt.grid(which='minor', linestyle=':', linewidth='0.5', color='gray')
 
     plt.show()
-
 
 plot_row_pixels_fwhm_from_background(fpaths[0], row_number, col_center, width)
 
@@ -796,16 +741,13 @@ ap = CAp(pos, r=FWHM*4)
 fig, axs = plt.subplots(1, 1, figsize=(7.5, 5.2),
                         sharex=False, sharey=False, gridspec_kw=None)
 
-im1 = zimshow(axs, hdul[0].data,
-            origin='lower',
-            )
+im1 = zimshow(axs, hdul[0].data, origin='lower')
 
 ap.plot(color='r', lw=1, alpha=0.5)
 
 ###########################################################
 # 설명할 내용 적기
-plt.title("Result of DAOStarfinder", fontsize = 11,
-    ha='center')
+plt.title("Result of DAOStarfinder", fontsize = 11, ha='center')
 
 plt.annotate(f'filename: {fpath.stem}', fontsize=8,
     xy=(0, 0), xytext=(-10, -60), va='top', ha='left',
@@ -823,9 +765,7 @@ plt.annotate(f'Number of star(s): {len(DAOfound)}', fontsize=8,
     xy=(0, 0), xytext=(-10, -50), va='top', ha='left',
     xycoords='axes fraction', textcoords='offset points')
 
-plt.colorbar(im1,
-            ax=axs,
-            fraction=0.0455, pad=0.04)
+plt.colorbar(im1, ax=axs, fraction=0.0455, pad=0.04)
 plt.tight_layout()
 plt.show()
 
@@ -977,8 +917,7 @@ def plot_3D_star_cutout(data, daofound, star_indices, cutsize=31):
     cutsize: The size (width and height) of the cutout image (default: 51 pixels).
     """
 
-    fig, axes = plt.subplots(2, 2,
-                             figsize=(7.5, 7.5),
+    fig, axes = plt.subplots(2, 2, figsize=(7.5, 7.5),
                              subplot_kw={'projection': '3d'})
     axes = axes.flatten()
 
@@ -1018,7 +957,6 @@ from matplotlib import pylab as pl
 from astropy.nddata import Cutout2D
 from astropy.io import fits
 
-
 def peak_label(peak):
     """원래 화소값(배경 포함)의 최댓값으로 노출 상태를 판정"""
     if peak >= 60000:
@@ -1028,7 +966,6 @@ def peak_label(peak):
     if peak >= 15000:
         return "적정"
     return "어두움"
-
 
 def plot_3d_surfaces(data, DAOfound, sky, cutsize=31):
     peak_raw = np.asarray(DAOfound['peak']) + sky        # 배경을 더해 원래 화소값으로

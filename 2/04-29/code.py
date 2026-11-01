@@ -16,14 +16,12 @@ PATHS = {
 }
 VARS = {"t": "t_an", "s": "s_an", "o": "o_an"}
 
-
 def open_woa(key):
     """WOA23 파일(약 80 MB)을 처음 한 번 내려받아 두고 열기"""
     local = Path(proj_dir) / Path(PATHS[key]).name
     if not local.exists():
         du.download(f"{SERVER}/{PATHS[key]}", local)
     return xr.open_dataset(local, decode_times=False)
-
 
 def get_section(lon):
     """경도 lon(°E, 서경은 음수)의 남북 단면(수온 · 염분 · 용존 산소) 받기"""
@@ -38,7 +36,6 @@ def get_section(lon):
     sec = xr.Dataset(data)
     sec.to_netcdf(nc_file)
     return sec
-
 
 atl = get_section(-25.5)   # 대서양 25.5°W
 print(atl)
@@ -74,13 +71,12 @@ plt.show()
 def add_density(sec, lon):
     depth2d, lat2d = np.meshgrid(sec.depth.values, sec.lat.values,
                                  indexing="ij")
-    p = gsw.p_from_z(-depth2d, lat2d)                       # 깊이(m) → 압력(dbar)
-    SA = gsw.SA_from_SP(sec["s"].values, p, lon, lat2d)    # 절대 염분 (g/kg)
-    CT = gsw.CT_from_t(SA, sec["t"].values, p)             # 보존 수온 (°C)
+    p = gsw.p_from_z(-depth2d, lat2d)           # 깊이(m) → 압력(dbar)
+    SA = gsw.SA_from_SP(sec["s"].values, p, lon, lat2d)  # 절대 염분 (g/kg)
+    CT = gsw.CT_from_t(SA, sec["t"].values, p)  # 보존 수온 (°C)
     sec["sigma0"] = (("depth", "lat"), gsw.sigma0(SA, CT))  # 포텐셜 밀도 - 1000
     sec["theta"] = (("depth", "lat"), gsw.pt_from_CT(SA, CT))  # 포텐셜 수온
     return sec
-
 
 atl = add_density(atl, -25.5)
 print(f"σθ 범위: {float(atl.sigma0.min()):.2f} ~ {float(atl.sigma0.max()):.2f}")
