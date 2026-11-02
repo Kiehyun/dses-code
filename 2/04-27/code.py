@@ -1,17 +1,17 @@
 # 지구과학 데이터 사이언스 2 | IV-07. MODIS 에어로졸 광학 두께(AOD) 지도 그리기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 471.
+# %% code Ⅳ-97.
 from mpl_toolkits.basemap import Basemap
 from pyhdf.SD import SD, SDC
 
-# %% code 472.
+# %% code Ⅳ-98.
 # 구글 드라이브에 공유한 MODIS 에어로졸 파일 내려받기
 modis_url = (
     "https://docs.google.com/uc?export=download&id=1x5NgxKJR7w2dmS3NsC3nd8r0-CdG7XDA")
 du.download(modis_url, proj_dir / "MOD04_L2.A2023103.0135.061.2023134174649.hdf")
 
-# %% code 473.
+# %% code Ⅳ-99.
 from pyhdf.SD import SD, SDC
 
 # 파일명 변수 설정
@@ -22,27 +22,27 @@ filename = "MOD04_L2.A2023103.0135.061.2023134174649.hdf"
 hdf = SD("{}{}".format(base_dr, filename), SDC.READ)
 print("hdf: {}".format(hdf))
 
-# %% code 474.
+# %% code Ⅳ-100.
 print([name for name in dir(hdf) if not name.startswith("_")])
 
-# %% code 475.
+# %% code Ⅳ-101.
 hdf.datasets()
 
-# %% code 476.
+# %% code Ⅳ-102.
 DATAFIELD_NAME = "Optical_Depth_Land_And_Ocean"
 hdf_raw = hdf.select(DATAFIELD_NAME)
 print("hdf_raw: {}".format(hdf_raw))
 
-# %% code 477.
+# %% code Ⅳ-103.
 hdf_raw[:,:]
 
-# %% code 478.
+# %% code Ⅳ-104.
 import numpy as np
 hdf_array = np.array(hdf_raw[:,:])
 print("np.shape(hdf_array): {}".format(np.shape(hdf_array)))
 print("hdf_array:\n {}".format(hdf_array))
 
-# %% code 479.
+# %% code Ⅳ-105.
 import numpy as np
 
 # 위도값
@@ -57,48 +57,48 @@ longitude = np.array(lon_raw[:,:])
 print("np.shape(longitude): {}".format(np.shape(longitude)))
 print("longitude: {}".format(longitude))
 
-# %% code 480.
+# %% code Ⅳ-106.
 for i in longitude[:10] :
     print("longitude: {}".format(i))
 
-# %% code 481.
+# %% code Ⅳ-107.
 for i in latitude[:10] :
     print("latitude: {}".format(i))
 
-# %% code 482.
+# %% code Ⅳ-108.
 print("np.shape(hdf_array): {}".format(np.shape(hdf_array)))
 print("np.shape(latitude): {}".format(np.shape(latitude)))
 print("np.shape(longitude): {}".format(np.shape(longitude)))
 
-# %% code 483.
+# %% code Ⅳ-109.
 print("hdf_array: {}".format(hdf_array))
 print("np.shape(hdf_array): {}".format(np.shape(hdf_array)))
 print("type(hdf_array): {}".format(type(hdf_array)))
 print("hdf_array.dtype: {}".format(hdf_array.dtype))
 
-# %% code 484.
+# %% code Ⅳ-110.
 print("hdf_raw.attributes(): {}".format(hdf_raw.attributes()))
 print("hdf_raw.dimensions(): {}".format(hdf_raw.dimensions()))
 print("hdf_raw.getfillvalue(): {}".format(hdf_raw.getfillvalue()))
 
-# %% code 485.
+# %% code Ⅳ-111.
 print("hdf_array.dtype : {}".format(hdf_array.dtype))
 print("latitude.dtype : {}".format(latitude.dtype))
 print("longitude.dtype : {}".format(longitude.dtype))
 
-# %% code 486.
+# %% code Ⅳ-112.
 hdf_array = hdf_array.astype(dtype=np.float64)
 print("type(hdf_array): {}".format(type(hdf_array)))
 
 hdf_array[hdf_array == hdf_raw.attributes()['_FillValue']] = np.nan
 print("hdf_array: {}".format(hdf_array))
 
-# %% code 487.
+# %% code Ⅳ-113.
 hdf_array[hdf_array < hdf_raw.attributes()['valid_range'][0]] = np.nan
 hdf_array[hdf_array > hdf_raw.attributes()['valid_range'][1]] = np.nan
 print("hdf_array: {}".format(hdf_array))
 
-# %% code 488.
+# %% code Ⅳ-114.
 print("lon_raw.attributes(): {}".format(lon_raw.attributes()))
 print("lon_raw.attributes()['valid_range']: {}".format(lon_raw.attributes()['valid_range']))
 
@@ -113,12 +113,12 @@ latitude[latitude < lat_raw.attributes()['valid_range'][0]] = np.nan
 latitude[latitude > lat_raw.attributes()['valid_range'][1]] = np.nan
 print("latitude: {}".format(latitude))
 
-# %% code 489.
+# %% code Ⅳ-115.
 attrs = hdf_raw.attributes()
 print("hdf_raw.attributes()['scale_factor']: {}".format(attrs['scale_factor']))
 print("hdf_raw.attributes()['add_offset']: {}".format(attrs['add_offset']))
 
-# %% code 490.
+# %% code Ⅳ-116.
 fill_value = hdf_raw.attributes()['_FillValue']
 scale_factor = hdf_raw.attributes()['scale_factor']
 offset = hdf_raw.attributes()['add_offset']
@@ -126,7 +126,7 @@ hdf_value = hdf_array * scale_factor + offset
 hdf_value = np.array(hdf_value)
 print("hdf_value: {}".format(hdf_value))
 
-# %% code 491.
+# %% code Ⅳ-117.
 print("np.shape(hdf_value): {}".format(np.shape(hdf_value)))
 print("np.shape(latitude): {}".format(np.shape(latitude)))
 print("np.shape(longitude): {}".format(np.shape(longitude)))
@@ -135,7 +135,7 @@ print("hdf_value.dtype : {}".format(hdf_value.dtype))
 print("latitude.dtype : {}".format(latitude.dtype))
 print("longitude.dtype : {}".format(longitude.dtype))
 
-# %% code 492.
+# %% code Ⅳ-118.
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -169,7 +169,7 @@ print("유효한 AOD 칸: {} / {} ({:.1f}%)".format(valid.size, hdf_value.size,
 plt.grid(True)
 plt.show()
 
-# %% code 493.
+# %% code Ⅳ-119.
 import numpy as np
 from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
@@ -189,7 +189,7 @@ m.drawmeridians(np.arange(-180., 180.1, 30.), labels=[1, 1, 1, 1], fontsize=9)
 
 plt.show()
 
-# %% code 494.
+# %% code Ⅳ-120.
 import numpy as np
 from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
@@ -211,13 +211,13 @@ m.drawmeridians(np.arange(-180., 180.1, 45.), labels=[0, 1, 0, 1], fontsize=8)
 
 plt.show()
 
-# %% code 495.
+# %% code Ⅳ-121.
 print("np.nanmin(longitude):{}".format(np.nanmin(longitude)))
 print("np.nanmax(longitude):{}".format(np.nanmax(longitude))) 
 print("np.nanmin(latitude):{}".format(np.nanmin(latitude)))
 print("np.nanmax(latitude):{}".format(np.nanmax(latitude)))
 
-# %% code 496.
+# %% code Ⅳ-122.
 Wlon, Elon = np.nanmin(longitude), np.nanmax(longitude)     # 서 · 동 경계
 Slat, Nlat = np.nanmin(latitude), np.nanmax(latitude)       # 남 · 북 경계
 Clon, Clat = (Wlon + Elon) / 2, (Slat + Nlat) / 2           # 중심 좌표
@@ -225,7 +225,7 @@ Clon, Clat = (Wlon + Elon) / 2, (Slat + Nlat) / 2           # 중심 좌표
 print(f"서 {Wlon:.2f}°, 동 {Elon:.2f}°, 남 {Slat:.2f}°, 북 {Nlat:.2f}°")
 print(f"중심 ({Clon:.2f}°E, {Clat:.2f}°N)")
 
-# %% code 497.
+# %% code Ⅳ-123.
 def findRangeOfMap(longitude, latitude, idl=False):
     """경위도 배열로 지도의 서 · 동 · 남 · 북 경계와 중심 좌표를 구한다.
 
@@ -244,7 +244,7 @@ Wlon, Elon, Slat, Nlat, Clon, Clat = findRangeOfMap(longitude, latitude)
 print(f"서 {Wlon:.2f}°, 동 {Elon:.2f}°, 남 {Slat:.2f}°, 북 {Nlat:.2f}°")
 print(f"중심 ({Clon:.2f}°E, {Clat:.2f}°N)")
 
-# %% code 498.
+# %% code Ⅳ-124.
 lon_idl = np.array([[170.0, 175.0, -175.0, -170.0]])       # 날짜 변경선을 지나는 가상 장면
 lat_idl = np.array([[30.0, 31.0, 32.0, 33.0]])
 
@@ -252,7 +252,7 @@ for idl in (False, True):
     W, E, S, N, Cx, Cy = findRangeOfMap(lon_idl, lat_idl, idl)
     print(f"idl={idl!s:5}: 서 {W:7.1f}°, 동 {E:7.1f}°, 중심 경도 {Cx:7.1f}°")
 
-# %% code 499.
+# %% code Ⅳ-125.
 import numpy as np
 from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
@@ -279,7 +279,7 @@ m.pcolormesh(x, y, hdf_value)
 
 plt.show()
 
-# %% code 500.
+# %% code Ⅳ-126.
 import numpy as np
 from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
@@ -325,7 +325,7 @@ plt.annotate("파일 : {}".format(filename),
 
 plt.show()
 
-# %% code 501.
+# %% code Ⅳ-127.
 import numpy as np
 from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt

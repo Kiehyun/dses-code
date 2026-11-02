@@ -1,12 +1,12 @@
 # 지구과학 데이터 사이언스 1 | III-04. 인공위성의 궤도 나타내기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 41.
+# %% code Ⅲ-41.
 TLE_NOAA14 = '''NOAA 14                 
 1 23455U 94089A   97320.90946019  .00000140  00000-0  10191-3 0  2621
 2 23455  99.0090 272.6745 0008546 223.1686 136.8816 14.11711747148495'''
 
-# %% code 42.
+# %% code Ⅲ-42.
 fname = "elements.txt"
 
 # CelesTrak에서 최근 30일 발사 위성의 TLE 받기
@@ -18,7 +18,7 @@ try:
 except Exception:
     du.download("https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=tle", Path(proj_dir) / (fname), overwrite=True)
 
-# %% code 43.
+# %% code Ⅲ-43.
 from skyfield.api import Loader
 
 # Skyfield 데이터 파일 저장 위치
@@ -34,7 +34,7 @@ print("planets: {}".format(planets))
 earth   = planets['earth']
 print("earth: {}".format(earth))
 
-# %% code 44.
+# %% code Ⅲ-44.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -74,7 +74,7 @@ ax.set_aspect('equal')
 
 plt.show()
 
-# %% code 45.
+# %% code Ⅲ-45.
 from skyfield.api import EarthSatellite, Loader
 import numpy as np
 
@@ -105,7 +105,7 @@ Rposecl = satellite.at(time).ecliptic_position().km
 print("Rpos.shape: {}".format(Rpos.shape))
 print("Rposecl.shape: {}".format(Rposecl.shape))
 
-# %% code 46.
+# %% code Ⅲ-46.
 fig = plt.figure(figsize=[10, 10])
 ax  = fig.add_subplot(1, 1, 1, projection='3d')
 
@@ -119,7 +119,7 @@ ax.set_aspect('equal')
 
 plt.show()
 
-# %% code 47.
+# %% code Ⅲ-47.
 def makecubelimits(axis, centers=None, hw=None):
     """
     3D 플롯의 축 비율을 고정하여 정육면체 형태의 플롯 영역을 만드는 함수
@@ -179,7 +179,7 @@ ax.set_aspect('equal')
 
 plt.show()
 
-# %% code 48.
+# %% code Ⅲ-48.
 # TLE epoch(1997-11-16) 무렵의 위성 위치
 time = ts.utc(1997, 11, 16, hours)
 Rpos = satellite.at(time).position.km
@@ -213,7 +213,7 @@ print(f"평균 고도: {alt_sat.mean():.2f} km")
 plt.tight_layout()
 plt.show()
 
-# %% code 49.
+# %% code Ⅲ-49.
 # 스타링크 위성 TLE(STARLINK-1007, 기준 시각 2024-05-21)
 # TLE는 글자 위치로 값을 읽는 고정 폭 형식이라 빈칸 수를 바꾸면 안 됨
 TLE = """STARLINK-1007
@@ -285,7 +285,7 @@ ax.set_aspect('equal')
 plt.tight_layout()
 plt.show()
 
-# %% code 50.
+# %% code Ⅲ-50.
 import requests
 
 # CelesTrak 새 주소(예전 stations.txt는 404)
@@ -330,7 +330,7 @@ if response:
 else:
     print("네트워크 오류로 인해 TLE 데이터를 가져올 수 없습니다.")
 
-# %% code 51.
+# %% code Ⅲ-51.
 from datetime import date
 from skyfield.api import EarthSatellite
 
@@ -348,7 +348,7 @@ time = ts.utc(today.year, today.month, today.day, hours)
 Rpos = sat.at(time).position.km
 print("Rpos.shape:", Rpos.shape)
 
-# %% code 52.
+# %% code Ⅲ-52.
 fig = plt.figure(figsize=[10, 10])
 ax  = fig.add_subplot(1, 1, 1, projection='3d')
 
@@ -365,7 +365,7 @@ ax.set_title('국제우주정거장(ISS) 궤도')
 ax.legend()
 plt.show()
 
-# %% code 53.
+# %% code Ⅲ-53.
 # 지구 중심 거리와 고도
 r_sat = np.sqrt((Rpos**2).sum(axis=0))
 alt_sat = r_sat - re
@@ -383,7 +383,7 @@ print(f"최대 고도: {alt_sat.max():.2f} km")
 print(f"최소 고도: {alt_sat.min():.2f} km")
 print(f"평균 고도: {alt_sat.mean():.2f} km")
 
-# %% code 54.
+# %% code Ⅲ-54.
 import requests
 from skyfield.api import EarthSatellite
 

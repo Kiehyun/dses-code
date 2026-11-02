@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>III-06. SDO HMI 이미지에서 흑점 탐지</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/03-06/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-78">78</a> <a href="#code-79">79</a> <a href="#code-80">80</a> <a href="#code-81">81</a> <a href="#code-82">82</a> <a href="#code-83">83</a> <a href="#code-84">84</a> <a href="#code-85">85</a> <a href="#code-86">86</a> <a href="#code-87">87</a> <a href="#code-88">88</a></p>
-<h2 id="code-78">code 78. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
+<p class="jump"><a href="#code-Ⅲ-78">Ⅲ-78</a> <a href="#code-Ⅲ-79">Ⅲ-79</a> <a href="#code-Ⅲ-80">Ⅲ-80</a> <a href="#code-Ⅲ-81">Ⅲ-81</a> <a href="#code-Ⅲ-82">Ⅲ-82</a> <a href="#code-Ⅲ-83">Ⅲ-83</a> <a href="#code-Ⅲ-84">Ⅲ-84</a> <a href="#code-Ⅲ-85">Ⅲ-85</a> <a href="#code-Ⅲ-86">Ⅲ-86</a> <a href="#code-Ⅲ-87">Ⅲ-87</a> <a href="#code-Ⅲ-88">Ⅲ-88</a></p>
+<h2 id="code-Ⅲ-78">code Ⅲ-78. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
 
 fname = &quot;20170228_231038_1024_HMII.jpg&quot;
 url = &quot;https://sdo.gsfc.nasa.gov/assets/img/browse/2017/02/28/&quot; + fname
@@ -24,7 +24,7 @@ except Exception:
     du.download(&quot;https://docs.google.com/uc?export=download&amp;id=1J-1zkRni9VPFT_alsnljSHEBEphdPPMQ&quot;, Path(proj_dir) / fname)
 
 fpaths = sorted(Path(proj_dir).glob(&#x27;*.jpg&#x27;))</code></pre>
-<h2 id="code-79">code 79. <button class="copy">복사</button></h2><pre><code>import cv2
+<h2 id="code-Ⅲ-79">code Ⅲ-79. <button class="copy">복사</button></h2><pre><code>import cv2
 
 print(f&quot;str(fpaths): {str(fpaths)}&quot;)
 print(f&quot;str(fpaths[0]): {str(fpaths[0])}&quot;)
@@ -52,7 +52,7 @@ plt.imshow(sun_im, cmap = &#x27;gray&#x27;, origin=&#x27;upper&#x27;, interpolat
 # plt.xticks([]), plt.yticks([]) 
 
 plt.show()</code></pre>
-<h2 id="code-80">code 80. <button class="copy">복사</button></h2><pre><code># 허프 변환으로 원(태양) 검출, 입력은 흑백 이미지
+<h2 id="code-Ⅲ-80">code Ⅲ-80. <button class="copy">복사</button></h2><pre><code># 허프 변환으로 원(태양) 검출, 입력은 흑백 이미지
 # 2: 누적기 해상도 비율(dp), 200: 원 중심 사이 최소 거리(픽셀)
 sun_circle = cv2.HoughCircles(sun_im, cv2.HOUGH_GRADIENT, 2, 200)
 
@@ -67,7 +67,7 @@ print(&quot;sun_circle[0, 0, :]: &quot;, sun_circle[0, 0, :])
 # 정수로 반올림
 sun_circle = np.round(sun_circle[0,0,:]).astype(int)
 print(&#x27;circle of sun&#x27;, sun_circle )</code></pre>
-<h2 id="code-81">code 81. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅲ-81">code Ⅲ-81. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 
 # sun_circle: (x, y, 반지름)
@@ -83,7 +83,7 @@ ax = plt.gca()
 ax.add_patch(circle)
 
 plt.show()</code></pre>
-<h2 id="code-82">code 82. <button class="copy">복사</button></h2><pre><code># 원본 보존용 복사본
+<h2 id="code-Ⅲ-82">code Ⅲ-82. <button class="copy">복사</button></h2><pre><code># 원본 보존용 복사본
 sun_im_output = sun_im.copy()
 print(&quot;sun_im_output: &quot;, sun_im_output)
 
@@ -104,7 +104,7 @@ print (np.shape(outer), np.shape(inner))
 
 print (&quot;outer:&quot;, outer)
 print (&quot;inner&quot;, inner)</code></pre>
-<h2 id="code-83">code 83. <button class="copy">복사</button></h2><pre><code># 8비트 영상에서 255는 흰색
+<h2 id="code-Ⅲ-83">code Ⅲ-83. <button class="copy">복사</button></h2><pre><code># 8비트 영상에서 255는 흰색
 sun_im_output[outer] = 255
 
 print (&#x27;boundary width :&#x27;, boundary_width)
@@ -120,7 +120,7 @@ circle = Circle((sun_circle[0], sun_circle[1]), sun_circle[2],
 ax.add_patch(circle) 
 
 plt.show()</code></pre>
-<h2 id="code-84">code 84. <button class="copy">복사</button></h2><pre><code># 이보다 어두우면 흑점 후보
+<h2 id="code-Ⅲ-84">code Ⅲ-84. <button class="copy">복사</button></h2><pre><code># 이보다 어두우면 흑점 후보
 bright_criterion = 70 
 
 # True: 흑점이 아닌 픽셀(뒤에서 흰색으로 칠함)
@@ -155,7 +155,7 @@ circle = Circle((sun_circle[0], sun_circle[1]), sun_circle[2],
 ax.add_patch(circle)
 
 plt.show()</code></pre>
-<h2 id="code-85">code 85. <button class="copy">복사</button></h2><pre><code>check_pixel = np.asarray(check_pixel)
+<h2 id="code-Ⅲ-85">code Ⅲ-85. <button class="copy">복사</button></h2><pre><code>check_pixel = np.asarray(check_pixel)
 print(&quot;check_pixel:&quot;, check_pixel)
 
 # 0으로 채운 im_height × im_width 배열(행 = y, 열 = x)
@@ -179,7 +179,7 @@ circle = Circle((sun_circle[0], sun_circle[1]), sun_circle[2],
 ax.add_patch(circle)
 
 plt.show()</code></pre>
-<h2 id="code-86">code 86. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots()
+<h2 id="code-Ⅲ-86">code Ⅲ-86. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots()
 
 plt.imshow(image.T,  # 잘못된 예: 행과 열을 바꿔(전치) 표시
            cmap = &#x27;gray&#x27;, 
@@ -191,7 +191,7 @@ circle = Circle((sun_circle[0], sun_circle[1]), sun_circle[2],
 ax.add_patch(circle) 
 
 plt.show()</code></pre>
-<h2 id="code-87">code 87. <button class="copy">복사</button></h2><pre><code>import math
+<h2 id="code-Ⅲ-87">code Ⅲ-87. <button class="copy">복사</button></h2><pre><code>import math
 
 # 흑점의 위도 · 경도(라디안)
 def latitude(y):
@@ -246,7 +246,7 @@ for y in range(0, im_height):
 print (&#x27;*&#x27;*80)
 print (&#x27;흑점 개수 : &#x27;, len(sunspot_data))
 print (&#x27;흑점 데이터 [x, y, 픽셀 수] : &#x27;, sunspot_data)</code></pre>
-<h2 id="code-88">code 88. <button class="copy">복사</button></h2><pre><code>sunspot_data = np.asarray(sunspot_data)
+<h2 id="code-Ⅲ-88">code Ⅲ-88. <button class="copy">복사</button></h2><pre><code>sunspot_data = np.asarray(sunspot_data)
 print(&quot;sunspot_data:\n&quot;, sunspot_data)
 
 if len(sunspot_data) == 0 : 

@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>II-04. 단진자 운동</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/02-04/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-39">39</a> <a href="#code-40">40</a> <a href="#code-41">41</a> <a href="#code-42">42</a> <a href="#code-43">43</a> <a href="#code-44">44</a> <a href="#code-45">45</a> <a href="#code-46">46</a> <a href="#code-47">47</a> <a href="#code-48">48</a></p>
-<h2 id="code-39">code 39. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<p class="jump"><a href="#code-Ⅱ-39">Ⅱ-39</a> <a href="#code-Ⅱ-40">Ⅱ-40</a> <a href="#code-Ⅱ-41">Ⅱ-41</a> <a href="#code-Ⅱ-42">Ⅱ-42</a> <a href="#code-Ⅱ-43">Ⅱ-43</a> <a href="#code-Ⅱ-44">Ⅱ-44</a> <a href="#code-Ⅱ-45">Ⅱ-45</a> <a href="#code-Ⅱ-46">Ⅱ-46</a> <a href="#code-Ⅱ-47">Ⅱ-47</a> <a href="#code-Ⅱ-48">Ⅱ-48</a></p>
+<h2 id="code-Ⅱ-39">code Ⅱ-39. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
@@ -45,7 +45,7 @@ ax2.set_title(&#x27;두 번째 그림&#x27;)
 plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;02_04_Simple_pendulum_motion_01&quot;))
 plt.show()</code></pre>
-<h2 id="code-40">code 40. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(8,8))
+<h2 id="code-Ⅱ-40">code Ⅱ-40. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(8,8))
 
 # 단진자 추의 (x, y) 좌표
 length = 1 
@@ -70,7 +70,7 @@ obj.set_data([x], [y])
 
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;02_04_Simple_pendulum_motion_02&quot;))
 plt.show()</code></pre>
-<h2 id="code-41">code 41. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅱ-41">code Ⅱ-41. <button class="copy">복사</button></h2><pre><code>import numpy as np
 from scipy.integrate import odeint
 
 def odefun(Z, t, k):
@@ -97,7 +97,7 @@ Z = odeint(odefun, Z0, t, args=(k,))  # 미분방정식 수치 적분
 print(f&quot;해의 개수: {len(Z)}&quot;)
 print(f&quot;각도 변화 (처음 12개): {Z[:12, 0] * 180 / np.pi}&quot;)  # 라디안 → 도
 print(f&quot;각속도 변화 (처음 12개): {Z[:12, 1]}&quot;)</code></pre>
-<h2 id="code-42">code 42. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(8,8))
+<h2 id="code-Ⅱ-42">code Ⅱ-42. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(8,8))
 
 # 단진자 추의 (x, y) 좌표
 length = 1  # 진자 길이
@@ -132,7 +132,7 @@ for j in Z[:12] :
     y_values.append(-length*np.cos(theta))
 print(&quot;x_values :&quot;, x_values)
 print(&quot;y_values :&quot;, y_values)</code></pre>
-<h2 id="code-43">code 43. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅱ-43">code Ⅱ-43. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 import numpy as np
 
 frames = range(1, 13)
@@ -166,7 +166,7 @@ plt.tight_layout()
 plt.subplots_adjust(top=0.93, bottom=0.1)
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;02_04_Simple_pendulum_motion_03&quot;))
 plt.show()</code></pre>
-<h2 id="code-44">code 44. <button class="copy">복사</button></h2><pre><code>length = 1
+<h2 id="code-Ⅱ-44">code Ⅱ-44. <button class="copy">복사</button></h2><pre><code>length = 1
 init_angle = 30
 k = 9.81/length
 
@@ -201,7 +201,7 @@ obj.set_data([x], [y])
 
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;02_04_Simple_pendulum_motion_04&quot;))
 plt.show()</code></pre>
-<h2 id="code-45">code 45. <button class="copy">복사</button></h2><pre><code>def animate(i):
+<h2 id="code-Ⅱ-45">code Ⅱ-45. <button class="copy">복사</button></h2><pre><code>def animate(i):
     &quot;&quot;&quot;애니메이션의 각 프레임을 업데이트하는 함수&quot;&quot;&quot;
     theta = Z[i, 0]  # i번째 시각의 각도
     x = length*np.sin(theta)
@@ -234,7 +234,7 @@ HTML(ani.to_jshtml())
 # matplotlib.rcParams[&#x27;animation.html&#x27;] = &#x27;html5&#x27;
 # print(f&quot;애니메이션 HTML 형식: {matplotlib.rcParams[&#x27;animation.html&#x27;]}&quot;)
 # HTML(ani.to_html5_video())</code></pre>
-<h2 id="code-46">code 46. <button class="copy">복사</button></h2><pre><code>class Pendulum(object):
+<h2 id="code-Ⅱ-46">code Ⅱ-46. <button class="copy">복사</button></h2><pre><code>class Pendulum(object):
     def __init__(self, length=1, init_angle=30, tf=10, dt=0.05):
         self.length = length
         self.init_angle = init_angle*np.pi/180  # 도 → 라디안
@@ -276,7 +276,7 @@ obj.set_data([x], [y])
 plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;02_04_Simple_pendulum_motion_05&quot;))
 plt.show()</code></pre>
-<h2 id="code-47">code 47. <button class="copy">복사</button></h2><pre><code>def animate(i):
+<h2 id="code-Ⅱ-47">code Ⅱ-47. <button class="copy">복사</button></h2><pre><code>def animate(i):
     theta = pend.Z[i, 0]
     x = length*np.sin(theta)
     y = -length*np.cos(theta)
@@ -307,7 +307,7 @@ HTML(ani.to_jshtml())
 # matplotlib.rcParams[&#x27;animation.html&#x27;] = &#x27;html5&#x27;
 # print(f&quot;애니메이션 HTML 형식: {matplotlib.rcParams[&#x27;animation.html&#x27;]}&quot;)
 # HTML(ani.to_html5_video())</code></pre>
-<h2 id="code-48">code 48. <button class="copy">복사</button></h2><pre><code># 애니메이션 저장
+<h2 id="code-Ⅱ-48">code Ⅱ-48. <button class="copy">복사</button></h2><pre><code># 애니메이션 저장
 fname = &#x27;Simple_pendulum&#x27;
 
 import shutil

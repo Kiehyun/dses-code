@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | III-05. 태양계 시뮬레이션
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 55.
+# %% code Ⅲ-55.
 from astropy.time import Time
 
 specific_time = Time("2017-01-01")
@@ -19,7 +19,7 @@ print("type(obj1): ", type(obj1))
 
 print("obj1: ",obj1)
 
-# %% code 56.
+# %% code Ⅲ-56.
 import numpy as np
 from astropy.time import Time, TimeDelta
 
@@ -66,7 +66,7 @@ dts = [dt.iso for dt in
 print("len(dts) :", len(dts))
 print("dts :", dts)
 
-# %% code 57.
+# %% code Ⅲ-57.
 import matplotlib.pyplot as plt
 
 fig = plt.figure(figsize=[4, 4])
@@ -89,7 +89,7 @@ plot = ax.scatter(0, 0,
                   edgecolors = None,
                   zorder = 10)        # 다른 것보다 앞에 그리기
 
-# %% code 58.
+# %% code Ⅲ-58.
 import matplotlib.pyplot as plt
 
 # 검은 배경
@@ -115,7 +115,7 @@ plot = ax.scatter(0, 0,
                   edgecolors = None,
                   zorder = 10)
 
-# %% code 59.
+# %% code Ⅲ-59.
 from astropy.time import Time
 specific_time = Time("2017-01-01")
 
@@ -136,7 +136,7 @@ print("obj1['vx']: ", obj1['vx'])
 print("obj1['vy']: ", obj1['vy'])
 print("obj1['vz']: ", obj1['vz'])
 
-# %% code 60.
+# %% code Ⅲ-60.
 from astropy.time import Time
 specific_time = Time("2017-01-01")
 
@@ -175,7 +175,7 @@ for i in range(4):
     ax.text(obj["x"], obj["y"]+0.1, names[i], zorder=1000, ha='center',
             fontsize='large')
 
-# %% code 61.
+# %% code Ⅲ-61.
 from astropy.time import Time
 specific_time = Time("2017-01-01")
 
@@ -208,7 +208,7 @@ import numpy as np
 r = np.array([np.double(obj[xi]) for xi in ['x', 'y', 'z']], dtype=np.float64)
 r
 
-# %% code 62.
+# %% code Ⅲ-62.
 import numpy as np
 from astropy.time import Time, TimeDelta
 
@@ -257,7 +257,7 @@ print("rs[5][:2]: {}".format(rs[5][:2]))
 print("rs[4]: {}".format(rs[4]))
 print("rs[5]: {}".format(rs[5]))
 
-# %% code 63.
+# %% code Ⅲ-63.
 import matplotlib.pyplot as plt
 
 # 궤도(rs, xs, ys)와 날짜 목록(dts)은 앞에서 계산한 것을 그대로 씀
@@ -275,7 +275,7 @@ plot = ax.scatter(obj["x"], obj["y"], s=10**2, edgecolors=None, zorder=10)
 line, = ax.plot([], [], linewidth=1.4)
 timestamp = ax.text(.03, .94, '날짜: ', color='w', transform=ax.transAxes, fontsize='x-large')
 
-# %% code 64.
+# %% code Ⅲ-64.
 def animate(i):
     plot.set_offsets(rs[i][:2])
     line.set_xdata(xs[:i])
@@ -286,7 +286,7 @@ def animate(i):
 from matplotlib.animation import FuncAnimation
 ani = FuncAnimation(fig, animate, frames=len(dts), blit=True)
 
-# %% code 65.
+# %% code Ⅲ-65.
 import matplotlib
 from IPython.display import HTML
 
@@ -300,11 +300,11 @@ print(f"애니메이션 HTML 형식: {matplotlib.rcParams['animation.html']}")
 
 HTML(ani.to_jshtml())
 
-# %% code 66.
+# %% code Ⅲ-66.
 # MP4 동영상으로 넣기(ffmpeg 실행 파일 필요)
 HTML(ani.to_html5_video())
 
-# %% code 67.
+# %% code Ⅲ-67.
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.time import Time
@@ -401,7 +401,7 @@ for i, nasaid in enumerate(ids):
 ss.run(sim_duration)  # 2년 치 궤도를 미리 계산
 plt.show()
 
-# %% code 68.
+# %% code Ⅲ-68.
 # 프레임 i: 미리 계산한 궤도에서 i번째 날을 그림
 def animate(i):
     return ss.draw(i)
@@ -415,15 +415,15 @@ ani = animation.FuncAnimation(fig,
                               blit=True,
                               interval=20)          # ms
 
-# %% code 69.
+# %% code Ⅲ-69.
 # 애니메이션 설정은 앞에서 정한 것을 그대로 씀
 HTML(ani.to_jshtml())
 
-# %% code 70.
+# %% code Ⅲ-70.
 # MP4 동영상으로 넣기(ffmpeg 실행 파일 필요)
 HTML(ani.to_html5_video())
 
-# %% code 71.
+# %% code Ⅲ-71.
 fname = 'Solar_System_2D_Animation_Class_Based'
 
 try:
@@ -448,7 +448,7 @@ except Exception as e:
         except Exception as e3:
             print(f"HTML 저장 중 오류 발생: {e3}")
 
-# %% code 72.
+# %% code Ⅲ-72.
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.time import Time
@@ -493,7 +493,7 @@ ss.run(sim_duration)  # 2년 치 궤도를 미리 계산
 plt.tight_layout()
 plt.show()
 
-# %% code 73.
+# %% code Ⅲ-73.
 # 프레임 i: 미리 계산한 궤도에서 i번째 날을 그림
 def animate(i):
     return ss.draw(i)
@@ -504,22 +504,22 @@ ani = FuncAnimation(fig, animate,
                     frames=sim_duration,  # 프레임 수 = 시뮬레이션 일수(2년)
                     blit=True)
 
-# %% code 74.
+# %% code Ⅲ-74.
 # 애니메이션 설정은 앞에서 정한 것을 그대로 씀
 HTML(ani.to_jshtml())
 
-# %% code 75.
+# %% code Ⅲ-75.
 # MP4 동영상으로 넣기(ffmpeg 실행 파일 필요)
 HTML(ani.to_html5_video())
 
-# %% code 76.
+# %% code Ⅲ-76.
 fname = 'Solar_System_3D_Animation_Class_Based'
 
 ani.save(f'{proj_dir}/{fname}.mp4', fps=60, dpi=150,
          writer='ffmpeg')  # ffmpeg 필요
 print(f"동영상이 저장되었습니다: {proj_dir}/{fname}.mp4")
 
-# %% code 77.
+# %% code Ⅲ-77.
 ani.save(f'{proj_dir}/{fname}.gif',
             fps=30,           # MP4보다 낮춰 용량 줄이기
             dpi=100,

@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>V-04. 지질도 작성 및 이해</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/05-04/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-34">34</a> <a href="#code-35">35</a> <a href="#code-36">36</a> <a href="#code-37">37</a> <a href="#code-38">38</a> <a href="#code-39">39</a> <a href="#code-40">40</a></p>
-<h2 id="code-34">code 34. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
+<p class="jump"><a href="#code-Ⅴ-34">Ⅴ-34</a> <a href="#code-Ⅴ-35">Ⅴ-35</a> <a href="#code-Ⅴ-36">Ⅴ-36</a> <a href="#code-Ⅴ-37">Ⅴ-37</a> <a href="#code-Ⅴ-38">Ⅴ-38</a> <a href="#code-Ⅴ-39">Ⅴ-39</a> <a href="#code-Ⅴ-40">Ⅴ-40</a></p>
+<h2 id="code-Ⅴ-34">code Ⅴ-34. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
 from urllib.parse import urlencode
 import json
 
@@ -76,7 +76,7 @@ download_log = pd.DataFrame(download_log)
 print(f&quot;중복 제거 후 지질 단위 수: {len(feature_collection[&#x27;features&#x27;])}&quot;)
 print(f&quot;파일 크기: {geojson_file.stat().st_size:,} bytes&quot;)
 print(download_log)</code></pre>
-<h2 id="code-35">code 35. <button class="copy">복사</button></h2><pre><code>clean_geojson_file = Path(proj_dir) / &quot;macrostrat_geologic_units_clean.geojson&quot;
+<h2 id="code-Ⅴ-35">code Ⅴ-35. <button class="copy">복사</button></h2><pre><code>clean_geojson_file = Path(proj_dir) / &quot;macrostrat_geologic_units_clean.geojson&quot;
 clean_geojson_file.write_text(
     json.dumps(feature_collection), encoding=&quot;utf-8&quot;,
 )
@@ -96,7 +96,7 @@ columns_to_show = [
 ]
 
 print(gdf[columns_to_show].head(10))</code></pre>
-<h2 id="code-36">code 36. <button class="copy">복사</button></h2><pre><code># 대표 시대별 다각형 수
+<h2 id="code-Ⅴ-36">code Ⅴ-36. <button class="copy">복사</button></h2><pre><code># 대표 시대별 다각형 수
 age_summary = (
     gdf.groupby(&quot;best_int_name&quot;, dropna=False)
     .size()
@@ -116,7 +116,7 @@ lith_summary = (
 
 print(age_summary)
 print(lith_summary)</code></pre>
-<h2 id="code-37">code 37. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅴ-37">code Ⅴ-37. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
 plot_gdf = gdf.copy()
@@ -137,7 +137,7 @@ ax.legend(loc=&quot;upper right&quot;)
 ax.set_aspect(1 / np.cos(np.deg2rad(36)))  # 위도 36°에서 경도 1° 길이는 위도 1°의 cos 36°배
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;05_04_Geologic_map_basics_01&quot;))
 plt.show()</code></pre>
-<h2 id="code-38">code 38. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅴ-38">code Ⅴ-38. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 # 대표 시대와 색의 짝(중복 제거)
 # 대표 시대 이름이 없는 단위(예: 선캄브리아)는 t_int_name(가장 젊은 시대)으로 채움
@@ -163,7 +163,7 @@ ax.invert_yaxis()  # 위에서 아래로 나열
 ax.set_title(&quot;지질 시대 범례&quot;, loc=&quot;left&quot;)
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;05_04_Geologic_map_basics_02&quot;))
 plt.show()</code></pre>
-<h2 id="code-39">code 39. <button class="copy">복사</button></h2><pre><code>import folium
+<h2 id="code-Ⅴ-39">code Ⅴ-39. <button class="copy">복사</button></h2><pre><code>import folium
 
 m = folium.Map(location=[map_center[&quot;lat&quot;], map_center[&quot;lng&quot;]], zoom_start=6, tiles=&quot;CartoDB positron&quot;)
 
@@ -197,7 +197,7 @@ map_file = Path(proj_dir) / &quot;macrostrat_geologic_map_korea.html&quot;
 m.save(map_file)
 print(f&quot;지도 저장 위치: {map_file}&quot;)
 m</code></pre>
-<h2 id="code-40">code 40. <button class="copy">복사</button></h2><pre><code># 데이터 출처(source_id)별 다각형 수와 문헌
+<h2 id="code-Ⅴ-40">code Ⅴ-40. <button class="copy">복사</button></h2><pre><code># 데이터 출처(source_id)별 다각형 수와 문헌
 source_summary = (
     gdf.groupby(&quot;source_id&quot;)
     .size()

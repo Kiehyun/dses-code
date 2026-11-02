@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | IV-07. 엘니뇨와 남방진동
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 109.
+# %% code Ⅳ-109.
 import cartopy.crs as ccrs
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 import matplotlib.ticker as mticker
@@ -72,7 +72,7 @@ plt.tight_layout()
 plt.savefig(f"{proj_dir}/ENSO_map.png", dpi=300, bbox_inches='tight')
 plt.show()
 
-# %% code 110.
+# %% code Ⅳ-110.
 import re
 import requests
 from pathlib import Path
@@ -96,16 +96,16 @@ print("SOI 주소:", url2)
 du.download(url1, oni_path, overwrite=True)
 du.download(url2, soi_path, overwrite=True)
 
-# %% code 111.
+# %% code Ⅳ-111.
 fpaths = du.list_files(proj_dir, "txt")
 
-# %% code 112.
+# %% code Ⅳ-112.
 du.preview_text(oni_path, n=10);  # ONI 파일 앞 10줄
 
-# %% code 113.
+# %% code Ⅳ-113.
 du.preview_text(soi_path, n=10);  # SOI 파일 앞 10줄
 
-# %% code 114.
+# %% code Ⅳ-114.
 import pandas as pd
 import numpy as np
 
@@ -124,7 +124,7 @@ df_ONI.index = df_ONI['dt_date']
 
 print("df_ONI : \n", df_ONI)
 
-# %% code 115.
+# %% code Ⅳ-115.
 import numpy as np
 
 arr = np.loadtxt(soi_path)
@@ -158,7 +158,7 @@ while date1 < EndDT:
 print("len(proc_dates): {}".format(len(proc_dates)))
 print(f"proc_dates: {proc_dates}")
 
-# %% code 116.
+# %% code Ⅳ-116.
 import pandas as pd
 
 # (날짜, SOI) 쌍으로 DataFrame 만들기
@@ -168,7 +168,7 @@ df_SOI.index = df_SOI['dt_date']
 df_SOI['SOI'] = df_SOI['SOI'].replace(-99.9, np.nan)  # -99.9는 결측값
 print("df_SOI :", df_SOI)
 
-# %% code 117.
+# %% code Ⅳ-117.
 import matplotlib.pyplot as plt
 from matplotlib import rc
 
@@ -179,7 +179,7 @@ ax.set_xlabel('시간(년)', fontsize=14)
 ax.set_ylabel('수온 편차 (°C)', fontsize=14)
 plt.show()
 
-# %% code 118.
+# %% code Ⅳ-118.
 import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(12.0, 4.0))
@@ -212,7 +212,7 @@ fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0.1)
 
 plt.show()
 
-# %% code 119.
+# %% code Ⅳ-119.
 import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(12.0, 4.0))
@@ -248,7 +248,7 @@ fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0.1)
 
 plt.show()
 
-# %% code 120.
+# %% code Ⅳ-120.
 # 달마다 상태 표시: 1(엘니뇨 쪽), -1(라니냐 쪽), 0(중립)
 oni = df_ONI['ONI'].astype(float)
 state = pd.Series(np.select([oni >= 0.5, oni <= -0.5], [1, -1], 0), index=oni.index)
@@ -278,12 +278,12 @@ print()
 print("최근 사례 5개")
 print(events.tail(5).to_string(index=False))
 
-# %% code 121.
+# %% code Ⅳ-121.
 # 최댓값의 절댓값이 큰 순서로 상위 8개 사례
 top = events.sort_values("최댓값", key=abs, ascending=False).head(8)
 print(top.to_string(index=False))
 
-# %% code 122.
+# %% code Ⅳ-122.
 fig, ax = plt.subplots(figsize=(12.0, 4.0))
 ax.plot(df_ONI['dt_date'], oni, "k-", linewidth=0.7)
 

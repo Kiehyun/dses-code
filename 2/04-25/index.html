@@ -11,15 +11,15 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>IV-05. 지구의 열수지와 온실효과</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/04-25/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-453">453</a> <a href="#code-454">454</a> <a href="#code-455">455</a> <a href="#code-456">456</a> <a href="#code-457">457</a> <a href="#code-458">458</a> <a href="#code-459">459</a> <a href="#code-460">460</a> <a href="#code-461">461</a></p>
-<h2 id="code-453">code 453. <button class="copy">복사</button></h2><pre><code># 필요한 라이브러리 불러오기
+<p class="jump"><a href="#code-Ⅳ-79">Ⅳ-79</a> <a href="#code-Ⅳ-80">Ⅳ-80</a> <a href="#code-Ⅳ-81">Ⅳ-81</a> <a href="#code-Ⅳ-82">Ⅳ-82</a> <a href="#code-Ⅳ-83">Ⅳ-83</a> <a href="#code-Ⅳ-84">Ⅳ-84</a> <a href="#code-Ⅳ-85">Ⅳ-85</a> <a href="#code-Ⅳ-86">Ⅳ-86</a> <a href="#code-Ⅳ-87">Ⅳ-87</a></p>
+<h2 id="code-Ⅳ-79">code Ⅳ-79. <button class="copy">복사</button></h2><pre><code># 필요한 라이브러리 불러오기
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrow, Rectangle
 
 %matplotlib inline</code></pre>
-<h2 id="code-454">code 454. <button class="copy">복사</button></h2><pre><code># 상수
+<h2 id="code-Ⅳ-80">code Ⅳ-80. <button class="copy">복사</button></h2><pre><code># 상수
 S = 1361.0              # 태양 상수 [W/m^2]
 albedo = 0.30           # 지구 전체의 알베도 (무차원)
 sigma = 5.670374419e-8  # 슈테판-볼츠만 상수 [W/(m^2·K^4)]
@@ -33,7 +33,7 @@ T_e = radiative_equilibrium_T()
 
 print(f&quot;단위 면적당 흡수량 : {S * (1 - albedo) / 4:8.2f} W/m^2&quot;)
 print(f&quot;복사 평형 온도     : {T_e:8.2f} K  =  {T_e - 273.15:6.2f} °C&quot;)</code></pre>
-<h2 id="code-455">code 455. <button class="copy">복사</button></h2><pre><code>albedos = np.linspace(0.0, 0.8, 200)
+<h2 id="code-Ⅳ-81">code Ⅳ-81. <button class="copy">복사</button></h2><pre><code>albedos = np.linspace(0.0, 0.8, 200)
 temps = radiative_equilibrium_T(albedo=albedos) - 273.15   # °C
 
 fig, ax = plt.subplots(figsize=(8.3, 4.4))
@@ -52,7 +52,7 @@ ax.set_title(&quot;알베도에 따른 지구의 복사 평형 온도&quot;, fon
              fontweight=&quot;bold&quot;)
 ax.grid(alpha=0.3)
 plt.show()</code></pre>
-<h2 id="code-456">code 456. <button class="copy">복사</button></h2><pre><code>T_a = T_e                    # 대기의 온도 = 복사 평형 온도
+<h2 id="code-Ⅳ-82">code Ⅳ-82. <button class="copy">복사</button></h2><pre><code>T_a = T_e                    # 대기의 온도 = 복사 평형 온도
 T_s = 2 ** 0.25 * T_e        # 지표의 온도
 
 print(f&quot;복사 평형 온도(대기 없음) : {T_e:7.2f} K = {T_e - 273.15:6.2f} °C&quot;)
@@ -61,7 +61,7 @@ print(f&quot;                    차이 : {T_s - T_e:7.2f} K&quot;)
 print()
 print(f&quot;실제 지구의 평균 기온     :  288.15 K =  15.00 °C&quot;)
 print(f&quot;실제 온실효과의 크기      : {288.15 - T_e:7.2f} K&quot;)</code></pre>
-<h2 id="code-457">code 457. <button class="copy">복사</button></h2><pre><code>N = np.arange(0, 6)                       # 대기 층 수 (0 = 대기 없음)
+<h2 id="code-Ⅳ-83">code Ⅳ-83. <button class="copy">복사</button></h2><pre><code>N = np.arange(0, 6)                       # 대기 층 수 (0 = 대기 없음)
 T_layers = (N + 1) ** 0.25 * T_e - 273.15  # °C
 
 fig, ax = plt.subplots(figsize=(8.3, 4.4))
@@ -82,7 +82,7 @@ ax.set_title(&quot;대기 층 수에 따른 지표 온도 (단순 모형)&quot;,
 ax.legend()
 ax.grid(axis=&quot;y&quot;, alpha=0.3)
 plt.show()</code></pre>
-<h2 id="code-458">code 458. <button class="copy">복사</button></h2><pre><code># 들어오는 태양 복사를 100으로 놓았을 때의 값
+<h2 id="code-Ⅳ-84">code Ⅳ-84. <button class="copy">복사</button></h2><pre><code># 들어오는 태양 복사를 100으로 놓았을 때의 값
 # (Trenberth 등(2009)의 W/m^2 값을 341.3 = 100으로 환산, 잠열만 23.4 → 24로 조정)
 budget = {
     &quot;입사&quot;: 100,
@@ -163,7 +163,7 @@ ax.text(33.5, 3.6, &quot;지구 복사 에너지&quot;, fontsize=10.5, va=&quot;
 ax.set_title(&quot;지구의 열수지 — 들어오는 태양 복사를 100으로 놓았을 때&quot;,
              fontsize=13, fontweight=&quot;bold&quot;, pad=12)
 plt.show()</code></pre>
-<h2 id="code-459">code 459. <button class="copy">복사</button></h2><pre><code>def check(name, incoming, outgoing):
+<h2 id="code-Ⅳ-85">code Ⅳ-85. <button class="copy">복사</button></h2><pre><code>def check(name, incoming, outgoing):
     &quot;&quot;&quot;들어온 양과 나간 양 견주기&quot;&quot;&quot;
     ok = &quot;균형&quot; if abs(incoming - outgoing) &lt; 1e-9 else &quot;★ 어긋남&quot;
     print(f&quot;{name:12} 들어옴 {incoming:6.1f}   나감 {outgoing:6.1f}   → {ok}&quot;)
@@ -196,7 +196,7 @@ unit = S / 4        # 지구 표면 평균 입사량 [W/m^2]
 print(f&quot;\n1 (= 1%)은 약 {unit / 100:.2f} W/m^2입니다.&quot;)
 print(f&quot;지표면이 받는 대기의 재복사 {b[&#x27;대기의 재복사&#x27;]}&quot;
       f&quot; → {b[&#x27;대기의 재복사&#x27;] * unit / 100:.0f} W/m^2&quot;)</code></pre>
-<h2 id="code-460">code 460. <button class="copy">복사</button></h2><pre><code>import urllib.request, io
+<h2 id="code-Ⅳ-86">code Ⅳ-86. <button class="copy">복사</button></h2><pre><code>import urllib.request, io
 
 headers = {&quot;User-Agent&quot;: &quot;Mozilla/5.0 (DSES textbook notebook)&quot;}
 
@@ -220,7 +220,7 @@ print(f&quot;CO2  : {co2[&#x27;year&#x27;].min():.0f} ~ {co2[&#x27;year&#x27;].m
       f&quot;{co2[&#x27;mean&#x27;].iloc[0]:.1f} → {co2[&#x27;mean&#x27;].iloc[-1]:.1f} ppm&quot;)
 print(f&quot;기온 : {temp[&#x27;Year&#x27;].min():.0f} ~ {temp[&#x27;Year&#x27;].max():.0f}년, &quot;
       f&quot;최근 편차 {temp[&#x27;J-D&#x27;].iloc[-1]:+.2f} °C&quot;)</code></pre>
-<h2 id="code-461">code 461. <button class="copy">복사</button></h2><pre><code>fig, ax1 = plt.subplots(figsize=(7.5, 4.1))
+<h2 id="code-Ⅳ-87">code Ⅳ-87. <button class="copy">복사</button></h2><pre><code>fig, ax1 = plt.subplots(figsize=(7.5, 4.1))
 
 # 왼쪽 축 — 이산화 탄소 농도
 line_co2, = ax1.plot(co2[&quot;year&quot;], co2[&quot;mean&quot;], color=&quot;#e2553d&quot;, linewidth=2.4,

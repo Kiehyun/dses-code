@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | IV-01. 기상청 AWS 데이터 시각화하기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 1.
+# %% code Ⅳ-1.
 from pathlib import Path
 
 fname = "SURFACE_ASOS_116_MI_2018-01_2018-12_2018.zip"
@@ -9,10 +9,10 @@ fid = "1bUOR1wEmCPCCH8iY23shQ5d_c2td_kt-"  # 구글 드라이브 파일 ID
 
 du.download(f"https://docs.google.com/uc?export=download&id={fid}", Path(proj_dir) / fname)
 
-# %% code 2.
+# %% code Ⅳ-2.
 fpaths = du.list_files(proj_dir, "zip")
 
-# %% code 3.
+# %% code Ⅳ-3.
 import shutil
 shutil.unpack_archive(str(fpaths[0]), str(Path(proj_dir)))
 
@@ -22,10 +22,10 @@ with ZipFile(str(fpaths[0]), 'r') as zip_ref:
 
 fpaths = du.list_files(proj_dir, "csv")
 
-# %% code 4.
+# %% code Ⅳ-4.
 du.preview_text(fpaths[0], n=10);  # 앞 10줄(인코딩 자동)
 
-# %% code 5.
+# %% code Ⅳ-5.
 import pandas as pd
 
 # 천 단위 쉼표 처리, 기상청 데이터는 EUC-KR 인코딩
@@ -33,7 +33,7 @@ df = pd.read_csv(str(fpaths[0]), thousands=',', encoding='euc-kr')
 
 print(f"df :\n{df}")
 
-# %% code 6.
+# %% code Ⅳ-6.
 # 월별 파일 모두 합치기
 import pandas as pd
 
@@ -48,7 +48,7 @@ df = df.drop_duplicates()  # 첫 달 파일이 두 번 들어가므로 중복 �
 print(f"총 레코드 수(중복 제거 후): {len(df)}")
 print(f"df :\n{df}")
 
-# %% code 7.
+# %% code Ⅳ-7.
 # 문자열 '일시'를 datetime으로 변환
 print(f"type(df['일시'][0]): {type(df['일시'][0])}")
 df['dt_YmdHM'] = pd.to_datetime(df['일시'])
@@ -61,7 +61,7 @@ df['dt_YmdHM-1min'] = df['dt_YmdHM'] - timedelta(minutes=1)
 df.index = df['dt_YmdHM-1min']
 print(f"df :\n{df}")
 
-# %% code 8.
+# %% code Ⅳ-8.
 from datetime import datetime, timedelta
 
 # 같은 날짜를 고르는 세 가지 방법
@@ -74,7 +74,7 @@ print(f"df_jan52 :\n{df_jan52}")
 df_jan53 = df[(df['dt_YmdHM-1min'] >= '2018-01-12 00:00') & (df['dt_YmdHM-1min'] < '2018-01-13 00:00')]
 print(f"df_jan53 :\n{df_jan53}")
 
-# %% code 9.
+# %% code Ⅳ-9.
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
@@ -113,7 +113,7 @@ ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
 plt.tight_layout()
 plt.show()
 
-# %% code 10.
+# %% code Ⅳ-10.
 import pandas as pd
 import numpy as np
 
@@ -155,7 +155,7 @@ months = ['1월', '2월', '3월', '4월', '5월', '6월',
 for month_num, count in monthly_count.items():
     print(f"{months[month_num-1]}: {count}일")
 
-# %% code 11.
+# %% code Ⅳ-11.
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
@@ -270,7 +270,7 @@ print(f"최대 강수량: {rainy_days['누적강수량(mm)'].max():.2f}mm")
 print(f"최소 강수량: {rainy_days['누적강수량(mm)'].min():.2f}mm")
 print(f"중간값: {rainy_days['누적강수량(mm)'].median():.2f}mm")
 
-# %% code 12.
+# %% code Ⅳ-12.
 import pandas as pd
 import numpy as np
 from datetime import datetime
@@ -431,7 +431,7 @@ results = calculate_temperature_averages(df, 'dt_YmdHM-1min', '기온(°C)')
 
 plot_temperature_comparison(results)
 
-# %% code 13.
+# %% code Ⅳ-13.
 # resample()만으로는 값이 아니라 Resampler 객체
 print("type(df.resample('D'): {}".format(type(df.resample('D'))))
 print("df.resample('D') :", df.resample('D'))
@@ -440,7 +440,7 @@ print("df.resample('D') :", df.resample('D'))
 df_daily_max = df.resample('D').max()
 print("df_daily_max :\n{}".format(df_daily_max))
 
-# %% code 14.
+# %% code Ⅳ-14.
 print(f"원본 데이터 형태: {df.shape}")
 print(f"인덱스 타입: {type(df.index)}")
 print(f"인덱스 빈도: {df.index.freq}")
@@ -501,7 +501,7 @@ print("df.resample('ME').max().index.month_name(): {}".format(df.resample('ME').
 print(f"YYYY-MM: {df.resample('ME').max().index.strftime('%Y-%m')[:5].values}")
 print(f"Month Year: {df.resample('ME').max().index.strftime('%B %Y')[:5].values}")
 
-# %% code 15.
+# %% code Ⅳ-15.
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
@@ -627,7 +627,7 @@ print(f"평균 일일 기온 변화: {daily_stats['기온변화'].mean():.2f}°C
 print(f"최대 일일 기온 상승: {daily_stats['기온변화'].max():.2f}°C")
 print(f"최대 일일 기온 하락: {daily_stats['기온변화'].min():.2f}°C")
 
-# %% code 16.
+# %% code Ⅳ-16.
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
@@ -741,7 +741,7 @@ for month, row in seasonal_avg.iterrows():
     print(f"{month}월 ({season}): 평균 {row['월평균기온']:.1f}°C, "
           f"최고 {row['월최고기온']:.1f}°C, 최저 {row['월최저기온']:.1f}°C")
 
-# %% code 17.
+# %% code Ⅳ-17.
 import numpy as np
 
 # 연습용 가상 데이터
@@ -758,7 +758,7 @@ ax = WindroseAxes.from_ax()  # 바람장미용 극좌표 축
 
 ax.bar(wd, ws)
 
-# %% code 18.
+# %% code Ⅳ-18.
 # windrose가 쓰는 열 이름으로 복사
 df['speed'] = df['풍속(m/s)']
 df['direction'] = df['풍향(deg)']
@@ -813,7 +813,7 @@ print(f"풍향 범위: {df['direction'].min():.1f} - {df['direction'].max():.1f}
 print(f"평균 풍속: {df['speed'].mean():.2f} m/s")
 print(f"최빈 풍향: {df['direction'].mode().values[0]:.1f} degrees")
 
-# %% code 19.
+# %% code Ⅳ-19.
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt

@@ -11,22 +11,22 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>II-01. 물리량 계산하기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/02-01/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-1">1</a> <a href="#code-2">2</a> <a href="#code-3">3</a> <a href="#code-4">4</a> <a href="#code-5">5</a> <a href="#code-6">6</a> <a href="#code-7">7</a> <a href="#code-8">8</a> <a href="#code-9">9</a> <a href="#code-10">10</a> <a href="#code-11">11</a> <a href="#code-12">12</a></p>
-<h2 id="code-1">code 1. <button class="copy">복사</button></h2><pre><code>from pint import UnitRegistry
+<p class="jump"><a href="#code-Ⅱ-1">Ⅱ-1</a> <a href="#code-Ⅱ-2">Ⅱ-2</a> <a href="#code-Ⅱ-3">Ⅱ-3</a> <a href="#code-Ⅱ-4">Ⅱ-4</a> <a href="#code-Ⅱ-5">Ⅱ-5</a> <a href="#code-Ⅱ-6">Ⅱ-6</a> <a href="#code-Ⅱ-7">Ⅱ-7</a> <a href="#code-Ⅱ-8">Ⅱ-8</a> <a href="#code-Ⅱ-9">Ⅱ-9</a> <a href="#code-Ⅱ-10">Ⅱ-10</a> <a href="#code-Ⅱ-11">Ⅱ-11</a> <a href="#code-Ⅱ-12">Ⅱ-12</a></p>
+<h2 id="code-Ⅱ-1">code Ⅱ-1. <button class="copy">복사</button></h2><pre><code>from pint import UnitRegistry
 u = UnitRegistry()
 print(&quot;type(u):&quot;, type(u))
 distance = 24.0 * u.meter  # 수치 × 단위 = 물리량(Quantity)
 print(&quot;type(distance)&quot;, type(distance))
 print(&quot;distance&quot;, distance)
 print(&quot;dir(distance):&quot;, dir(distance))</code></pre>
-<h2 id="code-2">code 2. <button class="copy">복사</button></h2><pre><code>print(&quot;distance.magnitude:&quot;, distance.magnitude)
+<h2 id="code-Ⅱ-2">code Ⅱ-2. <button class="copy">복사</button></h2><pre><code>print(&quot;distance.magnitude:&quot;, distance.magnitude)
 print(&quot;distance.units:&quot;, distance.units)
 print(&quot;distance.dimensionality:&quot;, distance.dimensionality)
 print(f&#x27;distance**2:P: {distance**2:P}&#x27;)     # 읽기 쉬운 형식
 print(f&#x27;distance**2:~P: {distance**2:~P}&#x27;)   # 단위 약어
 print(f&#x27;distance**2:~L: {distance**2:~L}&#x27;)   # LaTeX 형식
 print(f&#x27;distance**2:~H : {distance**2:~H}&#x27;)  # HTML 형식</code></pre>
-<h2 id="code-3">code 3. <button class="copy">복사</button></h2><pre><code>h = 6.626e-34 * u.J * u.s      # 플랑크 상수
+<h2 id="code-Ⅱ-3">code Ⅱ-3. <button class="copy">복사</button></h2><pre><code>h = 6.626e-34 * u.J * u.s      # 플랑크 상수
 c = 3.0e+8 * u.m / u.s         # 광속
 k = 1.38e-23 * u.J / u.K       # 볼츠만 상수
 wavelengths = 0.0000005 * u.m  # 파장(500 nm)
@@ -41,7 +41,7 @@ time = 4 * u.s
 average_velocity = distance / time
 print(f&#x27;average_velocity.to(u.cm/u.s): {average_velocity.to(u.cm/u.s)}&#x27;)
 print(f&#x27;average_velocity.to(u.km/u.s): {average_velocity.to(u.km/u.s)}&#x27;)</code></pre>
-<h2 id="code-4">code 4. <button class="copy">복사</button></h2><pre><code>length1 = 15 * u.meter
+<h2 id="code-Ⅱ-4">code Ⅱ-4. <button class="copy">복사</button></h2><pre><code>length1 = 15 * u.meter
 length2 = 300 * u.centimeter
 time1 = 10 * u.second
 print(&quot;length1 + length2 =&quot;, length1 + length2)  # 15 m + 3 m = 18 m(단위 자동 변환)
@@ -56,7 +56,7 @@ try:
     print(length1 + time1)
 except Exception as e:
     print(&quot;오류 (단위 불일치):&quot;, e)</code></pre>
-<h2 id="code-5">code 5. <button class="copy">복사</button></h2><pre><code>import scipy.constants as const
+<h2 id="code-Ⅱ-5">code Ⅱ-5. <button class="copy">복사</button></h2><pre><code>import scipy.constants as const
 constR1 = const.physical_constants[&quot;molar gas constant&quot;]  # 기체 상수(값, 단위, 불확도)
 print(&quot;type(constR1):&quot;, type(constR1))
 print(&quot;constR1:&quot;, constR1)
@@ -68,7 +68,7 @@ print(&quot;solar_luminosity:&quot;, solar_luminosity)
 
 # scipy.constants에서 값을 바로 가져오기
 print(f&quot;천문단위(AU): {const.au} m&quot;)</code></pre>
-<h2 id="code-6">code 6. <button class="copy">복사</button></h2><pre><code>import astropy.units as u
+<h2 id="code-Ⅱ-6">code Ⅱ-6. <button class="copy">복사</button></h2><pre><code>import astropy.units as u
 distance = 8 * u.m
 print(&quot;type(distance):{}&quot;.format(type(distance)))
 print(&quot;distance:{}&quot;.format(distance ))
@@ -77,11 +77,11 @@ time = 4 * u.s
 average_velocity = distance / time
 print(&quot;type(average_velocity):{}&quot;.format(type(average_velocity)))
 print(&quot;average_velocity:{}&quot;.format(average_velocity))</code></pre>
-<h2 id="code-7">code 7. <button class="copy">복사</button></h2><pre><code>print(f&#x27;distance.value:0.1f: {distance.value:.1f}, distance.unit: {distance.unit}&#x27;)
+<h2 id="code-Ⅱ-7">code Ⅱ-7. <button class="copy">복사</button></h2><pre><code>print(f&#x27;distance.value:0.1f: {distance.value:.1f}, distance.unit: {distance.unit}&#x27;)
 print(f&#x27;distance.value:0.8f:{distance.value:0.8f}, distance.unit:fits: {distance.unit:fits}&#x27;)
 print(f&#x27;distance.value:0.8f:{distance.value:0.8f}, distance.unit:cds: {distance.unit:cds}&#x27;)
 print(f&#x27;distance.value:0.2f:{distance.value:0.2f}, distance.unit:latex: {distance.unit:latex}&#x27;)</code></pre>
-<h2 id="code-8">code 8. <button class="copy">복사</button></h2><pre><code>h = 6.626e-34 * u.J * u.s                  # 플랑크 상수
+<h2 id="code-Ⅱ-8">code Ⅱ-8. <button class="copy">복사</button></h2><pre><code>h = 6.626e-34 * u.J * u.s                  # 플랑크 상수
 c = 3.0e+8  * u.m / u.s                    # 광속
 k = 1.38e-23 * u.J / u.K                   # 볼츠만 상수
 sigma = 5.67e-8 * u.W / (u.m**2 * u.K**4)  # 슈테판-볼츠만 상수
@@ -101,7 +101,7 @@ fall_time = (2 * height / g)**0.5  # t = √(2h/g)
 print(f&#x27;낙하시간: {fall_time}&#x27;)
 print(f&#x27;낙하시간 (분): {fall_time.to(u.minute)}&#x27;)
 print(f&#x27;낙하시간 (밀리초): {fall_time.to(u.millisecond)}&#x27;)</code></pre>
-<h2 id="code-9">code 9. <button class="copy">복사</button></h2><pre><code>import astropy.constants as const
+<h2 id="code-Ⅱ-9">code Ⅱ-9. <button class="copy">복사</button></h2><pre><code>import astropy.constants as const
 print(&quot;const.h:{}&quot;.format(const.h))
 print(&quot;const.c:{}&quot;.format(const.c))
 print(&quot;const.k_B:{}&quot;.format(const.k_B))
@@ -113,7 +113,7 @@ print(&quot;const.R_sun:{}&quot;.format(const.R_sun))      # 태양 반지름
 print(&quot;const.R_earth:{}&quot;.format(const.R_earth))  # 지구 반지름
 print(&quot;const.au:{}&quot;.format(const.au))            # 천문단위(지구–태양 평균 거리)
 print(&quot;const.pc:{}&quot;.format(const.pc))            # 파섹</code></pre>
-<h2 id="code-10">code 10. <button class="copy">복사</button></h2><pre><code>from metpy.units import units as u
+<h2 id="code-Ⅱ-10">code Ⅱ-10. <button class="copy">복사</button></h2><pre><code>from metpy.units import units as u
 
 length = 10 * u.meter
 time = 2 * u.second
@@ -138,7 +138,7 @@ try:
     print(length + time)
 except Exception as e:
     print(&quot;오류 (단위 불일치):&quot;, e)</code></pre>
-<h2 id="code-11">code 11. <button class="copy">복사</button></h2><pre><code># 수치(magnitude)와 단위(units) 분리
+<h2 id="code-Ⅱ-11">code Ⅱ-11. <button class="copy">복사</button></h2><pre><code># 수치(magnitude)와 단위(units) 분리
 print(&quot;length.magnitude:&quot;, length.magnitude)
 print(&quot;length.units:&quot;, length.units)
 print(&quot;speed.magnitude:&quot;, speed.magnitude)
@@ -153,7 +153,7 @@ print(&quot;speed (mile/hour):&quot;, speed.to(&#x27;mile/hour&#x27;))
 print(f&quot;speed = {speed.magnitude:.2f} [{speed.units}]&quot;)
 print(f&quot;total_length = {total_length.magnitude} {total_length.units}&quot;)
 print(f&quot;area = {area.magnitude} {area.units}&quot;)</code></pre>
-<h2 id="code-12">code 12. <button class="copy">복사</button></h2><pre><code>from metpy.constants import Rd, g, Cp_d, epsilon
+<h2 id="code-Ⅱ-12">code Ⅱ-12. <button class="copy">복사</button></h2><pre><code>from metpy.constants import Rd, g, Cp_d, epsilon
 
 print(f&quot;건조공기 기체상수 Rd: {Rd}&quot;)
 print(f&quot;표준 중력가속도 g: {g}&quot;)

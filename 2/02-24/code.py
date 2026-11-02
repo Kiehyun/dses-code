@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | II-04. 기체 분자 운동과 맥스웰-볼츠만 분포
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 42.
+# %% code Ⅱ-22.
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import constants
@@ -40,7 +40,7 @@ for T in (300, 1000):
     print(f"T = {T:4d} K : v_p = {v_p:5.0f}, <v> = {v_mean:5.0f}, "
           f"v_rms = {v_rms:5.0f} m/s,  넓이 = {area:.4f}")
 
-# %% code 43.
+# %% code Ⅱ-23.
 fig, ax = plt.subplots(figsize=(8.8, 4))
 for T, color in zip((100, 300, 600, 1000),
                     ("tab:blue", "tab:green", "tab:orange", "tab:red")):
@@ -60,7 +60,7 @@ ax.grid(alpha=0.3)
 du.save_figure(fig, os.path.join(proj_dir, "mb_temperature"))
 plt.show()
 
-# %% code 44.
+# %% code Ⅱ-24.
 gases = {"H$_2$": 2.016, "He": 4.003, "H$_2$O": 18.015,
          "N$_2$": 28.014, "O$_2$": 31.998, "CO$_2$": 44.009}
 T = 300
@@ -83,7 +83,7 @@ for name, M in gases.items():
     v_p, v_mean, v_rms = char_speeds_3d(M * amu, T)
     print(f"{label:6s} {M:6.1f} {v_p:7.0f} {v_mean:7.0f} {v_rms:7.0f}")
 
-# %% code 45.
+# %% code Ⅱ-25.
 rng = np.random.default_rng(42)       # 난수 씨앗 고정
 
 m_Ar = 39.948 * amu   # 아르곤 원자 질량 (kg)
@@ -124,7 +124,7 @@ print(f"\n[해수면 공기] 수 밀도 {n_air:.2e} /m^3, "
       f"평균 분자 간격 {n_air ** (-1 / 3) * 1e9:.1f} nm, "
       f"평균 자유 거리 {mfp_air * 1e9:.0f} nm")
 
-# %% code 46.
+# %% code Ⅱ-26.
 from scipy.spatial import cKDTree
 
 def step(pos, vel, dt):
@@ -151,7 +151,7 @@ def step(pos, vel, dt):
             n_coll += 1
     return wall_impulse, n_coll
 
-# %% code 47.
+# %% code Ⅱ-27.
 import time
 
 dt = 0.05e-12        # 시간 간격 (s)
@@ -192,7 +192,7 @@ print(f"계산 시간 {time.perf_counter() - start:.1f} 초, "
       f"충돌 {n_coll_total}번 (원자 하나당 평균 {2 * n_coll_total / N:.1f}번)")
 print(f"평형 데이터: 속력 표본 {eq_speed.size}개")
 
-# %% code 48.
+# %% code Ⅱ-28.
 speed_end = np.linalg.norm(vel, axis=1)
 fig, axes = plt.subplots(1, 2, figsize=(7.5, 3.6), constrained_layout=True)
 for ax, p, s_, title in zip(axes, (pos0, pos), (np.linalg.norm(vel0, axis=1), speed_end),
@@ -209,7 +209,7 @@ fig.colorbar(sc, ax=axes, shrink=0.85, label="속력 (m/s)")
 du.save_figure(fig, os.path.join(proj_dir, "box_snapshots"))
 plt.show()
 
-# %% code 49.
+# %% code Ⅱ-29.
 v_grid = np.linspace(0, 1000, 401)
 f2_theory = mb_speed_2d(v_grid, m_Ar, T0)
 bins = np.linspace(0, 1000, 41)
@@ -235,7 +235,7 @@ for t_ps in snap_times_ps:
     sp = snapshots[t_ps]
     print(f"t = {t_ps:3d} ps : 평균 {sp.mean():5.1f} m/s, 표준편차 {sp.std():5.1f} m/s")
 
-# %% code 50.
+# %% code Ⅱ-30.
 sigma = np.sqrt(k_B * T0 / m_Ar)                     # 성분별 표준편차
 vx_grid = np.linspace(-1000, 1000, 401)
 gauss = np.exp(-vx_grid**2 / (2 * sigma**2)) / (np.sqrt(2 * np.pi) * sigma)
@@ -275,7 +275,7 @@ print(f"{lab('평균 속력')}{eq_speed.mean():10.1f}{v_mean2:10.1f}  m/s")
 print(f"{lab('rms 속력')}{np.sqrt((eq_speed**2).mean()):10.1f}{v_rms2:10.1f}  m/s")
 print(f"{lab('v_x 표준편차')}{eq_vx.std():10.1f}{sigma:10.1f}  m/s")
 
-# %% code 51.
+# %% code Ⅱ-31.
 t_ps = history["t"] * 1e12
 E_rel = (history["E"] - history["E"][0]) / history["E"][0]
 shape = history["v4"] / history["v2"]**2
@@ -305,7 +305,7 @@ for t_check in (10, 40, 100):
     print(f"t = {t_check:3d} ps의 모양 비율: {shape[np.searchsorted(t_ps, t_check)]:.2f}")
 print(f"평형 구간 평균 모양 비율 : {shape[t_ps > 200].mean():.3f}")
 
-# %% code 52.
+# %% code Ⅱ-32.
 duration = n_steps * dt - t_eq
 P_sim = impulse_eq / (duration * 4 * L)               # 측정한 압력 (N/m)
 T_sim = history["E"][-1] / (N * k_B)                  # 2차원: E/N = k_B T
@@ -316,7 +316,7 @@ print(f"벽 충돌로 잰 압력      : {P_sim:.3e} N/m")
 print(f"이상기체 식 N k_B T / A : {P_ideal:.3e} N/m")
 print(f"비율 (측정 / 이상기체)  : {P_sim / P_ideal:.3f}")
 
-# %% code 53.
+# %% code Ⅱ-33.
 from scipy.special import erfcx
 
 G = constants.G
@@ -346,7 +346,7 @@ for body, (M, R, T_top) in bodies.items():
               f"v_esc/<v> = {ratio:5.1f}, "
               f"log10 F = {log10_escape_fraction(v_esc, m, T_top):7.1f}  -> {verdict}")
 
-# %% code 54.
+# %% code Ⅱ-34.
 from matplotlib.ticker import FuncFormatter, LogLocator, NullLocator
 
 v_km = np.linspace(0.01, 16, 800)                    # km/s
@@ -372,7 +372,7 @@ ax.grid(alpha=0.3, which="both")
 du.save_figure(fig, os.path.join(proj_dir, "escape_tail"))
 plt.show()
 
-# %% code 55.
+# %% code Ⅱ-35.
 MAKE_ANIMATION = False   # True로 바꾸면 애니메이션 생성
 
 if MAKE_ANIMATION:

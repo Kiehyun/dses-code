@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | I-03. AI 코딩 도우미로 데이터 분석하기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 12.
+# %% code Ⅰ-12.
 import numpy as np
 import pandas as pd
 
@@ -19,7 +19,7 @@ df = pd.DataFrame({
 }, index=days)
 df.head()
 
-# %% code 13.
+# %% code Ⅰ-13.
 import matplotlib.pyplot as plt
 
 ai = df.copy()
@@ -35,7 +35,7 @@ ax.set_title("AI가 처음 그린 그래프")
 plt.show()
 print(list(monthly.index))
 
-# %% code 14.
+# %% code Ⅰ-14.
 expected = [f"{m}월" for m in range(1, 13)]
 print("월 순서가 1월~12월인가? ", list(monthly.index) == expected)
 
@@ -43,7 +43,7 @@ july_direct = df.loc[df.index.month == 7, "tmax"].mean()     # 다른 방법으�
 print("7월 평균 최고기온이 같은가?",
       np.isclose(july_direct, monthly.loc["7월", "tmax"]))
 
-# %% code 15.
+# %% code Ⅰ-15.
 import os
 
 fixed = (df.assign(range=df["tmax"] - df["tmin"])

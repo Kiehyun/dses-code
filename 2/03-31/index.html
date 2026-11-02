@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>III-11. 소행성 관측 계획 수립하기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/03-31/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-322">322</a> <a href="#code-323">323</a> <a href="#code-324">324</a> <a href="#code-325">325</a> <a href="#code-326">326</a> <a href="#code-327">327</a> <a href="#code-328">328</a> <a href="#code-329">329</a> <a href="#code-330">330</a> <a href="#code-331">331</a> <a href="#code-332">332</a> <a href="#code-333">333</a> <a href="#code-334">334</a> <a href="#code-335">335</a> <a href="#code-336">336</a> <a href="#code-337">337</a> <a href="#code-338">338</a> <a href="#code-339">339</a> <a href="#code-340">340</a> <a href="#code-341">341</a></p>
-<h2 id="code-322">code 322. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+<p class="jump"><a href="#code-Ⅲ-267">Ⅲ-267</a> <a href="#code-Ⅲ-268">Ⅲ-268</a> <a href="#code-Ⅲ-269">Ⅲ-269</a> <a href="#code-Ⅲ-270">Ⅲ-270</a> <a href="#code-Ⅲ-271">Ⅲ-271</a> <a href="#code-Ⅲ-272">Ⅲ-272</a> <a href="#code-Ⅲ-273">Ⅲ-273</a> <a href="#code-Ⅲ-274">Ⅲ-274</a> <a href="#code-Ⅲ-275">Ⅲ-275</a> <a href="#code-Ⅲ-276">Ⅲ-276</a> <a href="#code-Ⅲ-277">Ⅲ-277</a> <a href="#code-Ⅲ-278">Ⅲ-278</a> <a href="#code-Ⅲ-279">Ⅲ-279</a> <a href="#code-Ⅲ-280">Ⅲ-280</a> <a href="#code-Ⅲ-281">Ⅲ-281</a> <a href="#code-Ⅲ-282">Ⅲ-282</a> <a href="#code-Ⅲ-283">Ⅲ-283</a> <a href="#code-Ⅲ-284">Ⅲ-284</a> <a href="#code-Ⅲ-285">Ⅲ-285</a> <a href="#code-Ⅲ-286">Ⅲ-286</a></p>
+<h2 id="code-Ⅲ-267">code Ⅲ-267. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 
 def classify_asteroid(a, e):
     &quot;&quot;&quot;궤도 긴반지름 a(au)와 이심률 e로 소행성 무리를 대략 판단&quot;&quot;&quot;
@@ -60,7 +60,7 @@ df_orbit[&quot;q(au)&quot;] = (df_orbit[&quot;a(au)&quot;] * (1 - df_orbit[&quot
 df_orbit[&quot;Q(au)&quot;] = (df_orbit[&quot;a(au)&quot;] * (1 + df_orbit[&quot;e&quot;])).round(3)
 df_orbit[&quot;group&quot;] = [classify_asteroid(a, e) for a, e in zip(df_orbit[&quot;a(au)&quot;], df_orbit[&quot;e&quot;])]
 df_orbit</code></pre>
-<h2 id="code-323">code 323. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅲ-268">code Ⅲ-268. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
 a_grid = np.linspace(0.6, 6, 400)
@@ -83,7 +83,7 @@ ax.set_ylabel(&quot;이심률 e&quot;)
 ax.set_title(&quot;궤도 요소에 따른 소행성 분류&quot;)
 ax.legend(fontsize=8, loc=&quot;upper right&quot;)
 plt.show()</code></pre>
-<h2 id="code-324">code 324. <button class="copy">복사</button></h2><pre><code>from datetime import datetime, timedelta, timezone
+<h2 id="code-Ⅲ-269">code Ⅲ-269. <button class="copy">복사</button></h2><pre><code>from datetime import datetime, timedelta, timezone
 from astropy.time import Time
 
 KST = timezone(timedelta(hours=9))
@@ -102,11 +102,11 @@ def datetime_range(start_dt, end_dt, delta):
 print([d.strftime(&quot;%m-%d&quot;) for d in datetime_range(datetime(2024, 12, 1),
                                                    datetime(2024, 12, 4),
                                                    timedelta(days=1))])</code></pre>
-<h2 id="code-325">code 325. <button class="copy">복사</button></h2><pre><code>t = Time(dt_utc, location=(&quot;127d&quot;, &quot;37d&quot;))
+<h2 id="code-Ⅲ-270">code Ⅲ-270. <button class="copy">복사</button></h2><pre><code>t = Time(dt_utc, location=(&quot;127d&quot;, &quot;37d&quot;))
 print(&quot;세계시      :&quot;, t.utc.iso)
 print(&quot;줄리안일    :&quot;, t.jd)
 print(&quot;평균 항성시 :&quot;, t.sidereal_time(&quot;mean&quot;))</code></pre>
-<h2 id="code-326">code 326. <button class="copy">복사</button></h2><pre><code>#############################################
+<h2 id="code-Ⅲ-271">code Ⅲ-271. <button class="copy">복사</button></h2><pre><code>#############################################
 # 변수
 mpc_code=&#x27;P64&#x27; # 관측 위치: 경기과학고 천문대, 수원 [코드 P64]
 
@@ -135,7 +135,7 @@ vmag_min=6
 vmag_max=13
 list_num=100
 sort=&#x27;trans&#x27;</code></pre>
-<h2 id="code-327">code 327. <button class="copy">복사</button></h2><pre><code># API 주소 정의
+<h2 id="code-Ⅲ-272">code Ⅲ-272. <button class="copy">복사</button></h2><pre><code># API 주소 정의
 url = &#x27;https://ssd-api.jpl.nasa.gov/sbwobs.api&#x27;
 
 # 이 API 요청에 맞는 주소 만들기
@@ -143,14 +143,14 @@ url += f&quot;?sb-kind=a&amp;mpc-code={mpc_code}&amp;obs-time={obs_datetime}&amp
 url += f&quot;&amp;vmag-max={vmag_max}&amp;vmag-min={vmag_min}&amp;optical=true&amp;fmt-ra-dec=true&amp;mag-required=true&amp;output-sort={sort}&amp;maxoutput={list_num}&quot;
 
 print(&quot;url :&quot;, url)</code></pre>
-<h2 id="code-328">code 328. <button class="copy">복사</button></h2><pre><code>import json
+<h2 id="code-Ⅲ-273">code Ⅲ-273. <button class="copy">복사</button></h2><pre><code>import json
 import requests
 
 response = requests.get(url, timeout=60)
 data = response.json()          # JSON 응답을 파이썬 딕셔너리로</code></pre>
-<h2 id="code-329">code 329. <button class="copy">복사</button></h2><pre><code>print(&quot;type(data) :&quot;, type(data))
+<h2 id="code-Ⅲ-274">code Ⅲ-274. <button class="copy">복사</button></h2><pre><code>print(&quot;type(data) :&quot;, type(data))
 print(&quot;data.keys() :&quot;, list(data.keys()))</code></pre>
-<h2 id="code-330">code 330. <button class="copy">복사</button></h2><pre><code>print(data[&#x27;obs_constraints&#x27;])
+<h2 id="code-Ⅲ-275">code Ⅲ-275. <button class="copy">복사</button></h2><pre><code>print(data[&#x27;obs_constraints&#x27;])
 print(data[&#x27;sb_constraints&#x27;])
 print(data[&#x27;fields&#x27;])
 print(data[&#x27;data&#x27;][0])            # 첫 행(소행성 한 개)만
@@ -158,15 +158,15 @@ print(type(data[&#x27;fields&#x27;]))
 print(len(data[&#x27;fields&#x27;]))
 print(len(data[&#x27;data&#x27;][0]))
 print(len(data[&#x27;data&#x27;]))          # 행(소행성) 수</code></pre>
-<h2 id="code-331">code 331. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+<h2 id="code-Ⅲ-276">code Ⅲ-276. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 
 df = pd.DataFrame.from_dict(data[&#x27;data&#x27;])
 df = df.set_axis((data[&#x27;fields&#x27;]), axis=1)
 df[&#x27;OBSdate(UT)&#x27;] = obs_date
 print(&quot;len(df) :&quot;, len(df))
 df.head()                         # 앞의 5행만 표시</code></pre>
-<h2 id="code-332">code 332. <button class="copy">복사</button></h2><pre><code>df.to_csv(str(proj_dir/ f&#x27;asteroid_{obs_date}.csv&#x27;))</code></pre>
-<h2 id="code-333">code 333. <button class="copy">복사</button></h2><pre><code>url_neo = (&quot;https://ssd-api.jpl.nasa.gov/sbwobs.api&quot;
+<h2 id="code-Ⅲ-277">code Ⅲ-277. <button class="copy">복사</button></h2><pre><code>df.to_csv(str(proj_dir/ f&#x27;asteroid_{obs_date}.csv&#x27;))</code></pre>
+<h2 id="code-Ⅲ-278">code Ⅲ-278. <button class="copy">복사</button></h2><pre><code>url_neo = (&quot;https://ssd-api.jpl.nasa.gov/sbwobs.api&quot;
            f&quot;?sb-kind=a&amp;sb-group=neo&amp;mpc-code={mpc_code}&amp;obs-time={obs_datetime}&quot;
            &quot;&amp;elev-min=30&amp;vmag-max=18&amp;output-sort=vmag&amp;maxoutput=20&quot;)
 print(&quot;url_neo :&quot;, url_neo)
@@ -178,7 +178,7 @@ if data_neo.get(&quot;data&quot;):
     display(df_neo[[&quot;Full name&quot;, &quot;Transit time&quot;, &quot;Vmag&quot;, &quot;Topo.range (au)&quot;]])
 else:
     print(&quot;조건에 맞는 근지구소행성이 없습니다:&quot;, data_neo.get(&quot;message&quot;, &quot;&quot;))</code></pre>
-<h2 id="code-334">code 334. <button class="copy">복사</button></h2><pre><code># 여러 날의 관측 후보 목록을 하루 간격으로 받아 CSV로 저장
+<h2 id="code-Ⅲ-279">code Ⅲ-279. <button class="copy">복사</button></h2><pre><code># 여러 날의 관측 후보 목록을 하루 간격으로 받아 CSV로 저장
 #############################################
 # 변수
 mpc_code=&#x27;P64&#x27; # 관측 위치: 경기과학고 천문대, 수원 [코드 P64]
@@ -235,7 +235,7 @@ print(&quot;len(df_all) :&quot;, len(df_all))
 
 df_all.to_csv(str(proj_dir/f&quot;asteroid_{dts[0].strftime(&#x27;%Y%m%d&#x27;)}-{dts[-1].strftime(&#x27;%Y%m%d&#x27;)}.csv&quot;))
 df_all.head()</code></pre>
-<h2 id="code-335">code 335. <button class="copy">복사</button></h2><pre><code>#print(&quot;df :&quot;, df)
+<h2 id="code-Ⅲ-280">code Ⅲ-280. <button class="copy">복사</button></h2><pre><code>#print(&quot;df :&quot;, df)
 #print(&quot;df[&#x27;Full name&#x27;] :&quot;, df[&#x27;Full name&#x27;])
 print(&quot;df[&#x27;Full name&#x27;][0] :&quot;, df[&#x27;Full name&#x27;][0])
 
@@ -246,16 +246,16 @@ print(&quot;df[&#x27;Full name&#x27;][0] :&quot;, df[&#x27;Full name&#x27;][0])
 asteroid_id = df[&#x27;Full name&#x27;][0].split(&quot; &quot;)[0]   # 이름 앞의 번호만 잘라 내기
 print(&quot;asteroid_id :&quot;, asteroid_id)
 obs_date = df[&#x27;OBSdate(UT)&#x27;][0]</code></pre>
-<h2 id="code-336">code 336. <button class="copy">복사</button></h2><pre><code>from astroquery.mpc import MPC</code></pre>
-<h2 id="code-337">code 337. <button class="copy">복사</button></h2><pre><code>t_start = Time(f&quot;{obs_date[:4]}-{obs_date[4:6]}-{obs_date[6:]} 09:00:00&quot;)   # KST 18시 = UTC 09시
+<h2 id="code-Ⅲ-281">code Ⅲ-281. <button class="copy">복사</button></h2><pre><code>from astroquery.mpc import MPC</code></pre>
+<h2 id="code-Ⅲ-282">code Ⅲ-282. <button class="copy">복사</button></h2><pre><code>t_start = Time(f&quot;{obs_date[:4]}-{obs_date[4:6]}-{obs_date[6:]} 09:00:00&quot;)   # KST 18시 = UTC 09시
 eph = MPC.get_ephemeris(asteroid_id, location=&#x27;P64&#x27;, start=t_start, number=15,
                         ra_format={&#x27;sep&#x27;: &#x27;:&#x27;, &#x27;unit&#x27;: &#x27;hourangle&#x27;,
                                    &#x27;precision&#x27;: 1},
                         dec_format={&#x27;sep&#x27;: &#x27;:&#x27;, &#x27;precision&#x27;: 0}, step=&#x27;1h&#x27;)
 print(&quot;type(eph): &quot;, type(eph))
 print(&quot;eph: &quot;, eph)</code></pre>
-<h2 id="code-338">code 338. <button class="copy">복사</button></h2><pre><code>print(f&quot;Proper motion: {eph[&#x27;Proper motion&#x27;].quantity.to(&#x27;arcmin/h&#x27;).max():.03f}&quot;)</code></pre>
-<h2 id="code-339">code 339. <button class="copy">복사</button></h2><pre><code>from astropy.coordinates import SkyCoord, AltAz, get_sun, get_body
+<h2 id="code-Ⅲ-283">code Ⅲ-283. <button class="copy">복사</button></h2><pre><code>print(f&quot;Proper motion: {eph[&#x27;Proper motion&#x27;].quantity.to(&#x27;arcmin/h&#x27;).max():.03f}&quot;)</code></pre>
+<h2 id="code-Ⅲ-284">code Ⅲ-284. <button class="copy">복사</button></h2><pre><code>from astropy.coordinates import SkyCoord, AltAz, get_sun, get_body
 import matplotlib.dates as mdates
 
 site = EarthLocation(lon=127.0*u.deg, lat=37.3*u.deg, height=50*u.m)   # P64 관측지
@@ -290,13 +290,13 @@ plt.show()
 i_max = int(np.argmax(aa_ast.alt.deg))
 print(f&quot;가장 높을 때: {kst(t_eph)[i_max]:%m-%d %H:%M} KST, 고도 {aa_ast.alt.deg[i_max]:.1f}°, &quot;
       f&quot;방위 {aa_ast.az.deg[i_max]:.1f}°&quot;)</code></pre>
-<h2 id="code-340">code 340. <button class="copy">복사</button></h2><pre><code>df_eph = eph.to_pandas()
+<h2 id="code-Ⅲ-285">code Ⅲ-285. <button class="copy">복사</button></h2><pre><code>df_eph = eph.to_pandas()
 df_eph[&#x27;Asteroid ID&#x27;] = asteroid_id
 
 df_eph[&#x27;Asteroid name&#x27;] = df[&#x27;Full name&#x27;][0]
 df_eph.to_csv(str(proj_dir/ f&#x27;asteroid_{asteroid_id}.csv&#x27;))
 df_eph</code></pre>
-<h2 id="code-341">code 341. <button class="copy">복사</button></h2><pre><code>import re
+<h2 id="code-Ⅲ-286">code Ⅲ-286. <button class="copy">복사</button></h2><pre><code>import re
 
 n_eph = 5                        # 책에서는 앞의 5개만(전체는 len(df))
 saved = []

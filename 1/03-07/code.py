@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | III-07. H-R도 그리기(히파르코스 성표)
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 89.
+# %% code Ⅲ-89.
 from pathlib import Path
 import requests
 
@@ -30,17 +30,17 @@ if not fpath.exists():
 
 print(f"{fpath} ({fpath.stat().st_size:,} 바이트)")
 
-# %% code 90.
+# %% code Ⅲ-90.
 from pathlib import Path 
 fpaths = sorted(list(Path(proj_dir).glob('*.tsv')))
 print(f"fpaths: {fpaths}")
 print(f"len(fpaths): {len(fpaths)}")
 
-# %% code 91.
+# %% code Ⅲ-91.
 # 파일 앞 40줄 출력(공통 함수, 인코딩 자동 판별)
 head = du.preview_text(fpaths[0], n=40)  # 출력한 줄 목록은 head에 담아 둠
 
-# %% code 92.
+# %% code Ⅲ-92.
 import numpy as np
 import pandas as pd
 
@@ -59,12 +59,12 @@ df = pd.read_table(
 print(f"df.shape:\n{df.shape}")
 print(f"df:\n", df)
 
-# %% code 93.
+# %% code Ⅲ-93.
 print("df[['Vmag', 'Plx', 'B-V']]:\n", df[['Vmag', 'Plx', 'B-V']])
 print("type(df['Vmag'][1]), type(df['Plx'][1]), type(df['B-V'][1]):", 
         type(df['Vmag'][1]), type(df['Plx'][1]), type(df['B-V'][1])) 
 
-# %% code 94.
+# %% code Ⅲ-94.
 print("df.describe() :", df.describe())
 
 # 문자열 양쪽 공백 제거
@@ -90,7 +90,7 @@ df_clean['B-V'] = df_clean['B-V'].astype(np.float64)
 print("type(df_clean['Vmag'][1]), type(df_clean['Plx'][1]), type(df_clean['B-V'][1]) :", 
       type(df_clean['Vmag'][1]), type(df_clean['Plx'][1]), type(df_clean['B-V'][1]))
 
-# %% code 95.
+# %% code Ⅲ-95.
 # 연주시차가 0 이하인 별 제외(거리를 구할 수 없음)
 df_clean = df_clean[df_clean['Plx'] > 0].copy()
 print(f"Plx > 0 인 별: {len(df_clean)}개")
@@ -100,14 +100,14 @@ df_clean['M_V'] = df_clean['Vmag'] + 5 * np.log10(df_clean['Plx']/100.)
 
 print("df_clean:\n", df_clean)
 
-# %% code 96.
+# %% code Ⅲ-96.
 # G8, F5처럼 「알파벳+숫자」로 시작하는 분광형만 남기기
 f = lambda s: (len(s) >= 2) and (s[0].isalpha()) and (s[1].isdigit())
 i = df_clean['SpType'].apply(f)
 df_clean = df_clean[i]
 print("분광형으로 거른 뒤 df_clean:\n", df_clean)
 
-# %% code 97.
+# %% code Ⅲ-97.
 # 분광형 앞 두 글자(예: G8)
 f = lambda s: s[0:2]
 df_clean['SpType2'] = df_clean['SpType'].apply(f)
@@ -121,7 +121,7 @@ clases = df_clean['SpType'].map(f)
 print('***df_clean에서 각 분광형별 개수 세기***')
 print(clases.value_counts())
 
-# %% code 98.
+# %% code Ⅲ-98.
 # OBAFGKM 분광형만 남기기
 f = lambda s: s[0] in 'OBAFGKM'
 df_clean = df_clean[df_clean['SpType'].map(f)]
@@ -132,7 +132,7 @@ clases = df_clean['SpType'].map(f)
 print('***df_clean에서 각 분광형별 개수 세기***')
 print(clases.value_counts())
 
-# %% code 99.
+# %% code Ⅲ-99.
 df_clean.to_csv(Path(proj_dir) / "HIP_clean.csv")
 print(f"df_clean을 저장함: {Path(proj_dir) / 'HIP_clean.csv'}")
 
@@ -145,7 +145,7 @@ df_clean['SpType2'] = df_clean['SpType2'].apply(f)
 
 print("df_clean:\n", df_clean)
 
-# %% code 100.
+# %% code Ⅲ-100.
 import matplotlib.pyplot as plt
 fig, ax = plt.subplots(figsize=(6,8))
 
@@ -169,7 +169,7 @@ ax.set_ylabel('절대 등급 ($M_V$)', fontsize=16)
 
 plt.show()
 
-# %% code 101.
+# %% code Ⅲ-101.
 import matplotlib.pyplot as plt
 fig, ax = plt.subplots(figsize=(6,8))
 
@@ -188,14 +188,14 @@ ax.set_ylabel('절대 등급 ($M_V$)', fontsize=12)
 
 plt.show()
 
-# %% code 102.
+# %% code Ⅲ-102.
 # 광도 계급(I, V 등)이 적힌 별
 f = lambda s: ('I' in s) or ('V' in s)
 b = df_clean['SpType'].map(f)
 print("b:", b)
 print("sum(b):", sum(b))
 
-# %% code 103.
+# %% code Ⅲ-103.
 # 광도 계급별 (이름, 조건) — 긴 표기부터 확인해 짧은 표기와 헷갈리지 않게 함
 lum_classes = {
     'VII': ('백색왜성(옛 표기)', lambda s: 'VII' in s),
@@ -216,7 +216,7 @@ for cls, (name, f) in lum_classes.items():
 n_class = sum(m.astype(int) for m in masks.values())
 print(f"두 계급 이상에 중복으로 센 별: {(n_class > 1).sum()}개")
 
-# %% code 104.
+# %% code Ⅲ-104.
 def plot_lum_class(b, c, label):
     ''' b: 선택할 별을 나타내는 불 Series
         c: 색상

@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>II-03. 지도 그리기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/02-03/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-22">22</a> <a href="#code-23">23</a> <a href="#code-24">24</a> <a href="#code-25">25</a> <a href="#code-26">26</a> <a href="#code-27">27</a> <a href="#code-28">28</a> <a href="#code-29">29</a> <a href="#code-30">30</a> <a href="#code-31">31</a> <a href="#code-32">32</a> <a href="#code-33">33</a> <a href="#code-34">34</a> <a href="#code-35">35</a> <a href="#code-36">36</a> <a href="#code-37">37</a> <a href="#code-38">38</a></p>
-<h2 id="code-22">code 22. <button class="copy">복사</button></h2><pre><code>from mpl_toolkits.basemap import Basemap
+<p class="jump"><a href="#code-Ⅱ-22">Ⅱ-22</a> <a href="#code-Ⅱ-23">Ⅱ-23</a> <a href="#code-Ⅱ-24">Ⅱ-24</a> <a href="#code-Ⅱ-25">Ⅱ-25</a> <a href="#code-Ⅱ-26">Ⅱ-26</a> <a href="#code-Ⅱ-27">Ⅱ-27</a> <a href="#code-Ⅱ-28">Ⅱ-28</a> <a href="#code-Ⅱ-29">Ⅱ-29</a> <a href="#code-Ⅱ-30">Ⅱ-30</a> <a href="#code-Ⅱ-31">Ⅱ-31</a> <a href="#code-Ⅱ-32">Ⅱ-32</a> <a href="#code-Ⅱ-33">Ⅱ-33</a> <a href="#code-Ⅱ-34">Ⅱ-34</a> <a href="#code-Ⅱ-35">Ⅱ-35</a> <a href="#code-Ⅱ-36">Ⅱ-36</a> <a href="#code-Ⅱ-37">Ⅱ-37</a> <a href="#code-Ⅱ-38">Ⅱ-38</a></p>
+<h2 id="code-Ⅱ-22">code Ⅱ-22. <button class="copy">복사</button></h2><pre><code>from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
@@ -39,7 +39,7 @@ ax3.set_title(&#x27;중심 위도 37도&#x27;)
 plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;02_03_Drawing_maps_01&quot;))
 plt.show()</code></pre>
-<h2 id="code-23">code 23. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅱ-23">code Ⅱ-23. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 
 fig = plt.figure(figsize=(12, 4))
@@ -61,7 +61,7 @@ m3.shadedrelief(scale=0.5, alpha=0.7)
 
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-24">code 24. <button class="copy">복사</button></h2><pre><code>from mpl_toolkits.basemap import Basemap
+<h2 id="code-Ⅱ-24">code Ⅱ-24. <button class="copy">복사</button></h2><pre><code>from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
 
 fig = plt.figure(figsize=(5, 5))
@@ -76,7 +76,7 @@ plt.text(x, y, &#x27;수원&#x27;, fontsize=12)
 
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;02_03_Drawing_maps_02&quot;))
 plt.show()</code></pre>
-<h2 id="code-25">code 25. <button class="copy">복사</button></h2><pre><code>from mpl_toolkits.basemap import Basemap
+<h2 id="code-Ⅱ-25">code Ⅱ-25. <button class="copy">복사</button></h2><pre><code>from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime, timezone
@@ -118,7 +118,7 @@ ax2.set_title(&#x27;%s (UTC) 주야 구분 지도&#x27; % date.strftime(&quot;%d
 
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-26">code 26. <button class="copy">복사</button></h2><pre><code>from itertools import chain
+<h2 id="code-Ⅱ-26">code Ⅱ-26. <button class="copy">복사</button></h2><pre><code>from itertools import chain
 
 def draw_map(m, scale=0.2):
     m.shadedrelief(scale=scale)
@@ -135,7 +135,7 @@ def draw_map(m, scale=0.2):
     # 이 선들을 돌면서 원하는 스타일을 지정한다
     for line in all_lines:
         line.set(linestyle=&#x27;-&#x27;, alpha=0.3, color=&#x27;w&#x27;)</code></pre>
-<h2 id="code-27">code 27. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(1, 3, figsize=(10, 5))
+<h2 id="code-Ⅱ-27">code Ⅱ-27. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(1, 3, figsize=(10, 5))
 
 for i, res in enumerate([&#x27;l&#x27;, &#x27;i&#x27;, &#x27;h&#x27;]):  # 해안선 해상도: 낮음 · 중간 · 높음
     # 심사 도법(gnomonic), 충남 당진 부근 중심, 폭 · 높이 단위 m
@@ -149,7 +149,7 @@ for i, res in enumerate([&#x27;l&#x27;, &#x27;i&#x27;, &#x27;h&#x27;]):  # 해�
     m.drawcoastlines()
     
     ax[i].set_title(&quot;해상도=&#x27;{0}&#x27;&quot;.format(res));</code></pre>
-<h2 id="code-28">code 28. <button class="copy">복사</button></h2><pre><code>plt.figure(figsize=(8, 6))
+<h2 id="code-Ⅱ-28">code Ⅱ-28. <button class="copy">복사</button></h2><pre><code>plt.figure(figsize=(8, 6))
 
 loglat = [90, 0, 180, 62]  # 왼쪽 아래 경도 · 위도, 오른쪽 위 경도 · 위도
 clog = (loglat[2]+loglat[0])/2
@@ -170,7 +170,7 @@ m.drawmeridians(np.arange(-180, 181, 10), labels=[0, 0, 0, 1])
 plt.title(&quot;일기도 바탕 지도\n&quot;, fontsize=20)
 plt.savefig(f&#x27;{proj_dir}/Weather_map.pdf&#x27;)
 plt.show()   </code></pre>
-<h2 id="code-29">code 29. <button class="copy">복사</button></h2><pre><code>import cartopy.crs as ccrs
+<h2 id="code-Ⅱ-29">code Ⅱ-29. <button class="copy">복사</button></h2><pre><code>import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
 import cartopy.feature as cfeature
 
@@ -190,7 +190,7 @@ ax2.set_title(&#x27;육지 · 바다 · 격자를 더한 세계 지도&#x27;)
 plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;02_03_Drawing_maps_03&quot;))
 plt.show()</code></pre>
-<h2 id="code-30">code 30. <button class="copy">복사</button></h2><pre><code>import cartopy.crs as ccrs
+<h2 id="code-Ⅱ-30">code Ⅱ-30. <button class="copy">복사</button></h2><pre><code>import cartopy.crs as ccrs
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 import matplotlib.pyplot as plt
 import cartopy.feature as cfeature
@@ -241,7 +241,7 @@ plt.tight_layout()
 
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;02_03_Drawing_maps_04&quot;))
 plt.show()</code></pre>
-<h2 id="code-31">code 31. <button class="copy">복사</button></h2><pre><code>import matplotlib.path as mpath
+<h2 id="code-Ⅱ-31">code Ⅱ-31. <button class="copy">복사</button></h2><pre><code>import matplotlib.path as mpath
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -276,7 +276,7 @@ ax2.set_boundary(circle, transform=ax2.transAxes)
 
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;02_03_Drawing_maps_05&quot;))
 plt.show()</code></pre>
-<h2 id="code-32">code 32. <button class="copy">복사</button></h2><pre><code>import cartopy.crs as ccrs
+<h2 id="code-Ⅱ-32">code Ⅱ-32. <button class="copy">복사</button></h2><pre><code>import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
 
 fig = plt.figure(figsize=(10, 10))
@@ -295,13 +295,13 @@ plt.title(&#x27;우리나라 주변 지도&#x27;, fontsize=18)
 
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;02_03_Drawing_maps_06&quot;))
 plt.show()</code></pre>
-<h2 id="code-33">code 33. <button class="copy">복사</button></h2><pre><code>import folium
+<h2 id="code-Ⅱ-33">code Ⅱ-33. <button class="copy">복사</button></h2><pre><code>import folium
 from IPython.display import display
 
 basic_map = folium.Map(location=[37.5665, 126.9780], zoom_start=12)  # 서울 중심, [위도, 경도] 순서
 
 display(basic_map)</code></pre>
-<h2 id="code-34">code 34. <button class="copy">복사</button></h2><pre><code>import folium
+<h2 id="code-Ⅱ-34">code Ⅱ-34. <button class="copy">복사</button></h2><pre><code>import folium
 
 seoul_coords = [37.5665, 126.9780]  # 서울(위도, 경도)
 
@@ -316,7 +316,7 @@ folium.Marker(
 
 basic_map.save(Path(proj_dir)/&#x27;basic_map_of_Seoul.html&#x27;)  # HTML 파일로 저장
 display(basic_map)</code></pre>
-<h2 id="code-35">code 35. <button class="copy">복사</button></h2><pre><code>def safe_tile_loader():
+<h2 id="code-Ⅱ-35">code Ⅱ-35. <button class="copy">복사</button></h2><pre><code>def safe_tile_loader():
     &quot;&quot;&quot;안전한 타일 로딩&quot;&quot;&quot;
     location = [37.5665, 126.9780]  # 서울시청 좌표
     
@@ -367,7 +367,7 @@ else:
 for name, map_obj in maps.items():
     print(f&quot;\n{name} 지도:&quot;)
     display(map_obj)</code></pre>
-<h2 id="code-36">code 36. <button class="copy">복사</button></h2><pre><code>def create_marker_showcase():
+<h2 id="code-Ⅱ-36">code Ⅱ-36. <button class="copy">복사</button></h2><pre><code>def create_marker_showcase():
     &quot;&quot;&quot;다양한 마커 스타일을 보여주는 지도&quot;&quot;&quot;
     m = folium.Map(location=[37.5665, 126.9780], zoom_start=12)
     
@@ -405,7 +405,7 @@ for name, map_obj in maps.items():
 marker_map = create_marker_showcase()
 marker_map.save(Path(proj_dir)/&#x27;marker_showcase_map.html&#x27;)
 display(marker_map)</code></pre>
-<h2 id="code-37">code 37. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅱ-37">code Ⅱ-37. <button class="copy">복사</button></h2><pre><code>import numpy as np
 
 def create_heatmap():
     &quot;&quot;&quot;히트맵을 생성하는 함수&quot;&quot;&quot;
@@ -438,7 +438,7 @@ heatmap.save(Path(proj_dir)/&#x27;heatmap.html&#x27;)
 print(&quot;히트맵이 생성되었습니다.&quot;)
 
 display(heatmap)</code></pre>
-<h2 id="code-38">code 38. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+<h2 id="code-Ⅱ-38">code Ⅱ-38. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 def create_bubble_map():
     &quot;&quot;&quot;한국 시도별 인구 데이터를 원의 크기 · 색으로 표시하는 버블 지도&quot;&quot;&quot;
     

@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | III-01. 천문학에서의 시간과 좌표계
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 1.
+# %% code Ⅲ-1.
 import datetime
 
 dt = datetime.datetime(2023, 4, 15, 12, 30, 0)
@@ -14,7 +14,7 @@ print("시:", dt.hour)
 print("분:", dt.minute)
 print("초:", dt.second)
 
-# %% code 2.
+# %% code Ⅲ-2.
 from datetime import datetime
 
 dt = datetime(2023, 4, 15, 12, 30, 0)
@@ -24,12 +24,12 @@ print("연:", dt.year)
 print("월:", dt.month)
 print("일:", dt.day)
 
-# %% code 3.
+# %% code Ⅲ-3.
 print("날짜와 시각:", dt.strftime("%Y-%m-%d %H:%M:%S"))
 dt2 = datetime.strptime("2017-01-02 14:44", "%Y-%m-%d %H:%M")
 print("날짜와 시각:", dt2.strftime("%Y-%m-%d %H:%M:%S"))
 
-# %% code 4.
+# %% code Ⅲ-4.
 now = datetime.now()
 print("type(now)", type(now))
 print(f"현재 날짜와 시각: {now.strftime('%Y-%m-%d %H:%M:%S')}")
@@ -40,12 +40,12 @@ from datetime import date, timedelta
 today = date.today()
 print("오늘 날짜:", today)
 
-# %% code 5.
+# %% code Ⅲ-5.
 diff_days = timedelta(days=5)
 print("시간 간격(일):", diff_days.days)
 print("5일 뒤 날짜:", today + diff_days)
 
-# %% code 6.
+# %% code Ⅲ-6.
 from datetime import datetime, timedelta
 import pytz
 
@@ -63,7 +63,7 @@ saturn_opposition_2024_kst = saturn_opposition_2024_utc.astimezone(KST)
 print("2024년 토성의 충 (KST, 근삿값):", 
       saturn_opposition_2024_kst.strftime("%Y-%m-%d %H:%M:%S %Z%z"))
 
-# %% code 7.
+# %% code Ⅲ-7.
 from datetime import datetime, timedelta
 from dateutil import relativedelta        # 월 · 연 단위도 되는 시간 간격
 
@@ -96,7 +96,7 @@ dt_list = create_datetime_list(start_time, end_time,
 
 print("dt_list : \n", dt_list)
 
-# %% code 8.
+# %% code Ⅲ-8.
 import numpy as np
 from astropy.time import Time
 
@@ -107,7 +107,7 @@ times = ['1999-01-01T00:00:00.123456789', '2010-01-01T00:00:00']
 t2 = Time(times, scale='utc')
 print("Time in UTC:", t2.utc.iso)
 
-# %% code 9.
+# %% code Ⅲ-9.
 t3_string = '1999-01-01T00:00:00.123456789'
 t3 = Time(t3_string, format='isot')
 print("t3 :", t3)
@@ -124,7 +124,7 @@ print("type(t3_mjd): ", type(t3_mjd))
 t3.format = 'fits'
 print("t3 :", t3)
 
-# %% code 10.
+# %% code Ⅲ-10.
 from astropy import units as u
 from astropy.timeseries import TimeSeries
 
@@ -135,7 +135,7 @@ ts1 = TimeSeries(
 print("type(ts1): ", type(ts1))
 print("ts1: \n", ts1)
 
-# %% code 11.
+# %% code Ⅲ-11.
 ts2 = TimeSeries(time=['2016-03-22T12:30:31',
                         '2016-03-22T12:30:38',
                         '2016-03-22T12:34:40'])
@@ -150,7 +150,7 @@ print("ts3.time.jd: \n", ts3.time.jd)
 print("ts3.time.mjd: \n", ts3.time.mjd)
 print("ts3.time.isot: \n", ts3.time.isot)
 
-# %% code 12.
+# %% code Ⅲ-12.
 from astropy.time import Time
 import astropy.units as u
 
@@ -183,7 +183,7 @@ t_list = create_time_list(start_time, end_time, time_delta=30*u.min)
 print("len(t_list) : \n", len(t_list))
 print("t_list : \n", t_list)
 
-# %% code 13.
+# %% code Ⅲ-13.
 from astropy.coordinates import SkyCoord
 
 # 문자열로 적경 · 적위 입력
@@ -207,7 +207,7 @@ from astropy import units as u
 # 도 단위로 적경 · 적위 입력(ICRS)
 c = SkyCoord(ra=10.625*u.degree, dec=41.2*u.degree, frame='icrs')
 
-# %% code 14.
+# %% code Ⅲ-14.
 print("c :", c)
 print("c.ra :", c.ra)
 print("c.dec :", c.dec)
@@ -217,22 +217,22 @@ print("c.icrs :", c.icrs)  # 국제 천구 기준 좌표계
 print("c.fk5 :", c.fk5)    # J2000.0 기준
 print("c.fk4 :", c.fk4)    # B1950.0 기준
 
-# %% code 15.
+# %% code Ⅲ-15.
 from astropy.coordinates import get_constellation
 print("get_constellation(c) :", get_constellation(c))
 
-# %% code 16.
+# %% code Ⅲ-16.
 print("c.galactic :", c.galactic)
 print("c.galactic.l :", c.galactic.l)  # 은하 경도
 print("c.galactic.b :", c.galactic.b)  # 은하 위도
 
-# %% code 17.
+# %% code Ⅲ-17.
 c_ecl = c.transform_to('geocentricmeanecliptic')  # 적도 좌표 → 지심 황도 좌표
 print("c_ecl :", c_ecl)
 print("c_ecl.lon :", c_ecl.lon)
 print("c_ecl.lat :", c_ecl.lat)
 
-# %% code 18.
+# %% code Ⅲ-18.
 from astropy import units as u
 from astropy.coordinates import SkyCoord
 
@@ -248,7 +248,7 @@ print("c_hcl :", c_hcl)
 print("c_hcl.lon :", c_hcl.lon)
 print("c_hcl.lat :", c_hcl.lat)
 
-# %% code 19.
+# %% code Ⅲ-19.
 from astropy.coordinates import AltAz, EarthLocation, SkyCoord
 from astropy.time import Time
 import astropy.units as u
@@ -263,7 +263,7 @@ altaz_frame = AltAz(obstime=time, location=P64)
 print("type(altaz_frame) :", type(altaz_frame))
 print("altaz_frame :", altaz_frame)
 
-# %% code 20.
+# %% code Ⅲ-20.
 print("관측 위치 (위도, 경도, 고도):", P64.lat, P64.lon, P64.height)
 print("관측 시각:", time.iso)
 print("AltAz 프레임:", altaz_frame)
@@ -274,7 +274,7 @@ c_altaz = c.transform_to(altaz_frame)
 
 print(f"고도: {c_altaz.alt:.2f}, 방위각: {c_altaz.az:.2f}")
 
-# %% code 21.
+# %% code Ⅲ-21.
 from datetime import datetime
 import matplotlib.pyplot as plt
 from zoneinfo import ZoneInfo
@@ -310,7 +310,7 @@ p.constellation_labels()
 # 성도를 파일로 저장
 # p.export(f"star_chart_basic.png", transparent=True, padding=0.1)
 
-# %% code 22.
+# %% code Ⅲ-22.
 p = MapPlot(
     projection=Projection.ZENITH,
     lat=33.363484,                 # 관측 위치

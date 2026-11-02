@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | II-02. 플랑크 곡선 그리기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 13.
+# %% code Ⅱ-13.
 h = 6.626e-34  # J s, 플랑크 상수
 c = 3.0e+8     # m/s, 광속
 k = 1.38e-23   # J/K, 볼츠만 상수
@@ -21,7 +21,7 @@ intensities = a / ( (wavelengths**5) * (np.exp(b) - 1.0) )  # 파장별 복사 �
 print ("len(wavelengths): {}".format(len(wavelengths)))
 print ("len(intensities): {}".format(len(intensities)))
 
-# %% code 14.
+# %% code Ⅱ-14.
 import matplotlib.pyplot as plt
 
 plt.plot(wavelengths*1e9, intensities, 'b-', label = '6000 K')  # 파장을 nm로 바꿔 그리기
@@ -36,7 +36,7 @@ plt.legend()
 
 plt.show()
 
-# %% code 15.
+# %% code Ⅱ-15.
 from astropy import units as u
 h = 6.626e-34 * u.J * u.s      # 플랑크 상수
 c = 3.0e+8  * u.m / u.s        # 광속
@@ -50,14 +50,14 @@ print ("k: {}".format(k))
 print ("wavelengths: {}".format(wavelengths))
 print ("T: {}".format(T))
 
-# %% code 16.
+# %% code Ⅱ-16.
 from astropy import constants as const
 
 print("const.h:{}".format(const.h))
 print("const.c:{}".format(const.c))
 print("const.k_B:{}".format(const.k_B))
 
-# %% code 17.
+# %% code Ⅱ-17.
 def planckQ(wavelengths, T):
     a = 2.0 * const.h * const.c**2
     b = const.h * const.c / (wavelengths * const.k_B * T)
@@ -93,7 +93,7 @@ plt.legend()
 
 plt.show()
 
-# %% code 18.
+# %% code Ⅱ-18.
 from astropy.modeling.models import BlackBody
 
 bb_temp = 5778*u.K  # 태양 표면 온도
@@ -107,7 +107,7 @@ print('wavelength : {}'.format(wavelength))
 print('flux : {}'.format(flux))
 print("type(flux)", type(flux))
 
-# %% code 19.
+# %% code Ⅱ-19.
 print(f'flux: {flux.value:0.1f} {flux.unit}')
 print(f'flux: {flux.value:0.8f} {flux.unit:fits}')
 print(f'flux: {flux.value:0.0f} {flux.unit:cds}')
@@ -119,7 +119,7 @@ print('wavelength.to(u.micron)  : {0.value:0.02f} {0.unit:FITS}'\
 print('flux.to(u.W / (u.m**2 * u.Hz * u.sr)) : {0.value:0.08f} {0.unit:FITS}'\
       .format(flux.to(u.W / (u.m**2 * u.Hz * u.sr))))
 
-# %% code 20.
+# %% code Ⅱ-20.
 from astropy.visualization import quantity_support
 
 bb = BlackBody(temperature=5778*u.K)  # 태양 표면 온도
@@ -139,7 +139,7 @@ with quantity_support():  # 단위가 붙은 값을 바로 그리기
     du.save_figure(plt.gcf(), os.path.join(proj_dir, "02_02_Plotting_Planck_curve_01"))
     plt.show()
 
-# %% code 21.
+# %% code Ⅱ-21.
 from astropy import units as u
 from astropy import constants as const
 import matplotlib.pyplot as plt

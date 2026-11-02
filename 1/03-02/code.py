@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | III-02. 행성의 물리량 계산
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 23.
+# %% code Ⅲ-23.
 import re
 import time
 from functools import lru_cache
@@ -149,7 +149,7 @@ print("행성 순서:", planet_order)
 print("\n비교표 추출값 미리보기:")
 display(w.loc[preview_keys, planet_order])
 
-# %% code 24.
+# %% code Ⅲ-24.
 import pandas as pd
 
 # 행성별 레코드 만들기
@@ -193,21 +193,21 @@ df.to_csv("planet_attributes.csv", index=False)
 df = df.set_index("행성")
 display(df)
 
-# %% code 25.
+# %% code Ⅲ-25.
 print("df.index: {}".format(df.index))
 print("df.columns: {}".format(df.columns))
 
 print("type(df.loc['수성', '질량(kg)']): ", type(df.loc['수성', '질량(kg)']))
 print("df.loc['수성', '질량(kg)']: ", df.loc['수성', '질량(kg)'])
 
-# %% code 26.
+# %% code Ⅲ-26.
 df['상대 질량'] = df["질량(kg)"]/df.loc["지구", "질량(kg)"]
 df['적도 반지름(상댓값)'] = df["적도반지름(km)"]/df.loc["지구", "적도반지름(km)"]
 df['부피(상댓값)'] = df['적도 반지름(상댓값)']**3
 print("df['부피(상댓값)']:\n", df['부피(상댓값)'])
 # print("df:\n", df)
 
-# %% code 27.
+# %% code Ⅲ-27.
 import astropy.units as u
 import astropy.constants as const
 import numpy as np
@@ -226,7 +226,7 @@ df['적도 인력 가속도(m s^-2)'] = (const.G * (df["질량(kg)"].values * u.
 
 print("df[['공전주기(년)', '평균반지름(km)', '평균 밀도 (g cm^-3)', '적도 인력 가속도(m s^-2)']]:\n", df[['공전주기(년)', '평균반지름(km)', '평균 밀도 (g cm^-3)', '적도 인력 가속도(m s^-2)']] )
 
-# %% code 28.
+# %% code Ⅲ-28.
 # 지구의 태양상수
 solar_constant0 = const.L_sun / (4 * np.pi * const.au**2)
 print(f"Solar constant (Earth): {solar_constant0.value:.2f} {solar_constant0.unit}")
@@ -234,12 +234,12 @@ print(f"Solar constant (Earth): {solar_constant0.value:.2f} {solar_constant0.uni
 df["태양상수(W m^-2)"] = const.L_sun / (4 * np.pi * (df["장반경(AU)"] *u.au.to(u.m))**2)
 df["태양상수(W m^-2)"]
 
-# %% code 29.
+# %% code Ⅲ-29.
 df["입사량(W)"] = ((1 - df["본드 알베도"]) * np.pi * (df["평균반지름(km)"] * u.km.to(u.m))**2 * df["태양상수(W m^-2)"]).values
 # 복사평형온도 계산
 df["복사평형온도(K)"] = ((((1 - df["본드 알베도"]) * (df["태양상수(W m^-2)"]) * u.W/u.m**2) / (4 * const.sigma_sb))**(1/4))
 print("df[['입사량(W)', '복사평형온도(K)']]:\n", df[['입사량(W)', '복사평형온도(K)']] )
 
-# %% code 30.
+# %% code Ⅲ-30.
 df.to_csv('result_of_calculations.csv')
 print("계산 결과가 'result_of_calculations.csv' 파일로 저장되었습니다.")

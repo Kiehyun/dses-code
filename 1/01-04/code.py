@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | I-04. Python 모듈
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 37.
+# %% code Ⅰ-37.
 import math
 help(math)                                # 도움말 출력
 print(f"math.sin(0.5): {math.sin(0.5)}")  # 각도 단위는 라디안
@@ -18,7 +18,7 @@ from datetime import date  # date 클래스만 불러오기(모듈 이름 dateti
 today = date.today()       # 클래스.메서드(모듈명 생략)
 print("today:", today)
 
-# %% code 38.
+# %% code Ⅰ-38.
 import numpy
 a = numpy.random.rand(6)  # 0과 1 사이 난수 6개
 print("a :", a)
@@ -33,7 +33,7 @@ from numpy.random import rand  # 필요한 함수만 불러오기
 b = rand(3)
 print("b :", b)
 
-# %% code 39.
+# %% code Ⅰ-39.
 # 패키지 설치
 !pip install numpy
 
@@ -46,7 +46,7 @@ print("b :", b)
 # 현재 설치된 패키지 목록 확인
 !pip list 
 
-# %% code 40.
+# %% code Ⅰ-40.
 from pathlib import Path
 cwd = Path.cwd()  # 현재 작업 폴더(current working directory)
 print(f"현재 작업 폴더: {cwd}")
@@ -60,7 +60,7 @@ base = Path('/home/user')
 new_path = base / 'data' / 'file.csv'  # / 연산자로 경로 결합
 print(f"결합한 경로: {new_path}")         # 운영체제에 맞는 구분자로 표시(Windows는 \)
 
-# %% code 41.
+# %% code Ⅰ-41.
 from pathlib import Path
 p = Path('.')
 
@@ -71,7 +71,7 @@ print("처음 4개:", dirs[:4])
 py_files = sorted(Path('.').glob('*.py'))  # .py 파일 찾기(예: 내려받은 dses_utils.py)
 print(".py 파일:", py_files)
 
-# %% code 42.
+# %% code Ⅰ-42.
 from datetime import datetime, date, time
 now = datetime.now()
 print("now :", now)
@@ -86,7 +86,7 @@ print("t:", t)
 print("type(d):", type(d))
 print("type(t):", type(t))
 
-# %% code 43.
+# %% code Ⅰ-43.
 from datetime import datetime, timedelta
 now = datetime.now()
 str_date = now.strftime("%Y-%m-%d %H:%M:%S")  # datetime → 문자열
@@ -99,7 +99,7 @@ diff = tomorrow - now               # 시간 차(timedelta)
 print("시간 차:", diff)
 print("type(diff):", type(diff))
 
-# %% code 44.
+# %% code Ⅰ-44.
 list_1d = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]  # 1차원 리스트
 list_2d = [ [1, 2, 3, 4, 5, 6],
             [7, 8, 9, 10, 11, 12] ]  # 2차원 리스트
@@ -124,7 +124,7 @@ print("len(list_3d[0]):{}".format(len(list_3d[0])))
 print("len(list_3d[0][1]):{}".format(len(list_3d[0][1])))
 print("list_3d[0][1][0]:{}".format(list_3d[0][1][0]))
 
-# %% code 45.
+# %% code Ⅰ-45.
 import numpy as np
 arr1 = np.array([[1,2,3],[4,5,6],[7,8,9]])
 print("arr1: ", arr1)
@@ -132,7 +132,7 @@ print("arr1.dtype: ", arr1.dtype)  # 자료형
 print("arr1.ndim: ", arr1.ndim)    # 차원 수
 print("arr1.shape: ", arr1.shape)  # 형태(행, 열)
 
-# %% code 46.
+# %% code Ⅰ-46.
 import numpy as np
 arr2 = np.zeros((3,2))  # 0으로 채운 3×2 배열
 print("arr2:", arr2)
@@ -150,7 +150,7 @@ print("arr5:", arr5)
 arr6 = np.linspace(1, 3, 5)  # 1~3을 같은 간격으로 5개
 print("arr6:", arr6)
 
-# %% code 47.
+# %% code Ⅰ-47.
 import numpy as np
 arr7 = np.arange(20)
 print("arr7:", arr7)
@@ -158,7 +158,7 @@ print("arr7:", arr7)
 re_arr7 = arr7.reshape((4,5))  # 4행 5열로 바꾸기
 print("re_arr7:", re_arr7)
 
-# %% code 48.
+# %% code Ⅰ-48.
 float_re_arr7 = re_arr7.astype(np.float64)  # 자료형 변경
 print("float_re_arr7:", float_re_arr7)
 print("float_re_arr7.dtype:", float_re_arr7.dtype)
@@ -170,7 +170,7 @@ print("string_arr8.dtype", string_arr8.dtype)
 float_arr8 = string_arr8.astype(np.float32)  # 문자열 → 실수
 print("dtype(float_arr8):", float_arr8.dtype)
 
-# %% code 49.
+# %% code Ⅰ-49.
 import numpy as np
 arr1 = np.array([[1,2,3],[4,5,6],[7,8,9]])
 arr2 = np.array([[11,12,13],[14,15,16],[17,18,19]])
@@ -185,7 +185,7 @@ print("arr1 * 3:\n", arr1 * 3)
 print("arr1 / 3:\n", arr1 / 3)
 print("arr1 ** 2:\n", arr1 ** 2)
 
-# %% code 50.
+# %% code Ⅰ-50.
 import numpy as np
 a = np.array([[-1,2,3],[3,4,8]])
 print('np.sum(a) =', np.sum(a))  # 함수로 합계
@@ -196,7 +196,7 @@ print('행별 합(axis=1) =', a.sum(axis=1))  # 가로 방향 합
 print('평균 =', a.mean())
 print('표준편차 =', a.std())
 
-# %% code 51.
+# %% code Ⅰ-51.
 import numpy as np
 import pandas as pd
 np.random.seed(0)  # 난수 고정(실행할 때마다 같은 결과)
@@ -219,13 +219,13 @@ print("-"*20+"\ns3:\n", s3)
 s3.index=['d', 'b', 'a', 'c', 'e']  # 인덱스 바꾸기
 print("-"*20+"\ns3:\n", s3)
 
-# %% code 52.
+# %% code Ⅰ-52.
 print("-"*20+"\ns1[:3]:", s1[:3])
 print("-"*20+"\ns1[1:4]:", s1[1:4])  # 위치 1~3
 print("-"*20+"\ns1[s1 > s1.median()]:", s1[s1 > s1.median()])  # 중앙값보다 큰 원소만(불 인덱싱)
 print("-"*20+"\ns1.iloc[[4, 3, 1]]:", s1.iloc[[4, 3, 1]])  # 위치로 고르기
 
-# %% code 53.
+# %% code Ⅰ-53.
 print("s2.dtype:", s2.dtype)
 print("np.exp(s2):", np.exp(s2))  # 원소마다 지수 함수 적용
 
@@ -234,7 +234,7 @@ print("-"*20+"\ns3_ar:", s3_ar)
 s3_ndar = s3.to_numpy()  # NumPy 배열로 변환
 print("s3_ndar:", s3_ndar)
 
-# %% code 54.
+# %% code Ⅰ-54.
 print("s3['a']:", s3['a'])  # 인덱스 이름으로 접근
 s3['e'] = 12.
 print("-"*20+"\ns3:\n", s3)
@@ -245,7 +245,7 @@ print("'f' in s3:", 'f' in s3)
 print("-"*20+"\ns3.get('f'):", s3.get('f'))         # 없으면 None
 print("s3.get('f', np.nan):", s3.get('f', np.nan))  # 없으면 기본값 NaN
 
-# %% code 55.
+# %% code Ⅰ-55.
 print("s1 + s1:\n", s1 + s1)
 print("-"*20+"\ns1 * 2:\n", s1 * 2)
 print("-"*20+"\nnp.exp(s1):\n", np.exp(s1))
@@ -259,7 +259,7 @@ print("-"*20+"\ns.name:", s.name)
 s = s.rename("different")  # 이름 바꾸기
 print("s.name(rename 뒤):", s.name)
 
-# %% code 56.
+# %% code Ⅰ-56.
 import pandas as pd
 import numpy as np
 
@@ -277,7 +277,7 @@ print("-"*20+"\ndf3:\n", df3)
 df4 = pd.DataFrame(d, index=['d', 'b', 'a'], columns=['two', 'three'])  # 없는 열 'three'는 NaN
 print("-"*20+"\ndf4:\n", df4)
 
-# %% code 57.
+# %% code Ⅰ-57.
 d = {'one': [1., 2., 3., 4.], 'two': [4., 3., 2., 1.]}
 df5 = pd.DataFrame(d)
 print("df5:\n", df5)
@@ -288,7 +288,7 @@ print("df5.columns:", df5.columns)
 df6 = pd.DataFrame(d, index=['a', 'b', 'c', 'd'])  # 인덱스 지정
 print("-"*20+"\ndf6:\n", df6)
 
-# %% code 58.
+# %% code Ⅰ-58.
 data = np.zeros((2,), dtype=[('A', 'i4'), ('B', 'f4'), ('C', 'S10')])  # 구조화 배열(A: 정수, B: 실수, C: 10바이트 문자열)
 print("data:", data)
 df7 = pd.DataFrame(data)    
@@ -318,7 +318,7 @@ print("-"*20+"\ndf12:\n", df12)                      # 튜플 키 → 다중 인
 print("-"*20+"\ndf12['a']['b']:\n", df12['a']['b'])  # 다중 인덱스 열 접근
 print("-"*20+"\ndf12['a', 'b']:\n", df12['a', 'b'])  # 튜플로 접근
 
-# %% code 59.
+# %% code Ⅰ-59.
 data = {"names": ["Kilho", "Kilho", "Kilho", "Charles", "Charles"],
            "year": [2014, 2015, 2016, 2015, 2016],
            "points": [1.5, 1.7, 3.6, 2.4, 2.9]}
@@ -340,7 +340,7 @@ print("-"*20+"\ndf3.loc['Kilho']:\n", df3.loc["Kilho"])  # 인덱스 이름으�
 df3 = df3.reset_index()  # 인덱스를 다시 열로
 print("-"*20+"\ndf3:\n", df3)
 
-# %% code 60.
+# %% code Ⅰ-60.
 # DataFrame 생성
 data = {'names': ['Kilho', 'Kilho', 'Kilho', 'Charles', 'Charles'],
         'year': [2014, 2015, 2016, 2015, 2016],
@@ -379,7 +379,7 @@ print("-"*20+"\ndf:\n", df)
 df = df.drop_duplicates(subset='names', keep='last').set_index('names')
 print("-"*20+"\ndf:\n", df)
 
-# %% code 61.
+# %% code Ⅰ-61.
 d1 = {'one': pd.Series([1., 2., 3.], index=['a', 'b', 'c'])}
 df1 = pd.DataFrame(d1)
 print("df1:\n", df1)
@@ -394,7 +394,7 @@ print("-"*20+"\ndf1_df2.index:\n", df1_df2.index)
 
 print("-"*20+"\ndf1_df2.duplicated():\n", df1_df2.duplicated())  # 중복 행 확인
 
-# %% code 62.
+# %% code Ⅰ-62.
 import pandas as pd
 
 df = pd.DataFrame(
@@ -419,7 +419,7 @@ for col, item in df.items():
 for row in df.itertuples():
     print(row)
 
-# %% code 63.
+# %% code Ⅰ-63.
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator, MultipleLocator, FuncFormatter
@@ -552,7 +552,7 @@ ax.text(4.0, -0.4, "Made with http://matplotlib.org",
 
 plt.show()
 
-# %% code 64.
+# %% code Ⅰ-64.
 import matplotlib.pyplot as plt
 # 한글 글꼴을 설정하지 않으면 '축' 같은 한글이 표시되지 않음
 
@@ -566,7 +566,7 @@ plt.ylabel("Y축")
 plt.grid(True)
 plt.show()
 
-# %% code 65.
+# %% code Ⅰ-65.
 import matplotlib.pyplot as plt
 
 # 2행 2열 서브플롯
@@ -596,7 +596,7 @@ axes[1, 1].grid(True)
 plt.tight_layout()
 plt.show()
 
-# %% code 66.
+# %% code Ⅰ-66.
 import matplotlib.pyplot as plt
 
 fig, axes = plt.subplots(2, 3, figsize=(15, 10))
@@ -648,7 +648,7 @@ axes[1,2].set_title('범례 테두리와 그림자')
 plt.tight_layout()
 plt.show()
 
-# %% code 67.
+# %% code Ⅰ-67.
 import matplotlib.pyplot as plt
 
 # y값만 주면 x는 0, 1, ...로 자동 지정
@@ -658,7 +658,7 @@ plt.savefig(f"{proj_dir}/pic.png")
 plt.savefig(f"{proj_dir}/pic.pdf", dpi=300, bbox_inches='tight', pad_inches=0.1 )
 plt.show()
 
-# %% code 68.
+# %% code Ⅰ-68.
 import matplotlib.pyplot as plt
 
 fname = f"{proj_dir}/pic.png"
@@ -671,7 +671,7 @@ plt.imshow(chart_png, interpolation='none')
 
 plt.show()
 
-# %% code 69.
+# %% code Ⅰ-69.
 # 한글 글꼴 설정과 깨짐 해결
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
@@ -722,7 +722,7 @@ print(f"\n현재 시스템: {platform.system()}")
 print(f"설정된 글꼴: {current_font}")
 print("한글이 정상적으로 표시되면 설정이 완료되었습니다.")
 
-# %% code 70.
+# %% code Ⅰ-70.
 import numpy as np
 import pandas as pd
 
@@ -742,7 +742,7 @@ print(df_r.head())
 print("-" * 20)
 print(df_r.dtypes)
 
-# %% code 71.
+# %% code Ⅰ-71.
 try:
     pd.read_csv(fpath, encoding="utf-8")  # 저장한 인코딩과 다르게 읽기
 except UnicodeDecodeError as e:
@@ -752,7 +752,7 @@ fpath_u = proj_dir / "temp_week_utf8.csv"
 df_r.to_csv(fpath_u, index=False, encoding="utf-8")  # 같은 표를 UTF-8로 저장
 print("utf-8로 다시 저장해 읽은 행 수:", len(pd.read_csv(fpath_u, encoding="utf-8")))
 
-# %% code 72.
+# %% code Ⅰ-72.
 import io
 
 text = """# 가상 관측소 일평균 데이터
@@ -771,7 +771,7 @@ print(df_txt)
 print("-" * 20)
 print(df_txt.dtypes)
 
-# %% code 73.
+# %% code Ⅰ-73.
 fpath_txt = proj_dir / "station_daily.txt"
 fpath_txt.write_text(text.replace("rain\n", "rain\n-----------------------\n"),  # 열 이름 아래에 구분선
                      encoding="utf-8")
@@ -789,7 +789,7 @@ df_txt2 = pd.read_csv(fpath_txt, skiprows=n_skip, sep=r"\s+", header=None,
 print("건너뛴 줄 수:", n_skip)
 print(df_txt2.head(3))
 
-# %% code 74.
+# %% code Ⅰ-74.
 print("변환 전:", df_r["일시"].dtype, type(df_r["일시"][0]))
 df_r["일시"] = pd.to_datetime(df_r["일시"])       # 문자열 → datetime64
 print("변환 후:", df_r["일시"].dtype, type(df_r["일시"][0]))
@@ -802,7 +802,7 @@ print("-" * 20)
 print(pd.to_datetime("20250701 1530", format="%Y%m%d %H%M"))  # 형식 지정
 print("관측 기간:", df_r["일시"].max() - df_r["일시"].min())   # 두 시각의 차
 
-# %% code 75.
+# %% code Ⅰ-75.
 daily = df_r.groupby("날짜")["기온(°C)"].mean()  # 날짜별 평균 기온
 print(daily.round(1))
 
@@ -810,7 +810,7 @@ print("-" * 20)
 by_hour = df_r.groupby("시")["기온(°C)"].agg(["mean", "min", "max"])  # 시각별 여러 통계
 print(by_hour.round(1))
 
-# %% code 76.
+# %% code Ⅰ-76.
 df_t = df_r.set_index("일시")                     # 일시를 인덱스로
 print(type(df_t.index).__name__)                 # DatetimeIndex
 
@@ -821,7 +821,7 @@ print("-" * 20)
 two_day = df_t[["기온(°C)", "습도(%)"]].resample("2D").mean()        # 이틀 단위 평균
 print(two_day.round(1))
 
-# %% code 77.
+# %% code Ⅰ-77.
 f = lambda t: t * 9 / 5 + 32                     # 섭씨 → 화씨
 print("f(25) =", f(25))
 
@@ -833,13 +833,13 @@ print(df_r[["일시", "기온(°C)", "기온(°F)", "구분", "시간대"]].head
 print("-" * 20)
 print(df_r["구분"].value_counts())               # 값마다 개수 세기
 
-# %% code 78.
+# %% code Ⅰ-78.
 fpath_out = proj_dir / "temp_week_result.csv"
 df_r.to_csv(fpath_out, index=False, encoding="utf-8-sig")  # 엑셀에서도 한글이 깨지지 않게
 print(fpath_out.name, "저장:", len(df_r), "행,", len(df_r.columns), "열")
 print(pd.read_csv(fpath_out, encoding="utf-8-sig").columns.tolist())
 
-# %% code 79.
+# %% code Ⅰ-79.
 import matplotlib.pyplot as plt
 
 du.set_korean_font()  # 한글 글꼴 지정

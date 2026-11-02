@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | III-06. SDO HMI 이미지에서 흑점 탐지
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 78.
+# %% code Ⅲ-78.
 from pathlib import Path
 
 fname = "20170228_231038_1024_HMII.jpg"
@@ -15,7 +15,7 @@ except Exception:
 
 fpaths = sorted(Path(proj_dir).glob('*.jpg'))
 
-# %% code 79.
+# %% code Ⅲ-79.
 import cv2
 
 print(f"str(fpaths): {str(fpaths)}")
@@ -45,7 +45,7 @@ plt.imshow(sun_im, cmap = 'gray', origin='upper', interpolation = 'None')
 
 plt.show()
 
-# %% code 80.
+# %% code Ⅲ-80.
 # 허프 변환으로 원(태양) 검출, 입력은 흑백 이미지
 # 2: 누적기 해상도 비율(dp), 200: 원 중심 사이 최소 거리(픽셀)
 sun_circle = cv2.HoughCircles(sun_im, cv2.HOUGH_GRADIENT, 2, 200)
@@ -62,7 +62,7 @@ print("sun_circle[0, 0, :]: ", sun_circle[0, 0, :])
 sun_circle = np.round(sun_circle[0,0,:]).astype(int)
 print('circle of sun', sun_circle )
 
-# %% code 81.
+# %% code Ⅲ-81.
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
 
@@ -80,7 +80,7 @@ ax.add_patch(circle)
 
 plt.show()
 
-# %% code 82.
+# %% code Ⅲ-82.
 # 원본 보존용 복사본
 sun_im_output = sun_im.copy()
 print("sun_im_output: ", sun_im_output)
@@ -103,7 +103,7 @@ print (np.shape(outer), np.shape(inner))
 print ("outer:", outer)
 print ("inner", inner)
 
-# %% code 83.
+# %% code Ⅲ-83.
 # 8비트 영상에서 255는 흰색
 sun_im_output[outer] = 255
 
@@ -121,7 +121,7 @@ ax.add_patch(circle)
 
 plt.show()
 
-# %% code 84.
+# %% code Ⅲ-84.
 # 이보다 어두우면 흑점 후보
 bright_criterion = 70 
 
@@ -158,7 +158,7 @@ ax.add_patch(circle)
 
 plt.show()
 
-# %% code 85.
+# %% code Ⅲ-85.
 check_pixel = np.asarray(check_pixel)
 print("check_pixel:", check_pixel)
 
@@ -184,7 +184,7 @@ ax.add_patch(circle)
 
 plt.show()
 
-# %% code 86.
+# %% code Ⅲ-86.
 fig, ax = plt.subplots()
 
 plt.imshow(image.T,  # 잘못된 예: 행과 열을 바꿔(전치) 표시
@@ -198,7 +198,7 @@ ax.add_patch(circle)
 
 plt.show()
 
-# %% code 87.
+# %% code Ⅲ-87.
 import math
 
 # 흑점의 위도 · 경도(라디안)
@@ -255,7 +255,7 @@ print ('*'*80)
 print ('흑점 개수 : ', len(sunspot_data))
 print ('흑점 데이터 [x, y, 픽셀 수] : ', sunspot_data)
 
-# %% code 88.
+# %% code Ⅲ-88.
 sunspot_data = np.asarray(sunspot_data)
 print("sunspot_data:\n", sunspot_data)
 

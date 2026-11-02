@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>III-04. FITS 파일 다루기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/03-24/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-93">93</a> <a href="#code-94">94</a> <a href="#code-95">95</a> <a href="#code-96">96</a> <a href="#code-97">97</a> <a href="#code-98">98</a> <a href="#code-99">99</a> <a href="#code-100">100</a> <a href="#code-101">101</a> <a href="#code-102">102</a> <a href="#code-103">103</a> <a href="#code-104">104</a> <a href="#code-105">105</a> <a href="#code-106">106</a> <a href="#code-107">107</a> <a href="#code-108">108</a> <a href="#code-109">109</a> <a href="#code-110">110</a> <a href="#code-111">111</a> <a href="#code-112">112</a> <a href="#code-113">113</a> <a href="#code-114">114</a> <a href="#code-115">115</a> <a href="#code-116">116</a> <a href="#code-117">117</a> <a href="#code-118">118</a> <a href="#code-119">119</a> <a href="#code-120">120</a> <a href="#code-121">121</a> <a href="#code-122">122</a> <a href="#code-123">123</a> <a href="#code-124">124</a> <a href="#code-125">125</a> <a href="#code-126">126</a> <a href="#code-127">127</a> <a href="#code-128">128</a> <a href="#code-129">129</a></p>
-<h2 id="code-93">code 93. <button class="copy">복사</button></h2><pre><code># 파일 ID와 저장 경로를 리스트로 정의
+<p class="jump"><a href="#code-Ⅲ-38">Ⅲ-38</a> <a href="#code-Ⅲ-39">Ⅲ-39</a> <a href="#code-Ⅲ-40">Ⅲ-40</a> <a href="#code-Ⅲ-41">Ⅲ-41</a> <a href="#code-Ⅲ-42">Ⅲ-42</a> <a href="#code-Ⅲ-43">Ⅲ-43</a> <a href="#code-Ⅲ-44">Ⅲ-44</a> <a href="#code-Ⅲ-45">Ⅲ-45</a> <a href="#code-Ⅲ-46">Ⅲ-46</a> <a href="#code-Ⅲ-47">Ⅲ-47</a> <a href="#code-Ⅲ-48">Ⅲ-48</a> <a href="#code-Ⅲ-49">Ⅲ-49</a> <a href="#code-Ⅲ-50">Ⅲ-50</a> <a href="#code-Ⅲ-51">Ⅲ-51</a> <a href="#code-Ⅲ-52">Ⅲ-52</a> <a href="#code-Ⅲ-53">Ⅲ-53</a> <a href="#code-Ⅲ-54">Ⅲ-54</a> <a href="#code-Ⅲ-55">Ⅲ-55</a> <a href="#code-Ⅲ-56">Ⅲ-56</a> <a href="#code-Ⅲ-57">Ⅲ-57</a> <a href="#code-Ⅲ-58">Ⅲ-58</a> <a href="#code-Ⅲ-59">Ⅲ-59</a> <a href="#code-Ⅲ-60">Ⅲ-60</a> <a href="#code-Ⅲ-61">Ⅲ-61</a> <a href="#code-Ⅲ-62">Ⅲ-62</a> <a href="#code-Ⅲ-63">Ⅲ-63</a> <a href="#code-Ⅲ-64">Ⅲ-64</a> <a href="#code-Ⅲ-65">Ⅲ-65</a> <a href="#code-Ⅲ-66">Ⅲ-66</a> <a href="#code-Ⅲ-67">Ⅲ-67</a> <a href="#code-Ⅲ-68">Ⅲ-68</a> <a href="#code-Ⅲ-69">Ⅲ-69</a> <a href="#code-Ⅲ-70">Ⅲ-70</a> <a href="#code-Ⅲ-71">Ⅲ-71</a> <a href="#code-Ⅲ-72">Ⅲ-72</a> <a href="#code-Ⅲ-73">Ⅲ-73</a> <a href="#code-Ⅲ-74">Ⅲ-74</a></p>
+<h2 id="code-Ⅲ-38">code Ⅲ-38. <button class="copy">복사</button></h2><pre><code># 파일 ID와 저장 경로를 리스트로 정의
 files = [
     (&#x27;1V7cWf_scSRdDclb-ciz5CU6dajDIEUyk&#x27;, &#x27;m42-001L.fit&#x27;),
     (&quot;1USKkCup8BTHmBVyg8iC4od1gV19v2MEg&quot;,
@@ -33,9 +33,9 @@ files = [
 for file_id, output_path in files:
     du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={file_id}&quot;,
                 proj_dir / output_path)</code></pre>
-<h2 id="code-94">code 94. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;fit*&quot;)
+<h2 id="code-Ⅲ-39">code Ⅲ-39. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;fit*&quot;)
 print(f&quot;fpaths[0]: {fpaths[0]}&quot;)</code></pre>
-<h2 id="code-95">code 95. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
+<h2 id="code-Ⅲ-40">code Ⅲ-40. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
 from astropy.io import fits
 
 fpath = Path(fpaths[4])
@@ -47,7 +47,7 @@ print(&quot;type(hdul) :&quot;, type(hdul))
 print(&quot;hdul :&quot;, hdul)
 print(&quot;len(hdul) :&quot;, len(hdul))
 print(&quot;type(hdul[0]) :&quot;, type(hdul[0]))</code></pre>
-<h2 id="code-96">code 96. <button class="copy">복사</button></h2><pre><code>print(&quot;type(hdul[0].header) :&quot;, type(hdul[0].header))
+<h2 id="code-Ⅲ-41">code Ⅲ-41. <button class="copy">복사</button></h2><pre><code>print(&quot;type(hdul[0].header) :&quot;, type(hdul[0].header))
 print(&quot;hdul[0].header :&quot;, f&quot;헤더 카드 {len(hdul[0].header)}개&quot;)
 
 print(&quot;hdul[0].header[&#x27;DATE-OBS&#x27;] :&quot;, hdul[0].header[&#x27;DATE-OBS&#x27;])
@@ -60,7 +60,7 @@ print(&quot;type(hdul[0].data) :&quot;, type(hdul[0].data))
 print(&quot;hdul[0].data.dtype :&quot;, hdul[0].data.dtype)
 print(&quot;hdul[0].data.shape :&quot;, hdul[0].data.shape)
 print(&quot;hdul[0].data :&quot;, hdul[0].data)</code></pre>
-<h2 id="code-97">code 97. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅲ-42">code Ⅲ-42. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
 # 1행 2열 subplot 생성
@@ -79,7 +79,7 @@ fig.colorbar(im2, ax=axes[1], fraction=0.035, pad=0.04)
 
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-98">code 98. <button class="copy">복사</button></h2><pre><code>from astropy.visualization import (MinMaxInterval, SqrtStretch, LogStretch,
+<h2 id="code-Ⅲ-43">code Ⅲ-43. <button class="copy">복사</button></h2><pre><code>from astropy.visualization import (MinMaxInterval, SqrtStretch, LogStretch,
                                    ImageNormalize)
 
 # ImageNormalize 객체 만들기
@@ -106,11 +106,11 @@ fig.colorbar(im1, ax=axs[1], fraction=0.035, pad=0.04)
 
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-99">code 99. <button class="copy">복사</button></h2><pre><code>from warnings import warn
+<h2 id="code-Ⅲ-44">code Ⅲ-44. <button class="copy">복사</button></h2><pre><code>from warnings import warn
 from astropy.visualization import (
     ImageNormalize, LinearStretch, ZScaleInterval, simple_norm,
 )</code></pre>
-<h2 id="code-100">code 100. <button class="copy">복사</button></h2><pre><code>def znorm(image, stretch=LinearStretch(), **kwargs):
+<h2 id="code-Ⅲ-45">code Ⅲ-45. <button class="copy">복사</button></h2><pre><code>def znorm(image, stretch=LinearStretch(), **kwargs):
     &quot;&quot;&quot;
     이미지에 ZScale 간격과 스트레칭을 적용한 정규화 객체를 생성합니다.
     
@@ -130,7 +130,7 @@ from astropy.visualization import (
     &quot;&quot;&quot;
     return ImageNormalize(image, interval=ZScaleInterval(**kwargs),
                           stretch=stretch)</code></pre>
-<h2 id="code-101">code 101. <button class="copy">복사</button></h2><pre><code>def zimshow(
+<h2 id="code-Ⅲ-46">code Ⅲ-46. <button class="copy">복사</button></h2><pre><code>def zimshow(
     ax,
     image,
     stretch=LinearStretch(),
@@ -169,7 +169,7 @@ from astropy.visualization import (
         cmap=cmap, **kwargs
     )
     return im</code></pre>
-<h2 id="code-102">code 102. <button class="copy">복사</button></h2><pre><code>def norm_imshow(
+<h2 id="code-Ⅲ-47">code Ⅲ-47. <button class="copy">복사</button></h2><pre><code>def norm_imshow(
     ax,
     data,
     origin=&quot;lower&quot;,
@@ -267,7 +267,7 @@ from astropy.visualization import (
             norm = simple_norm(min_cut=min_cut, max_cut=max_cut, **kw)
         im = ax.imshow(data, origin=origin, norm=norm, **kwargs)
     return im</code></pre>
-<h2 id="code-103">code 103. <button class="copy">복사</button></h2><pre><code>fig, axs = plt.subplots(1, 2, figsize=(7.5, 2.5),
+<h2 id="code-Ⅲ-48">code Ⅲ-48. <button class="copy">복사</button></h2><pre><code>fig, axs = plt.subplots(1, 2, figsize=(7.5, 2.5),
                        sharex=False, sharey=False, gridspec_kw=None)
 
 # ImageNormalize 객체 만들기
@@ -286,7 +286,7 @@ fig.colorbar(im0, ax = axs[0], fraction=0.035, pad=0.04)
 fig.colorbar(im1, ax = axs[1], fraction=0.035, pad=0.04)
 
 plt.tight_layout()</code></pre>
-<h2 id="code-104">code 104. <button class="copy">복사</button></h2><pre><code>print(&quot;fpaths[2]&quot;, (fpaths[2]))
+<h2 id="code-Ⅲ-49">code Ⅲ-49. <button class="copy">복사</button></h2><pre><code>print(&quot;fpaths[2]&quot;, (fpaths[2]))
 hdul2 = fits.open(str(fpaths[2]))
 
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 2.5),
@@ -302,7 +302,7 @@ fig.suptitle(f&#x27;{str(fpaths[2])}&#x27;, fontsize=8)
 fig.colorbar(im0, ax = axs[0], fraction=0.031, pad=0.04)
 fig.colorbar(im1, ax = axs[1], fraction=0.031, pad=0.04)
 plt.tight_layout()</code></pre>
-<h2 id="code-105">code 105. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅲ-50">code Ⅲ-50. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 from astropy.nddata import Cutout2D
 import textwrap
@@ -373,7 +373,7 @@ plt.colorbar(im31, ax=ax31, fraction=0.0455, pad=0.04)
 
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-106">code 106. <button class="copy">복사</button></h2><pre><code>import matplotlib.patches as patches
+<h2 id="code-Ⅲ-51">code Ⅲ-51. <button class="copy">복사</button></h2><pre><code>import matplotlib.patches as patches
 from astropy.nddata import Cutout2D
 import textwrap
 
@@ -424,9 +424,9 @@ def plot_image_with_cutouts(fpath, location, cutsizes=101):
 
 # 함수 사용 예
 # plot_image_with_cutouts(&#x27;path_to_your_fits_file.fits&#x27;, location)</code></pre>
-<h2 id="code-107">code 107. <button class="copy">복사</button></h2><pre><code># 함수 사용 예
+<h2 id="code-Ⅲ-52">code Ⅲ-52. <button class="copy">복사</button></h2><pre><code># 함수 사용 예
 plot_image_with_cutouts(fpaths[0], 500)</code></pre>
-<h2 id="code-108">code 108. <button class="copy">복사</button></h2><pre><code>from astropy.modeling.functional_models import Moffat1D, Gaussian1D
+<h2 id="code-Ⅲ-53">code Ⅲ-53. <button class="copy">복사</button></h2><pre><code>from astropy.modeling.functional_models import Moffat1D, Gaussian1D
 from scipy.special import gamma as G
 import numpy as np
 
@@ -471,9 +471,9 @@ ax2.set_title(&#x27;log scale = magnitude scale&#x27;)
 ax1.legend(*ax2.get_legend_handles_labels(), fontsize=8, loc=&#x27;upper right&#x27;)   # 범례는 왼쪽 그래프의 빈 곳에
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-109">code 109. <button class="copy">복사</button></h2><pre><code># 함수 사용 예
+<h2 id="code-Ⅲ-54">code Ⅲ-54. <button class="copy">복사</button></h2><pre><code># 함수 사용 예
 plot_image_with_cutouts(fpaths[0], 700)</code></pre>
-<h2 id="code-110">code 110. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅲ-55">code Ⅲ-55. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 hdul = fits.open(str(fpaths[0]))
 data = hdul[0].data
 
@@ -488,7 +488,7 @@ plt.title(f&#x27;Pixel Values of Row {row_index}&#x27;)
 plt.grid(True, which=&#x27;both&#x27;)  # 그리드 추가
 plt.minorticks_on()           # 마이너 틱 추가
 plt.show()</code></pre>
-<h2 id="code-111">code 111. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅲ-56">code Ⅲ-56. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 def plot_row_pixels(fpath, row_index, col_center, width):
   &quot;&quot;&quot;
@@ -525,7 +525,7 @@ col_center = 420  # 중심 화소 번호
 width = 50        # 가로 화소 너비
 
 plot_row_pixels(fpaths[0], row_number, col_center, width)</code></pre>
-<h2 id="code-112">code 112. <button class="copy">복사</button></h2><pre><code>def plot_row_pixels_fwhm(fpath, row_number, col_center, width):
+<h2 id="code-Ⅲ-57">code Ⅲ-57. <button class="copy">복사</button></h2><pre><code>def plot_row_pixels_fwhm(fpath, row_number, col_center, width):
     &quot;&quot;&quot;
     FITS 파일에서 한 행의 화소값을 꺼내 앞뒤 width 화소만 그리고,
     화소값 0을 기준으로 한 최댓값의 절반에서 FWHM(화소)을 재어 함께 표시합니다.
@@ -583,7 +583,7 @@ plot_row_pixels(fpaths[0], row_number, col_center, width)</code></pre>
     plt.show()
 
 plot_row_pixels_fwhm(fpaths[0], row_number, col_center, width)</code></pre>
-<h2 id="code-113">code 113. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅲ-58">code Ⅲ-58. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 def plot_row_pixels_fwhm_from_background(fpath, row_number, col_center, width):
     &quot;&quot;&quot;
@@ -645,17 +645,17 @@ def plot_row_pixels_fwhm_from_background(fpath, row_number, col_center, width):
     plt.show()
 
 plot_row_pixels_fwhm_from_background(fpaths[0], row_number, col_center, width)</code></pre>
-<h2 id="code-114">code 114. <button class="copy">복사</button></h2><pre><code>fpath = Path(fpaths[0])                     # 아래 그림 주석의 파일 이름
+<h2 id="code-Ⅲ-59">code Ⅲ-59. <button class="copy">복사</button></h2><pre><code>fpath = Path(fpaths[0])                     # 아래 그림 주석의 파일 이름
 hdul = fits.open(str(fpath))
 
 FWHM = 5</code></pre>
-<h2 id="code-115">code 115. <button class="copy">복사</button></h2><pre><code>from photutils.segmentation import detect_threshold
+<h2 id="code-Ⅲ-60">code Ⅲ-60. <button class="copy">복사</button></h2><pre><code>from photutils.segmentation import detect_threshold
 thresh_snr = detect_threshold(data=hdul[0].data, n_sigma=3)   # 배경 + 3σ (절대 화소값)
 print(&#x27;type(thresh_snr) :&#x27;, type(thresh_snr))
 print(&#x27;thresh_snr.shape :&#x27;, thresh_snr.shape)
 print(&#x27;detect_threshold&#x27;, thresh_snr)
 thresh_snr = thresh_snr[0][0]</code></pre>
-<h2 id="code-116">code 116. <button class="copy">복사</button></h2><pre><code>from astropy.stats import sigma_clipped_stats
+<h2 id="code-Ⅲ-61">code Ⅲ-61. <button class="copy">복사</button></h2><pre><code>from astropy.stats import sigma_clipped_stats
 
 avg, med, std = sigma_clipped_stats(hdul[0].data)  # 기본값은 3σ, 5회 반복
 print(&quot;avg, med, std :&quot;, avg, med, std)
@@ -663,7 +663,7 @@ data_sub = hdul[0].data - med                       # 배경을 뺀 영상
 thresh = 5.*std                                     # 배경 위 5σ
 print(&quot;thresh (배경 위 5σ) :&quot;, thresh)
 print(&quot;detect_threshold − 배경 (배경 위 3σ) :&quot;, thresh_snr - med)</code></pre>
-<h2 id="code-117">code 117. <button class="copy">복사</button></h2><pre><code>from photutils.detection import DAOStarFinder
+<h2 id="code-Ⅲ-62">code Ⅲ-62. <button class="copy">복사</button></h2><pre><code>from photutils.detection import DAOStarFinder
 
 DAOfind = DAOStarFinder(
                         fwhm = FWHM,
@@ -679,19 +679,19 @@ if &quot;xcentroid&quot; in DAOfound.colnames:   # photutils 3.0 전 판이면 �
     DAOfound.rename_columns([&quot;xcentroid&quot;, &quot;ycentroid&quot;], [&quot;x_centroid&quot;, &quot;y_centroid&quot;])
 print(&quot;len(DAOfound) :&quot;,len(DAOfound))
 DAOfound</code></pre>
-<h2 id="code-118">code 118. <button class="copy">복사</button></h2><pre><code>print(&quot;type(DAOfound) :&quot;, type(DAOfound))
+<h2 id="code-Ⅲ-63">code Ⅲ-63. <button class="copy">복사</button></h2><pre><code>print(&quot;type(DAOfound) :&quot;, type(DAOfound))
 print(&quot;DAOfound :&quot;, DAOfound)</code></pre>
-<h2 id="code-119">code 119. <button class="copy">복사</button></h2><pre><code>print(f&quot;DAOfound.colnames : {DAOfound.colnames}&quot;)
+<h2 id="code-Ⅲ-64">code Ⅲ-64. <button class="copy">복사</button></h2><pre><code>print(f&quot;DAOfound.colnames : {DAOfound.colnames}&quot;)
 print(f&quot;(type(DAOfound[&#x27;x_centroid&#x27;]) :&quot;, type(DAOfound[&#x27;x_centroid&#x27;]))
 print(f&quot;DAOfound[&#x27;x_centroid&#x27;] : {DAOfound[&#x27;x_centroid&#x27;]}&quot;)</code></pre>
-<h2 id="code-120">code 120. <button class="copy">복사</button></h2><pre><code>df = DAOfound.to_pandas()
+<h2 id="code-Ⅲ-65">code Ⅲ-65. <button class="copy">복사</button></h2><pre><code>df = DAOfound.to_pandas()
 print(type(df))
 df</code></pre>
-<h2 id="code-121">code 121. <button class="copy">복사</button></h2><pre><code>pos = np.transpose((DAOfound[&#x27;x_centroid&#x27;], DAOfound[&#x27;y_centroid&#x27;]))
+<h2 id="code-Ⅲ-66">code Ⅲ-66. <button class="copy">복사</button></h2><pre><code>pos = np.transpose((DAOfound[&#x27;x_centroid&#x27;], DAOfound[&#x27;y_centroid&#x27;]))
 print(f&quot;len(pos): {len(pos)}&quot;)
 print(f&quot;pos[0]: {pos[0]}&quot;)
 pos  # DAOfound로 찾아낸 별의 화소 좌표</code></pre>
-<h2 id="code-122">code 122. <button class="copy">복사</button></h2><pre><code>from photutils.aperture import CircularAperture as CAp
+<h2 id="code-Ⅲ-67">code Ⅲ-67. <button class="copy">복사</button></h2><pre><code>from photutils.aperture import CircularAperture as CAp
 
 ap = CAp(pos, r=FWHM*4)
 
@@ -725,9 +725,9 @@ plt.annotate(f&#x27;Number of star(s): {len(DAOfound)}&#x27;, fontsize=8,
 plt.colorbar(im1, ax=axs, fraction=0.0455, pad=0.04)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-123">code 123. <button class="copy">복사</button></h2><pre><code>DAOfound.sort([&#x27;flux&#x27;], reverse=True)
+<h2 id="code-Ⅲ-68">code Ⅲ-68. <button class="copy">복사</button></h2><pre><code>DAOfound.sort([&#x27;flux&#x27;], reverse=True)
 DAOfound</code></pre>
-<h2 id="code-124">code 124. <button class="copy">복사</button></h2><pre><code>from astropy.nddata import Cutout2D
+<h2 id="code-Ⅲ-69">code Ⅲ-69. <button class="copy">복사</button></h2><pre><code>from astropy.nddata import Cutout2D
 
 def plot_star_cutout(data, daofound, idx, cutsize=51):
   &quot;&quot;&quot;
@@ -763,7 +763,7 @@ def plot_star_cutout(data, daofound, idx, cutsize=51):
 
 # 사용 예(hdul과 DAOfound가 준비되어 있다고 가정)
 plot_star_cutout(hdul[0].data, DAOfound, 0)  # 첫 번째 별(idx=0)의 잘라낸 이미지 그리기</code></pre>
-<h2 id="code-125">code 125. <button class="copy">복사</button></h2><pre><code>import matplotlib.gridspec as gridspec
+<h2 id="code-Ⅲ-70">code Ⅲ-70. <button class="copy">복사</button></h2><pre><code>import matplotlib.gridspec as gridspec
 
 def plot_star_cutouts(data, daofound, star_indices, cutsize=51):
     &quot;&quot;&quot;
@@ -805,7 +805,7 @@ def plot_star_cutouts(data, daofound, star_indices, cutsize=51):
 
 # 예시 사용법 (hdul과 DAOfound가 있다고 가정)
 plot_star_cutouts(hdul[0].data, DAOfound, [0, 100, 200, 250])  # 0 · 100 · 200 · 250번 별</code></pre>
-<h2 id="code-126">code 126. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅲ-71">code Ⅲ-71. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 from astropy.nddata import Cutout2D
 
@@ -848,7 +848,7 @@ def plot_3D_star_cutout(data, daofound, idx, cutsize=31):
 
 # 사용 예(hdul과 DAOfound가 준비되어 있다고 가정)
 plot_3D_star_cutout(hdul[0].data, DAOfound, 0)  # 첫 번째 별(idx=0)의 잘라낸 이미지 그리기</code></pre>
-<h2 id="code-127">code 127. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅲ-72">code Ⅲ-72. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 from astropy.nddata import Cutout2D
 
@@ -891,7 +891,7 @@ def plot_3D_star_cutouts(data, daofound, star_indices, cutsize=31):
 
 # 사용 예(hdul과 DAOfound가 준비되어 있다고 가정)
 plot_3D_star_cutouts(hdul[0].data, DAOfound, [0, 1, 2, 3])</code></pre>
-<h2 id="code-128">code 128. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅲ-73">code Ⅲ-73. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 from astropy.nddata import Cutout2D
 
@@ -936,7 +936,7 @@ def plot_3d_surfaces(data, DAOfound, sky, cutsize=31):
 
 # 함수 사용 예
 plot_3d_surfaces(hdul[0].data, DAOfound, sky=med)</code></pre>
-<h2 id="code-129">code 129. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅲ-74">code Ⅲ-74. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 from astropy.nddata import Cutout2D
 

@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>IV-07. 엘니뇨와 남방진동</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/04-07/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-109">109</a> <a href="#code-110">110</a> <a href="#code-111">111</a> <a href="#code-112">112</a> <a href="#code-113">113</a> <a href="#code-114">114</a> <a href="#code-115">115</a> <a href="#code-116">116</a> <a href="#code-117">117</a> <a href="#code-118">118</a> <a href="#code-119">119</a> <a href="#code-120">120</a> <a href="#code-121">121</a> <a href="#code-122">122</a></p>
-<h2 id="code-109">code 109. <button class="copy">복사</button></h2><pre><code>import cartopy.crs as ccrs
+<p class="jump"><a href="#code-Ⅳ-109">Ⅳ-109</a> <a href="#code-Ⅳ-110">Ⅳ-110</a> <a href="#code-Ⅳ-111">Ⅳ-111</a> <a href="#code-Ⅳ-112">Ⅳ-112</a> <a href="#code-Ⅳ-113">Ⅳ-113</a> <a href="#code-Ⅳ-114">Ⅳ-114</a> <a href="#code-Ⅳ-115">Ⅳ-115</a> <a href="#code-Ⅳ-116">Ⅳ-116</a> <a href="#code-Ⅳ-117">Ⅳ-117</a> <a href="#code-Ⅳ-118">Ⅳ-118</a> <a href="#code-Ⅳ-119">Ⅳ-119</a> <a href="#code-Ⅳ-120">Ⅳ-120</a> <a href="#code-Ⅳ-121">Ⅳ-121</a> <a href="#code-Ⅳ-122">Ⅳ-122</a></p>
+<h2 id="code-Ⅳ-109">code Ⅳ-109. <button class="copy">복사</button></h2><pre><code>import cartopy.crs as ccrs
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 import matplotlib.ticker as mticker
 import matplotlib.pyplot as plt
@@ -81,7 +81,7 @@ plt.tight_layout()
 
 plt.savefig(f&quot;{proj_dir}/ENSO_map.png&quot;, dpi=300, bbox_inches=&#x27;tight&#x27;)
 plt.show()</code></pre>
-<h2 id="code-110">code 110. <button class="copy">복사</button></h2><pre><code>import re
+<h2 id="code-Ⅳ-110">code Ⅳ-110. <button class="copy">복사</button></h2><pre><code>import re
 import requests
 from pathlib import Path
 
@@ -103,10 +103,10 @@ print(&quot;SOI 주소:&quot;, url2)
 # 주기적으로 갱신되는 데이터라 늘 새로 받기(overwrite)
 du.download(url1, oni_path, overwrite=True)
 du.download(url2, soi_path, overwrite=True)</code></pre>
-<h2 id="code-111">code 111. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;txt&quot;)</code></pre>
-<h2 id="code-112">code 112. <button class="copy">복사</button></h2><pre><code>du.preview_text(oni_path, n=10);  # ONI 파일 앞 10줄</code></pre>
-<h2 id="code-113">code 113. <button class="copy">복사</button></h2><pre><code>du.preview_text(soi_path, n=10);  # SOI 파일 앞 10줄</code></pre>
-<h2 id="code-114">code 114. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+<h2 id="code-Ⅳ-111">code Ⅳ-111. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;txt&quot;)</code></pre>
+<h2 id="code-Ⅳ-112">code Ⅳ-112. <button class="copy">복사</button></h2><pre><code>du.preview_text(oni_path, n=10);  # ONI 파일 앞 10줄</code></pre>
+<h2 id="code-Ⅳ-113">code Ⅳ-113. <button class="copy">복사</button></h2><pre><code>du.preview_text(soi_path, n=10);  # SOI 파일 앞 10줄</code></pre>
+<h2 id="code-Ⅳ-114">code Ⅳ-114. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 import numpy as np
 
 # 공백으로 나뉜 표: SEAS(3개월 묶음), YR(연도), TOTAL(수온), ANOM(편차 = ONI)
@@ -123,7 +123,7 @@ df_ONI[&#x27;ONI&#x27;] = df_ONI[&#x27;ANOM&#x27;]
 df_ONI.index = df_ONI[&#x27;dt_date&#x27;]
 
 print(&quot;df_ONI : \n&quot;, df_ONI)</code></pre>
-<h2 id="code-115">code 115. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅳ-115">code Ⅳ-115. <button class="copy">복사</button></h2><pre><code>import numpy as np
 
 arr = np.loadtxt(soi_path)
 print(&quot;arr.shape :&quot;, arr.shape)
@@ -155,7 +155,7 @@ while date1 &lt; EndDT:
 
 print(&quot;len(proc_dates): {}&quot;.format(len(proc_dates)))
 print(f&quot;proc_dates: {proc_dates}&quot;)</code></pre>
-<h2 id="code-116">code 116. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+<h2 id="code-Ⅳ-116">code Ⅳ-116. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 
 # (날짜, SOI) 쌍으로 DataFrame 만들기
 df_SOI = pd.DataFrame(list(zip(proc_dates, arr2)), columns = [&quot;date&quot;, &quot;SOI&quot;])
@@ -163,7 +163,7 @@ df_SOI[&#x27;dt_date&#x27;] = pd.to_datetime(df_SOI[&#x27;date&#x27;])
 df_SOI.index = df_SOI[&#x27;dt_date&#x27;]
 df_SOI[&#x27;SOI&#x27;] = df_SOI[&#x27;SOI&#x27;].replace(-99.9, np.nan)  # -99.9는 결측값
 print(&quot;df_SOI :&quot;, df_SOI)</code></pre>
-<h2 id="code-117">code 117. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅳ-117">code Ⅳ-117. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 from matplotlib import rc
 
 fig, ax = plt.subplots(figsize=(12.0, 4.0))
@@ -172,7 +172,7 @@ ax.set_title(&#x27;니뇨 3.4 지역의 해양 엘니뇨 지수(ONI)&#x27;, font
 ax.set_xlabel(&#x27;시간(년)&#x27;, fontsize=14)
 ax.set_ylabel(&#x27;수온 편차 (°C)&#x27;, fontsize=14)
 plt.show()</code></pre>
-<h2 id="code-118">code 118. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅳ-118">code Ⅳ-118. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(12.0, 4.0))
 
@@ -203,7 +203,7 @@ fig.tight_layout()
 fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0.1)
 
 plt.show()</code></pre>
-<h2 id="code-119">code 119. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅳ-119">code Ⅳ-119. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(12.0, 4.0))
 
@@ -237,7 +237,7 @@ fig.tight_layout()
 fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0.1)
 
 plt.show()</code></pre>
-<h2 id="code-120">code 120. <button class="copy">복사</button></h2><pre><code># 달마다 상태 표시: 1(엘니뇨 쪽), -1(라니냐 쪽), 0(중립)
+<h2 id="code-Ⅳ-120">code Ⅳ-120. <button class="copy">복사</button></h2><pre><code># 달마다 상태 표시: 1(엘니뇨 쪽), -1(라니냐 쪽), 0(중립)
 oni = df_ONI[&#x27;ONI&#x27;].astype(float)
 state = pd.Series(np.select([oni &gt;= 0.5, oni &lt;= -0.5], [1, -1], 0), index=oni.index)
 
@@ -265,10 +265,10 @@ print(events.groupby([&quot;구분&quot;, &quot;강도&quot;], observed=False).s
 print()
 print(&quot;최근 사례 5개&quot;)
 print(events.tail(5).to_string(index=False))</code></pre>
-<h2 id="code-121">code 121. <button class="copy">복사</button></h2><pre><code># 최댓값의 절댓값이 큰 순서로 상위 8개 사례
+<h2 id="code-Ⅳ-121">code Ⅳ-121. <button class="copy">복사</button></h2><pre><code># 최댓값의 절댓값이 큰 순서로 상위 8개 사례
 top = events.sort_values(&quot;최댓값&quot;, key=abs, ascending=False).head(8)
 print(top.to_string(index=False))</code></pre>
-<h2 id="code-122">code 122. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(12.0, 4.0))
+<h2 id="code-Ⅳ-122">code Ⅳ-122. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(12.0, 4.0))
 ax.plot(df_ONI[&#x27;dt_date&#x27;], oni, &quot;k-&quot;, linewidth=0.7)
 
 # 사례 기간마다 색 띠(끝 달은 그달 말일까지)

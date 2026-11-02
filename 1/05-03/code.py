@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | V-03. 지진파 데이터로 진앙 찾기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 24.
+# %% code Ⅴ-24.
 from pathlib import Path
 from datetime import datetime
 from urllib.parse import urlencode
@@ -36,7 +36,7 @@ else:
     print(f"저장 위치: {event_file}")
 print(f"파일 크기: {event_file.stat().st_size:,} bytes")
 
-# %% code 25.
+# %% code Ⅴ-25.
 # XML 도우미 함수(태그 이름 · 자식 요소 · 글자 읽기)
 def tag_name(element):
     return element.tag.split("}")[-1]
@@ -73,7 +73,7 @@ origin_info = {
 
 origin_info
 
-# %% code 26.
+# %% code Ⅴ-26.
 # 위상 판독(pick)마다 위상 · 시각 · 관측소 정보 모으기
 pick_rows = []
 
@@ -95,10 +95,10 @@ for pick in [elem for elem in event.iter() if tag_name(elem) == "pick"]:
 picks = pd.DataFrame(pick_rows)
 print(picks)
 
-# %% code 27.
+# %% code Ⅴ-27.
 picks["phase"].value_counts(dropna=False)
 
-# %% code 28.
+# %% code Ⅴ-28.
 # 관측소마다 가장 이른 P · S 도착 시각을 한 행으로
 phase_table = (
     picks[picks["phase"].isin(["P", "S"])]
@@ -117,7 +117,7 @@ phase_table = phase_table.sort_values("s_minus_p_sec").reset_index(drop=True)
 
 print(phase_table)
 
-# %% code 29.
+# %% code Ⅴ-29.
 # 관측소 위치(위도 · 경도 · 고도) 조회
 def download_station_metadata(network, station, event_time):
     params = {
@@ -156,7 +156,7 @@ stations = pd.DataFrame(station_rows)
 
 print(stations)
 
-# %% code 30.
+# %% code Ⅴ-30.
 # 도착 시각 + 관측소 위치
 data = phase_table.merge(stations, on=["network", "station"], how="inner")
 
@@ -170,7 +170,7 @@ data = data.sort_values("estimated_distance_km").reset_index(drop=True)
 
 print(data[["network", "station", "P", "S", "s_minus_p_sec", "estimated_distance_km", "station_latitude", "station_longitude"]])
 
-# %% code 31.
+# %% code Ⅴ-31.
 # 두 지점 사이 대원 거리(km)
 def haversine_km(lat1, lon1, lat2, lon2):
     radius = 6371.0  # 지구 평균 반지름(km)
@@ -211,7 +211,7 @@ print(f"발표 진앙: lat={origin_info['latitude']:.4f}, lon={origin_info['long
 print(f"평균 거리 잔차(RMS): {best_misfit:.1f} km")
 print(f"실제 진앙과의 거리 차이: {haversine_km(estimated_lat, estimated_lon, origin_info['latitude'], origin_info['longitude']):.1f} km")
 
-# %% code 32.
+# %% code Ⅴ-32.
 import matplotlib.pyplot as plt
 
 # 관측소와 발표 진앙 사이의 실제 거리(앞 셀의 haversine_km 사용)
@@ -234,7 +234,7 @@ ax.grid(alpha=0.3)
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "05_03_Finding_epicenter_with_P_and_S_waves_01"))
 plt.show()
 
-# %% code 33.
+# %% code Ⅴ-33.
 import folium
 
 # 지도 중심: 추정 · 발표 진앙의 중간

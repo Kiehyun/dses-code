@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | III-03. 우주론
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 79.
+# %% code Ⅲ-24.
 import numpy as np
 import pandas as pd
 import astropy.units as u
@@ -17,7 +17,7 @@ table = pd.DataFrame({
 display(table.round({"척도인자 a": 4, "우주 나이 (Gyr)": 4,
                      "H(z) (km/s/Mpc)": 1}))
 
-# %% code 80.
+# %% code Ⅲ-25.
 import astropy.constants as const
 
 H0 = Planck18.H0
@@ -26,7 +26,7 @@ print(f"직접 계산한 임계 밀도 : {rho_c:.3e}")
 print(f"astropy 값            : {Planck18.critical_density0.to(u.kg / u.m**3):.3e}")
 print(f"양성자로 치면 1 m³마다 약 {(rho_c / const.m_p).to(u.m**-3).value:.1f}개")
 
-# %% code 81.
+# %% code Ⅲ-26.
 from astropy.cosmology import LambdaCDM
 
 curvature = pd.DataFrame([
@@ -44,7 +44,7 @@ curvature["곡률"] = curvature["Omega_k (식)"].map(
     lambda ok: "평탄" if abs(ok) < 1e-12 else ("열린" if ok > 0 else "닫힌"))
 display(curvature)
 
-# %% code 82.
+# %% code Ⅲ-27.
 import matplotlib.pyplot as plt
 from astropy.cosmology import FlatLambdaCDM
 
@@ -76,7 +76,7 @@ du.save_figure(fig, proj_dir / "flat_vs_lambdacdm")
 plt.show()
 print(f"FlatLambdaCDM의 Ode0 = {cosmo_flat.Ode0:.5f}, LambdaCDM의 Ok0 = {cosmo_lambda.Ok0:.5f}")
 
-# %% code 83.
+# %% code Ⅲ-28.
 from astropy.cosmology import WMAP9
 
 for name, cosmo in [("WMAP9", WMAP9), ("Planck18", Planck18)]:
@@ -87,7 +87,7 @@ for name, cosmo in [("WMAP9", WMAP9), ("Planck18", Planck18)]:
     print(f"  허블 시간 1/H0    : {cosmo.hubble_time.to(u.Gyr):.3f}")
     print(f"  허블 길이 c/H0    : {hubble_len:.1f} = {hubble_len.to(u.lyr).value / 1e9:.2f} Gly")
 
-# %% code 84.
+# %% code Ⅲ-29.
 cosmo = LambdaCDM(H0=Hubble_const, Om0=Omega_m, Ode0=Omega_Lambda,
                   Tcmb0=2.725, Neff=3.046)
 age = cosmo.age(z)
@@ -116,7 +116,7 @@ du.save_figure(fig, proj_dir / "hubble_time_vs_age")
 plt.show()
 print(f"허블 시간 {t_hubble:.2f}, ΛCDM 우주의 나이 {age_now:.2f}, 차이 {t_hubble - age_now:.2f}")
 
-# %% code 85.
+# %% code Ⅲ-30.
 fig, ax = plt.subplots(figsize=(7.5, 4.4))
 ax.plot(t_const - t_hubble.value, a_const, label="등속 팽창(텅 빈) 우주")
 ax.plot((age - age_now).value, scale,
@@ -137,7 +137,7 @@ plt.tight_layout()
 du.save_figure(fig, proj_dir / "hubble_time_vs_age_centered")
 plt.show()
 
-# %% code 86.
+# %% code Ⅲ-31.
 z_t = np.concatenate([np.logspace(4, -3, 400), -np.linspace(0.001, 0.09, 40)])  # 과거 → 미래
 t_now = cosmo.age(0).to(u.Gyr).value
 t = cosmo.age(z_t).to(u.Gyr).value - t_now                       # 현재로부터의 시간
@@ -168,7 +168,7 @@ print(f"지금의 허블 길이      : {D_h0:.2f} = {gly(D_h0):.1f} Gly")
 print(f"지금의 우주의 지평선  : {D_p0:.2f} = {gly(D_p0):.1f} Gly")
 print(f"빛의 속력 × 우주 나이 : {gly(const.c * cosmo.age(0)):.1f} Gly")
 
-# %% code 87.
+# %% code Ⅲ-32.
 H0_values = [67.4, 73.0] * u.km / u.s / u.Mpc
 
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 2.8), sharey=True)
@@ -192,7 +192,7 @@ plt.tight_layout()
 du.save_figure(fig, proj_dir / "hubble_tension_scale_factor")
 plt.show()
 
-# %% code 88.
+# %% code Ⅲ-33.
 fname = "SCPUnion2.1_mu_vs_z.txt"
 sn_path = du.download("https://supernova.lbl.gov/union/figures/" + fname,
                       proj_dir / fname)
@@ -209,7 +209,7 @@ print(f"\n초신성 {len(sn)}개, 적색편이 {sn['z'].min():.3f} ~ {sn['z'].ma
       f"거리지수 {sn['mu'].min():.2f} ~ {sn['mu'].max():.2f}")
 display(sn.head())
 
-# %% code 89.
+# %% code Ⅲ-34.
 checks = {
     "값이 모두 있음": sn[["name", "z", "mu", "mu_err"]].notna().all(axis=1),
     "물리적으로 가능한 값": (sn["z"] > 0) & (sn["mu"] > 0) & (sn["mu_err"] > 0),
@@ -227,7 +227,7 @@ sn_ok = sn[ok].copy()
 print(f"점검 전 {len(sn)}개 → 점검 후 {len(sn_ok)}개 ({len(sn_ok) / len(sn):.1%})")
 print(f"점검 후 평균 거리지수 오차: {sn_ok['mu_err'].mean():.3f}등급")
 
-# %% code 90.
+# %% code Ⅲ-35.
 import matplotlib.ticker as mticker
 
 H0_union = 70 * u.km / u.s / u.Mpc
@@ -300,11 +300,11 @@ def plot_sn_models(data, xscale="linear", fig_name=None):
 binned = plot_sn_models(sn_ok, xscale="linear", fig_name="sn_models_linear")
 display(binned.round(3))
 
-# %% code 91.
+# %% code Ⅲ-36.
 binned_log = plot_sn_models(sn_ok, xscale="log", fig_name="sn_models_log")
 display(binned_log.round(3))
 
-# %% code 92.
+# %% code Ⅲ-37.
 import warnings
 
 scale_models = [

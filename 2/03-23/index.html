@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>III-03. 우주론</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/03-23/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-79">79</a> <a href="#code-80">80</a> <a href="#code-81">81</a> <a href="#code-82">82</a> <a href="#code-83">83</a> <a href="#code-84">84</a> <a href="#code-85">85</a> <a href="#code-86">86</a> <a href="#code-87">87</a> <a href="#code-88">88</a> <a href="#code-89">89</a> <a href="#code-90">90</a> <a href="#code-91">91</a> <a href="#code-92">92</a></p>
-<h2 id="code-79">code 79. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<p class="jump"><a href="#code-Ⅲ-24">Ⅲ-24</a> <a href="#code-Ⅲ-25">Ⅲ-25</a> <a href="#code-Ⅲ-26">Ⅲ-26</a> <a href="#code-Ⅲ-27">Ⅲ-27</a> <a href="#code-Ⅲ-28">Ⅲ-28</a> <a href="#code-Ⅲ-29">Ⅲ-29</a> <a href="#code-Ⅲ-30">Ⅲ-30</a> <a href="#code-Ⅲ-31">Ⅲ-31</a> <a href="#code-Ⅲ-32">Ⅲ-32</a> <a href="#code-Ⅲ-33">Ⅲ-33</a> <a href="#code-Ⅲ-34">Ⅲ-34</a> <a href="#code-Ⅲ-35">Ⅲ-35</a> <a href="#code-Ⅲ-36">Ⅲ-36</a> <a href="#code-Ⅲ-37">Ⅲ-37</a></p>
+<h2 id="code-Ⅲ-24">code Ⅲ-24. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import pandas as pd
 import astropy.units as u
 from astropy.cosmology import Planck18
@@ -26,14 +26,14 @@ table = pd.DataFrame({
 })
 display(table.round({&quot;척도인자 a&quot;: 4, &quot;우주 나이 (Gyr)&quot;: 4,
                      &quot;H(z) (km/s/Mpc)&quot;: 1}))</code></pre>
-<h2 id="code-80">code 80. <button class="copy">복사</button></h2><pre><code>import astropy.constants as const
+<h2 id="code-Ⅲ-25">code Ⅲ-25. <button class="copy">복사</button></h2><pre><code>import astropy.constants as const
 
 H0 = Planck18.H0
 rho_c = (3 * H0**2 / (8 * np.pi * const.G)).to(u.kg / u.m**3)
 print(f&quot;직접 계산한 임계 밀도 : {rho_c:.3e}&quot;)
 print(f&quot;astropy 값            : {Planck18.critical_density0.to(u.kg / u.m**3):.3e}&quot;)
 print(f&quot;양성자로 치면 1 m³마다 약 {(rho_c / const.m_p).to(u.m**-3).value:.1f}개&quot;)</code></pre>
-<h2 id="code-81">code 81. <button class="copy">복사</button></h2><pre><code>from astropy.cosmology import LambdaCDM
+<h2 id="code-Ⅲ-26">code Ⅲ-26. <button class="copy">복사</button></h2><pre><code>from astropy.cosmology import LambdaCDM
 
 curvature = pd.DataFrame([
     {&quot;모형&quot;: &quot;가속 팽창 평탄 우주&quot;, &quot;Omega_m&quot;: 0.3, &quot;Omega_Lambda&quot;: 0.7},
@@ -49,7 +49,7 @@ curvature[&quot;Omega_k (astropy)&quot;] = [
 curvature[&quot;곡률&quot;] = curvature[&quot;Omega_k (식)&quot;].map(
     lambda ok: &quot;평탄&quot; if abs(ok) &lt; 1e-12 else (&quot;열린&quot; if ok &gt; 0 else &quot;닫힌&quot;))
 display(curvature)</code></pre>
-<h2 id="code-82">code 82. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅲ-27">code Ⅲ-27. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 from astropy.cosmology import FlatLambdaCDM
 
 Hubble_const = 67.8 * u.km / u.s / u.Mpc   # 허블 상수
@@ -79,7 +79,7 @@ plt.tight_layout()
 du.save_figure(fig, proj_dir / &quot;flat_vs_lambdacdm&quot;)
 plt.show()
 print(f&quot;FlatLambdaCDM의 Ode0 = {cosmo_flat.Ode0:.5f}, LambdaCDM의 Ok0 = {cosmo_lambda.Ok0:.5f}&quot;)</code></pre>
-<h2 id="code-83">code 83. <button class="copy">복사</button></h2><pre><code>from astropy.cosmology import WMAP9
+<h2 id="code-Ⅲ-28">code Ⅲ-28. <button class="copy">복사</button></h2><pre><code>from astropy.cosmology import WMAP9
 
 for name, cosmo in [(&quot;WMAP9&quot;, WMAP9), (&quot;Planck18&quot;, Planck18)]:
     hubble_len = cosmo.hubble_distance
@@ -88,7 +88,7 @@ for name, cosmo in [(&quot;WMAP9&quot;, WMAP9), (&quot;Planck18&quot;, Planck18)
     print(f&quot;  우주의 나이       : {cosmo.age(0):.3f}&quot;)
     print(f&quot;  허블 시간 1/H0    : {cosmo.hubble_time.to(u.Gyr):.3f}&quot;)
     print(f&quot;  허블 길이 c/H0    : {hubble_len:.1f} = {hubble_len.to(u.lyr).value / 1e9:.2f} Gly&quot;)</code></pre>
-<h2 id="code-84">code 84. <button class="copy">복사</button></h2><pre><code>cosmo = LambdaCDM(H0=Hubble_const, Om0=Omega_m, Ode0=Omega_Lambda,
+<h2 id="code-Ⅲ-29">code Ⅲ-29. <button class="copy">복사</button></h2><pre><code>cosmo = LambdaCDM(H0=Hubble_const, Om0=Omega_m, Ode0=Omega_Lambda,
                   Tcmb0=2.725, Neff=3.046)
 age = cosmo.age(z)
 scale = cosmo.scale_factor(z)
@@ -115,7 +115,7 @@ plt.tight_layout()
 du.save_figure(fig, proj_dir / &quot;hubble_time_vs_age&quot;)
 plt.show()
 print(f&quot;허블 시간 {t_hubble:.2f}, ΛCDM 우주의 나이 {age_now:.2f}, 차이 {t_hubble - age_now:.2f}&quot;)</code></pre>
-<h2 id="code-85">code 85. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(7.5, 4.4))
+<h2 id="code-Ⅲ-30">code Ⅲ-30. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(7.5, 4.4))
 ax.plot(t_const - t_hubble.value, a_const, label=&quot;등속 팽창(텅 빈) 우주&quot;)
 ax.plot((age - age_now).value, scale,
         label=rf&quot;$\Lambda$CDM ($\Omega_m = {Omega_m},~\Omega_\Lambda = {Omega_Lambda}$)&quot;)
@@ -134,7 +134,7 @@ ax.legend(loc=&quot;upper left&quot;)
 plt.tight_layout()
 du.save_figure(fig, proj_dir / &quot;hubble_time_vs_age_centered&quot;)
 plt.show()</code></pre>
-<h2 id="code-86">code 86. <button class="copy">복사</button></h2><pre><code>z_t = np.concatenate([np.logspace(4, -3, 400), -np.linspace(0.001, 0.09, 40)])  # 과거 → 미래
+<h2 id="code-Ⅲ-31">code Ⅲ-31. <button class="copy">복사</button></h2><pre><code>z_t = np.concatenate([np.logspace(4, -3, 400), -np.linspace(0.001, 0.09, 40)])  # 과거 → 미래
 t_now = cosmo.age(0).to(u.Gyr).value
 t = cosmo.age(z_t).to(u.Gyr).value - t_now                       # 현재로부터의 시간
 
@@ -163,7 +163,7 @@ D_p0 = cosmo.comoving_distance(1e5).to(u.Gpc)
 print(f&quot;지금의 허블 길이      : {D_h0:.2f} = {gly(D_h0):.1f} Gly&quot;)
 print(f&quot;지금의 우주의 지평선  : {D_p0:.2f} = {gly(D_p0):.1f} Gly&quot;)
 print(f&quot;빛의 속력 × 우주 나이 : {gly(const.c * cosmo.age(0)):.1f} Gly&quot;)</code></pre>
-<h2 id="code-87">code 87. <button class="copy">복사</button></h2><pre><code>H0_values = [67.4, 73.0] * u.km / u.s / u.Mpc
+<h2 id="code-Ⅲ-32">code Ⅲ-32. <button class="copy">복사</button></h2><pre><code>H0_values = [67.4, 73.0] * u.km / u.s / u.Mpc
 
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 2.8), sharey=True)
 for H0_i in H0_values:
@@ -185,7 +185,7 @@ for ax in axs:
 plt.tight_layout()
 du.save_figure(fig, proj_dir / &quot;hubble_tension_scale_factor&quot;)
 plt.show()</code></pre>
-<h2 id="code-88">code 88. <button class="copy">복사</button></h2><pre><code>fname = &quot;SCPUnion2.1_mu_vs_z.txt&quot;
+<h2 id="code-Ⅲ-33">code Ⅲ-33. <button class="copy">복사</button></h2><pre><code>fname = &quot;SCPUnion2.1_mu_vs_z.txt&quot;
 sn_path = du.download(&quot;https://supernova.lbl.gov/union/figures/&quot; + fname,
                       proj_dir / fname)
 
@@ -200,7 +200,7 @@ sn = pd.read_csv(sn_path, sep=&quot;\t&quot;, comment=&quot;#&quot;, header=None
 print(f&quot;\n초신성 {len(sn)}개, 적색편이 {sn[&#x27;z&#x27;].min():.3f} ~ {sn[&#x27;z&#x27;].max():.3f}, &quot;
       f&quot;거리지수 {sn[&#x27;mu&#x27;].min():.2f} ~ {sn[&#x27;mu&#x27;].max():.2f}&quot;)
 display(sn.head())</code></pre>
-<h2 id="code-89">code 89. <button class="copy">복사</button></h2><pre><code>checks = {
+<h2 id="code-Ⅲ-34">code Ⅲ-34. <button class="copy">복사</button></h2><pre><code>checks = {
     &quot;값이 모두 있음&quot;: sn[[&quot;name&quot;, &quot;z&quot;, &quot;mu&quot;, &quot;mu_err&quot;]].notna().all(axis=1),
     &quot;물리적으로 가능한 값&quot;: (sn[&quot;z&quot;] &gt; 0) &amp; (sn[&quot;mu&quot;] &gt; 0) &amp; (sn[&quot;mu_err&quot;] &gt; 0),
     &quot;0.01 &lt;= z &lt;= 1.4&quot;: sn[&quot;z&quot;].between(0.01, 1.4),
@@ -216,7 +216,7 @@ ok = np.logical_and.reduce(list(checks.values()))
 sn_ok = sn[ok].copy()
 print(f&quot;점검 전 {len(sn)}개 → 점검 후 {len(sn_ok)}개 ({len(sn_ok) / len(sn):.1%})&quot;)
 print(f&quot;점검 후 평균 거리지수 오차: {sn_ok[&#x27;mu_err&#x27;].mean():.3f}등급&quot;)</code></pre>
-<h2 id="code-90">code 90. <button class="copy">복사</button></h2><pre><code>import matplotlib.ticker as mticker
+<h2 id="code-Ⅲ-35">code Ⅲ-35. <button class="copy">복사</button></h2><pre><code>import matplotlib.ticker as mticker
 
 H0_union = 70 * u.km / u.s / u.Mpc
 models = [
@@ -287,9 +287,9 @@ def plot_sn_models(data, xscale=&quot;linear&quot;, fig_name=None):
 
 binned = plot_sn_models(sn_ok, xscale=&quot;linear&quot;, fig_name=&quot;sn_models_linear&quot;)
 display(binned.round(3))</code></pre>
-<h2 id="code-91">code 91. <button class="copy">복사</button></h2><pre><code>binned_log = plot_sn_models(sn_ok, xscale=&quot;log&quot;, fig_name=&quot;sn_models_log&quot;)
+<h2 id="code-Ⅲ-36">code Ⅲ-36. <button class="copy">복사</button></h2><pre><code>binned_log = plot_sn_models(sn_ok, xscale=&quot;log&quot;, fig_name=&quot;sn_models_log&quot;)
 display(binned_log.round(3))</code></pre>
-<h2 id="code-92">code 92. <button class="copy">복사</button></h2><pre><code>import warnings
+<h2 id="code-Ⅲ-37">code Ⅲ-37. <button class="copy">복사</button></h2><pre><code>import warnings
 
 scale_models = [
     (&quot;물질만 있는 닫힌 우주&quot;, 6.0, 0.0),

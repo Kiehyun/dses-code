@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | IV-01. 지구과학 데이터 형식
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 375.
+# %% code Ⅳ-1.
 gd = "https://docs.google.com/uc?export=download&id="   # 구글 드라이브 사본
 psl = "https://downloads.psl.noaa.gov/Datasets/noaa.oisst.v2/"
 
@@ -24,10 +24,10 @@ modis = [
 for file_id, output_path in modis:
     du.download(gd + file_id, PROJ / output_path)
 
-# %% code 376.
+# %% code Ⅳ-2.
 fpaths = du.list_files(PROJ, pattern="*.*")
 
-# %% code 377.
+# %% code Ⅳ-3.
 import shutil
 
 for fpath in fpaths:
@@ -37,7 +37,7 @@ for fpath in fpaths:
 
 fpaths = du.list_files(PROJ, "nc")
 
-# %% code 378.
+# %% code Ⅳ-4.
 from netCDF4 import Dataset
 import numpy as np
 
@@ -46,7 +46,7 @@ file_path = str(PROJ / "lsmask.nc")  # NetCDF 파일 경로
 nc_file = Dataset(file_path, 'r') 
 nc_file.variables
 
-# %% code 379.
+# %% code Ⅳ-5.
 from netCDF4 import Dataset
 import numpy as np
 
@@ -60,7 +60,7 @@ with Dataset(file_path, 'r') as nc_file:
 
 print("마스크 준비 끝: 바다", int(np.isfinite(mask).sum()), "칸, 육지는 NaN")
 
-# %% code 380.
+# %% code Ⅳ-6.
 from netCDF4 import Dataset
 import numpy as np
 import matplotlib.pyplot as plt
@@ -74,7 +74,7 @@ mask_path = str(PROJ / "lsmask.nc")  # Land-sea mask 파일 경로
 with Dataset(file_path, 'r') as sst_file:
     print("SST file variables:", list(sst_file.variables.keys()))
 
-# %% code 381.
+# %% code Ⅳ-7.
 # 변수명에 따라 수정 (예: 'longitude', 'latitude' 등)
 with Dataset(file_path, 'r') as sst_file, Dataset(mask_path, 'r') as mask_file:
  # 변수명 자동 탐색
@@ -118,7 +118,7 @@ jet = ["#000080", "blue", "#007FFF", "cyan", "#7FFF7F", "yellow", "#FF7F00",
        "red", "#7F0000"]
 cm = LinearSegmentedColormap.from_list('custom_jet', jet, N=len(levs))
 
-# %% code 382.
+# %% code Ⅳ-8.
 # 시각화
 fig, ax = plt.subplots(figsize=(7.5, 3.8))
 contour = ax.contourf(lon, lat, sst, levels=levs, cmap=cm, extend='both')
@@ -137,7 +137,7 @@ ax.set_ylabel('Latitude', fontsize=11)
 plt.tight_layout()
 plt.show()
 
-# %% code 383.
+# %% code Ⅳ-9.
 from netCDF4 import Dataset
 
 sst_l2 = PROJ / "T2008168030500.L2_LAC_SST.x.nc"   # 위성 해수면 온도(MODIS L2) 파일
@@ -149,26 +149,26 @@ for key in ["title", "platform", "instrument", "processing_level",
     print(f"  {key:20s}: {nc.getncattr(key)}")
 print("그룹 :", list(nc.groups))
 
-# %% code 384.
+# %% code Ⅳ-10.
 for dim in nc.dimensions.values():
     print(dim)
 
-# %% code 385.
+# %% code Ⅳ-11.
 print("nc.groups", nc.groups)
 print("nc.groups['geophysical_data']", nc.groups['geophysical_data'])
 
-# %% code 386.
+# %% code Ⅳ-12.
 print("nc.groups['geophysical_data']['sst']",
       nc.groups['geophysical_data']['sst'])
 print("nc.groups['geophysical_data']['sst'].dimensions",
       nc.groups['geophysical_data']['sst'].dimensions)
 
-# %% code 387.
+# %% code Ⅳ-13.
 print("nc.groups['navigation_data']", nc.groups['navigation_data'])
 print("nc.groups['navigation_data']['latitude']",
       nc.groups['navigation_data']['latitude'])
 
-# %% code 388.
+# %% code Ⅳ-14.
 import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.basemap import Basemap
@@ -180,7 +180,7 @@ qual = nc.groups['geophysical_data']['qual_sst'][:]   # 품질 플래그 (0 최�
 sst = np.ma.masked_where(qual > 1, sst)               # 품질 0·1 화소만 남김
 print(f"품질 0·1 화소 수: {sst.count():,} / {sst.size:,}")
 
-# %% code 389.
+# %% code Ⅳ-15.
 # 원소를 모두 찍으면 수천 줄이 나오므로 모양과 일부만 확인
 import numpy as _np
 _a = _np.asarray(latitude)
@@ -192,12 +192,12 @@ _o = _np.asarray(longitude)
 print(f"longitude: shape={_o.shape}, "
       f"min={_np.nanmin(_o):.4f}, max={_np.nanmax(_o):.4f}")
 
-# %% code 390.
+# %% code Ⅳ-16.
 print("latitude.dtype : {}".format(latitude.dtype))
 print("longitude.dtype : {}".format(longitude.dtype))
 print("sst.dtype : {}".format(sst.dtype))
 
-# %% code 391.
+# %% code Ⅳ-17.
 DATAFIELD_NAME = "SST"
 
 import matplotlib.pyplot as plt
@@ -218,7 +218,7 @@ plt.savefig(f"{PROJ}/{sst_l2.stem}_hist.pdf", bbox_inches='tight')
 print(f"savefig: {PROJ}/{sst_l2.stem}_hist.pdf")
 plt.show()   
 
-# %% code 392.
+# %% code Ⅳ-18.
 Llon, Rlon, Slat, Nlat = 100, 150, 10, 60
 
 import numpy as np
@@ -247,7 +247,7 @@ plt.title('SST product using MODIS', fontsize=10)
       
 plt.show()
 
-# %% code 393.
+# %% code Ⅳ-19.
 DATAFIELD_NAME = "SST"
 
 print("="*80)
@@ -301,7 +301,7 @@ plt.savefig(f"{PROJ}/{sst_l2.stem}_{DATAFIELD_NAME}.pdf", bbox_inches='tight')
 print(f"savefig: {PROJ}/{sst_l2.stem}_{DATAFIELD_NAME}.pdf")
 plt.show()
 
-# %% code 394.
+# %% code Ⅳ-20.
 Llon, Rlon, Slat, Nlat = 100, 150, 10, 60     # 지도 영역(경도 · 위도)
 RES = 24                                      # 4 km 격자: 1도에 24칸
 
@@ -317,13 +317,13 @@ print("요청 주소 :", url)
 hdf_path = proj_dir / "AQUA_MODIS.201908.L3m.MO.chlor_a.4km_EastAsia.nc4"
 du.download(url, hdf_path)
 
-# %% code 395.
+# %% code Ⅳ-21.
 signature = hdf_path.read_bytes()[:8]
 print("파일 크기 :", f"{hdf_path.stat().st_size / 1e6:.2f} MB")
 print("서명      :", signature)
 print("HDF5 인가 :", signature == b"\x89HDF\r\n\x1a\n")
 
-# %% code 396.
+# %% code Ⅳ-22.
 import h5py
 
 hdf = h5py.File(hdf_path, "r")
@@ -338,7 +338,7 @@ def show(name, obj):
 
 hdf.visititems(show)
 
-# %% code 397.
+# %% code Ⅳ-23.
 import numpy as np
 
 def attr(dset, key):
@@ -354,7 +354,7 @@ chl_ds = hdf["chlor_a"]
 for key in ["long_name", "units", "_FillValue", "valid_min", "valid_max"]:
     print(f"{key:12s}: {attr(chl_ds, key)}")
 
-# %% code 398.
+# %% code Ⅳ-24.
 chl = chl_ds[:].astype(float)
 lat = hdf["lat"][:]
 lon = hdf["lon"][:]
@@ -371,7 +371,7 @@ print("경도 범위     :", lon.min().round(2), "~", lon.max().round(2))
 print("유효한 칸 비율:", f"{np.isfinite(chl).mean() * 100:.1f} %")
 print(f"최솟값 · 중앙값 · 최댓값: {np.nanmin(chl):.3f} · {np.nanmedian(chl):.3f} · {np.nanmax(chl):.1f} mg/m³")
 
-# %% code 399.
+# %% code Ⅳ-25.
 import matplotlib.pyplot as plt
 plt.rcParams["axes.unicode_minus"] = False   # 로그 눈금의 마이너스(−)를 하이픈으로 표시
 
@@ -391,7 +391,7 @@ ax.legend()
 plt.savefig(proj_dir / "chlor_a_hist.png", dpi=150, bbox_inches="tight")
 plt.show()
 
-# %% code 400.
+# %% code Ⅳ-26.
 from matplotlib.colors import LogNorm
 from mpl_toolkits.basemap import Basemap
 

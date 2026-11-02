@@ -11,17 +11,17 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>V-01. 세계의 화산대</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/05-01/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-1">1</a> <a href="#code-2">2</a> <a href="#code-3">3</a> <a href="#code-4">4</a> <a href="#code-5">5</a> <a href="#code-6">6</a> <a href="#code-7">7</a> <a href="#code-8">8</a> <a href="#code-9">9</a> <a href="#code-10">10</a> <a href="#code-11">11</a></p>
-<h2 id="code-1">code 1. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
+<p class="jump"><a href="#code-Ⅴ-1">Ⅴ-1</a> <a href="#code-Ⅴ-2">Ⅴ-2</a> <a href="#code-Ⅴ-3">Ⅴ-3</a> <a href="#code-Ⅴ-4">Ⅴ-4</a> <a href="#code-Ⅴ-5">Ⅴ-5</a> <a href="#code-Ⅴ-6">Ⅴ-6</a> <a href="#code-Ⅴ-7">Ⅴ-7</a> <a href="#code-Ⅴ-8">Ⅴ-8</a> <a href="#code-Ⅴ-9">Ⅴ-9</a> <a href="#code-Ⅴ-10">Ⅴ-10</a> <a href="#code-Ⅴ-11">Ⅴ-11</a></p>
+<h2 id="code-Ⅴ-1">code Ⅴ-1. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
 
 # 세계 화산 목록(VAAC용) 엑셀 파일, 구글 드라이브 파일 ID
 fname = &quot;List_of_Volcanoes_of_the_World_for_VAAC_Use.xls&quot;
 fid = &quot;17wbUIiJCxRz3XIgz6ZUM_1o4D2jOSA5P&quot;
 
 du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={fid}&quot;, Path(proj_dir) / fname)</code></pre>
-<h2 id="code-2">code 2. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;xls&quot;)</code></pre>
-<h2 id="code-3">code 3. <button class="copy">복사</button></h2><pre><code>du.preview_text(fpaths[0], n=10);  # 앞 10줄(인코딩 자동)</code></pre>
-<h2 id="code-4">code 4. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+<h2 id="code-Ⅴ-2">code Ⅴ-2. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;xls&quot;)</code></pre>
+<h2 id="code-Ⅴ-3">code Ⅴ-3. <button class="copy">복사</button></h2><pre><code>du.preview_text(fpaths[0], n=10);  # 앞 10줄(인코딩 자동)</code></pre>
+<h2 id="code-Ⅴ-4">code Ⅴ-4. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 import lxml.etree as ET
 
 # 1) 엑셀 2003 XML(SpreadsheetML) 파일 파싱
@@ -56,12 +56,12 @@ for col in df_vol.columns:
 
 print(f&quot;화산 수: {len(df_vol)}&quot;)
 print(&quot;df_vol :&quot;, df_vol)</code></pre>
-<h2 id="code-5">code 5. <button class="copy">복사</button></h2><pre><code>df_vol.columns</code></pre>
-<h2 id="code-6">code 6. <button class="copy">복사</button></h2><pre><code># 십진 도(°) 단위 위도 · 경도를 짧은 열 이름으로
+<h2 id="code-Ⅴ-5">code Ⅴ-5. <button class="copy">복사</button></h2><pre><code>df_vol.columns</code></pre>
+<h2 id="code-Ⅴ-6">code Ⅴ-6. <button class="copy">복사</button></h2><pre><code># 십진 도(°) 단위 위도 · 경도를 짧은 열 이름으로
 df_vol[&#x27;Latitude&#x27;] = df_vol[&#x27;LatitudeDecimal&#x27;]
 df_vol[&#x27;Longitude&#x27;] = df_vol[&#x27;LongitudeDecimal&#x27;]
 print(df_vol[[&#x27;Latitude&#x27;, &#x27;Longitude&#x27;]])</code></pre>
-<h2 id="code-7">code 7. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅴ-7">code Ⅴ-7. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 import numpy as np
 
 # 화산 위치 산점도
@@ -82,7 +82,7 @@ plt.axvline(x=0, color=&#x27;k&#x27;, linestyle=&#x27;-&#x27;, alpha=0.3)  # 본
 plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;05_01_Plotting_ring_of_fire_01&quot;))
 plt.show()</code></pre>
-<h2 id="code-8">code 8. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+<h2 id="code-Ⅴ-8">code Ⅴ-8. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 import numpy as np
@@ -116,7 +116,7 @@ plt.legend(loc=&#x27;lower left&#x27;)
 plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;05_01_Plotting_ring_of_fire_02&quot;))
 plt.show()</code></pre>
-<h2 id="code-9">code 9. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅴ-9">code Ⅴ-9. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 
@@ -135,7 +135,7 @@ plt.title(&#x27;전 세계 화산 분포 (Cartopy)&#x27;, fontsize=16, fontweigh
 plt.legend(loc=&#x27;lower left&#x27;)
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;05_01_Plotting_ring_of_fire_03&quot;))
 plt.show()</code></pre>
-<h2 id="code-10">code 10. <button class="copy">복사</button></h2><pre><code>import folium
+<h2 id="code-Ⅴ-10">code Ⅴ-10. <button class="copy">복사</button></h2><pre><code>import folium
 from folium.plugins import MarkerCluster
 import pandas as pd
 
@@ -152,7 +152,7 @@ for idx, row in df_vol.iterrows():
     folium.Marker([lat, lon], popup=name, icon=folium.Icon(color=&#x27;red&#x27;, icon=&#x27;fire&#x27;)).add_to(marker_cluster)
 m.save(&#x27;world_volcanoes_folium.html&#x27;)
 display(m)</code></pre>
-<h2 id="code-11">code 11. <button class="copy">복사</button></h2><pre><code>import plotly.graph_objects as go
+<h2 id="code-Ⅴ-11">code Ⅴ-11. <button class="copy">복사</button></h2><pre><code>import plotly.graph_objects as go
 import plotly.express as px
 
 fig = go.Figure()

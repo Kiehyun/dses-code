@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | V-02. 세계의 지진대
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 12.
+# %% code Ⅴ-12.
 # USGS 지진 목록(GeoJSON): 최근 30일 전체, 규모 4.5 이상
 usgs_feeds = {
     "01_usgs_all_month.geojson": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson",
@@ -21,10 +21,10 @@ if len(fpaths) == 0:
 print(f"fpaths: {fpaths}")
 print(f"len(fpaths): {len(fpaths)}")
 
-# %% code 13.
+# %% code Ⅴ-13.
 du.preview_text(fpaths[0], n=10);
 
-# %% code 14.
+# %% code Ⅴ-14.
 import pandas as pd
 import json
 
@@ -73,7 +73,7 @@ df, data = earthquake_json_to_dataframe(fpaths[0])
 
 print(f"파일명: {fpaths[0].name}")
 
-# %% code 15.
+# %% code Ⅴ-15.
 # 위도 · 경도 · 깊이(km) · 규모(mag) 열이 들어 있는지 확인
 print(f"파일명: {fpaths[0].name}")
 print(f"데이터프레임 크기: {df.shape}")
@@ -81,7 +81,7 @@ print(f"열: {df.columns.tolist()}")
 print(f"자료형:\n{df.dtypes}")
 display(df.head(3))
 
-# %% code 16.
+# %% code Ⅴ-16.
 import hashlib
 from pathlib import Path
 
@@ -111,7 +111,7 @@ def save_csv_if_changed(df_obj, output_path):
 
 save_csv_if_changed(df, proj_dir/"usgs_all_month.csv")
 
-# %% code 17.
+# %% code Ⅴ-17.
 # 폴더의 GeoJSON 파일 목록 다시 확인(두 번째 파일을 쓸 차례)
 fpaths = sorted((proj_dir).glob("*.geojson")) + sorted((proj_dir).glob("*.json"))
 fpaths = list(dict.fromkeys(fpaths))
@@ -122,7 +122,7 @@ if len(fpaths) < 2:
 print(f"fpaths: {fpaths}")
 print(f"len(fpaths): {len(fpaths)}")
 
-# %% code 18.
+# %% code Ⅴ-18.
 import json
 
 # 두 번째 파일(규모 4.5 이상) 읽기 · 구조 확인
@@ -151,14 +151,14 @@ print(f"데이터프레임 크기: {df1.shape}")
 print(f"열: {df1.columns.tolist()}")
 display(df1.head(3))
 
-# %% code 19.
+# %% code Ⅴ-19.
 # df1: 규모 4.5 이상 지진(df와 같은 열 구성)
 print(f"파일명: {fpaths[1].name}")
 print(f"데이터프레임 크기: {df1.shape}")
 print(f"열: {df1.columns.tolist()}")
 display(df1.head(3))
 
-# %% code 20.
+# %% code Ⅴ-20.
 import folium
 from folium import plugins
 import numpy as np
@@ -216,7 +216,7 @@ print(f"\n지도 저장 완료: {map_path}")
 print(f"지도에 표시된 지진 수: {len(df_clean)}")
 m
 
-# %% code 21.
+# %% code Ⅴ-21.
 import folium
 import numpy as np
 
@@ -278,7 +278,7 @@ print(f"\n지도 저장 완료: {map_path1}")
 print(f"지도에 표시된 지진 수: {len(df1_clean)}")
 m1
 
-# %% code 22.
+# %% code Ⅴ-22.
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 import numpy as np
@@ -329,7 +329,7 @@ plt.show()
 
 print(f"지도에 표시된 지진 수: {len(df1_clean)}")
 
-# %% code 23.
+# %% code Ⅴ-23.
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature

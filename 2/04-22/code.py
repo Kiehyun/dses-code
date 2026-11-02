@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | IV-02. 단열선도(Skew T-log P) 그리기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 401.
+# %% code Ⅳ-27.
 fname = "UPPER_SONDE_47122_ALL_2018_2018_2019.csv"
 fid = "1HYYmP07A8pMeRNxJIBcPiMaAkCuxIWpF"
 
@@ -9,13 +9,13 @@ fid = "1HYYmP07A8pMeRNxJIBcPiMaAkCuxIWpF"
 du.download(f"https://docs.google.com/uc?export=download&id={fid}",
             proj_dir / fname)
 
-# %% code 402.
+# %% code Ⅳ-28.
 fpaths = du.list_files(proj_dir, "csv")
 
-# %% code 403.
+# %% code Ⅳ-29.
 du.preview_text(fpaths[0], n=10)
 
-# %% code 404.
+# %% code Ⅳ-30.
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
@@ -114,7 +114,7 @@ def draw_skewt_paper(skew, xlim=(-40, 40), ylim=(1050, 100), *,
         skew.ax.legend(handles=handles, loc='upper right', fontsize=7.5)
     return skew
 
-# %% code 405.
+# %% code Ⅳ-31.
 # 단열선도 전체 그리기 (지상 1050 hPa ~ 100 hPa)
 xxlim = [-40, 40]        # 기온 축 범위 (°C)
 yylim = [1050, 100]      # 기압 축 범위 (hPa)
@@ -131,7 +131,7 @@ plt.savefig(f'{str(proj_dir)}/SkewTlogP_paper_{xxlim[0]}_{xxlim[1]}_{yylim[0]}_{
 plt.show()
 plt.close()
 
-# %% code 406.
+# %% code Ⅳ-32.
 # 아래쪽 일부만 확대해 보기 — 범위와 간격만 바꾸어 같은 함수 호출
 xxlim = [-30, 10]        # 기온 축 범위 (°C)
 yylim = [1050, 700]      # 기압 축 범위 (hPa)
@@ -150,7 +150,7 @@ plt.savefig(f'{str(proj_dir)}/SkewTlogP_crop_{xxlim[0]}_{xxlim[1]}_{yylim[0]}_{y
 plt.show()
 plt.close()
 
-# %% code 407.
+# %% code Ⅳ-33.
 import urllib.request
 from IPython.display import Image, display
 
@@ -187,7 +187,7 @@ doc.close()
 # 3) 노트북에 표시
 display(Image(filename=png_path, width=1000))
 
-# %% code 408.
+# %% code Ⅳ-34.
 import matplotlib.pyplot as plt
 from metpy.plots import SkewT
 
@@ -205,7 +205,7 @@ skew.ax.tick_params(labelsize=8)
 
 plt.show()
 
-# %% code 409.
+# %% code Ⅳ-35.
 import matplotlib.pyplot as plt
 from metpy.plots import SkewT
 
@@ -267,7 +267,7 @@ add_isothermal(skew)
 
 plt.show()
 
-# %% code 410.
+# %% code Ⅳ-36.
 import numpy as np
 import matplotlib.pyplot as plt
 from metpy.plots import SkewT
@@ -323,7 +323,7 @@ add_isobar(skew)
  
 plt.show()
 
-# %% code 411.
+# %% code Ⅳ-37.
 import numpy as np
 import metpy.calc as mpcalc
 import matplotlib.pyplot as plt
@@ -374,7 +374,7 @@ skew.ax.set_ylim(yylim[0], yylim[1])
 
 plt.show()
 
-# %% code 412.
+# %% code Ⅳ-38.
 import numpy as np
 import metpy.calc as mpcalc
 import matplotlib.pyplot as plt
@@ -434,7 +434,7 @@ skew.ax.set_ylim(yylim[0], yylim[1])
 
 plt.show()
 
-# %% code 413.
+# %% code Ⅳ-39.
 import numpy as np
 import metpy.calc as mpcalc
 import matplotlib.pyplot as plt
@@ -486,7 +486,7 @@ skew.ax.set_ylim(yylim[0], yylim[1])
 
 plt.show()
 
-# %% code 414.
+# %% code Ⅳ-40.
 import numpy as np
 import metpy.calc as mpcalc
 import matplotlib.pyplot as plt
@@ -527,7 +527,7 @@ plt.legend(loc='upper left', fontsize=7)
 
 plt.show()
 
-# %% code 415.
+# %% code Ⅳ-41.
 # 패키지 불러오기
 import pandas as pd
 
@@ -536,24 +536,24 @@ df = pd.read_csv(str(fpaths[0]), thousands = ',', encoding= 'euc-kr')
 print("행 · 열 :", df.shape)
 df.head()
 
-# %% code 416.
+# %% code Ⅳ-42.
 # 기온·이슬점이 모두 NaN인 행 제거
 df = df.dropna(subset=('기온(°C)', '이슬점온도(°C)'), how='all').reset_index(drop=True)
 print("행 · 열 :", df.shape)
 df.head()
 
-# %% code 417.
+# %% code Ⅳ-43.
 print("df['일시(UTC)'].iloc[0]:{}".format(df['일시(UTC)'].iloc[0]))
 print("type(df['일시(UTC)'].iloc[0]):{}".format(type(df['일시(UTC)'].iloc[0])))
 
-# %% code 418.
+# %% code Ⅳ-44.
 df['dt_YmdHM'] = pd.to_datetime(df['일시(UTC)'])
 print("type(df['dt_YmdHM'].iloc[0]):{}".format(type(df['dt_YmdHM'].iloc[0])))
 
 df.index = df['dt_YmdHM']
 df.head(3)
 
-# %% code 419.
+# %% code Ⅳ-45.
 from datetime import datetime
 
 # 원하는 관측시간을 입력
@@ -561,7 +561,7 @@ target_date = datetime(2018, 1, 12, 12)
 target_date_strf = target_date.strftime('%Y-%m-%d %H:%M')
 target_date_strf
 
-# %% code 420.
+# %% code Ⅳ-46.
 from datetime import datetime
 
 # 원하는 관측시간을 입력
@@ -578,7 +578,7 @@ df_selected_time = df_selected_time.sort_values('기압(hPa)', ascending=False)
 print("층 수 :", len(df_selected_time))
 df_selected_time.head()
 
-# %% code 421.
+# %% code Ⅳ-47.
 f = lambda s: target_date_strf in s
 ids  = df['일시(UTC)'].apply(f)
 
@@ -586,7 +586,7 @@ df_selected_time = df[ids]
 df_selected_time = df_selected_time.sort_values('기압(hPa)', ascending=False)
 print("층 수 :", len(df_selected_time))   # 앞 셀과 같은 46개 층
 
-# %% code 422.
+# %% code Ⅳ-48.
 import numpy as np
 import metpy.calc as mpcalc
 from metpy.units import units as u
@@ -604,7 +604,7 @@ def show_levels(cols):
     """정한 기압 층(levels)에서 cols 열만 보여 준다."""
     return df_selected_time.set_index('기압(hPa)').loc[levels, cols]
 
-# %% code 423.
+# %% code Ⅳ-49.
 import numpy as np
 import metpy.calc as mpcalc
 from metpy.units import units as u
@@ -615,7 +615,7 @@ df_selected_time['u_wind'], df_selected_time['v_wind'] = mpcalc.wind_components(
 
 show_levels(['u_wind', 'v_wind'])
 
-# %% code 424.
+# %% code Ⅳ-50.
 import numpy as np
 import metpy.calc as mpcalc
 from metpy.units import units as u
@@ -626,7 +626,7 @@ df_selected_time['wet_bulb_T'] = \
                 df_selected_time['기온(°C)'].values * u.degC,
                 df_selected_time['이슬점온도(°C)'].values * u.degC)
 
-# %% code 425.
+# %% code Ⅳ-51.
 import numpy as np
 import metpy.calc as mpcalc
 from metpy.units import units as u
@@ -638,7 +638,7 @@ df_selected_time['potential_T'] = \
 
 show_levels(['potential_T'])
 
-# %% code 426.
+# %% code Ⅳ-52.
 # 상대습도 계산
 df_selected_time['relative_humidity_from_dewpoint'] = \
         mpcalc.relative_humidity_from_dewpoint(df_selected_time['기온(°C)'].values * u.degC,
@@ -646,7 +646,7 @@ df_selected_time['relative_humidity_from_dewpoint'] = \
 
 show_levels(['relative_humidity_from_dewpoint'])
 
-# %% code 427.
+# %% code Ⅳ-53.
 # 혼합비 계산 (단위 kg/kg)
 df_selected_time['saturation_mixing_ratio'] = \
         mpcalc.saturation_mixing_ratio(df_selected_time['기압(hPa)'].values * u.hPa,
@@ -659,7 +659,7 @@ df_selected_time['mixing_ratio_from_relative_humidity'] = \
 show_levels(['saturation_mixing_ratio',
              'mixing_ratio_from_relative_humidity'])
 
-# %% code 428.
+# %% code Ⅳ-54.
 # 수증기압 계산 — 두 값 모두 hPa로 맞춘 뒤 숫자만 저장
 df_selected_time['saturation_vapor_pressure(hPa)'] = \
         mpcalc.saturation_vapor_pressure(df_selected_time['기온(°C)'].values * u.degC).to('hPa').m
@@ -669,7 +669,7 @@ df_selected_time['vapor_pressure(hPa)'] = \
 
 show_levels(['saturation_vapor_pressure(hPa)', 'vapor_pressure(hPa)'])
 
-# %% code 429.
+# %% code Ⅳ-55.
 # 상대습도 계산 (결과는 0~1 비율, 100을 곱하면 %)
 df_selected_time['relative_humidity_from_mixing_ratio'] =\
         mpcalc.relative_humidity_from_mixing_ratio(df_selected_time['기압(hPa)'].values * u.hPa,
@@ -678,7 +678,7 @@ df_selected_time['relative_humidity_from_mixing_ratio'] =\
 
 show_levels(['relative_humidity_from_mixing_ratio'])
 
-# %% code 430.
+# %% code Ⅳ-56.
 import numpy as np
 import metpy.calc as mpcalc
 from metpy.units import units as u
@@ -696,7 +696,7 @@ df_selected_time['virtual_potential_temperature'] =\
 
 show_levels(['virtual_temperature', 'virtual_potential_temperature'])
 
-# %% code 431.
+# %% code Ⅳ-57.
 import numpy as np
 import metpy.calc as mpcalc
 import matplotlib.pyplot as plt
@@ -824,7 +824,7 @@ plt.savefig(f"{proj_dir}/{fpaths[0].stem}_{target_date.strftime('%Y%m%d_%HUTC')}
 
 plt.show()
 
-# %% code 432.
+# %% code Ⅳ-58.
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -928,7 +928,7 @@ plt.savefig(f'{proj_dir}/{fpaths[0].stem}_{stamp}.pdf')
 plt.savefig(f'{proj_dir}/{fpaths[0].stem}_{stamp}.png', dpi=150)
 plt.show()
 
-# %% code 433.
+# %% code Ⅳ-59.
 rows = {}
 for label, t in [('겨울 2018-01-12 12 UTC', '2018-01-12 12:00'),
                  ('여름 2018-08-28 12 UTC', '2018-08-28 12:00')]:

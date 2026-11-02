@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>III-03. 일출·일몰 시각 계산하기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/03-03/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-31">31</a> <a href="#code-32">32</a> <a href="#code-33">33</a> <a href="#code-34">34</a> <a href="#code-35">35</a> <a href="#code-36">36</a> <a href="#code-37">37</a> <a href="#code-38">38</a> <a href="#code-39">39</a> <a href="#code-40">40</a></p>
-<h2 id="code-31">code 31. <button class="copy">복사</button></h2><pre><code>from geopy.geocoders import Nominatim
+<p class="jump"><a href="#code-Ⅲ-31">Ⅲ-31</a> <a href="#code-Ⅲ-32">Ⅲ-32</a> <a href="#code-Ⅲ-33">Ⅲ-33</a> <a href="#code-Ⅲ-34">Ⅲ-34</a> <a href="#code-Ⅲ-35">Ⅲ-35</a> <a href="#code-Ⅲ-36">Ⅲ-36</a> <a href="#code-Ⅲ-37">Ⅲ-37</a> <a href="#code-Ⅲ-38">Ⅲ-38</a> <a href="#code-Ⅲ-39">Ⅲ-39</a> <a href="#code-Ⅲ-40">Ⅲ-40</a></p>
+<h2 id="code-Ⅲ-31">code Ⅲ-31. <button class="copy">복사</button></h2><pre><code>from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderInsufficientPrivileges, GeocoderTimedOut
 
 geolocator = Nominatim(user_agent=&quot;ESDS&quot;)
@@ -36,13 +36,13 @@ print(&quot;location.point: {}&quot;.format(location_Suwon.point))  # 위도 · 
 
 print(f&quot;latitude: {location_Suwon.latitude}&quot;)
 print(f&quot;longitude: {location_Suwon.longitude}&quot;)</code></pre>
-<h2 id="code-32">code 32. <button class="copy">복사</button></h2><pre><code>from astral import LocationInfo
+<h2 id="code-Ⅲ-32">code Ⅲ-32. <button class="copy">복사</button></h2><pre><code>from astral import LocationInfo
 
 city_London = LocationInfo(&quot;London&quot;, &quot;England&quot;, &quot;Europe/London&quot;, 51.5, -0.116)  # 이름, 지역, 시간대, 위도, 경도
 
 print(f&quot;type(city_London): {type(city_London)}&quot;)
 print(f&quot;city_London: {city_London}&quot;)</code></pre>
-<h2 id="code-33">code 33. <button class="copy">복사</button></h2><pre><code># geopy로 얻은 수원의 위도 · 경도 사용
+<h2 id="code-Ⅲ-33">code Ⅲ-33. <button class="copy">복사</button></h2><pre><code># geopy로 얻은 수원의 위도 · 경도 사용
 from astral import LocationInfo
 
 city_Suwon = LocationInfo(place_Suwon, &quot;Korea&quot;, &quot;Asia/Seoul&quot;, location_Suwon.latitude, location_Suwon.longitude)
@@ -55,7 +55,7 @@ print(f&quot;city_Suwon.region: {city_Suwon.region}&quot;)
 print(f&quot;city_Suwon.timezone: {city_Suwon.timezone}&quot;)
 print(f&quot;city_Suwon.latitude: {city_Suwon.latitude}&quot;)
 print(f&quot;city_Suwon.longitude: {city_Suwon.longitude}&quot;)</code></pre>
-<h2 id="code-34">code 34. <button class="copy">복사</button></h2><pre><code>from datetime import date
+<h2 id="code-Ⅲ-34">code Ⅲ-34. <button class="copy">복사</button></h2><pre><code>from datetime import date
 from astral.sun import sun
 
 s = sun(city_Suwon.observer, date = date(2009, 3, 23),
@@ -64,7 +64,7 @@ s = sun(city_Suwon.observer, date = date(2009, 3, 23),
 print(f&quot;type(s): {type(s)}&quot;)
 print(f&quot;s : {s}&quot;)
 print(s)</code></pre>
-<h2 id="code-35">code 35. <button class="copy">복사</button></h2><pre><code>print(&quot;s[&#x27;sunrise&#x27;]: {}&quot;.format(s[&#x27;sunrise&#x27;]))
+<h2 id="code-Ⅲ-35">code Ⅲ-35. <button class="copy">복사</button></h2><pre><code>print(&quot;s[&#x27;sunrise&#x27;]: {}&quot;.format(s[&#x27;sunrise&#x27;]))
 print(&quot;s[&#x27;sunset&#x27;]: {}&quot;.format(s[&#x27;sunset&#x27;]))
 
 print(&quot;s[&#x27;dawn&#x27;]: {}&quot;.format(s[&#x27;dawn&#x27;]))  # 새벽(박명 시작)
@@ -72,7 +72,7 @@ print(&quot;s[&#x27;dusk&#x27;]: {}&quot;.format(s[&#x27;dusk&#x27;]))  # 황혼
 
 print(&quot;type(s[&#x27;sunset&#x27;]-s[&#x27;sunrise&#x27;]): {}&quot;.format(type(s[&#x27;sunset&#x27;]-s[&#x27;sunrise&#x27;])))
 print(&quot;daytime: {}&quot;.format(s[&#x27;sunset&#x27;]-s[&#x27;sunrise&#x27;]))</code></pre>
-<h2 id="code-36">code 36. <button class="copy">복사</button></h2><pre><code>from datetime import date
+<h2 id="code-Ⅲ-36">code Ⅲ-36. <button class="copy">복사</button></h2><pre><code>from datetime import date
 from astral import moon
 from astral import LocationInfo
 
@@ -87,7 +87,7 @@ moonset_time = moon.moonset(city.observer, date=today)
 print(f&quot;날짜: {today}&quot;)
 print(f&quot;달이 뜨는 시각 (Moonrise): {moonrise_time}&quot;)
 print(f&quot;달이 지는 시각 (Moonset): {moonset_time}&quot;)</code></pre>
-<h2 id="code-37">code 37. <button class="copy">복사</button></h2><pre><code>from datetime import datetime, date, timedelta
+<h2 id="code-Ⅲ-37">code Ⅲ-37. <button class="copy">복사</button></h2><pre><code>from datetime import datetime, date, timedelta
 from zoneinfo import ZoneInfo
 from suntime import Sun
 
@@ -119,7 +119,7 @@ daytime = sunset - sunrise
 print(f&quot;{today_date} 일출 시각(KST): {sunrise}&quot;)
 print(f&quot;{today_date} 일몰 시각(KST): {sunset}&quot;)
 print(f&quot;낮의 길이 (일몰-일출): {daytime}&quot;)</code></pre>
-<h2 id="code-38">code 38. <button class="copy">복사</button></h2><pre><code># 1년 동안 수원의 낮의 길이
+<h2 id="code-Ⅲ-38">code Ⅲ-38. <button class="copy">복사</button></h2><pre><code># 1년 동안 수원의 낮의 길이
 import matplotlib.pyplot as plt
 
 def day_length_hours(sun, day, tz):
@@ -150,7 +150,7 @@ plt.ylabel(&#x27;낮의 길이 (시간)&#x27;)
 plt.grid(True)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-39">code 39. <button class="copy">복사</button></h2><pre><code># 월별 낮의 총합
+<h2 id="code-Ⅲ-39">code Ⅲ-39. <button class="copy">복사</button></h2><pre><code># 월별 낮의 총합
 import matplotlib.pyplot as plt
 from zoneinfo import ZoneInfo
 
@@ -182,7 +182,7 @@ plt.ylabel(&#x27;월별 낮의 총합 (시간)&#x27;)
 plt.grid(axis=&#x27;y&#x27;)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-40">code 40. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅲ-40">code Ⅲ-40. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
 # 수원(suwon_totals)은 앞에서 구함, 모스크바도 같은 함수로

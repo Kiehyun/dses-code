@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | III-08. 색등급도 그리기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 105.
+# %% code Ⅲ-105.
 from pathlib import Path
 
 # (HLA 데이터셋 이름, 파일 이름, 구글 드라이브 사본 ID)
@@ -21,11 +21,11 @@ for dataset, fname, fid in files:
 # 이름순: [0] f450w, [1] f814w, [2] multiwave
 fpaths = sorted(Path(proj_dir).glob('*.cat'))
 
-# %% code 106.
+# %% code Ⅲ-106.
 # 파일 앞 40줄 출력(공통 함수, 인코딩 자동 판별)
 head = du.preview_text(fpaths[2], n=40)  # 출력한 줄 목록은 head에 담아 둠
 
-# %% code 107.
+# %% code Ⅲ-107.
 import numpy as np
 
 # 데이터가 시작되는 줄 수(파일을 열어 확인)
@@ -42,7 +42,7 @@ DAO_array = np.loadtxt(
 print("type(DAO_array):", type(DAO_array))
 print("DAO_array.shape:", DAO_array.shape)
 
-# %% code 108.
+# %% code Ⅲ-108.
 # 행 방향 슬라이싱
 print("DAO_array[1, :]: {}".format(DAO_array[1, :]))
 
@@ -51,7 +51,7 @@ print("DAO_array[:, 1]: {}".format(DAO_array[:, 1]))
 
 print("CI:\n {}".format(DAO_array[:,5]-DAO_array[:,6]))
 
-# %% code 109.
+# %% code Ⅲ-109.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -63,7 +63,7 @@ plt.gca().invert_yaxis()
 
 plt.show()
 
-# %% code 110.
+# %% code Ⅲ-110.
 print("DAO_array[:,5].min(): {}".format(DAO_array[:,5].min()))
 print("DAO_array[:,5].max(): {}".format(DAO_array[:,5].max()))
 print("DAO_array[:,6].min(): {}".format(DAO_array[:,6].min()))
@@ -103,7 +103,7 @@ DAO_array_masked = DAO_array[mask]
 print("DAO_array_masked.shape: {}".format(DAO_array_masked.shape))
 print("DAO_array_masked[:5]:\n {}".format(DAO_array_masked[:5]))
 
-# %% code 111.
+# %% code Ⅲ-111.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -115,7 +115,7 @@ plt.gca().invert_yaxis()
 
 plt.show()
 
-# %% code 112.
+# %% code Ⅲ-112.
 import numpy as np
 
 ch1, ch2 = "F450", "F814"
@@ -147,7 +147,7 @@ print(f'{proj_dir}/{object_name}_{data_type}_CMD.png 파일을 만들었습니�
 
 plt.show()
 
-# %% code 113.
+# %% code Ⅲ-113.
 ch1, ch2 = "F450", "F814"
 data_type = "WFPC2_WFC"
 object_name = 'M80'
@@ -196,7 +196,7 @@ print(f'{proj_dir}/{object_name}_{data_type1}_{data_type2}_CMD.png 파일을 만
 
 plt.show()
 
-# %% code 114.
+# %% code Ⅲ-114.
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -250,11 +250,11 @@ plt.annotate('허블 우주 망원경 데이터(HLA)',
 
 plt.show()
 
-# %% code 115.
+# %% code Ⅲ-115.
 # F450W 파일 앞 65줄 출력(F814W 파일도 구조가 같음)
 head = du.preview_text(fpaths[0], n=65)
 
-# %% code 116.
+# %% code Ⅲ-116.
 import numpy as np
 
 # 데이터가 시작되는 줄 수(파일을 열어 확인)
@@ -277,13 +277,13 @@ print("type(F814_array):", type(F814_array))
 print("F450_array[1, :]: {}".format(F450_array[1, :]))
 print("F814_array[1, :]: {}".format(F814_array[1, :]))  
 
-# %% code 117.
+# %% code Ⅲ-117.
 print("F450.shape: {}".format(F450_array.shape))
 print("F814.shape: {}".format(F814_array.shape))
 print("F450[:,4:6]: {}".format(F450_array[:,4:6]))
 print("F814[:,4:6]: {}".format(F814_array[:,4:6]))
 
-# %% code 118.
+# %% code Ⅲ-118.
 import numpy as np
 
 mag_col = 7  # MagAP2(0.30초각 조리개) 등급 열 — multiwave 파일의 그림과 같은 조리개
@@ -307,10 +307,10 @@ print("len(color):{}".format(len(color)))
 print("len(F450[mask]):{}".format(len(F450_array[mask])))
 print("len(color[mask]):{}".format(len(color[mask])))
 
-# %% code 119.
+# %% code Ⅲ-119.
 color[mask]
 
-# %% code 120.
+# %% code Ⅲ-120.
 import numpy as np
 import matplotlib.pyplot as plt
 

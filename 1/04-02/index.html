@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>IV-02. 킬링 곡선 그리기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/04-02/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-20">20</a> <a href="#code-21">21</a> <a href="#code-22">22</a> <a href="#code-23">23</a> <a href="#code-24">24</a> <a href="#code-25">25</a> <a href="#code-26">26</a> <a href="#code-27">27</a> <a href="#code-28">28</a> <a href="#code-29">29</a> <a href="#code-30">30</a> <a href="#code-31">31</a> <a href="#code-32">32</a> <a href="#code-33">33</a> <a href="#code-34">34</a> <a href="#code-35">35</a> <a href="#code-36">36</a></p>
-<h2 id="code-20">code 20. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<p class="jump"><a href="#code-Ⅳ-20">Ⅳ-20</a> <a href="#code-Ⅳ-21">Ⅳ-21</a> <a href="#code-Ⅳ-22">Ⅳ-22</a> <a href="#code-Ⅳ-23">Ⅳ-23</a> <a href="#code-Ⅳ-24">Ⅳ-24</a> <a href="#code-Ⅳ-25">Ⅳ-25</a> <a href="#code-Ⅳ-26">Ⅳ-26</a> <a href="#code-Ⅳ-27">Ⅳ-27</a> <a href="#code-Ⅳ-28">Ⅳ-28</a> <a href="#code-Ⅳ-29">Ⅳ-29</a> <a href="#code-Ⅳ-30">Ⅳ-30</a> <a href="#code-Ⅳ-31">Ⅳ-31</a> <a href="#code-Ⅳ-32">Ⅳ-32</a> <a href="#code-Ⅳ-33">Ⅳ-33</a> <a href="#code-Ⅳ-34">Ⅳ-34</a> <a href="#code-Ⅳ-35">Ⅳ-35</a> <a href="#code-Ⅳ-36">Ⅳ-36</a></p>
+<h2 id="code-Ⅳ-20">code Ⅳ-20. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 # 건조 공기의 구성 성분과 부피비(%)
 labels = [&#x27;질소 (N₂)&#x27;, &#x27;산소 (O₂)&#x27;, &#x27;아르곤 (Ar)&#x27;, &#x27;이산화탄소 (CO₂)&#x27;, &#x27;기타&#x27;]
@@ -38,7 +38,7 @@ ax.text(1.12, -0.95, others_text, fontsize=8.5, va=&#x27;bottom&#x27;, ha=&#x27;
 ax.set_title(&#x27;대기의 구성 성분 (건조 공기)&#x27;, fontsize=13)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-21">code 21. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅳ-21">code Ⅳ-21. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
@@ -109,16 +109,16 @@ ax.text(-155.58 - 5, 19.54, &#x27;MAUNA LOA&#x27;, color=&#x27;red&#x27;, fontsi
 plt.title(&#x27;대기 관측소 분포 (태평양 중심 지도)&#x27;, fontsize=12)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-22">code 22. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
+<h2 id="code-Ⅳ-22">code Ⅳ-22. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
 
 fname = &quot;monthly_in_situ_co2_mlo.csv&quot;
 
 # 스크립스 CO₂ 프로그램에서 직접 내려받기
 url = &quot;https://keelinglabsites.ucsd.edu/websitedataco2/monthly_in_situ_co2_mlo.csv&quot;
 du.download(url, Path(proj_dir) / fname)</code></pre>
-<h2 id="code-23">code 23. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;csv&quot;)</code></pre>
-<h2 id="code-24">code 24. <button class="copy">복사</button></h2><pre><code>du.preview_text(fpaths[0], n=70);  # 앞 70줄(설명 64줄 + 데이터)</code></pre>
-<h2 id="code-25">code 25. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+<h2 id="code-Ⅳ-23">code Ⅳ-23. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;csv&quot;)</code></pre>
+<h2 id="code-Ⅳ-24">code Ⅳ-24. <button class="copy">복사</button></h2><pre><code>du.preview_text(fpaths[0], n=70);  # 앞 70줄(설명 64줄 + 데이터)</code></pre>
+<h2 id="code-Ⅳ-25">code Ⅳ-25. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 
 df = pd.read_csv(str(fpaths[0]),
                  thousands = &#x27;,&#x27;,
@@ -138,7 +138,7 @@ df = pd.read_csv(str(fpaths[0]),
 
 df = df[df.CO2 != -99.99]  # -99.99는 결측값
 print(&quot;df: &quot;, df)</code></pre>
-<h2 id="code-26">code 26. <button class="copy">복사</button></h2><pre><code># 간단한 방법: 1년을 365.25일로 근사
+<h2 id="code-Ⅳ-26">code Ⅳ-26. <button class="copy">복사</button></h2><pre><code># 간단한 방법: 1년을 365.25일로 근사
 df[&#x27;datetime&#x27;] = pd.to_datetime(df[&#x27;Date&#x27;], format=&#x27;%Y&#x27;) + pd.to_timedelta((df[&#x27;Date&#x27;] % 1) * 365.25, unit=&#x27;D&#x27;)
 
 # 윤년을 고려한 변환(NumPy 벡터 연산)
@@ -160,7 +160,7 @@ def decimal_year_to_datetime_vectorized(decimal_years):
 df[&#x27;datetime&#x27;] = decimal_year_to_datetime_vectorized(df[&#x27;Date&#x27;])
 
 print(df[[&#x27;Date&#x27;, &#x27;datetime&#x27;]])</code></pre>
-<h2 id="code-27">code 27. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅳ-27">code Ⅳ-27. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(10.5,8))
 
@@ -176,7 +176,7 @@ ax.set_xlabel(&#x27;연도&#x27;)
 ax.set_title(&#x27;하와이 마우나로아 관측소\n월평균 이산화탄소 농도&#x27;,
              fontdict={&#x27;fontsize&#x27;:16})
 plt.show()</code></pre>
-<h2 id="code-28">code 28. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅳ-28">code Ⅳ-28. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(10.5,8))
 
@@ -191,7 +191,7 @@ ax.set_xlabel(&#x27;연도&#x27;)
 ax.set_title(&#x27;하와이 마우나로아 관측소\n월평균 이산화탄소 농도&#x27;,
              fontdict={&#x27;fontsize&#x27;:16})
 plt.show()</code></pre>
-<h2 id="code-29">code 29. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅳ-29">code Ⅳ-29. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(10.5, 8))
@@ -238,7 +238,7 @@ ax.text(1.0, 1.01, f&#x27;Data through {last:%B %Y}&#x27;, transform=ax.transAxe
         fontdict={&#x27;fontsize&#x27;:12})
 
 plt.show()</code></pre>
-<h2 id="code-30">code 30. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅳ-30">code Ⅳ-30. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
 co2 = df[[&#x27;Date&#x27;, &#x27;CO2&#x27;, &#x27;seasonally adjusted&#x27;, &#x27;fit&#x27;]].replace(-99.99, np.nan)
@@ -258,13 +258,13 @@ axes[0].set_ylabel(r&#x27;$\rm{CO_2}$ 농도 ($\rm{ppm}$)&#x27;)
 axes[1].legend()
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-31">code 31. <button class="copy">복사</button></h2><pre><code># 계절 성분 = 관측값 - 계절 변동 제거 값
+<h2 id="code-Ⅳ-31">code Ⅳ-31. <button class="copy">복사</button></h2><pre><code># 계절 성분 = 관측값 - 계절 변동 제거 값
 seasonal = co2[&#x27;CO2&#x27;] - co2[&#x27;seasonally adjusted&#x27;]
 cycle = seasonal.groupby(df[&#x27;Month&#x27;]).mean()
 print(cycle.round(2).to_string())
 print(f&quot;가장 높은 달: {cycle.idxmax()}월, 가장 낮은 달: {cycle.idxmin()}월, &quot;
       f&quot;진폭: {cycle.max() - cycle.min():.1f}ppm&quot;)</code></pre>
-<h2 id="code-32">code 32. <button class="copy">복사</button></h2><pre><code># 12달이 모두 있는 해만 연평균
+<h2 id="code-Ⅳ-32">code Ⅳ-32. <button class="copy">복사</button></h2><pre><code># 12달이 모두 있는 해만 연평균
 annual = df.groupby(&#x27;Year&#x27;)[&#x27;CO2&#x27;].agg([&#x27;mean&#x27;, &#x27;count&#x27;])
 annual = annual.loc[annual[&#x27;count&#x27;] == 12, &#x27;mean&#x27;]
 growth = (annual.diff() / annual.index.to_series().diff()).dropna()  # ppm/년
@@ -281,7 +281,7 @@ ax.set_ylabel(&#x27;연평균 증가율 (ppm/년)&#x27;)
 ax.set_title(&#x27;마우나로아 CO₂ 농도의 10년 단위 증가율&#x27;)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-33">code 33. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅳ-33">code Ⅳ-33. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(10.5, 8))
@@ -309,7 +309,7 @@ ax.text(1.0, 1.01, f&quot;Data through {df[&#x27;datetime&#x27;].max():%B %Y}&qu
 # 첫 데이터 점만 그려 두고 애니메이션에서 갱신
 line, = ax.plot(df[&#x27;Date&#x27;].iloc[0], df[&#x27;CO2&#x27;].iloc[0])
 point = ax.scatter(df[&#x27;Date&#x27;].iloc[0], df[&#x27;CO2&#x27;].iloc[0], s=5)</code></pre>
-<h2 id="code-34">code 34. <button class="copy">복사</button></h2><pre><code>def animate(i):
+<h2 id="code-Ⅳ-34">code Ⅳ-34. <button class="copy">복사</button></h2><pre><code>def animate(i):
     line.set_data(df[&#x27;Date&#x27;].iloc[:i], df[&#x27;CO2&#x27;].iloc[:i])  # i번째까지 선으로
     point.set_offsets([df[&#x27;Date&#x27;].iloc[i], df[&#x27;CO2&#x27;].iloc[i]])  # 현재 점
     return line, point
@@ -333,7 +333,7 @@ except:
         ani
 
 HTML(ani.to_jshtml())</code></pre>
-<h2 id="code-35">code 35. <button class="copy">복사</button></h2><pre><code>fname = &#x27;Keeling_curve_MLO&#x27;
+<h2 id="code-Ⅳ-35">code Ⅳ-35. <button class="copy">복사</button></h2><pre><code>fname = &#x27;Keeling_curve_MLO&#x27;
 
 # MP4로 저장, 실패하면 GIF, 그다음 HTML
 try:
@@ -354,7 +354,7 @@ except Exception as e:
             print(f&quot;HTML 파일이 저장되었습니다: {proj_dir}/{fname}.html&quot;)
         except Exception as e3:
             print(f&quot;HTML 저장 중 오류 발생: {e3}&quot;)</code></pre>
-<h2 id="code-36">code 36. <button class="copy">복사</button></h2><pre><code>import re
+<h2 id="code-Ⅳ-36">code Ⅳ-36. <button class="copy">복사</button></h2><pre><code>import re
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt

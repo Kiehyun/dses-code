@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>IV-01. 지구과학 데이터 형식</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/04-21/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-375">375</a> <a href="#code-376">376</a> <a href="#code-377">377</a> <a href="#code-378">378</a> <a href="#code-379">379</a> <a href="#code-380">380</a> <a href="#code-381">381</a> <a href="#code-382">382</a> <a href="#code-383">383</a> <a href="#code-384">384</a> <a href="#code-385">385</a> <a href="#code-386">386</a> <a href="#code-387">387</a> <a href="#code-388">388</a> <a href="#code-389">389</a> <a href="#code-390">390</a> <a href="#code-391">391</a> <a href="#code-392">392</a> <a href="#code-393">393</a> <a href="#code-394">394</a> <a href="#code-395">395</a> <a href="#code-396">396</a> <a href="#code-397">397</a> <a href="#code-398">398</a> <a href="#code-399">399</a> <a href="#code-400">400</a></p>
-<h2 id="code-375">code 375. <button class="copy">복사</button></h2><pre><code>gd = &quot;https://docs.google.com/uc?export=download&amp;id=&quot;   # 구글 드라이브 사본
+<p class="jump"><a href="#code-Ⅳ-1">Ⅳ-1</a> <a href="#code-Ⅳ-2">Ⅳ-2</a> <a href="#code-Ⅳ-3">Ⅳ-3</a> <a href="#code-Ⅳ-4">Ⅳ-4</a> <a href="#code-Ⅳ-5">Ⅳ-5</a> <a href="#code-Ⅳ-6">Ⅳ-6</a> <a href="#code-Ⅳ-7">Ⅳ-7</a> <a href="#code-Ⅳ-8">Ⅳ-8</a> <a href="#code-Ⅳ-9">Ⅳ-9</a> <a href="#code-Ⅳ-10">Ⅳ-10</a> <a href="#code-Ⅳ-11">Ⅳ-11</a> <a href="#code-Ⅳ-12">Ⅳ-12</a> <a href="#code-Ⅳ-13">Ⅳ-13</a> <a href="#code-Ⅳ-14">Ⅳ-14</a> <a href="#code-Ⅳ-15">Ⅳ-15</a> <a href="#code-Ⅳ-16">Ⅳ-16</a> <a href="#code-Ⅳ-17">Ⅳ-17</a> <a href="#code-Ⅳ-18">Ⅳ-18</a> <a href="#code-Ⅳ-19">Ⅳ-19</a> <a href="#code-Ⅳ-20">Ⅳ-20</a> <a href="#code-Ⅳ-21">Ⅳ-21</a> <a href="#code-Ⅳ-22">Ⅳ-22</a> <a href="#code-Ⅳ-23">Ⅳ-23</a> <a href="#code-Ⅳ-24">Ⅳ-24</a> <a href="#code-Ⅳ-25">Ⅳ-25</a> <a href="#code-Ⅳ-26">Ⅳ-26</a></p>
+<h2 id="code-Ⅳ-1">code Ⅳ-1. <button class="copy">복사</button></h2><pre><code>gd = &quot;https://docs.google.com/uc?export=download&amp;id=&quot;   # 구글 드라이브 사본
 psl = &quot;https://downloads.psl.noaa.gov/Datasets/noaa.oisst.v2/&quot;
 
 # OISST·마스크: NOAA PSL에서 직접 받기(실패하면 구글 드라이브 사본으로 대체)
@@ -33,8 +33,8 @@ modis = [
 ]
 for file_id, output_path in modis:
     du.download(gd + file_id, PROJ / output_path)</code></pre>
-<h2 id="code-376">code 376. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(PROJ, pattern=&quot;*.*&quot;)</code></pre>
-<h2 id="code-377">code 377. <button class="copy">복사</button></h2><pre><code>import shutil
+<h2 id="code-Ⅳ-2">code Ⅳ-2. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(PROJ, pattern=&quot;*.*&quot;)</code></pre>
+<h2 id="code-Ⅳ-3">code Ⅳ-3. <button class="copy">복사</button></h2><pre><code>import shutil
 
 for fpath in fpaths:
     if fpath.suffix == &quot;.zip&quot;:
@@ -42,14 +42,14 @@ for fpath in fpaths:
         shutil.unpack_archive(str(fpath), str(PROJ))
 
 fpaths = du.list_files(PROJ, &quot;nc&quot;)</code></pre>
-<h2 id="code-378">code 378. <button class="copy">복사</button></h2><pre><code>from netCDF4 import Dataset
+<h2 id="code-Ⅳ-4">code Ⅳ-4. <button class="copy">복사</button></h2><pre><code>from netCDF4 import Dataset
 import numpy as np
 
 # 육지·바다 구분 마스크
 file_path = str(PROJ / &quot;lsmask.nc&quot;)  # NetCDF 파일 경로
 nc_file = Dataset(file_path, &#x27;r&#x27;) 
 nc_file.variables</code></pre>
-<h2 id="code-379">code 379. <button class="copy">복사</button></h2><pre><code>from netCDF4 import Dataset
+<h2 id="code-Ⅳ-5">code Ⅳ-5. <button class="copy">복사</button></h2><pre><code>from netCDF4 import Dataset
 import numpy as np
 
 # 육지·바다 구분 마스크
@@ -61,7 +61,7 @@ with Dataset(file_path, &#x27;r&#x27;) as nc_file:
     mask[mask == 0] = np.nan  # 육지 부분을 np.nan으로 변환
 
 print(&quot;마스크 준비 끝: 바다&quot;, int(np.isfinite(mask).sum()), &quot;칸, 육지는 NaN&quot;)</code></pre>
-<h2 id="code-380">code 380. <button class="copy">복사</button></h2><pre><code>from netCDF4 import Dataset
+<h2 id="code-Ⅳ-6">code Ⅳ-6. <button class="copy">복사</button></h2><pre><code>from netCDF4 import Dataset
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
@@ -73,7 +73,7 @@ mask_path = str(PROJ / &quot;lsmask.nc&quot;)  # Land-sea mask 파일 경로
 # 변수명 확인
 with Dataset(file_path, &#x27;r&#x27;) as sst_file:
     print(&quot;SST file variables:&quot;, list(sst_file.variables.keys()))</code></pre>
-<h2 id="code-381">code 381. <button class="copy">복사</button></h2><pre><code># 변수명에 따라 수정 (예: &#x27;longitude&#x27;, &#x27;latitude&#x27; 등)
+<h2 id="code-Ⅳ-7">code Ⅳ-7. <button class="copy">복사</button></h2><pre><code># 변수명에 따라 수정 (예: &#x27;longitude&#x27;, &#x27;latitude&#x27; 등)
 with Dataset(file_path, &#x27;r&#x27;) as sst_file, Dataset(mask_path, &#x27;r&#x27;) as mask_file:
  # 변수명 자동 탐색
     varnames = list(sst_file.variables.keys())
@@ -115,7 +115,7 @@ levs = np.arange(-2, 35, 1)  # 온도 범위
 jet = [&quot;#000080&quot;, &quot;blue&quot;, &quot;#007FFF&quot;, &quot;cyan&quot;, &quot;#7FFF7F&quot;, &quot;yellow&quot;, &quot;#FF7F00&quot;,
        &quot;red&quot;, &quot;#7F0000&quot;]
 cm = LinearSegmentedColormap.from_list(&#x27;custom_jet&#x27;, jet, N=len(levs))</code></pre>
-<h2 id="code-382">code 382. <button class="copy">복사</button></h2><pre><code># 시각화
+<h2 id="code-Ⅳ-8">code Ⅳ-8. <button class="copy">복사</button></h2><pre><code># 시각화
 fig, ax = plt.subplots(figsize=(7.5, 3.8))
 contour = ax.contourf(lon, lat, sst, levels=levs, cmap=cm, extend=&#x27;both&#x27;)
 cbar = plt.colorbar(contour, ax=ax, orientation=&#x27;vertical&#x27;, fraction=0.02,
@@ -132,7 +132,7 @@ ax.set_ylabel(&#x27;Latitude&#x27;, fontsize=11)
 
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-383">code 383. <button class="copy">복사</button></h2><pre><code>from netCDF4 import Dataset
+<h2 id="code-Ⅳ-9">code Ⅳ-9. <button class="copy">복사</button></h2><pre><code>from netCDF4 import Dataset
 
 sst_l2 = PROJ / &quot;T2008168030500.L2_LAC_SST.x.nc&quot;   # 위성 해수면 온도(MODIS L2) 파일
 nc = Dataset(sst_l2)
@@ -142,18 +142,18 @@ for key in [&quot;title&quot;, &quot;platform&quot;, &quot;instrument&quot;, &qu
             &quot;time_coverage_start&quot;, &quot;time_coverage_end&quot;, &quot;spatialResolution&quot;]:
     print(f&quot;  {key:20s}: {nc.getncattr(key)}&quot;)
 print(&quot;그룹 :&quot;, list(nc.groups))</code></pre>
-<h2 id="code-384">code 384. <button class="copy">복사</button></h2><pre><code>for dim in nc.dimensions.values():
+<h2 id="code-Ⅳ-10">code Ⅳ-10. <button class="copy">복사</button></h2><pre><code>for dim in nc.dimensions.values():
     print(dim)</code></pre>
-<h2 id="code-385">code 385. <button class="copy">복사</button></h2><pre><code>print(&quot;nc.groups&quot;, nc.groups)
+<h2 id="code-Ⅳ-11">code Ⅳ-11. <button class="copy">복사</button></h2><pre><code>print(&quot;nc.groups&quot;, nc.groups)
 print(&quot;nc.groups[&#x27;geophysical_data&#x27;]&quot;, nc.groups[&#x27;geophysical_data&#x27;])</code></pre>
-<h2 id="code-386">code 386. <button class="copy">복사</button></h2><pre><code>print(&quot;nc.groups[&#x27;geophysical_data&#x27;][&#x27;sst&#x27;]&quot;,
+<h2 id="code-Ⅳ-12">code Ⅳ-12. <button class="copy">복사</button></h2><pre><code>print(&quot;nc.groups[&#x27;geophysical_data&#x27;][&#x27;sst&#x27;]&quot;,
       nc.groups[&#x27;geophysical_data&#x27;][&#x27;sst&#x27;])
 print(&quot;nc.groups[&#x27;geophysical_data&#x27;][&#x27;sst&#x27;].dimensions&quot;,
       nc.groups[&#x27;geophysical_data&#x27;][&#x27;sst&#x27;].dimensions)</code></pre>
-<h2 id="code-387">code 387. <button class="copy">복사</button></h2><pre><code>print(&quot;nc.groups[&#x27;navigation_data&#x27;]&quot;, nc.groups[&#x27;navigation_data&#x27;])
+<h2 id="code-Ⅳ-13">code Ⅳ-13. <button class="copy">복사</button></h2><pre><code>print(&quot;nc.groups[&#x27;navigation_data&#x27;]&quot;, nc.groups[&#x27;navigation_data&#x27;])
 print(&quot;nc.groups[&#x27;navigation_data&#x27;][&#x27;latitude&#x27;]&quot;,
       nc.groups[&#x27;navigation_data&#x27;][&#x27;latitude&#x27;])</code></pre>
-<h2 id="code-388">code 388. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅳ-14">code Ⅳ-14. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.basemap import Basemap
 
@@ -163,7 +163,7 @@ sst = nc.groups[&#x27;geophysical_data&#x27;][&#x27;sst&#x27;][:]
 qual = nc.groups[&#x27;geophysical_data&#x27;][&#x27;qual_sst&#x27;][:]   # 품질 플래그 (0 최상, 클수록 나쁨)
 sst = np.ma.masked_where(qual &gt; 1, sst)               # 품질 0·1 화소만 남김
 print(f&quot;품질 0·1 화소 수: {sst.count():,} / {sst.size:,}&quot;)</code></pre>
-<h2 id="code-389">code 389. <button class="copy">복사</button></h2><pre><code># 원소를 모두 찍으면 수천 줄이 나오므로 모양과 일부만 확인
+<h2 id="code-Ⅳ-15">code Ⅳ-15. <button class="copy">복사</button></h2><pre><code># 원소를 모두 찍으면 수천 줄이 나오므로 모양과 일부만 확인
 import numpy as _np
 _a = _np.asarray(latitude)
 print(f&quot;latitude: shape={_a.shape}, &quot;
@@ -173,10 +173,10 @@ print(&quot;뒤 5개 :&quot;, _np.ravel(_a)[-5:])
 _o = _np.asarray(longitude)
 print(f&quot;longitude: shape={_o.shape}, &quot;
       f&quot;min={_np.nanmin(_o):.4f}, max={_np.nanmax(_o):.4f}&quot;)</code></pre>
-<h2 id="code-390">code 390. <button class="copy">복사</button></h2><pre><code>print(&quot;latitude.dtype : {}&quot;.format(latitude.dtype))
+<h2 id="code-Ⅳ-16">code Ⅳ-16. <button class="copy">복사</button></h2><pre><code>print(&quot;latitude.dtype : {}&quot;.format(latitude.dtype))
 print(&quot;longitude.dtype : {}&quot;.format(longitude.dtype))
 print(&quot;sst.dtype : {}&quot;.format(sst.dtype))</code></pre>
-<h2 id="code-391">code 391. <button class="copy">복사</button></h2><pre><code>DATAFIELD_NAME = &quot;SST&quot;
+<h2 id="code-Ⅳ-17">code Ⅳ-17. <button class="copy">복사</button></h2><pre><code>DATAFIELD_NAME = &quot;SST&quot;
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -195,7 +195,7 @@ plt.grid(True)
 plt.savefig(f&quot;{PROJ}/{sst_l2.stem}_hist.pdf&quot;, bbox_inches=&#x27;tight&#x27;)
 print(f&quot;savefig: {PROJ}/{sst_l2.stem}_hist.pdf&quot;)
 plt.show()   </code></pre>
-<h2 id="code-392">code 392. <button class="copy">복사</button></h2><pre><code>Llon, Rlon, Slat, Nlat = 100, 150, 10, 60
+<h2 id="code-Ⅳ-18">code Ⅳ-18. <button class="copy">복사</button></h2><pre><code>Llon, Rlon, Slat, Nlat = 100, 150, 10, 60
 
 import numpy as np
 from mpl_toolkits.basemap import Basemap
@@ -222,7 +222,7 @@ x, y = m(longitude, latitude) # 투영 지도로 변환
 plt.title(&#x27;SST product using MODIS&#x27;, fontsize=10) 
       
 plt.show()</code></pre>
-<h2 id="code-393">code 393. <button class="copy">복사</button></h2><pre><code>DATAFIELD_NAME = &quot;SST&quot;
+<h2 id="code-Ⅳ-19">code Ⅳ-19. <button class="copy">복사</button></h2><pre><code>DATAFIELD_NAME = &quot;SST&quot;
 
 print(&quot;=&quot;*80)
 print(&quot;Plotting data on the map&quot;)
@@ -274,7 +274,7 @@ plt.text(x2, y2, &quot;{}\nMODIS SST product from Ocean Color Web\n&quot;.format
 plt.savefig(f&quot;{PROJ}/{sst_l2.stem}_{DATAFIELD_NAME}.pdf&quot;, bbox_inches=&#x27;tight&#x27;)
 print(f&quot;savefig: {PROJ}/{sst_l2.stem}_{DATAFIELD_NAME}.pdf&quot;)
 plt.show()</code></pre>
-<h2 id="code-394">code 394. <button class="copy">복사</button></h2><pre><code>Llon, Rlon, Slat, Nlat = 100, 150, 10, 60     # 지도 영역(경도 · 위도)
+<h2 id="code-Ⅳ-20">code Ⅳ-20. <button class="copy">복사</button></h2><pre><code>Llon, Rlon, Slat, Nlat = 100, 150, 10, 60     # 지도 영역(경도 · 위도)
 RES = 24                                      # 4 km 격자: 1도에 24칸
 
 i0, i1 = int((90 - Nlat) * RES), int((90 - Slat) * RES)   # 위도 칸(북 → 남)
@@ -288,11 +288,11 @@ print(&quot;요청 주소 :&quot;, url)
 
 hdf_path = proj_dir / &quot;AQUA_MODIS.201908.L3m.MO.chlor_a.4km_EastAsia.nc4&quot;
 du.download(url, hdf_path)</code></pre>
-<h2 id="code-395">code 395. <button class="copy">복사</button></h2><pre><code>signature = hdf_path.read_bytes()[:8]
+<h2 id="code-Ⅳ-21">code Ⅳ-21. <button class="copy">복사</button></h2><pre><code>signature = hdf_path.read_bytes()[:8]
 print(&quot;파일 크기 :&quot;, f&quot;{hdf_path.stat().st_size / 1e6:.2f} MB&quot;)
 print(&quot;서명      :&quot;, signature)
 print(&quot;HDF5 인가 :&quot;, signature == b&quot;\x89HDF\r\n\x1a\n&quot;)</code></pre>
-<h2 id="code-396">code 396. <button class="copy">복사</button></h2><pre><code>import h5py
+<h2 id="code-Ⅳ-22">code Ⅳ-22. <button class="copy">복사</button></h2><pre><code>import h5py
 
 hdf = h5py.File(hdf_path, &quot;r&quot;)
 print(&quot;맨 위 항목 :&quot;, list(hdf.keys()))
@@ -305,7 +305,7 @@ def show(name, obj):
         print(f&quot;  그룹     {name}&quot;)
 
 hdf.visititems(show)</code></pre>
-<h2 id="code-397">code 397. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅳ-23">code Ⅳ-23. <button class="copy">복사</button></h2><pre><code>import numpy as np
 
 def attr(dset, key):
     &quot;&quot;&quot;HDF5 속성 값을 파이썬 값으로 변환(바이트 → 문자열, 길이 1 배열 → 숫자)&quot;&quot;&quot;
@@ -319,7 +319,7 @@ def attr(dset, key):
 chl_ds = hdf[&quot;chlor_a&quot;]
 for key in [&quot;long_name&quot;, &quot;units&quot;, &quot;_FillValue&quot;, &quot;valid_min&quot;, &quot;valid_max&quot;]:
     print(f&quot;{key:12s}: {attr(chl_ds, key)}&quot;)</code></pre>
-<h2 id="code-398">code 398. <button class="copy">복사</button></h2><pre><code>chl = chl_ds[:].astype(float)
+<h2 id="code-Ⅳ-24">code Ⅳ-24. <button class="copy">복사</button></h2><pre><code>chl = chl_ds[:].astype(float)
 lat = hdf[&quot;lat&quot;][:]
 lon = hdf[&quot;lon&quot;][:]
 
@@ -334,7 +334,7 @@ print(&quot;위도 범위     :&quot;, lat.min().round(2), &quot;~&quot;, lat.ma
 print(&quot;경도 범위     :&quot;, lon.min().round(2), &quot;~&quot;, lon.max().round(2))
 print(&quot;유효한 칸 비율:&quot;, f&quot;{np.isfinite(chl).mean() * 100:.1f} %&quot;)
 print(f&quot;최솟값 · 중앙값 · 최댓값: {np.nanmin(chl):.3f} · {np.nanmedian(chl):.3f} · {np.nanmax(chl):.1f} mg/m³&quot;)</code></pre>
-<h2 id="code-399">code 399. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅳ-25">code Ⅳ-25. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 plt.rcParams[&quot;axes.unicode_minus&quot;] = False   # 로그 눈금의 마이너스(−)를 하이픈으로 표시
 
 valid = chl[np.isfinite(chl)]
@@ -352,7 +352,7 @@ ax.set_title(&quot;MODIS Aqua 엽록소 농도 분포 (2019년 8월)&quot;)
 ax.legend()
 plt.savefig(proj_dir / &quot;chlor_a_hist.png&quot;, dpi=150, bbox_inches=&quot;tight&quot;)
 plt.show()</code></pre>
-<h2 id="code-400">code 400. <button class="copy">복사</button></h2><pre><code>from matplotlib.colors import LogNorm
+<h2 id="code-Ⅳ-26">code Ⅳ-26. <button class="copy">복사</button></h2><pre><code>from matplotlib.colors import LogNorm
 from mpl_toolkits.basemap import Basemap
 
 plt.figure(figsize=(4.8, 4.4))

@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | IV-05. 지구의 열수지와 온실효과
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 453.
+# %% code Ⅳ-79.
 # 필요한 라이브러리 불러오기
 import numpy as np
 import pandas as pd
@@ -10,7 +10,7 @@ from matplotlib.patches import FancyArrow, Rectangle
 
 %matplotlib inline
 
-# %% code 454.
+# %% code Ⅳ-80.
 # 상수
 S = 1361.0              # 태양 상수 [W/m^2]
 albedo = 0.30           # 지구 전체의 알베도 (무차원)
@@ -26,7 +26,7 @@ T_e = radiative_equilibrium_T()
 print(f"단위 면적당 흡수량 : {S * (1 - albedo) / 4:8.2f} W/m^2")
 print(f"복사 평형 온도     : {T_e:8.2f} K  =  {T_e - 273.15:6.2f} °C")
 
-# %% code 455.
+# %% code Ⅳ-81.
 albedos = np.linspace(0.0, 0.8, 200)
 temps = radiative_equilibrium_T(albedo=albedos) - 273.15   # °C
 
@@ -47,7 +47,7 @@ ax.set_title("알베도에 따른 지구의 복사 평형 온도", fontsize=12,
 ax.grid(alpha=0.3)
 plt.show()
 
-# %% code 456.
+# %% code Ⅳ-82.
 T_a = T_e                    # 대기의 온도 = 복사 평형 온도
 T_s = 2 ** 0.25 * T_e        # 지표의 온도
 
@@ -58,7 +58,7 @@ print()
 print(f"실제 지구의 평균 기온     :  288.15 K =  15.00 °C")
 print(f"실제 온실효과의 크기      : {288.15 - T_e:7.2f} K")
 
-# %% code 457.
+# %% code Ⅳ-83.
 N = np.arange(0, 6)                       # 대기 층 수 (0 = 대기 없음)
 T_layers = (N + 1) ** 0.25 * T_e - 273.15  # °C
 
@@ -81,7 +81,7 @@ ax.legend()
 ax.grid(axis="y", alpha=0.3)
 plt.show()
 
-# %% code 458.
+# %% code Ⅳ-84.
 # 들어오는 태양 복사를 100으로 놓았을 때의 값
 # (Trenberth 등(2009)의 W/m^2 값을 341.3 = 100으로 환산, 잠열만 23.4 → 24로 조정)
 budget = {
@@ -164,7 +164,7 @@ ax.set_title("지구의 열수지 — 들어오는 태양 복사를 100으로 �
              fontsize=13, fontweight="bold", pad=12)
 plt.show()
 
-# %% code 459.
+# %% code Ⅳ-85.
 def check(name, incoming, outgoing):
     """들어온 양과 나간 양 견주기"""
     ok = "균형" if abs(incoming - outgoing) < 1e-9 else "★ 어긋남"
@@ -199,7 +199,7 @@ print(f"\n1 (= 1%)은 약 {unit / 100:.2f} W/m^2입니다.")
 print(f"지표면이 받는 대기의 재복사 {b['대기의 재복사']}"
       f" → {b['대기의 재복사'] * unit / 100:.0f} W/m^2")
 
-# %% code 460.
+# %% code Ⅳ-86.
 import urllib.request, io
 
 headers = {"User-Agent": "Mozilla/5.0 (DSES textbook notebook)"}
@@ -225,7 +225,7 @@ print(f"CO2  : {co2['year'].min():.0f} ~ {co2['year'].max():.0f}년, "
 print(f"기온 : {temp['Year'].min():.0f} ~ {temp['Year'].max():.0f}년, "
       f"최근 편차 {temp['J-D'].iloc[-1]:+.2f} °C")
 
-# %% code 461.
+# %% code Ⅳ-87.
 fig, ax1 = plt.subplots(figsize=(7.5, 4.1))
 
 # 왼쪽 축 — 이산화 탄소 농도

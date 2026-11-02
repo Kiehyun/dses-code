@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | II-04. 단진자 운동
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 39.
+# %% code Ⅱ-39.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -36,7 +36,7 @@ plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "02_04_Simple_pendulum_motion_01"))
 plt.show()
 
-# %% code 40.
+# %% code Ⅱ-40.
 fig, ax = plt.subplots(figsize=(8,8))
 
 # 단진자 추의 (x, y) 좌표
@@ -63,7 +63,7 @@ obj.set_data([x], [y])
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "02_04_Simple_pendulum_motion_02"))
 plt.show()
 
-# %% code 41.
+# %% code Ⅱ-41.
 import numpy as np
 from scipy.integrate import odeint
 
@@ -92,7 +92,7 @@ print(f"해의 개수: {len(Z)}")
 print(f"각도 변화 (처음 12개): {Z[:12, 0] * 180 / np.pi}")  # 라디안 → 도
 print(f"각속도 변화 (처음 12개): {Z[:12, 1]}")
 
-# %% code 42.
+# %% code Ⅱ-42.
 fig, ax = plt.subplots(figsize=(8,8))
 
 # 단진자 추의 (x, y) 좌표
@@ -129,7 +129,7 @@ for j in Z[:12] :
 print("x_values :", x_values)
 print("y_values :", y_values)
 
-# %% code 43.
+# %% code Ⅱ-43.
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -165,7 +165,7 @@ plt.subplots_adjust(top=0.93, bottom=0.1)
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "02_04_Simple_pendulum_motion_03"))
 plt.show()
 
-# %% code 44.
+# %% code Ⅱ-44.
 length = 1
 init_angle = 30
 k = 9.81/length
@@ -202,7 +202,7 @@ obj.set_data([x], [y])
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "02_04_Simple_pendulum_motion_04"))
 plt.show()
 
-# %% code 45.
+# %% code Ⅱ-45.
 def animate(i):
     """애니메이션의 각 프레임을 업데이트하는 함수"""
     theta = Z[i, 0]  # i번째 시각의 각도
@@ -237,7 +237,7 @@ HTML(ani.to_jshtml())
 # print(f"애니메이션 HTML 형식: {matplotlib.rcParams['animation.html']}")
 # HTML(ani.to_html5_video())
 
-# %% code 46.
+# %% code Ⅱ-46.
 class Pendulum(object):
     def __init__(self, length=1, init_angle=30, tf=10, dt=0.05):
         self.length = length
@@ -281,7 +281,7 @@ plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "02_04_Simple_pendulum_motion_05"))
 plt.show()
 
-# %% code 47.
+# %% code Ⅱ-47.
 def animate(i):
     theta = pend.Z[i, 0]
     x = length*np.sin(theta)
@@ -314,7 +314,7 @@ HTML(ani.to_jshtml())
 # print(f"애니메이션 HTML 형식: {matplotlib.rcParams['animation.html']}")
 # HTML(ani.to_html5_video())
 
-# %% code 48.
+# %% code Ⅱ-48.
 # 애니메이션 저장
 fname = 'Simple_pendulum'
 

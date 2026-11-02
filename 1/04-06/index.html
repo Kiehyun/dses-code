@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>IV-06. 기상위성 천리안 이미지 RGB 합성</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/04-06/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-99">99</a> <a href="#code-100">100</a> <a href="#code-101">101</a> <a href="#code-102">102</a> <a href="#code-103">103</a> <a href="#code-104">104</a> <a href="#code-105">105</a> <a href="#code-106">106</a> <a href="#code-107">107</a> <a href="#code-108">108</a></p>
-<h2 id="code-99">code 99. <button class="copy">복사</button></h2><pre><code># 국가기상위성센터에서 2019-07-10 10:45 영상 다섯 채널 내려받기
+<p class="jump"><a href="#code-Ⅳ-99">Ⅳ-99</a> <a href="#code-Ⅳ-100">Ⅳ-100</a> <a href="#code-Ⅳ-101">Ⅳ-101</a> <a href="#code-Ⅳ-102">Ⅳ-102</a> <a href="#code-Ⅳ-103">Ⅳ-103</a> <a href="#code-Ⅳ-104">Ⅳ-104</a> <a href="#code-Ⅳ-105">Ⅳ-105</a> <a href="#code-Ⅳ-106">Ⅳ-106</a> <a href="#code-Ⅳ-107">Ⅳ-107</a> <a href="#code-Ⅳ-108">Ⅳ-108</a></p>
+<h2 id="code-Ⅳ-99">code Ⅳ-99. <button class="copy">복사</button></h2><pre><code># 국가기상위성센터에서 2019-07-10 10:45 영상 다섯 채널 내려받기
 from pathlib import Path
 
 du.download(f&quot;http://nmsc.kma.go.kr/IMG/COMS/MI/L1/L1B/201907/10/coms_mi_le1b_vis_en010ge_201907101045.png&quot;, Path(proj_dir) / &#x27;coms_mi_le1b_vis_en010ge_201907101045.png&#x27;)
@@ -20,9 +20,9 @@ du.download(f&quot;http://nmsc.kma.go.kr/IMG/COMS/MI/L1/L1B/201907/10/coms_mi_le
 du.download(f&quot;http://nmsc.kma.go.kr/IMG/COMS/MI/L1/L1B/201907/10/coms_mi_le1b_ir02_en040ge_201907101045.png&quot;, Path(proj_dir) / &#x27;coms_mi_le1b_ir02_en040ge_201907101045.png&#x27;)
 du.download(f&quot;http://nmsc.kma.go.kr/IMG/COMS/MI/L1/L1B/201907/10/coms_mi_le1b_swir_en040ge_201907101045.png&quot;, Path(proj_dir) / &#x27;coms_mi_le1b_swir_en040ge_201907101045.png&#x27;)
 du.download(f&quot;http://nmsc.kma.go.kr/IMG/COMS/MI/L1/L1B/201907/10/coms_mi_le1b_wv_en040ge_201907101045.png&quot;, Path(proj_dir) / &#x27;coms_mi_le1b_wv_en040ge_201907101045.png&#x27;)</code></pre>
-<h2 id="code-100">code 100. <button class="copy">복사</button></h2><pre><code># 내려받은 원본 영상만(이 노트북이 만든 합성 · 이어 붙인 그림은 빼고)
+<h2 id="code-Ⅳ-100">code Ⅳ-100. <button class="copy">복사</button></h2><pre><code># 내려받은 원본 영상만(이 노트북이 만든 합성 · 이어 붙인 그림은 빼고)
 fpaths = [p for p in du.list_files(proj_dir, &quot;png&quot;) if &quot;_le1b_&quot; in str(p)]</code></pre>
-<h2 id="code-101">code 101. <button class="copy">복사</button></h2><pre><code>from PIL import Image
+<h2 id="code-Ⅳ-101">code Ⅳ-101. <button class="copy">복사</button></h2><pre><code>from PIL import Image
 
 # 파일 이름의 채널 표시로 고른다(순서에 기대지 않음)
 pick = lambda ch: next(p for p in fpaths if f&quot;_{ch}_&quot; in str(p))
@@ -39,7 +39,7 @@ blue = Image.open(ir2_filename)
 
 print(&quot;type(red) :&quot;, type(red))
 print(&quot;red :&quot;, red)</code></pre>
-<h2 id="code-102">code 102. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅳ-102">code Ⅳ-102. <button class="copy">복사</button></h2><pre><code>import numpy as np
 red_arr = np.array(red)  # 이미지 → ndarray
 print(&quot;type(red_arr) : {}&quot;.format(type(red_arr)))
 print(red_arr.shape)  # (세로, 가로, 채널)
@@ -56,7 +56,7 @@ redA = np.array(red)
 print(redA.shape)
 print (type(red))
 print (red)</code></pre>
-<h2 id="code-103">code 103. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅳ-103">code Ⅳ-103. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 print (&#x27;*&#x27;*80)
 print (&#x27;display COMS_MI image&#x27;)
@@ -66,7 +66,7 @@ plt.imshow(red, cmap = &#x27;gray&#x27;, interpolation = &#x27;None&#x27;)
 
 plt.xticks([]), plt.yticks([])  # 눈금 숨기기
 plt.show()</code></pre>
-<h2 id="code-104">code 104. <button class="copy">복사</button></h2><pre><code>from PIL import Image
+<h2 id="code-Ⅳ-104">code Ⅳ-104. <button class="copy">복사</button></h2><pre><code>from PIL import Image
 
 print(&quot;변환 전 크기&quot;)
 print(&quot;red size  :&quot;, red.size)
@@ -119,9 +119,9 @@ for ax in axes.flat:
 
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-105">code 105. <button class="copy">복사</button></h2><pre><code>print (&quot;red.width:{}&quot;.format(red.width))
+<h2 id="code-Ⅳ-105">code Ⅳ-105. <button class="copy">복사</button></h2><pre><code>print (&quot;red.width:{}&quot;.format(red.width))
 print (&quot;red.height:{}&quot;.format(red.height))</code></pre>
-<h2 id="code-106">code 106. <button class="copy">복사</button></h2><pre><code># 가로로 두 장 붙일 빈 RGB 이미지(너비 2배)
+<h2 id="code-Ⅳ-106">code Ⅳ-106. <button class="copy">복사</button></h2><pre><code># 가로로 두 장 붙일 빈 RGB 이미지(너비 2배)
 new_im=Image.new(&#x27;RGB&#x27;, (red.width*2,red.height*1))
 print (type(new_im))
 
@@ -129,14 +129,14 @@ new_im.paste(red, (0, 0))  # 붙일 위치(왼쪽 위 모서리)
 new_im.paste(green, (green.width, 0))
 print (type(new_im))
 print (new_im)</code></pre>
-<h2 id="code-107">code 107. <button class="copy">복사</button></h2><pre><code># 세로로 두 장 붙일 빈 RGB 이미지(높이 2배)
+<h2 id="code-Ⅳ-107">code Ⅳ-107. <button class="copy">복사</button></h2><pre><code># 세로로 두 장 붙일 빈 RGB 이미지(높이 2배)
 new_im=Image.new(&#x27;RGB&#x27;, (red.width*1,red.height*2))
 new_im.paste(red, (0, 0))
 new_im.paste(green, (0, green.height))
 print (type(new_im))
 print (new_im)
 new_im  # 셀의 마지막 값이 이미지면 화면에 표시</code></pre>
-<h2 id="code-108">code 108. <button class="copy">복사</button></h2><pre><code># 여섯 장을 2행 3열로 이어 붙이기
+<h2 id="code-Ⅳ-108">code Ⅳ-108. <button class="copy">복사</button></h2><pre><code># 여섯 장을 2행 3열로 이어 붙이기
 from PIL import Image
 img_filenames = [vis_filename, ir1_filename, ir2_filename, swir_filename, wv_filename,
         f&quot;{proj_dir}/coms_mi_rgb_201907101045.png&quot;]

@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>I-04. 코딩 에이전트로 분석 프로젝트 하기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/01-24/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-16">16</a> <a href="#code-17">17</a> <a href="#code-18">18</a> <a href="#code-19">19</a> <a href="#code-20">20</a></p>
-<h2 id="code-16">code 16. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
+<p class="jump"><a href="#code-Ⅰ-16">Ⅰ-16</a> <a href="#code-Ⅰ-17">Ⅰ-17</a> <a href="#code-Ⅰ-18">Ⅰ-18</a> <a href="#code-Ⅰ-19">Ⅰ-19</a> <a href="#code-Ⅰ-20">Ⅰ-20</a></p>
+<h2 id="code-Ⅰ-16">code Ⅰ-16. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
 
 guide = &#x27;&#x27;&#x27;# 프로젝트 지침 — 우리 학교 기상 관측 데이터 분석
 
@@ -45,7 +45,7 @@ guide = &#x27;&#x27;&#x27;# 프로젝트 지침 — 우리 학교 기상 관측 
 print((proj_dir / &quot;AGENTS.md&quot;).read_text(encoding=&quot;utf-8&quot;))
 print(&quot;--- CLAUDE.md ---&quot;)
 print((proj_dir / &quot;CLAUDE.md&quot;).read_text(encoding=&quot;utf-8&quot;))</code></pre>
-<h2 id="code-17">code 17. <button class="copy">복사</button></h2><pre><code>import json
+<h2 id="code-Ⅰ-17">code Ⅰ-17. <button class="copy">복사</button></h2><pre><code>import json
 
 def check_notebook(path):
     nb = json.loads(Path(path).read_text(encoding=&quot;utf-8-sig&quot;))
@@ -67,7 +67,7 @@ if nb_paths:
     display(check_notebook(nb_paths[0]))           # 첫 노트북으로 시험
 else:
     print(&quot;이 폴더에는 노트북 파일(.ipynb)이 없습니다.&quot;)</code></pre>
-<h2 id="code-18">code 18. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+<h2 id="code-Ⅰ-18">code Ⅰ-18. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 
 folder = Path.cwd()                                  # 점검할 폴더(지금 노트북이 있는 곳)
 nb_paths = sorted(folder.glob(&quot;*.ipynb&quot;))
@@ -79,7 +79,7 @@ if nb_paths:
     print(f&quot;오류가 남은 노트북: {(report[&#x27;오류 셀&#x27;] &gt; 0).sum()}개&quot;)
 else:
     print(f&quot;{folder.name} 폴더에는 노트북 파일(.ipynb)이 없습니다.&quot;)</code></pre>
-<h2 id="code-19">code 19. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅰ-19">code Ⅰ-19. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
 # 1) 연습용 원시 데이터: 2025년 가상의 일평균 기온(°C)
@@ -111,7 +111,7 @@ agent_nb = {&quot;cells&quot;: [{&quot;cell_type&quot;: &quot;code&quot;, &quot;
 
 print(&quot;만든 파일:&quot;, sorted(p.name for p in proj_dir.iterdir()
                         if p.suffix in (&quot;.csv&quot;, &quot;.png&quot;, &quot;.ipynb&quot;)))</code></pre>
-<h2 id="code-20">code 20. <button class="copy">복사</button></h2><pre><code># 1) 노트북 점검: 이 장에서 만든 check_notebook 재사용
+<h2 id="code-Ⅰ-20">code Ⅰ-20. <button class="copy">복사</button></h2><pre><code># 1) 노트북 점검: 이 장에서 만든 check_notebook 재사용
 display(check_notebook(proj_dir / &quot;agent_monthly.ipynb&quot;))
 
 # 2) 요청한 그림 파일이 있는지

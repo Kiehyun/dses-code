@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | II-03. 지도 그리기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 22.
+# %% code Ⅱ-22.
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
@@ -30,7 +30,7 @@ plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "02_03_Drawing_maps_01"))
 plt.show()
 
-# %% code 23.
+# %% code Ⅱ-23.
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 
@@ -54,7 +54,7 @@ m3.shadedrelief(scale=0.5, alpha=0.7)
 plt.tight_layout()
 plt.show()
 
-# %% code 24.
+# %% code Ⅱ-24.
 from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
 
@@ -71,7 +71,7 @@ plt.text(x, y, '수원', fontsize=12)
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "02_03_Drawing_maps_02"))
 plt.show()
 
-# %% code 25.
+# %% code Ⅱ-25.
 from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
 import numpy as np
@@ -115,7 +115,7 @@ ax2.set_title('%s (UTC) 주야 구분 지도' % date.strftime("%d %b %Y %H:%M:%S
 plt.tight_layout()
 plt.show()
 
-# %% code 26.
+# %% code Ⅱ-26.
 from itertools import chain
 
 def draw_map(m, scale=0.2):
@@ -134,7 +134,7 @@ def draw_map(m, scale=0.2):
     for line in all_lines:
         line.set(linestyle='-', alpha=0.3, color='w')
 
-# %% code 27.
+# %% code Ⅱ-27.
 fig, ax = plt.subplots(1, 3, figsize=(10, 5))
 
 for i, res in enumerate(['l', 'i', 'h']):  # 해안선 해상도: 낮음 · 중간 · 높음
@@ -150,7 +150,7 @@ for i, res in enumerate(['l', 'i', 'h']):  # 해안선 해상도: 낮음 · 중�
     
     ax[i].set_title("해상도='{0}'".format(res));
 
-# %% code 28.
+# %% code Ⅱ-28.
 plt.figure(figsize=(8, 6))
 
 loglat = [90, 0, 180, 62]  # 왼쪽 아래 경도 · 위도, 오른쪽 위 경도 · 위도
@@ -173,7 +173,7 @@ plt.title("일기도 바탕 지도\n", fontsize=20)
 plt.savefig(f'{proj_dir}/Weather_map.pdf')
 plt.show()   
 
-# %% code 29.
+# %% code Ⅱ-29.
 import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
 import cartopy.feature as cfeature
@@ -195,7 +195,7 @@ plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "02_03_Drawing_maps_03"))
 plt.show()
 
-# %% code 30.
+# %% code Ⅱ-30.
 import cartopy.crs as ccrs
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 import matplotlib.pyplot as plt
@@ -248,7 +248,7 @@ plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "02_03_Drawing_maps_04"))
 plt.show()
 
-# %% code 31.
+# %% code Ⅱ-31.
 import matplotlib.path as mpath
 import matplotlib.pyplot as plt
 import numpy as np
@@ -285,7 +285,7 @@ ax2.set_boundary(circle, transform=ax2.transAxes)
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "02_03_Drawing_maps_05"))
 plt.show()
 
-# %% code 32.
+# %% code Ⅱ-32.
 import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
 
@@ -306,7 +306,7 @@ plt.title('우리나라 주변 지도', fontsize=18)
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "02_03_Drawing_maps_06"))
 plt.show()
 
-# %% code 33.
+# %% code Ⅱ-33.
 import folium
 from IPython.display import display
 
@@ -314,7 +314,7 @@ basic_map = folium.Map(location=[37.5665, 126.9780], zoom_start=12)  # 서울 �
 
 display(basic_map)
 
-# %% code 34.
+# %% code Ⅱ-34.
 import folium
 
 seoul_coords = [37.5665, 126.9780]  # 서울(위도, 경도)
@@ -331,7 +331,7 @@ folium.Marker(
 basic_map.save(Path(proj_dir)/'basic_map_of_Seoul.html')  # HTML 파일로 저장
 display(basic_map)
 
-# %% code 35.
+# %% code Ⅱ-35.
 def safe_tile_loader():
     """안전한 타일 로딩"""
     location = [37.5665, 126.9780]  # 서울시청 좌표
@@ -384,7 +384,7 @@ for name, map_obj in maps.items():
     print(f"\n{name} 지도:")
     display(map_obj)
 
-# %% code 36.
+# %% code Ⅱ-36.
 def create_marker_showcase():
     """다양한 마커 스타일을 보여주는 지도"""
     m = folium.Map(location=[37.5665, 126.9780], zoom_start=12)
@@ -424,7 +424,7 @@ marker_map = create_marker_showcase()
 marker_map.save(Path(proj_dir)/'marker_showcase_map.html')
 display(marker_map)
 
-# %% code 37.
+# %% code Ⅱ-37.
 import numpy as np
 
 def create_heatmap():
@@ -459,7 +459,7 @@ print("히트맵이 생성되었습니다.")
 
 display(heatmap)
 
-# %% code 38.
+# %% code Ⅱ-38.
 import pandas as pd
 def create_bubble_map():
     """한국 시도별 인구 데이터를 원의 크기 · 색으로 표시하는 버블 지도"""

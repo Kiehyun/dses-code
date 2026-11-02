@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | III-08. 구경 측광
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 239.
+# %% code Ⅲ-184.
 fname = ("TrES-4b_LIGHT_R_2024-06-13-15-09-52_"
          "120sec_GSON300_STF-8300M_-10c_1bin.fit")
 fid = "1_ha7akgPnktWVQ8_s-r0BGqmqk-c1F_q"
@@ -9,10 +9,10 @@ fid = "1_ha7akgPnktWVQ8_s-r0BGqmqk-c1F_q"
 du.download(f"https://docs.google.com/uc?export=download&id={fid}",
             proj_dir / fname)
 
-# %% code 240.
+# %% code Ⅲ-185.
 fpaths = du.list_files(proj_dir, "fit*")
 
-# %% code 241.
+# %% code Ⅲ-186.
 from astropy.io import fits
 
 hdul = fits.open(str(fpaths[0]))
@@ -21,12 +21,12 @@ for k in ["NAXIS1", "NAXIS2", "DATE-OBS", "EXPTIME", "OBJECT", "FILTER"]:
         print(f"{k:9s} = {hdul[0].header[k]}")
 print("data :", hdul[0].data.dtype, hdul[0].data.shape)
 
-# %% code 242.
+# %% code Ⅲ-187.
 # 위치 보정 여부 확인 — Ⅲ-06 「FITS 파일 천체 위치 보정」에서 만든 du.checkPSolve(dses_utils)
 SOLVE, ASTAP, LOCAL = du.checkPSolve(str(fpaths[0]))
 print("SOLVE :", SOLVE)
 
-# %% code 243.
+# %% code Ⅲ-188.
 from astropy.coordinates import SkyCoord
 from astropy import units as u
 
@@ -48,7 +48,7 @@ if hdul[0].header["CCDNAME"] == "STX-16803" :
 
 print("rdnoise, gain, PIX2ARCSEC :", rdnoise, gain, PIX2ARCSEC)
 
-# %% code 244.
+# %% code Ⅲ-189.
 from astropy.time import Time
 from astropy.wcs import WCS
 from astropy.nddata import Cutout2D
@@ -60,7 +60,7 @@ t_middle = t_start + t_expos / 2 # 시작 시각 + 노출 시간의 절반
 
 print(f"t_start: {t_start}, t_expos: {t_expos}, t_middle: {t_middle}")
 
-# %% code 245.
+# %% code Ⅲ-190.
 #######################################################
 # FWHM 초기 추정값(화소)
 FWHM_INIT = 6
@@ -84,7 +84,7 @@ R_OUT = 6 * FWHM_INIT   # 고리(annulus) 바깥쪽 반지름
 
 print("FWHM, thresh :", FWHM, thresh)
 
-# %% code 246.
+# %% code Ⅲ-191.
 from photutils.detection import DAOStarFinder
 
 fpath = fpaths[0]
@@ -107,24 +107,24 @@ DAOfind = DAOStarFinder(
 DAOfound = DAOfind(hdul[0].data)
 print("len(DAOfound) :",len(DAOfound))
 
-# %% code 247.
+# %% code Ⅲ-192.
 print("type(DAOfound) :", type(DAOfound))
 print(DAOfound.colnames)
 DAOfound
 
-# %% code 248.
+# %% code Ⅲ-193.
 DAOfound.write(f"{proj_dir}/{fpath.stem}_DAOStarfinder_fwhm_{FWHM}_{thresh}.csv",
                             overwrite = True, format='ascii.fast_csv')
 
-# %% code 249.
+# %% code Ⅲ-194.
 df = DAOfound.to_pandas()
 print(type(df))
 df
 
-# %% code 250.
+# %% code Ⅲ-195.
 # 영상 표시 함수 znorm · zimshow · norm_imshow 는 Ⅲ-04 「FITS 파일 다루기」에서 설명했고 dses_utils 에 들어 있음
 
-# %% code 251.
+# %% code Ⅲ-196.
 import numpy as np
 # 중심 열 이름: photutils 3.0부터 x_centroid, 그 전 판은 xcentroid
 xc, yc = ("x_centroid", "y_centroid") if "x_centroid" in DAOfound.colnames else ("xcentroid", "ycentroid")
@@ -134,7 +134,7 @@ print("type(pos) :", type(pos))
 print("pos.shape :", pos.shape)
 print("pos :", pos)
 
-# %% code 252.
+# %% code Ⅲ-197.
 from astropy.wcs import WCS
 
 wcs = WCS(hdul[0].header)
@@ -142,7 +142,7 @@ print("wcs :", wcs)
 
 wcs.pixel_n_dim
 
-# %% code 253.
+# %% code Ⅲ-198.
 from photutils.aperture import CircularAperture as CAp
 from photutils.aperture import CircularAnnulus as CAn
 apert = CAp(pos, r=R_AP)
@@ -150,7 +150,7 @@ apert = CAp(pos, r=R_AP)
 annul = CAn(positions=pos, r_in=R_IN, r_out=R_OUT)
 #고리(annulus)
 
-# %% code 254.
+# %% code Ⅲ-199.
 import matplotlib.pyplot as plt
 
 fig, axs = plt.subplots(1, 1, figsize=(7.5, 5),
@@ -202,7 +202,7 @@ plt.savefig(proj_dir / f"{fpath.stem}_starfinder.png")
 plt.show()
 #plt.close()
 
-# %% code 255.
+# %% code Ⅲ-200.
 idx = 7
 mask_apert = (apert.to_mask(method='center'))[idx]
 star_apply  = mask_apert.multiply(hdul[0].data)
@@ -230,11 +230,11 @@ plt.colorbar(im1, ax=axs[1], fraction=0.0455, pad=0.04, )
 plt.tight_layout()
 plt.show()
 
-# %% code 256.
+# %% code Ⅲ-201.
 print("starimg :", starimg)
 print("star_apply :", star_apply)
 
-# %% code 257.
+# %% code Ⅲ-202.
 import matplotlib.pyplot as plt
 from astropy.nddata import Cutout2D
 
@@ -282,7 +282,7 @@ def plot_cutouts(apert, data, indices, cols, figsize=(6.4, 6.6)):
 # 사용 예시
 plot_cutouts(apert, hdul[0].data, range(0, 16), 4,  figsize=(6.4, 6.6))
 
-# %% code 258.
+# %% code Ⅲ-203.
 from photutils.aperture import aperture_photometry as apphot
 apphot_result = apphot(hdul[0].data, apert, method='exact')
 print(type(apphot_result))
@@ -290,11 +290,11 @@ apphot_result
 df_apphot = apphot_result.to_pandas()
 df_apphot
 
-# %% code 259.
+# %% code Ⅲ-204.
 ap_area   = apert.area
 ap_area
 
-# %% code 260.
+# %% code Ⅲ-205.
 idx = 7
 mask_annul = (annul.to_mask(method='center'))[idx]
 sky_apply  = mask_annul.multiply(hdul[0].data)
@@ -328,11 +328,11 @@ plt.colorbar(im1, ax=axs[1], fraction=0.0455, pad=0.04, )
 plt.tight_layout()
 plt.show()
 
-# %% code 261.
+# %% code Ⅲ-206.
 print("skyimg :", skyimg)
 print("sky_apply :", sky_apply)
 
-# %% code 262.
+# %% code Ⅲ-207.
 import matplotlib.pyplot as plt
 from astropy.nddata import Cutout2D
 
@@ -383,11 +383,11 @@ def plot_cutouts(apert, data, indices, cols, figsize=(6.4, 6.6)):
 # 사용 예시 (mask_annul, hdul[0].data, 그리고 그릴 인덱스를 지정)
 plot_cutouts(annul, hdul[0].data, range(0, 16), 4,  figsize=(6.4, 6.6))
 
-# %% code 263.
+# %% code Ⅲ-208.
 import numpy as np
 from astropy.stats import sigma_clip
 
-# %% code 264.
+# %% code Ⅲ-209.
 def sky_fit(all_sky, method='mode', sky_nsigma=3, sky_iter=5, \
             mode_option='sex', med_factor=2.5, mean_factor=1.5):
     '''
@@ -463,7 +463,7 @@ def sky_fit(all_sky, method='mode', sky_nsigma=3, sky_iter=5, \
 
         return sky, std, nsky, nrej
 
-# %% code 265.
+# %% code Ⅲ-210.
 idx = 1
 mask_annul = (annul.to_mask(method='center'))[idx]
 annul_weighted = mask_annul.multiply(hdul[0].data)
@@ -475,7 +475,7 @@ msky, sky_std, nsky, nrej = sky_fit(sky_pixel, method='mode',
 
 print("msky, sky_std, nsky, nrej :", msky, sky_std, nsky, nrej)
 
-# %% code 266.
+# %% code Ⅲ-211.
 import numpy as np
 
 # 플럭스로 기기 등급과 그 오차를 계산해 돌려줌
@@ -489,10 +489,10 @@ def mag_inst(flux, ferr):
         merr = 2.5 / np.log(10) * ferr / flux
     return m_inst, merr
 
-# %% code 267.
+# %% code Ⅲ-212.
 print(2.5 / np.log(10) * 0.01)  # 플럭스 오차 1% 에 해당하는 등급 오차
 
-# %% code 268.
+# %% code Ⅲ-213.
 # 모든 별의 고리 마스크를 한 번에 만들어 둠
 mask_annul = annul.to_mask(method='center')
 
@@ -525,14 +525,14 @@ plt.ylabel('Instrumental mag')
 plt.grid(ls=':')
 plt.show()
 
-# %% code 269.
+# %% code Ⅲ-214.
 fcsv = proj_dir / f"{fpath.stem}_m_inst.csv"
 df_apphot.to_csv(fcsv)
 print(fcsv)
 
 df_apphot
 
-# %% code 270.
+# %% code Ⅲ-215.
 from photutils.aperture import aperture_photometry
 
 def apphot_annulus(data, aperture, annulus, gain=1.0, rdnoise=0.0, method="exact"):
@@ -564,7 +564,7 @@ d_err = np.abs(phot_all["merr"] - df_apphot["merr_inst"])
 print(f"별 {len(phot_all)}개: 반복문과의 차이 — 등급 최대 {np.nanmax(d_mag):.1e}, 등급 오차 최대 {np.nanmax(d_err):.1e}")
 phot_all[["id", "msky", "source_sum", "source_sum_err", "mag", "merr", "snr"]].head()
 
-# %% code 271.
+# %% code Ⅲ-216.
 from photutils.aperture import aperture_photometry as apphot
 
 # 가장자리에서 떨어지고 주변이 깨끗한, 밝기가 중간쯤인 별 3개

@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>III-05. 태양계 시뮬레이션</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/03-05/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-55">55</a> <a href="#code-56">56</a> <a href="#code-57">57</a> <a href="#code-58">58</a> <a href="#code-59">59</a> <a href="#code-60">60</a> <a href="#code-61">61</a> <a href="#code-62">62</a> <a href="#code-63">63</a> <a href="#code-64">64</a> <a href="#code-65">65</a> <a href="#code-66">66</a> <a href="#code-67">67</a> <a href="#code-68">68</a> <a href="#code-69">69</a> <a href="#code-70">70</a> <a href="#code-71">71</a> <a href="#code-72">72</a> <a href="#code-73">73</a> <a href="#code-74">74</a> <a href="#code-75">75</a> <a href="#code-76">76</a> <a href="#code-77">77</a></p>
-<h2 id="code-55">code 55. <button class="copy">복사</button></h2><pre><code>from astropy.time import Time
+<p class="jump"><a href="#code-Ⅲ-55">Ⅲ-55</a> <a href="#code-Ⅲ-56">Ⅲ-56</a> <a href="#code-Ⅲ-57">Ⅲ-57</a> <a href="#code-Ⅲ-58">Ⅲ-58</a> <a href="#code-Ⅲ-59">Ⅲ-59</a> <a href="#code-Ⅲ-60">Ⅲ-60</a> <a href="#code-Ⅲ-61">Ⅲ-61</a> <a href="#code-Ⅲ-62">Ⅲ-62</a> <a href="#code-Ⅲ-63">Ⅲ-63</a> <a href="#code-Ⅲ-64">Ⅲ-64</a> <a href="#code-Ⅲ-65">Ⅲ-65</a> <a href="#code-Ⅲ-66">Ⅲ-66</a> <a href="#code-Ⅲ-67">Ⅲ-67</a> <a href="#code-Ⅲ-68">Ⅲ-68</a> <a href="#code-Ⅲ-69">Ⅲ-69</a> <a href="#code-Ⅲ-70">Ⅲ-70</a> <a href="#code-Ⅲ-71">Ⅲ-71</a> <a href="#code-Ⅲ-72">Ⅲ-72</a> <a href="#code-Ⅲ-73">Ⅲ-73</a> <a href="#code-Ⅲ-74">Ⅲ-74</a> <a href="#code-Ⅲ-75">Ⅲ-75</a> <a href="#code-Ⅲ-76">Ⅲ-76</a> <a href="#code-Ⅲ-77">Ⅲ-77</a></p>
+<h2 id="code-Ⅲ-55">code Ⅲ-55. <button class="copy">복사</button></h2><pre><code>from astropy.time import Time
 
 specific_time = Time(&quot;2017-01-01&quot;)
 
@@ -28,7 +28,7 @@ obj1 = Horizons(id = &#x27;199&#x27;,                # 199 = 수성
 print(&quot;type(obj1): &quot;, type(obj1))
 
 print(&quot;obj1: &quot;,obj1)</code></pre>
-<h2 id="code-56">code 56. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅲ-56">code Ⅲ-56. <button class="copy">복사</button></h2><pre><code>import numpy as np
 from astropy.time import Time, TimeDelta
 
 specific_time_str = &quot;2017-01-01&quot;
@@ -73,7 +73,7 @@ dts = [dt.iso for dt in
 
 print(&quot;len(dts) :&quot;, len(dts))
 print(&quot;dts :&quot;, dts)</code></pre>
-<h2 id="code-57">code 57. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅲ-57">code Ⅲ-57. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 fig = plt.figure(figsize=[4, 4])
 
@@ -94,7 +94,7 @@ plot = ax.scatter(0, 0,
                   s = 28**2,          # 점 크기는 지름의 제곱
                   edgecolors = None,
                   zorder = 10)        # 다른 것보다 앞에 그리기</code></pre>
-<h2 id="code-58">code 58. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅲ-58">code Ⅲ-58. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 # 검은 배경
 plt.style.use(&#x27;dark_background&#x27;)
@@ -118,7 +118,7 @@ plot = ax.scatter(0, 0,
                   s = 28**2,          # 점 크기는 지름의 제곱
                   edgecolors = None,
                   zorder = 10)</code></pre>
-<h2 id="code-59">code 59. <button class="copy">복사</button></h2><pre><code>from astropy.time import Time
+<h2 id="code-Ⅲ-59">code Ⅲ-59. <button class="copy">복사</button></h2><pre><code>from astropy.time import Time
 specific_time = Time(&quot;2017-01-01&quot;)
 
 from astroquery.jplhorizons import Horizons
@@ -137,7 +137,7 @@ print(&quot;obj1[&#x27;z&#x27;]: &quot;, obj1[&#x27;z&#x27;])
 print(&quot;obj1[&#x27;vx&#x27;]: &quot;, obj1[&#x27;vx&#x27;])
 print(&quot;obj1[&#x27;vy&#x27;]: &quot;, obj1[&#x27;vy&#x27;])
 print(&quot;obj1[&#x27;vz&#x27;]: &quot;, obj1[&#x27;vz&#x27;])</code></pre>
-<h2 id="code-60">code 60. <button class="copy">복사</button></h2><pre><code>from astropy.time import Time
+<h2 id="code-Ⅲ-60">code Ⅲ-60. <button class="copy">복사</button></h2><pre><code>from astropy.time import Time
 specific_time = Time(&quot;2017-01-01&quot;)
 
 import matplotlib.pyplot as plt
@@ -174,7 +174,7 @@ for i in range(4):
     # 행성 위에 이름
     ax.text(obj[&quot;x&quot;], obj[&quot;y&quot;]+0.1, names[i], zorder=1000, ha=&#x27;center&#x27;,
             fontsize=&#x27;large&#x27;)</code></pre>
-<h2 id="code-61">code 61. <button class="copy">복사</button></h2><pre><code>from astropy.time import Time
+<h2 id="code-Ⅲ-61">code Ⅲ-61. <button class="copy">복사</button></h2><pre><code>from astropy.time import Time
 specific_time = Time(&quot;2017-01-01&quot;)
 
 import matplotlib.pyplot as plt
@@ -205,7 +205,7 @@ import numpy as np
 # 위치 벡터 r(AU)
 r = np.array([np.double(obj[xi]) for xi in [&#x27;x&#x27;, &#x27;y&#x27;, &#x27;z&#x27;]], dtype=np.float64)
 r</code></pre>
-<h2 id="code-62">code 62. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅲ-62">code Ⅲ-62. <button class="copy">복사</button></h2><pre><code>import numpy as np
 from astropy.time import Time, TimeDelta
 
 start_time_text = &quot;2017-01-01&quot;
@@ -252,7 +252,7 @@ print(&quot;len(accs): {}&quot;.format(len(accs)))
 print(&quot;rs[5][:2]: {}&quot;.format(rs[5][:2]))
 print(&quot;rs[4]: {}&quot;.format(rs[4]))
 print(&quot;rs[5]: {}&quot;.format(rs[5]))</code></pre>
-<h2 id="code-63">code 63. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅲ-63">code Ⅲ-63. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 # 궤도(rs, xs, ys)와 날짜 목록(dts)은 앞에서 계산한 것을 그대로 씀
 plt.style.use(&#x27;dark_background&#x27;)
@@ -268,7 +268,7 @@ ax.text(obj[&quot;x&quot;], obj[&quot;y&quot;]+0.1,
 plot = ax.scatter(obj[&quot;x&quot;], obj[&quot;y&quot;], s=10**2, edgecolors=None, zorder=10)
 line, = ax.plot([], [], linewidth=1.4)
 timestamp = ax.text(.03, .94, &#x27;날짜: &#x27;, color=&#x27;w&#x27;, transform=ax.transAxes, fontsize=&#x27;x-large&#x27;)</code></pre>
-<h2 id="code-64">code 64. <button class="copy">복사</button></h2><pre><code>def animate(i):
+<h2 id="code-Ⅲ-64">code Ⅲ-64. <button class="copy">복사</button></h2><pre><code>def animate(i):
     plot.set_offsets(rs[i][:2])
     line.set_xdata(xs[:i])
     line.set_ydata(ys[:i])
@@ -277,7 +277,7 @@ timestamp = ax.text(.03, .94, &#x27;날짜: &#x27;, color=&#x27;w&#x27;, transfo
 
 from matplotlib.animation import FuncAnimation
 ani = FuncAnimation(fig, animate, frames=len(dts), blit=True)</code></pre>
-<h2 id="code-65">code 65. <button class="copy">복사</button></h2><pre><code>import matplotlib
+<h2 id="code-Ⅲ-65">code Ⅲ-65. <button class="copy">복사</button></h2><pre><code>import matplotlib
 from IPython.display import HTML
 
 # 애니메이션 설정(이 장의 모든 애니메이션에 씀)
@@ -289,9 +289,9 @@ print(f&quot;애니메이션 용량 한도: {matplotlib.rcParams[&#x27;animation
 print(f&quot;애니메이션 HTML 형식: {matplotlib.rcParams[&#x27;animation.html&#x27;]}&quot;)
 
 HTML(ani.to_jshtml())</code></pre>
-<h2 id="code-66">code 66. <button class="copy">복사</button></h2><pre><code># MP4 동영상으로 넣기(ffmpeg 실행 파일 필요)
+<h2 id="code-Ⅲ-66">code Ⅲ-66. <button class="copy">복사</button></h2><pre><code># MP4 동영상으로 넣기(ffmpeg 실행 파일 필요)
 HTML(ani.to_html5_video())</code></pre>
-<h2 id="code-67">code 67. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅲ-67">code Ⅲ-67. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 from astropy.time import Time
 from astroquery.jplhorizons import Horizons
@@ -386,7 +386,7 @@ for i, nasaid in enumerate(ids):
 
 ss.run(sim_duration)  # 2년 치 궤도를 미리 계산
 plt.show()</code></pre>
-<h2 id="code-68">code 68. <button class="copy">복사</button></h2><pre><code># 프레임 i: 미리 계산한 궤도에서 i번째 날을 그림
+<h2 id="code-Ⅲ-68">code Ⅲ-68. <button class="copy">복사</button></h2><pre><code># 프레임 i: 미리 계산한 궤도에서 i번째 날을 그림
 def animate(i):
     return ss.draw(i)
 
@@ -398,11 +398,11 @@ ani = animation.FuncAnimation(fig,
                               frames=sim_duration,  # 프레임 수 = 시뮬레이션 일수
                               blit=True,
                               interval=20)          # ms</code></pre>
-<h2 id="code-69">code 69. <button class="copy">복사</button></h2><pre><code># 애니메이션 설정은 앞에서 정한 것을 그대로 씀
+<h2 id="code-Ⅲ-69">code Ⅲ-69. <button class="copy">복사</button></h2><pre><code># 애니메이션 설정은 앞에서 정한 것을 그대로 씀
 HTML(ani.to_jshtml())</code></pre>
-<h2 id="code-70">code 70. <button class="copy">복사</button></h2><pre><code># MP4 동영상으로 넣기(ffmpeg 실행 파일 필요)
+<h2 id="code-Ⅲ-70">code Ⅲ-70. <button class="copy">복사</button></h2><pre><code># MP4 동영상으로 넣기(ffmpeg 실행 파일 필요)
 HTML(ani.to_html5_video())</code></pre>
-<h2 id="code-71">code 71. <button class="copy">복사</button></h2><pre><code>fname = &#x27;Solar_System_2D_Animation_Class_Based&#x27;
+<h2 id="code-Ⅲ-71">code Ⅲ-71. <button class="copy">복사</button></h2><pre><code>fname = &#x27;Solar_System_2D_Animation_Class_Based&#x27;
 
 try:
     # MP4 저장(ffmpeg 필요)
@@ -425,7 +425,7 @@ except Exception as e:
             print(f&quot;HTML 파일이 저장되었습니다: {proj_dir}/{fname}.html&quot;)
         except Exception as e3:
             print(f&quot;HTML 저장 중 오류 발생: {e3}&quot;)</code></pre>
-<h2 id="code-72">code 72. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅲ-72">code Ⅲ-72. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 from astropy.time import Time
 from astroquery.jplhorizons import Horizons
@@ -468,7 +468,7 @@ for i, nasaid in enumerate(ids):
 ss.run(sim_duration)  # 2년 치 궤도를 미리 계산
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-73">code 73. <button class="copy">복사</button></h2><pre><code># 프레임 i: 미리 계산한 궤도에서 i번째 날을 그림
+<h2 id="code-Ⅲ-73">code Ⅲ-73. <button class="copy">복사</button></h2><pre><code># 프레임 i: 미리 계산한 궤도에서 i번째 날을 그림
 def animate(i):
     return ss.draw(i)
 
@@ -477,16 +477,16 @@ from matplotlib.animation import FuncAnimation
 ani = FuncAnimation(fig, animate,
                     frames=sim_duration,  # 프레임 수 = 시뮬레이션 일수(2년)
                     blit=True)</code></pre>
-<h2 id="code-74">code 74. <button class="copy">복사</button></h2><pre><code># 애니메이션 설정은 앞에서 정한 것을 그대로 씀
+<h2 id="code-Ⅲ-74">code Ⅲ-74. <button class="copy">복사</button></h2><pre><code># 애니메이션 설정은 앞에서 정한 것을 그대로 씀
 HTML(ani.to_jshtml())</code></pre>
-<h2 id="code-75">code 75. <button class="copy">복사</button></h2><pre><code># MP4 동영상으로 넣기(ffmpeg 실행 파일 필요)
+<h2 id="code-Ⅲ-75">code Ⅲ-75. <button class="copy">복사</button></h2><pre><code># MP4 동영상으로 넣기(ffmpeg 실행 파일 필요)
 HTML(ani.to_html5_video())</code></pre>
-<h2 id="code-76">code 76. <button class="copy">복사</button></h2><pre><code>fname = &#x27;Solar_System_3D_Animation_Class_Based&#x27;
+<h2 id="code-Ⅲ-76">code Ⅲ-76. <button class="copy">복사</button></h2><pre><code>fname = &#x27;Solar_System_3D_Animation_Class_Based&#x27;
 
 ani.save(f&#x27;{proj_dir}/{fname}.mp4&#x27;, fps=60, dpi=150,
          writer=&#x27;ffmpeg&#x27;)  # ffmpeg 필요
 print(f&quot;동영상이 저장되었습니다: {proj_dir}/{fname}.mp4&quot;)</code></pre>
-<h2 id="code-77">code 77. <button class="copy">복사</button></h2><pre><code>ani.save(f&#x27;{proj_dir}/{fname}.gif&#x27;,
+<h2 id="code-Ⅲ-77">code Ⅲ-77. <button class="copy">복사</button></h2><pre><code>ani.save(f&#x27;{proj_dir}/{fname}.gif&#x27;,
             fps=30,           # MP4보다 낮춰 용량 줄이기
             dpi=100,
             writer=&#x27;pillow&#x27;)

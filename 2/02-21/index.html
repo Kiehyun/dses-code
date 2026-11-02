@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>II-01. 측정과 오차 다루기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/02-21/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-21">21</a> <a href="#code-22">22</a> <a href="#code-23">23</a> <a href="#code-24">24</a> <a href="#code-25">25</a> <a href="#code-26">26</a></p>
-<h2 id="code-21">code 21. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<p class="jump"><a href="#code-Ⅱ-1">Ⅱ-1</a> <a href="#code-Ⅱ-2">Ⅱ-2</a> <a href="#code-Ⅱ-3">Ⅱ-3</a> <a href="#code-Ⅱ-4">Ⅱ-4</a> <a href="#code-Ⅱ-5">Ⅱ-5</a> <a href="#code-Ⅱ-6">Ⅱ-6</a></p>
+<h2 id="code-Ⅱ-1">code Ⅱ-1. <button class="copy">복사</button></h2><pre><code>import numpy as np
 
 rng = np.random.default_rng(0)          # 결과를 재현할 수 있게 씨앗 고정
 
@@ -22,7 +22,7 @@ SIGMA = 0.05         # 한 번 잴 때의 우연오차 크기(초)
 measurements = rng.normal(TRUE_PERIOD, SIGMA, size=20)   # 20번 측정
 print(&quot;측정값 (앞 5개):&quot;, np.round(measurements[:5], 3))
 print(f&quot;측정 횟수 : {measurements.size}회&quot;)</code></pre>
-<h2 id="code-22">code 22. <button class="copy">복사</button></h2><pre><code>mean = measurements.mean()              # 평균
+<h2 id="code-Ⅱ-2">code Ⅱ-2. <button class="copy">복사</button></h2><pre><code>mean = measurements.mean()              # 평균
 std = measurements.std(ddof=1)          # 표준편차(표본)
 sem = std / np.sqrt(measurements.size)  # 표준오차
 
@@ -31,7 +31,7 @@ print(f&quot;표준편차 : {std:.4f} 초   (측정 하나의 흩어짐)&quot;)
 print(f&quot;표준오차 : {sem:.4f} 초   (평균의 오차)&quot;)
 print(f&quot;결과     : {mean:.3f} +/- {sem:.3f} 초&quot;)
 print(f&quot;참값과의 차이: {abs(mean - TRUE_PERIOD):.4f} 초&quot;)</code></pre>
-<h2 id="code-23">code 23. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅱ-3">code Ⅱ-3. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 counts = np.arange(2, 201)                          # 측정 횟수 2회부터 200회까지
 big_sample = rng.normal(TRUE_PERIOD, SIGMA, size=counts.max())
@@ -48,7 +48,7 @@ ax.legend()
 ax.grid(alpha=0.3)
 du.save_figure(fig, os.path.join(proj_dir, &quot;standard_error&quot;))
 plt.show()</code></pre>
-<h2 id="code-24">code 24. <button class="copy">복사</button></h2><pre><code>L, L_err = 1.000, 0.002  # 진자 길이 (m)
+<h2 id="code-Ⅱ-4">code Ⅱ-4. <button class="copy">복사</button></h2><pre><code>L, L_err = 1.000, 0.002  # 진자 길이 (m)
 T, T_err = 2.000, 0.011  # 주기 (초)
 
 g = 4 * np.pi**2 * L / T**2        # 중력가속도
@@ -61,7 +61,7 @@ g_err = g * rel_g
 print(f&quot;길이 상대오차 : {rel_L*100:.2f}%&quot;)
 print(f&quot;주기 상대오차 : {rel_T*100:.2f}%  (제곱이라 {2*rel_T*100:.2f}%로 반영)&quot;)
 print(f&quot;g = {g:.2f} +/- {g_err:.2f} m/s^2  (상대오차 {rel_g*100:.2f}%)&quot;)</code></pre>
-<h2 id="code-25">code 25. <button class="copy">복사</button></h2><pre><code>N = 100_000
+<h2 id="code-Ⅱ-5">code Ⅱ-5. <button class="copy">복사</button></h2><pre><code>N = 100_000
 L_samples = rng.normal(L, L_err, N)                  # 길이를 N번 뽑고
 T_samples = rng.normal(T, T_err, N)                  # 주기도 N번 뽑아
 g_samples = 4 * np.pi**2 * L_samples / T_samples**2  # 그때마다 g 계산
@@ -80,7 +80,7 @@ ax.set_title(&quot;오차 전파 공식과 모의실험 비교&quot;)
 ax.legend()
 du.save_figure(fig, os.path.join(proj_dir, &quot;error_propagation&quot;))
 plt.show()</code></pre>
-<h2 id="code-26">code 26. <button class="copy">복사</button></h2><pre><code>def format_result(value, error, sig=1):
+<h2 id="code-Ⅱ-6">code Ⅱ-6. <button class="copy">복사</button></h2><pre><code>def format_result(value, error, sig=1):
     &quot;&quot;&quot;측정값과 오차를 자릿수를 맞춰 보기 좋게 적는다.&quot;&quot;&quot;
     if error &lt;= 0:
         return f&quot;{value:g}&quot;

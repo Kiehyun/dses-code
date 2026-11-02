@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>I-03. AI 코딩 도우미로 데이터 분석하기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/01-23/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-12">12</a> <a href="#code-13">13</a> <a href="#code-14">14</a> <a href="#code-15">15</a></p>
-<h2 id="code-12">code 12. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<p class="jump"><a href="#code-Ⅰ-12">Ⅰ-12</a> <a href="#code-Ⅰ-13">Ⅰ-13</a> <a href="#code-Ⅰ-14">Ⅰ-14</a> <a href="#code-Ⅰ-15">Ⅰ-15</a></p>
+<h2 id="code-Ⅰ-12">code Ⅰ-12. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import pandas as pd
 
 rng = np.random.default_rng(0)                       # 같은 난수가 나오도록 씨앗 고정
@@ -28,7 +28,7 @@ df = pd.DataFrame({
     &quot;tmin&quot;: tmean - drange / 2 + rng.normal(0, 2.0, len(days)),
 }, index=days)
 df.head()</code></pre>
-<h2 id="code-13">code 13. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅰ-13">code Ⅰ-13. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 ai = df.copy()
 ai[&quot;month&quot;] = ai.index.month.astype(str) + &quot;월&quot;           # 1월, 2월, … 을 글자로 만든다
@@ -42,13 +42,13 @@ ax.set_ylabel(&quot;기온 (°C)&quot;)
 ax.set_title(&quot;AI가 처음 그린 그래프&quot;)
 plt.show()
 print(list(monthly.index))</code></pre>
-<h2 id="code-14">code 14. <button class="copy">복사</button></h2><pre><code>expected = [f&quot;{m}월&quot; for m in range(1, 13)]
+<h2 id="code-Ⅰ-14">code Ⅰ-14. <button class="copy">복사</button></h2><pre><code>expected = [f&quot;{m}월&quot; for m in range(1, 13)]
 print(&quot;월 순서가 1월~12월인가? &quot;, list(monthly.index) == expected)
 
 july_direct = df.loc[df.index.month == 7, &quot;tmax&quot;].mean()     # 다른 방법으로 다시 계산
 print(&quot;7월 평균 최고기온이 같은가?&quot;,
       np.isclose(july_direct, monthly.loc[&quot;7월&quot;, &quot;tmax&quot;]))</code></pre>
-<h2 id="code-15">code 15. <button class="copy">복사</button></h2><pre><code>import os
+<h2 id="code-Ⅰ-15">code Ⅰ-15. <button class="copy">복사</button></h2><pre><code>import os
 
 fixed = (df.assign(range=df[&quot;tmax&quot;] - df[&quot;tmin&quot;])
          .groupby(df.index.month)[[&quot;tmax&quot;, &quot;tmin&quot;, &quot;range&quot;]].mean())

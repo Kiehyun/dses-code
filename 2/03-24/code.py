@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | III-04. FITS 파일 다루기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 93.
+# %% code Ⅲ-38.
 # 파일 ID와 저장 경로를 리스트로 정의
 files = [
     ('1V7cWf_scSRdDclb-ciz5CU6dajDIEUyk', 'm42-001L.fit'),
@@ -24,11 +24,11 @@ for file_id, output_path in files:
     du.download(f"https://docs.google.com/uc?export=download&id={file_id}",
                 proj_dir / output_path)
 
-# %% code 94.
+# %% code Ⅲ-39.
 fpaths = du.list_files(proj_dir, "fit*")
 print(f"fpaths[0]: {fpaths[0]}")
 
-# %% code 95.
+# %% code Ⅲ-40.
 from pathlib import Path
 from astropy.io import fits
 
@@ -42,7 +42,7 @@ print("hdul :", hdul)
 print("len(hdul) :", len(hdul))
 print("type(hdul[0]) :", type(hdul[0]))
 
-# %% code 96.
+# %% code Ⅲ-41.
 print("type(hdul[0].header) :", type(hdul[0].header))
 print("hdul[0].header :", f"헤더 카드 {len(hdul[0].header)}개")
 
@@ -57,7 +57,7 @@ print("hdul[0].data.dtype :", hdul[0].data.dtype)
 print("hdul[0].data.shape :", hdul[0].data.shape)
 print("hdul[0].data :", hdul[0].data)
 
-# %% code 97.
+# %% code Ⅲ-42.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -78,7 +78,7 @@ fig.colorbar(im2, ax=axes[1], fraction=0.035, pad=0.04)
 plt.tight_layout()
 plt.show()
 
-# %% code 98.
+# %% code Ⅲ-43.
 from astropy.visualization import (MinMaxInterval, SqrtStretch, LogStretch,
                                    ImageNormalize)
 
@@ -107,13 +107,13 @@ fig.colorbar(im1, ax=axs[1], fraction=0.035, pad=0.04)
 plt.tight_layout()
 plt.show()
 
-# %% code 99.
+# %% code Ⅲ-44.
 from warnings import warn
 from astropy.visualization import (
     ImageNormalize, LinearStretch, ZScaleInterval, simple_norm,
 )
 
-# %% code 100.
+# %% code Ⅲ-45.
 def znorm(image, stretch=LinearStretch(), **kwargs):
     """
     이미지에 ZScale 간격과 스트레칭을 적용한 정규화 객체를 생성합니다.
@@ -135,7 +135,7 @@ def znorm(image, stretch=LinearStretch(), **kwargs):
     return ImageNormalize(image, interval=ZScaleInterval(**kwargs),
                           stretch=stretch)
 
-# %% code 101.
+# %% code Ⅲ-46.
 def zimshow(
     ax,
     image,
@@ -176,7 +176,7 @@ def zimshow(
     )
     return im
 
-# %% code 102.
+# %% code Ⅲ-47.
 def norm_imshow(
     ax,
     data,
@@ -276,7 +276,7 @@ def norm_imshow(
         im = ax.imshow(data, origin=origin, norm=norm, **kwargs)
     return im
 
-# %% code 103.
+# %% code Ⅲ-48.
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 2.5),
                        sharex=False, sharey=False, gridspec_kw=None)
 
@@ -297,7 +297,7 @@ fig.colorbar(im1, ax = axs[1], fraction=0.035, pad=0.04)
 
 plt.tight_layout()
 
-# %% code 104.
+# %% code Ⅲ-49.
 print("fpaths[2]", (fpaths[2]))
 hdul2 = fits.open(str(fpaths[2]))
 
@@ -315,7 +315,7 @@ fig.colorbar(im0, ax = axs[0], fraction=0.031, pad=0.04)
 fig.colorbar(im1, ax = axs[1], fraction=0.031, pad=0.04)
 plt.tight_layout()
 
-# %% code 105.
+# %% code Ⅲ-50.
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.nddata import Cutout2D
@@ -388,7 +388,7 @@ plt.colorbar(im31, ax=ax31, fraction=0.0455, pad=0.04)
 plt.tight_layout()
 plt.show()
 
-# %% code 106.
+# %% code Ⅲ-51.
 import matplotlib.patches as patches
 from astropy.nddata import Cutout2D
 import textwrap
@@ -441,11 +441,11 @@ def plot_image_with_cutouts(fpath, location, cutsizes=101):
 # 함수 사용 예
 # plot_image_with_cutouts('path_to_your_fits_file.fits', location)
 
-# %% code 107.
+# %% code Ⅲ-52.
 # 함수 사용 예
 plot_image_with_cutouts(fpaths[0], 500)
 
-# %% code 108.
+# %% code Ⅲ-53.
 from astropy.modeling.functional_models import Moffat1D, Gaussian1D
 from scipy.special import gamma as G
 import numpy as np
@@ -492,11 +492,11 @@ ax1.legend(*ax2.get_legend_handles_labels(), fontsize=8, loc='upper right')   # 
 plt.tight_layout()
 plt.show()
 
-# %% code 109.
+# %% code Ⅲ-54.
 # 함수 사용 예
 plot_image_with_cutouts(fpaths[0], 700)
 
-# %% code 110.
+# %% code Ⅲ-55.
 import matplotlib.pyplot as plt
 hdul = fits.open(str(fpaths[0]))
 data = hdul[0].data
@@ -513,7 +513,7 @@ plt.grid(True, which='both')  # 그리드 추가
 plt.minorticks_on()           # 마이너 틱 추가
 plt.show()
 
-# %% code 111.
+# %% code Ⅲ-56.
 import matplotlib.pyplot as plt
 
 def plot_row_pixels(fpath, row_index, col_center, width):
@@ -552,7 +552,7 @@ width = 50        # 가로 화소 너비
 
 plot_row_pixels(fpaths[0], row_number, col_center, width)
 
-# %% code 112.
+# %% code Ⅲ-57.
 def plot_row_pixels_fwhm(fpath, row_number, col_center, width):
     """
     FITS 파일에서 한 행의 화소값을 꺼내 앞뒤 width 화소만 그리고,
@@ -612,7 +612,7 @@ def plot_row_pixels_fwhm(fpath, row_number, col_center, width):
 
 plot_row_pixels_fwhm(fpaths[0], row_number, col_center, width)
 
-# %% code 113.
+# %% code Ⅲ-58.
 import matplotlib.pyplot as plt
 
 def plot_row_pixels_fwhm_from_background(fpath, row_number, col_center, width):
@@ -676,13 +676,13 @@ def plot_row_pixels_fwhm_from_background(fpath, row_number, col_center, width):
 
 plot_row_pixels_fwhm_from_background(fpaths[0], row_number, col_center, width)
 
-# %% code 114.
+# %% code Ⅲ-59.
 fpath = Path(fpaths[0])                     # 아래 그림 주석의 파일 이름
 hdul = fits.open(str(fpath))
 
 FWHM = 5
 
-# %% code 115.
+# %% code Ⅲ-60.
 from photutils.segmentation import detect_threshold
 thresh_snr = detect_threshold(data=hdul[0].data, n_sigma=3)   # 배경 + 3σ (절대 화소값)
 print('type(thresh_snr) :', type(thresh_snr))
@@ -690,7 +690,7 @@ print('thresh_snr.shape :', thresh_snr.shape)
 print('detect_threshold', thresh_snr)
 thresh_snr = thresh_snr[0][0]
 
-# %% code 116.
+# %% code Ⅲ-61.
 from astropy.stats import sigma_clipped_stats
 
 avg, med, std = sigma_clipped_stats(hdul[0].data)  # 기본값은 3σ, 5회 반복
@@ -700,7 +700,7 @@ thresh = 5.*std                                     # 배경 위 5σ
 print("thresh (배경 위 5σ) :", thresh)
 print("detect_threshold − 배경 (배경 위 3σ) :", thresh_snr - med)
 
-# %% code 117.
+# %% code Ⅲ-62.
 from photutils.detection import DAOStarFinder
 
 DAOfind = DAOStarFinder(
@@ -718,27 +718,27 @@ if "xcentroid" in DAOfound.colnames:   # photutils 3.0 전 판이면 열 이름�
 print("len(DAOfound) :",len(DAOfound))
 DAOfound
 
-# %% code 118.
+# %% code Ⅲ-63.
 print("type(DAOfound) :", type(DAOfound))
 print("DAOfound :", DAOfound)
 
-# %% code 119.
+# %% code Ⅲ-64.
 print(f"DAOfound.colnames : {DAOfound.colnames}")
 print(f"(type(DAOfound['x_centroid']) :", type(DAOfound['x_centroid']))
 print(f"DAOfound['x_centroid'] : {DAOfound['x_centroid']}")
 
-# %% code 120.
+# %% code Ⅲ-65.
 df = DAOfound.to_pandas()
 print(type(df))
 df
 
-# %% code 121.
+# %% code Ⅲ-66.
 pos = np.transpose((DAOfound['x_centroid'], DAOfound['y_centroid']))
 print(f"len(pos): {len(pos)}")
 print(f"pos[0]: {pos[0]}")
 pos  # DAOfound로 찾아낸 별의 화소 좌표
 
-# %% code 122.
+# %% code Ⅲ-67.
 from photutils.aperture import CircularAperture as CAp
 
 ap = CAp(pos, r=FWHM*4)
@@ -774,11 +774,11 @@ plt.colorbar(im1, ax=axs, fraction=0.0455, pad=0.04)
 plt.tight_layout()
 plt.show()
 
-# %% code 123.
+# %% code Ⅲ-68.
 DAOfound.sort(['flux'], reverse=True)
 DAOfound
 
-# %% code 124.
+# %% code Ⅲ-69.
 from astropy.nddata import Cutout2D
 
 def plot_star_cutout(data, daofound, idx, cutsize=51):
@@ -816,7 +816,7 @@ def plot_star_cutout(data, daofound, idx, cutsize=51):
 # 사용 예(hdul과 DAOfound가 준비되어 있다고 가정)
 plot_star_cutout(hdul[0].data, DAOfound, 0)  # 첫 번째 별(idx=0)의 잘라낸 이미지 그리기
 
-# %% code 125.
+# %% code Ⅲ-70.
 import matplotlib.gridspec as gridspec
 
 def plot_star_cutouts(data, daofound, star_indices, cutsize=51):
@@ -860,7 +860,7 @@ def plot_star_cutouts(data, daofound, star_indices, cutsize=51):
 # 예시 사용법 (hdul과 DAOfound가 있다고 가정)
 plot_star_cutouts(hdul[0].data, DAOfound, [0, 100, 200, 250])  # 0 · 100 · 200 · 250번 별
 
-# %% code 126.
+# %% code Ⅲ-71.
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.nddata import Cutout2D
@@ -905,7 +905,7 @@ def plot_3D_star_cutout(data, daofound, idx, cutsize=31):
 # 사용 예(hdul과 DAOfound가 준비되어 있다고 가정)
 plot_3D_star_cutout(hdul[0].data, DAOfound, 0)  # 첫 번째 별(idx=0)의 잘라낸 이미지 그리기
 
-# %% code 127.
+# %% code Ⅲ-72.
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.nddata import Cutout2D
@@ -950,7 +950,7 @@ def plot_3D_star_cutouts(data, daofound, star_indices, cutsize=31):
 # 사용 예(hdul과 DAOfound가 준비되어 있다고 가정)
 plot_3D_star_cutouts(hdul[0].data, DAOfound, [0, 1, 2, 3])
 
-# %% code 128.
+# %% code Ⅲ-73.
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.nddata import Cutout2D
@@ -997,7 +997,7 @@ def plot_3d_surfaces(data, DAOfound, sky, cutsize=31):
 # 함수 사용 예
 plot_3d_surfaces(hdul[0].data, DAOfound, sky=med)
 
-# %% code 129.
+# %% code Ⅲ-74.
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.nddata import Cutout2D

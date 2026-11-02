@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | III-11. 소행성 관측 계획 수립하기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 322.
+# %% code Ⅲ-267.
 import pandas as pd
 
 def classify_asteroid(a, e):
@@ -51,7 +51,7 @@ df_orbit["Q(au)"] = (df_orbit["a(au)"] * (1 + df_orbit["e"])).round(3)
 df_orbit["group"] = [classify_asteroid(a, e) for a, e in zip(df_orbit["a(au)"], df_orbit["e"])]
 df_orbit
 
-# %% code 323.
+# %% code Ⅲ-268.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -76,7 +76,7 @@ ax.set_title("궤도 요소에 따른 소행성 분류")
 ax.legend(fontsize=8, loc="upper right")
 plt.show()
 
-# %% code 324.
+# %% code Ⅲ-269.
 from datetime import datetime, timedelta, timezone
 from astropy.time import Time
 
@@ -97,13 +97,13 @@ print([d.strftime("%m-%d") for d in datetime_range(datetime(2024, 12, 1),
                                                    datetime(2024, 12, 4),
                                                    timedelta(days=1))])
 
-# %% code 325.
+# %% code Ⅲ-270.
 t = Time(dt_utc, location=("127d", "37d"))
 print("세계시      :", t.utc.iso)
 print("줄리안일    :", t.jd)
 print("평균 항성시 :", t.sidereal_time("mean"))
 
-# %% code 326.
+# %% code Ⅲ-271.
 #############################################
 # 변수
 mpc_code='P64' # 관측 위치: 경기과학고 천문대, 수원 [코드 P64]
@@ -134,7 +134,7 @@ vmag_max=13
 list_num=100
 sort='trans'
 
-# %% code 327.
+# %% code Ⅲ-272.
 # API 주소 정의
 url = 'https://ssd-api.jpl.nasa.gov/sbwobs.api'
 
@@ -144,18 +144,18 @@ url += f"&vmag-max={vmag_max}&vmag-min={vmag_min}&optical=true&fmt-ra-dec=true&m
 
 print("url :", url)
 
-# %% code 328.
+# %% code Ⅲ-273.
 import json
 import requests
 
 response = requests.get(url, timeout=60)
 data = response.json()          # JSON 응답을 파이썬 딕셔너리로
 
-# %% code 329.
+# %% code Ⅲ-274.
 print("type(data) :", type(data))
 print("data.keys() :", list(data.keys()))
 
-# %% code 330.
+# %% code Ⅲ-275.
 print(data['obs_constraints'])
 print(data['sb_constraints'])
 print(data['fields'])
@@ -165,7 +165,7 @@ print(len(data['fields']))
 print(len(data['data'][0]))
 print(len(data['data']))          # 행(소행성) 수
 
-# %% code 331.
+# %% code Ⅲ-276.
 import pandas as pd
 
 df = pd.DataFrame.from_dict(data['data'])
@@ -174,10 +174,10 @@ df['OBSdate(UT)'] = obs_date
 print("len(df) :", len(df))
 df.head()                         # 앞의 5행만 표시
 
-# %% code 332.
+# %% code Ⅲ-277.
 df.to_csv(str(proj_dir/ f'asteroid_{obs_date}.csv'))
 
-# %% code 333.
+# %% code Ⅲ-278.
 url_neo = ("https://ssd-api.jpl.nasa.gov/sbwobs.api"
            f"?sb-kind=a&sb-group=neo&mpc-code={mpc_code}&obs-time={obs_datetime}"
            "&elev-min=30&vmag-max=18&output-sort=vmag&maxoutput=20")
@@ -191,7 +191,7 @@ if data_neo.get("data"):
 else:
     print("조건에 맞는 근지구소행성이 없습니다:", data_neo.get("message", ""))
 
-# %% code 334.
+# %% code Ⅲ-279.
 # 여러 날의 관측 후보 목록을 하루 간격으로 받아 CSV로 저장
 #############################################
 # 변수
@@ -250,7 +250,7 @@ print("len(df_all) :", len(df_all))
 df_all.to_csv(str(proj_dir/f"asteroid_{dts[0].strftime('%Y%m%d')}-{dts[-1].strftime('%Y%m%d')}.csv"))
 df_all.head()
 
-# %% code 335.
+# %% code Ⅲ-280.
 #print("df :", df)
 #print("df['Full name'] :", df['Full name'])
 print("df['Full name'][0] :", df['Full name'][0])
@@ -263,10 +263,10 @@ asteroid_id = df['Full name'][0].split(" ")[0]   # 이름 앞의 번호만 잘�
 print("asteroid_id :", asteroid_id)
 obs_date = df['OBSdate(UT)'][0]
 
-# %% code 336.
+# %% code Ⅲ-281.
 from astroquery.mpc import MPC
 
-# %% code 337.
+# %% code Ⅲ-282.
 t_start = Time(f"{obs_date[:4]}-{obs_date[4:6]}-{obs_date[6:]} 09:00:00")   # KST 18시 = UTC 09시
 eph = MPC.get_ephemeris(asteroid_id, location='P64', start=t_start, number=15,
                         ra_format={'sep': ':', 'unit': 'hourangle',
@@ -275,10 +275,10 @@ eph = MPC.get_ephemeris(asteroid_id, location='P64', start=t_start, number=15,
 print("type(eph): ", type(eph))
 print("eph: ", eph)
 
-# %% code 338.
+# %% code Ⅲ-283.
 print(f"Proper motion: {eph['Proper motion'].quantity.to('arcmin/h').max():.03f}")
 
-# %% code 339.
+# %% code Ⅲ-284.
 from astropy.coordinates import SkyCoord, AltAz, get_sun, get_body
 import matplotlib.dates as mdates
 
@@ -315,7 +315,7 @@ i_max = int(np.argmax(aa_ast.alt.deg))
 print(f"가장 높을 때: {kst(t_eph)[i_max]:%m-%d %H:%M} KST, 고도 {aa_ast.alt.deg[i_max]:.1f}°, "
       f"방위 {aa_ast.az.deg[i_max]:.1f}°")
 
-# %% code 340.
+# %% code Ⅲ-285.
 df_eph = eph.to_pandas()
 df_eph['Asteroid ID'] = asteroid_id
 
@@ -323,7 +323,7 @@ df_eph['Asteroid name'] = df['Full name'][0]
 df_eph.to_csv(str(proj_dir/ f'asteroid_{asteroid_id}.csv'))
 df_eph
 
-# %% code 341.
+# %% code Ⅲ-286.
 import re
 
 n_eph = 5                        # 책에서는 앞의 5개만(전체는 len(df))

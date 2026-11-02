@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | II-01. 물리량 계산하기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 1.
+# %% code Ⅱ-1.
 from pint import UnitRegistry
 u = UnitRegistry()
 print("type(u):", type(u))
@@ -10,7 +10,7 @@ print("type(distance)", type(distance))
 print("distance", distance)
 print("dir(distance):", dir(distance))
 
-# %% code 2.
+# %% code Ⅱ-2.
 print("distance.magnitude:", distance.magnitude)
 print("distance.units:", distance.units)
 print("distance.dimensionality:", distance.dimensionality)
@@ -19,7 +19,7 @@ print(f'distance**2:~P: {distance**2:~P}')   # 단위 약어
 print(f'distance**2:~L: {distance**2:~L}')   # LaTeX 형식
 print(f'distance**2:~H : {distance**2:~H}')  # HTML 형식
 
-# %% code 3.
+# %% code Ⅱ-3.
 h = 6.626e-34 * u.J * u.s      # 플랑크 상수
 c = 3.0e+8 * u.m / u.s         # 광속
 k = 1.38e-23 * u.J / u.K       # 볼츠만 상수
@@ -36,7 +36,7 @@ average_velocity = distance / time
 print(f'average_velocity.to(u.cm/u.s): {average_velocity.to(u.cm/u.s)}')
 print(f'average_velocity.to(u.km/u.s): {average_velocity.to(u.km/u.s)}')
 
-# %% code 4.
+# %% code Ⅱ-4.
 length1 = 15 * u.meter
 length2 = 300 * u.centimeter
 time1 = 10 * u.second
@@ -53,7 +53,7 @@ try:
 except Exception as e:
     print("오류 (단위 불일치):", e)
 
-# %% code 5.
+# %% code Ⅱ-5.
 import scipy.constants as const
 constR1 = const.physical_constants["molar gas constant"]  # 기체 상수(값, 단위, 불확도)
 print("type(constR1):", type(constR1))
@@ -67,7 +67,7 @@ print("solar_luminosity:", solar_luminosity)
 # scipy.constants에서 값을 바로 가져오기
 print(f"천문단위(AU): {const.au} m")
 
-# %% code 6.
+# %% code Ⅱ-6.
 import astropy.units as u
 distance = 8 * u.m
 print("type(distance):{}".format(type(distance)))
@@ -78,13 +78,13 @@ average_velocity = distance / time
 print("type(average_velocity):{}".format(type(average_velocity)))
 print("average_velocity:{}".format(average_velocity))
 
-# %% code 7.
+# %% code Ⅱ-7.
 print(f'distance.value:0.1f: {distance.value:.1f}, distance.unit: {distance.unit}')
 print(f'distance.value:0.8f:{distance.value:0.8f}, distance.unit:fits: {distance.unit:fits}')
 print(f'distance.value:0.8f:{distance.value:0.8f}, distance.unit:cds: {distance.unit:cds}')
 print(f'distance.value:0.2f:{distance.value:0.2f}, distance.unit:latex: {distance.unit:latex}')
 
-# %% code 8.
+# %% code Ⅱ-8.
 h = 6.626e-34 * u.J * u.s                  # 플랑크 상수
 c = 3.0e+8  * u.m / u.s                    # 광속
 k = 1.38e-23 * u.J / u.K                   # 볼츠만 상수
@@ -106,7 +106,7 @@ print(f'낙하시간: {fall_time}')
 print(f'낙하시간 (분): {fall_time.to(u.minute)}')
 print(f'낙하시간 (밀리초): {fall_time.to(u.millisecond)}')
 
-# %% code 9.
+# %% code Ⅱ-9.
 import astropy.constants as const
 print("const.h:{}".format(const.h))
 print("const.c:{}".format(const.c))
@@ -120,7 +120,7 @@ print("const.R_earth:{}".format(const.R_earth))  # 지구 반지름
 print("const.au:{}".format(const.au))            # 천문단위(지구–태양 평균 거리)
 print("const.pc:{}".format(const.pc))            # 파섹
 
-# %% code 10.
+# %% code Ⅱ-10.
 from metpy.units import units as u
 
 length = 10 * u.meter
@@ -147,7 +147,7 @@ try:
 except Exception as e:
     print("오류 (단위 불일치):", e)
 
-# %% code 11.
+# %% code Ⅱ-11.
 # 수치(magnitude)와 단위(units) 분리
 print("length.magnitude:", length.magnitude)
 print("length.units:", length.units)
@@ -164,7 +164,7 @@ print(f"speed = {speed.magnitude:.2f} [{speed.units}]")
 print(f"total_length = {total_length.magnitude} {total_length.units}")
 print(f"area = {area.magnitude} {area.units}")
 
-# %% code 12.
+# %% code Ⅱ-12.
 from metpy.constants import Rd, g, Cp_d, epsilon
 
 print(f"건조공기 기체상수 Rd: {Rd}")

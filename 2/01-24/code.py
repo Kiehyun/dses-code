@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | I-04. 코딩 에이전트로 분석 프로젝트 하기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 16.
+# %% code Ⅰ-16.
 from pathlib import Path
 
 guide = '''# 프로젝트 지침 — 우리 학교 기상 관측 데이터 분석
@@ -36,7 +36,7 @@ print((proj_dir / "AGENTS.md").read_text(encoding="utf-8"))
 print("--- CLAUDE.md ---")
 print((proj_dir / "CLAUDE.md").read_text(encoding="utf-8"))
 
-# %% code 17.
+# %% code Ⅰ-17.
 import json
 
 def check_notebook(path):
@@ -60,7 +60,7 @@ if nb_paths:
 else:
     print("이 폴더에는 노트북 파일(.ipynb)이 없습니다.")
 
-# %% code 18.
+# %% code Ⅰ-18.
 import pandas as pd
 
 folder = Path.cwd()                                  # 점검할 폴더(지금 노트북이 있는 곳)
@@ -74,7 +74,7 @@ if nb_paths:
 else:
     print(f"{folder.name} 폴더에는 노트북 파일(.ipynb)이 없습니다.")
 
-# %% code 19.
+# %% code Ⅰ-19.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -108,7 +108,7 @@ agent_nb = {"cells": [{"cell_type": "code", "execution_count": 1, "metadata": {}
 print("만든 파일:", sorted(p.name for p in proj_dir.iterdir()
                         if p.suffix in (".csv", ".png", ".ipynb")))
 
-# %% code 20.
+# %% code Ⅰ-20.
 # 1) 노트북 점검: 이 장에서 만든 check_notebook 재사용
 display(check_notebook(proj_dir / "agent_monthly.ipynb"))
 

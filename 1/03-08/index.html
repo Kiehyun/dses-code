@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>III-08. 색등급도 그리기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/03-08/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-105">105</a> <a href="#code-106">106</a> <a href="#code-107">107</a> <a href="#code-108">108</a> <a href="#code-109">109</a> <a href="#code-110">110</a> <a href="#code-111">111</a> <a href="#code-112">112</a> <a href="#code-113">113</a> <a href="#code-114">114</a> <a href="#code-115">115</a> <a href="#code-116">116</a> <a href="#code-117">117</a> <a href="#code-118">118</a> <a href="#code-119">119</a> <a href="#code-120">120</a></p>
-<h2 id="code-105">code 105. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
+<p class="jump"><a href="#code-Ⅲ-105">Ⅲ-105</a> <a href="#code-Ⅲ-106">Ⅲ-106</a> <a href="#code-Ⅲ-107">Ⅲ-107</a> <a href="#code-Ⅲ-108">Ⅲ-108</a> <a href="#code-Ⅲ-109">Ⅲ-109</a> <a href="#code-Ⅲ-110">Ⅲ-110</a> <a href="#code-Ⅲ-111">Ⅲ-111</a> <a href="#code-Ⅲ-112">Ⅲ-112</a> <a href="#code-Ⅲ-113">Ⅲ-113</a> <a href="#code-Ⅲ-114">Ⅲ-114</a> <a href="#code-Ⅲ-115">Ⅲ-115</a> <a href="#code-Ⅲ-116">Ⅲ-116</a> <a href="#code-Ⅲ-117">Ⅲ-117</a> <a href="#code-Ⅲ-118">Ⅲ-118</a> <a href="#code-Ⅲ-119">Ⅲ-119</a> <a href="#code-Ⅲ-120">Ⅲ-120</a></p>
+<h2 id="code-Ⅲ-105">code Ⅲ-105. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
 
 # (HLA 데이터셋 이름, 파일 이름, 구글 드라이브 사본 ID)
 files = [
@@ -30,9 +30,9 @@ for dataset, fname, fid in files:
 
 # 이름순: [0] f450w, [1] f814w, [2] multiwave
 fpaths = sorted(Path(proj_dir).glob(&#x27;*.cat&#x27;))</code></pre>
-<h2 id="code-106">code 106. <button class="copy">복사</button></h2><pre><code># 파일 앞 40줄 출력(공통 함수, 인코딩 자동 판별)
+<h2 id="code-Ⅲ-106">code Ⅲ-106. <button class="copy">복사</button></h2><pre><code># 파일 앞 40줄 출력(공통 함수, 인코딩 자동 판별)
 head = du.preview_text(fpaths[2], n=40)  # 출력한 줄 목록은 head에 담아 둠</code></pre>
-<h2 id="code-107">code 107. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅲ-107">code Ⅲ-107. <button class="copy">복사</button></h2><pre><code>import numpy as np
 
 # 데이터가 시작되는 줄 수(파일을 열어 확인)
 skiprows = 35
@@ -47,14 +47,14 @@ DAO_array = np.loadtxt(
 
 print(&quot;type(DAO_array):&quot;, type(DAO_array))
 print(&quot;DAO_array.shape:&quot;, DAO_array.shape)</code></pre>
-<h2 id="code-108">code 108. <button class="copy">복사</button></h2><pre><code># 행 방향 슬라이싱
+<h2 id="code-Ⅲ-108">code Ⅲ-108. <button class="copy">복사</button></h2><pre><code># 행 방향 슬라이싱
 print(&quot;DAO_array[1, :]: {}&quot;.format(DAO_array[1, :]))
 
 # 열 방향 슬라이싱
 print(&quot;DAO_array[:, 1]: {}&quot;.format(DAO_array[:, 1]))
 
 print(&quot;CI:\n {}&quot;.format(DAO_array[:,5]-DAO_array[:,6]))</code></pre>
-<h2 id="code-109">code 109. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅲ-109">code Ⅲ-109. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
 # 색등급도
@@ -64,7 +64,7 @@ plt.plot(DAO_array[:,5]-DAO_array[:,6], DAO_array[:,5], &#x27;o&#x27;, ms=2, alp
 plt.gca().invert_yaxis()
 
 plt.show()</code></pre>
-<h2 id="code-110">code 110. <button class="copy">복사</button></h2><pre><code>print(&quot;DAO_array[:,5].min(): {}&quot;.format(DAO_array[:,5].min()))
+<h2 id="code-Ⅲ-110">code Ⅲ-110. <button class="copy">복사</button></h2><pre><code>print(&quot;DAO_array[:,5].min(): {}&quot;.format(DAO_array[:,5].min()))
 print(&quot;DAO_array[:,5].max(): {}&quot;.format(DAO_array[:,5].max()))
 print(&quot;DAO_array[:,6].min(): {}&quot;.format(DAO_array[:,6].min()))
 print(&quot;DAO_array[:,6].max(): {}&quot;.format(DAO_array[:,6].max()))
@@ -102,7 +102,7 @@ print(&quot;mask:\n {}&quot;.format(mask))
 DAO_array_masked = DAO_array[mask]      
 print(&quot;DAO_array_masked.shape: {}&quot;.format(DAO_array_masked.shape))
 print(&quot;DAO_array_masked[:5]:\n {}&quot;.format(DAO_array_masked[:5]))</code></pre>
-<h2 id="code-111">code 111. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅲ-111">code Ⅲ-111. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
 # 색등급도
@@ -112,7 +112,7 @@ plt.plot(DAO_array[mask,5]-DAO_array[mask,6], DAO_array[mask,5], &#x27;o&#x27;, 
 plt.gca().invert_yaxis()
 
 plt.show()</code></pre>
-<h2 id="code-112">code 112. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅲ-112">code Ⅲ-112. <button class="copy">복사</button></h2><pre><code>import numpy as np
 
 ch1, ch2 = &quot;F450&quot;, &quot;F814&quot;
 data_type  = &quot;WFPC2_WFC&quot;
@@ -142,7 +142,7 @@ plt.savefig(f&#x27;{proj_dir}/{object_name}_{data_type}_CMD.png&#x27;,
 print(f&#x27;{proj_dir}/{object_name}_{data_type}_CMD.png 파일을 만들었습니다.&#x27;)
 
 plt.show()</code></pre>
-<h2 id="code-113">code 113. <button class="copy">복사</button></h2><pre><code>ch1, ch2 = &quot;F450&quot;, &quot;F814&quot;
+<h2 id="code-Ⅲ-113">code Ⅲ-113. <button class="copy">복사</button></h2><pre><code>ch1, ch2 = &quot;F450&quot;, &quot;F814&quot;
 data_type = &quot;WFPC2_WFC&quot;
 object_name = &#x27;M80&#x27;
 
@@ -189,7 +189,7 @@ plt.savefig(f&#x27;{proj_dir}/{object_name}_{data_type1}_{data_type2}_CMD.png&#x
 print(f&#x27;{proj_dir}/{object_name}_{data_type1}_{data_type2}_CMD.png 파일을 만들었습니다.&#x27;)
 
 plt.show()</code></pre>
-<h2 id="code-114">code 114. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+<h2 id="code-Ⅲ-114">code Ⅲ-114. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 import matplotlib.pyplot as plt
 
 file_path = f&#x27;{fpaths[2]}&#x27;  # multiwave 파일
@@ -241,9 +241,9 @@ plt.annotate(&#x27;허블 우주 망원경 데이터(HLA)&#x27;,
         xycoords=&#x27;axes fraction&#x27;, textcoords=&#x27;offset points&#x27;)
 
 plt.show()</code></pre>
-<h2 id="code-115">code 115. <button class="copy">복사</button></h2><pre><code># F450W 파일 앞 65줄 출력(F814W 파일도 구조가 같음)
+<h2 id="code-Ⅲ-115">code Ⅲ-115. <button class="copy">복사</button></h2><pre><code># F450W 파일 앞 65줄 출력(F814W 파일도 구조가 같음)
 head = du.preview_text(fpaths[0], n=65)</code></pre>
-<h2 id="code-116">code 116. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅲ-116">code Ⅲ-116. <button class="copy">복사</button></h2><pre><code>import numpy as np
 
 # 데이터가 시작되는 줄 수(파일을 열어 확인)
 skiprows = 60
@@ -264,11 +264,11 @@ print(&quot;type(F450_array):&quot;, type(F450_array))
 print(&quot;type(F814_array):&quot;, type(F814_array))
 print(&quot;F450_array[1, :]: {}&quot;.format(F450_array[1, :]))
 print(&quot;F814_array[1, :]: {}&quot;.format(F814_array[1, :]))  </code></pre>
-<h2 id="code-117">code 117. <button class="copy">복사</button></h2><pre><code>print(&quot;F450.shape: {}&quot;.format(F450_array.shape))
+<h2 id="code-Ⅲ-117">code Ⅲ-117. <button class="copy">복사</button></h2><pre><code>print(&quot;F450.shape: {}&quot;.format(F450_array.shape))
 print(&quot;F814.shape: {}&quot;.format(F814_array.shape))
 print(&quot;F450[:,4:6]: {}&quot;.format(F450_array[:,4:6]))
 print(&quot;F814[:,4:6]: {}&quot;.format(F814_array[:,4:6]))</code></pre>
-<h2 id="code-118">code 118. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅲ-118">code Ⅲ-118. <button class="copy">복사</button></h2><pre><code>import numpy as np
 
 mag_col = 7  # MagAP2(0.30초각 조리개) 등급 열 — multiwave 파일의 그림과 같은 조리개
 mask = np.zeros(len(F450_array)).astype(bool)  # True: 쓸 별
@@ -290,8 +290,8 @@ for i in range(0, len(F450_array)):
 print(&quot;len(color):{}&quot;.format(len(color)))
 print(&quot;len(F450[mask]):{}&quot;.format(len(F450_array[mask])))
 print(&quot;len(color[mask]):{}&quot;.format(len(color[mask])))</code></pre>
-<h2 id="code-119">code 119. <button class="copy">복사</button></h2><pre><code>color[mask]</code></pre>
-<h2 id="code-120">code 120. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅲ-119">code Ⅲ-119. <button class="copy">복사</button></h2><pre><code>color[mask]</code></pre>
+<h2 id="code-Ⅲ-120">code Ⅲ-120. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
 # 색등급도

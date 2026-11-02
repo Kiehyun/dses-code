@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | V-04. 방사성 동위원소 연대측정 기초
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 536.
+# %% code Ⅴ-18.
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -26,7 +26,7 @@ half_lives = pd.DataFrame([
 ])
 half_lives
 
-# %% code 537.
+# %% code Ⅴ-19.
 fig, ax = plt.subplots(figsize=(8.5, 4.4))
 
 for row in half_lives.itertuples(index=False):
@@ -43,7 +43,7 @@ ax.legend()
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f"{proj_dir.name}_01"))
 plt.show()
 
-# %% code 538.
+# %% code Ⅴ-20.
 def age_from_remaining_fraction(remaining_fraction, half_life_year):
     """남은 모원소 비율과 반감기로 연대를 계산"""
     remaining_fraction = np.asarray(remaining_fraction, dtype=float)
@@ -60,7 +60,7 @@ pd.DataFrame({
     "age_Ma": ages / 1e6,
 })
 
-# %% code 539.
+# %% code Ⅴ-21.
 # 40K 붕괴 상수 (Min et al., 2000), 단위 1/년
 lambda_e = 0.580e-10     # 40K → 40Ar (전자포획)
 lambda_beta = 4.883e-10  # 40K → 40Ca (베타 붕괴)
@@ -92,7 +92,7 @@ pd.DataFrame({
     "age_Ma_no_branching": age_wrong / 1e6,
 }).round({"age_Ma": 2, "age_Ma_SJ1977": 2, "diff_percent": 2, "age_Ma_no_branching": 2})
 
-# %% code 540.
+# %% code Ⅴ-22.
 measurement_error = np.linspace(-0.03, 0.03, 61)
 rows = []
 
@@ -119,7 +119,7 @@ plt.show()
 
 pd.DataFrame(rows).round(3)
 
-# %% code 541.
+# %% code Ⅴ-23.
 url = "https://data.goettingen-research-online.de/api/access/datafile/40582"
 raw_file = DATA_DIR / "Ball_2022_intraplate_volcanics.csv"
 if not raw_file.exists():  # 이미 받아 둔 파일은 다시 받지 않음
@@ -145,7 +145,7 @@ print(f"전체 시료 수: {len(ball):,}")
 print(f"우리나라 시료 수: {len(kor):,}")
 pd.crosstab(kor["region"], kor["Method"], margins=True, margins_name="합계")
 
-# %% code 542.
+# %% code Ⅴ-24.
 fig, ax = plt.subplots(figsize=(8.5, 4.2))
 bins = np.arange(0, 7.0, 0.25)
 ax.hist([kor.loc[kor["is_radiometric"], "Age"], kor.loc[~kor["is_radiometric"], "Age"]],
@@ -159,7 +159,7 @@ ax.grid(alpha=0.3)
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f"{proj_dir.name}_03"))
 plt.show()
 
-# %% code 543.
+# %% code Ⅴ-25.
 # 지역 · 방법 · 연대 · 오차가 같은 시료를 한 묶음으로
 age_groups = (kor.groupby(["region", "Method", "Age", "Uncertainty"])
               .size().reset_index(name="n_samples")

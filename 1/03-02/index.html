@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>III-02. 행성의 물리량 계산</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/03-02/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-23">23</a> <a href="#code-24">24</a> <a href="#code-25">25</a> <a href="#code-26">26</a> <a href="#code-27">27</a> <a href="#code-28">28</a> <a href="#code-29">29</a> <a href="#code-30">30</a></p>
-<h2 id="code-23">code 23. <button class="copy">복사</button></h2><pre><code>import re
+<p class="jump"><a href="#code-Ⅲ-23">Ⅲ-23</a> <a href="#code-Ⅲ-24">Ⅲ-24</a> <a href="#code-Ⅲ-25">Ⅲ-25</a> <a href="#code-Ⅲ-26">Ⅲ-26</a> <a href="#code-Ⅲ-27">Ⅲ-27</a> <a href="#code-Ⅲ-28">Ⅲ-28</a> <a href="#code-Ⅲ-29">Ⅲ-29</a> <a href="#code-Ⅲ-30">Ⅲ-30</a></p>
+<h2 id="code-Ⅲ-23">code Ⅲ-23. <button class="copy">복사</button></h2><pre><code>import re
 import time
 from functools import lru_cache
 from io import StringIO
@@ -158,7 +158,7 @@ preview_keys = [
 print(&quot;행성 순서:&quot;, planet_order)
 print(&quot;\n비교표 추출값 미리보기:&quot;)
 display(w.loc[preview_keys, planet_order])</code></pre>
-<h2 id="code-24">code 24. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+<h2 id="code-Ⅲ-24">code Ⅲ-24. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 
 # 행성별 레코드 만들기
 rows = []
@@ -200,17 +200,17 @@ df.to_csv(&quot;planet_attributes.csv&quot;, index=False)
 
 df = df.set_index(&quot;행성&quot;)
 display(df)</code></pre>
-<h2 id="code-25">code 25. <button class="copy">복사</button></h2><pre><code>print(&quot;df.index: {}&quot;.format(df.index))
+<h2 id="code-Ⅲ-25">code Ⅲ-25. <button class="copy">복사</button></h2><pre><code>print(&quot;df.index: {}&quot;.format(df.index))
 print(&quot;df.columns: {}&quot;.format(df.columns))
 
 print(&quot;type(df.loc[&#x27;수성&#x27;, &#x27;질량(kg)&#x27;]): &quot;, type(df.loc[&#x27;수성&#x27;, &#x27;질량(kg)&#x27;]))
 print(&quot;df.loc[&#x27;수성&#x27;, &#x27;질량(kg)&#x27;]: &quot;, df.loc[&#x27;수성&#x27;, &#x27;질량(kg)&#x27;])</code></pre>
-<h2 id="code-26">code 26. <button class="copy">복사</button></h2><pre><code>df[&#x27;상대 질량&#x27;] = df[&quot;질량(kg)&quot;]/df.loc[&quot;지구&quot;, &quot;질량(kg)&quot;]
+<h2 id="code-Ⅲ-26">code Ⅲ-26. <button class="copy">복사</button></h2><pre><code>df[&#x27;상대 질량&#x27;] = df[&quot;질량(kg)&quot;]/df.loc[&quot;지구&quot;, &quot;질량(kg)&quot;]
 df[&#x27;적도 반지름(상댓값)&#x27;] = df[&quot;적도반지름(km)&quot;]/df.loc[&quot;지구&quot;, &quot;적도반지름(km)&quot;]
 df[&#x27;부피(상댓값)&#x27;] = df[&#x27;적도 반지름(상댓값)&#x27;]**3
 print(&quot;df[&#x27;부피(상댓값)&#x27;]:\n&quot;, df[&#x27;부피(상댓값)&#x27;])
 # print(&quot;df:\n&quot;, df)</code></pre>
-<h2 id="code-27">code 27. <button class="copy">복사</button></h2><pre><code>import astropy.units as u
+<h2 id="code-Ⅲ-27">code Ⅲ-27. <button class="copy">복사</button></h2><pre><code>import astropy.units as u
 import astropy.constants as const
 import numpy as np
 
@@ -227,17 +227,17 @@ df[&#x27;평균 밀도 (g cm^-3)&#x27;] = (3 * (df[&quot;질량(kg)&quot;].value
 df[&#x27;적도 인력 가속도(m s^-2)&#x27;] = (const.G * (df[&quot;질량(kg)&quot;].values * u.kg) / (df[&quot;적도반지름(km)&quot;].values * u.km)**2).to(u.m / u.s**2).value
 
 print(&quot;df[[&#x27;공전주기(년)&#x27;, &#x27;평균반지름(km)&#x27;, &#x27;평균 밀도 (g cm^-3)&#x27;, &#x27;적도 인력 가속도(m s^-2)&#x27;]]:\n&quot;, df[[&#x27;공전주기(년)&#x27;, &#x27;평균반지름(km)&#x27;, &#x27;평균 밀도 (g cm^-3)&#x27;, &#x27;적도 인력 가속도(m s^-2)&#x27;]] )</code></pre>
-<h2 id="code-28">code 28. <button class="copy">복사</button></h2><pre><code># 지구의 태양상수
+<h2 id="code-Ⅲ-28">code Ⅲ-28. <button class="copy">복사</button></h2><pre><code># 지구의 태양상수
 solar_constant0 = const.L_sun / (4 * np.pi * const.au**2)
 print(f&quot;Solar constant (Earth): {solar_constant0.value:.2f} {solar_constant0.unit}&quot;)
 
 df[&quot;태양상수(W m^-2)&quot;] = const.L_sun / (4 * np.pi * (df[&quot;장반경(AU)&quot;] *u.au.to(u.m))**2)
 df[&quot;태양상수(W m^-2)&quot;]</code></pre>
-<h2 id="code-29">code 29. <button class="copy">복사</button></h2><pre><code>df[&quot;입사량(W)&quot;] = ((1 - df[&quot;본드 알베도&quot;]) * np.pi * (df[&quot;평균반지름(km)&quot;] * u.km.to(u.m))**2 * df[&quot;태양상수(W m^-2)&quot;]).values
+<h2 id="code-Ⅲ-29">code Ⅲ-29. <button class="copy">복사</button></h2><pre><code>df[&quot;입사량(W)&quot;] = ((1 - df[&quot;본드 알베도&quot;]) * np.pi * (df[&quot;평균반지름(km)&quot;] * u.km.to(u.m))**2 * df[&quot;태양상수(W m^-2)&quot;]).values
 # 복사평형온도 계산
 df[&quot;복사평형온도(K)&quot;] = ((((1 - df[&quot;본드 알베도&quot;]) * (df[&quot;태양상수(W m^-2)&quot;]) * u.W/u.m**2) / (4 * const.sigma_sb))**(1/4))
 print(&quot;df[[&#x27;입사량(W)&#x27;, &#x27;복사평형온도(K)&#x27;]]:\n&quot;, df[[&#x27;입사량(W)&#x27;, &#x27;복사평형온도(K)&#x27;]] )</code></pre>
-<h2 id="code-30">code 30. <button class="copy">복사</button></h2><pre><code>df.to_csv(&#x27;result_of_calculations.csv&#x27;)
+<h2 id="code-Ⅲ-30">code Ⅲ-30. <button class="copy">복사</button></h2><pre><code>df.to_csv(&#x27;result_of_calculations.csv&#x27;)
 print(&quot;계산 결과가 &#x27;result_of_calculations.csv&#x27; 파일로 저장되었습니다.&quot;)</code></pre>
 <script>
 document.querySelectorAll('button.copy').forEach(function (b) {

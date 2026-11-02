@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | IV-06. 기상위성 천리안 이미지 RGB 합성
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 99.
+# %% code Ⅳ-99.
 # 국가기상위성센터에서 2019-07-10 10:45 영상 다섯 채널 내려받기
 from pathlib import Path
 
@@ -11,11 +11,11 @@ du.download(f"http://nmsc.kma.go.kr/IMG/COMS/MI/L1/L1B/201907/10/coms_mi_le1b_ir
 du.download(f"http://nmsc.kma.go.kr/IMG/COMS/MI/L1/L1B/201907/10/coms_mi_le1b_swir_en040ge_201907101045.png", Path(proj_dir) / 'coms_mi_le1b_swir_en040ge_201907101045.png')
 du.download(f"http://nmsc.kma.go.kr/IMG/COMS/MI/L1/L1B/201907/10/coms_mi_le1b_wv_en040ge_201907101045.png", Path(proj_dir) / 'coms_mi_le1b_wv_en040ge_201907101045.png')
 
-# %% code 100.
+# %% code Ⅳ-100.
 # 내려받은 원본 영상만(이 노트북이 만든 합성 · 이어 붙인 그림은 빼고)
 fpaths = [p for p in du.list_files(proj_dir, "png") if "_le1b_" in str(p)]
 
-# %% code 101.
+# %% code Ⅳ-101.
 from PIL import Image
 
 # 파일 이름의 채널 표시로 고른다(순서에 기대지 않음)
@@ -34,7 +34,7 @@ blue = Image.open(ir2_filename)
 print("type(red) :", type(red))
 print("red :", red)
 
-# %% code 102.
+# %% code Ⅳ-102.
 import numpy as np
 red_arr = np.array(red)  # 이미지 → ndarray
 print("type(red_arr) : {}".format(type(red_arr)))
@@ -53,7 +53,7 @@ print(redA.shape)
 print (type(red))
 print (red)
 
-# %% code 103.
+# %% code Ⅳ-103.
 import matplotlib.pyplot as plt
 
 print ('*'*80)
@@ -65,7 +65,7 @@ plt.imshow(red, cmap = 'gray', interpolation = 'None')
 plt.xticks([]), plt.yticks([])  # 눈금 숨기기
 plt.show()
 
-# %% code 104.
+# %% code Ⅳ-104.
 from PIL import Image
 
 print("변환 전 크기")
@@ -120,11 +120,11 @@ for ax in axes.flat:
 plt.tight_layout()
 plt.show()
 
-# %% code 105.
+# %% code Ⅳ-105.
 print ("red.width:{}".format(red.width))
 print ("red.height:{}".format(red.height))
 
-# %% code 106.
+# %% code Ⅳ-106.
 # 가로로 두 장 붙일 빈 RGB 이미지(너비 2배)
 new_im=Image.new('RGB', (red.width*2,red.height*1))
 print (type(new_im))
@@ -134,7 +134,7 @@ new_im.paste(green, (green.width, 0))
 print (type(new_im))
 print (new_im)
 
-# %% code 107.
+# %% code Ⅳ-107.
 # 세로로 두 장 붙일 빈 RGB 이미지(높이 2배)
 new_im=Image.new('RGB', (red.width*1,red.height*2))
 new_im.paste(red, (0, 0))
@@ -143,7 +143,7 @@ print (type(new_im))
 print (new_im)
 new_im  # 셀의 마지막 값이 이미지면 화면에 표시
 
-# %% code 108.
+# %% code Ⅳ-108.
 # 여섯 장을 2행 3열로 이어 붙이기
 from PIL import Image
 img_filenames = [vis_filename, ir1_filename, ir2_filename, swir_filename, wv_filename,

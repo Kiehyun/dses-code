@@ -11,10 +11,10 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>I-01. 공통 함수 모듈 dses_utils 이해하기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/01-21/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-1">1</a> <a href="#code-2">2</a> <a href="#code-3">3</a> <a href="#code-4">4</a> <a href="#code-5">5</a> <a href="#code-6">6</a> <a href="#code-7">7</a> <a href="#code-8">8</a> <a href="#code-9">9</a></p>
-<h2 id="code-1">code 1. <button class="copy">복사</button></h2><pre><code># 필요한 모듈 정의 (버전 명시 가능)
+<p class="jump"><a href="#code-Ⅰ-1">Ⅰ-1</a> <a href="#code-Ⅰ-2">Ⅰ-2</a> <a href="#code-Ⅰ-3">Ⅰ-3</a> <a href="#code-Ⅰ-4">Ⅰ-4</a> <a href="#code-Ⅰ-5">Ⅰ-5</a> <a href="#code-Ⅰ-6">Ⅰ-6</a> <a href="#code-Ⅰ-7">Ⅰ-7</a> <a href="#code-Ⅰ-8">Ⅰ-8</a> <a href="#code-Ⅰ-9">Ⅰ-9</a></p>
+<h2 id="code-Ⅰ-1">code Ⅰ-1. <button class="copy">복사</button></h2><pre><code># 필요한 모듈 정의 (버전 명시 가능)
 packages_str = &quot;numpy, pandas, matplotlib, version_information&quot;</code></pre>
-<h2 id="code-2">code 2. <button class="copy">복사</button></h2><pre><code># 공통 함수(dses_utils) 불러오기 — 코랩/로컬 모두 동작(별도 설치 불필요)
+<h2 id="code-Ⅰ-2">code Ⅰ-2. <button class="copy">복사</button></h2><pre><code># 공통 함수(dses_utils) 불러오기 — 코랩/로컬 모두 동작(별도 설치 불필요)
 import os, sys, importlib, urllib.request
 
 _url = &quot;https://raw.githubusercontent.com/Kiehyun/dses_utils/main/dses_utils.py&quot;
@@ -33,7 +33,7 @@ import dses_utils as du
 du.check_and_install(packages_str)              # 패키지 확인·설치와 버전 출력
 du.set_korean_font()                            # 그래프의 한글 글꼴 설정
 proj_dir = du.make_project_dir(du.current_notebook_name())   # 데이터 저장 폴더 생성</code></pre>
-<h2 id="code-3">code 3. <button class="copy">복사</button></h2><pre><code>src = &#x27;&#x27;&#x27;&quot;&quot;&quot;단위 변환 함수 모음(연습용 모듈).&quot;&quot;&quot;
+<h2 id="code-Ⅰ-3">code Ⅰ-3. <button class="copy">복사</button></h2><pre><code>src = &#x27;&#x27;&#x27;&quot;&quot;&quot;단위 변환 함수 모음(연습용 모듈).&quot;&quot;&quot;
 
 
 def c_to_k(c):
@@ -48,7 +48,7 @@ def k_to_c(k):
 mod_path = proj_dir / &quot;my_units.py&quot;
 mod_path.write_text(src, encoding=&quot;utf-8&quot;)
 print(mod_path, &quot;저장됨&quot;)</code></pre>
-<h2 id="code-4">code 4. <button class="copy">복사</button></h2><pre><code>import sys
+<h2 id="code-Ⅰ-4">code Ⅰ-4. <button class="copy">복사</button></h2><pre><code>import sys
 from pathlib import Path
 
 sys.path.insert(0, str(proj_dir))     # 모듈을 찾을 폴더를 맨 앞에 더한다
@@ -59,7 +59,7 @@ import my_units
 print(&quot;불러온 파일:&quot;, Path(my_units.__file__).name)
 print(&quot;15 °C =&quot;, my_units.c_to_k(15.0), &quot;K&quot;)
 help(my_units.k_to_c)</code></pre>
-<h2 id="code-5">code 5. <button class="copy">복사</button></h2><pre><code>import importlib
+<h2 id="code-Ⅰ-5">code Ⅰ-5. <button class="copy">복사</button></h2><pre><code>import importlib
 
 print(&quot;sys.modules에 있음:&quot;, &quot;my_units&quot; in sys.modules)
 
@@ -76,7 +76,7 @@ print(&quot;import 뒤 c_to_f 있음:&quot;, hasattr(my_units, &quot;c_to_f&quot
 importlib.reload(my_units)            # 파일을 다시 읽어 새로 실행한다
 print(&quot;reload 뒤 c_to_f 있음:&quot;, hasattr(my_units, &quot;c_to_f&quot;))
 print(&quot;15 °C =&quot;, my_units.c_to_f(15.0), &quot;°F&quot;)</code></pre>
-<h2 id="code-6">code 6. <button class="copy">복사</button></h2><pre><code>import inspect
+<h2 id="code-Ⅰ-6">code Ⅰ-6. <button class="copy">복사</button></h2><pre><code>import inspect
 
 print(&quot;불러온 파일:&quot;, Path(du.__file__).name)
 for name, f in inspect.getmembers(du, inspect.isfunction):
@@ -87,7 +87,7 @@ for name, f in inspect.getmembers(du, inspect.isfunction):
 
 print()
 print(&quot;download의 인자:&quot;, inspect.signature(du.download))</code></pre>
-<h2 id="code-7">code 7. <button class="copy">복사</button></h2><pre><code>import importlib.util
+<h2 id="code-Ⅰ-7">code Ⅰ-7. <button class="copy">복사</button></h2><pre><code>import importlib.util
 
 for pypi, mod in list(du._PYPI_TO_IMPORT.items())[:5]:
     print(f&quot;{pypi:16} → import {mod}&quot;)
@@ -97,7 +97,7 @@ for mod in [&quot;numpy&quot;, &quot;pandas&quot;, &quot;sklearn&quot;, &quot;�
     found = importlib.util.find_spec(mod) is not None
     print(f&quot;{mod:12} {&#x27;설치됨&#x27; if found else &#x27;없음&#x27;}&quot;)
 print(&quot;\n지금 쓰는 파이썬 환경:&quot;, Path(sys.prefix).name)   # 가상환경 폴더 이름</code></pre>
-<h2 id="code-8">code 8. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+<h2 id="code-Ⅰ-8">code Ⅰ-8. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 
 df = pd.DataFrame({
     &quot;월&quot;: range(1, 13),
@@ -109,7 +109,7 @@ df.to_csv(csv_path, index=False, encoding=&quot;utf-8&quot;)
 
 fpaths = du.list_files(proj_dir, &quot;csv&quot;)
 lines = du.preview_text(fpaths[0], n=5)</code></pre>
-<h2 id="code-9">code 9. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅰ-9">code Ⅰ-9. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(8.5, 4.2))
 ax.plot(df[&quot;월&quot;], df[&quot;평균기온(°C)&quot;], &quot;o-&quot;)

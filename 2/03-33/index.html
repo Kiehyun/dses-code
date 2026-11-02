@@ -11,15 +11,15 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>III-13. 차등 측광과 소행성 광도 곡선</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/03-33/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-365">365</a> <a href="#code-366">366</a> <a href="#code-367">367</a> <a href="#code-368">368</a> <a href="#code-369">369</a> <a href="#code-370">370</a> <a href="#code-371">371</a> <a href="#code-372">372</a> <a href="#code-373">373</a> <a href="#code-374">374</a></p>
-<h2 id="code-365">code 365. <button class="copy">복사</button></h2><pre><code>import shutil
+<p class="jump"><a href="#code-Ⅲ-310">Ⅲ-310</a> <a href="#code-Ⅲ-311">Ⅲ-311</a> <a href="#code-Ⅲ-312">Ⅲ-312</a> <a href="#code-Ⅲ-313">Ⅲ-313</a> <a href="#code-Ⅲ-314">Ⅲ-314</a> <a href="#code-Ⅲ-315">Ⅲ-315</a> <a href="#code-Ⅲ-316">Ⅲ-316</a> <a href="#code-Ⅲ-317">Ⅲ-317</a> <a href="#code-Ⅲ-318">Ⅲ-318</a> <a href="#code-Ⅲ-319">Ⅲ-319</a></p>
+<h2 id="code-Ⅲ-310">code Ⅲ-310. <button class="copy">복사</button></h2><pre><code>import shutil
 
 fname = &quot;925ALPHONSINA_V_2016-11-08_RiLA600_reduced.zip&quot;
 fid = &quot;1xRUHe6nvHTD8veUBZKLXQlOTJZmsDI8A&quot;
 du.download(f&quot;https://drive.google.com/uc?id={fid}&quot;, proj_dir / fname)
 shutil.unpack_archive(str(proj_dir / fname), str(proj_dir))   # 압축 풀기</code></pre>
-<h2 id="code-366">code 366. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;fit*&quot;)</code></pre>
-<h2 id="code-367">code 367. <button class="copy">복사</button></h2><pre><code>import re
+<h2 id="code-Ⅲ-311">code Ⅲ-311. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;fit*&quot;)</code></pre>
+<h2 id="code-Ⅲ-312">code Ⅲ-312. <button class="copy">복사</button></h2><pre><code>import re
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -54,7 +54,7 @@ Suwon = EarthLocation(lon=127.005 * u.deg, lat=37.308889 * u.deg, height=101 * u
 observatory_code = &quot;P64&quot;
 OBJID = str(int(re.match(r&quot;\d+&quot;, fpath.name).group()))   # 파일 이름 앞의 소행성 번호(0000925 -&gt; 925)
 print(&quot;gain, rdnoise :&quot;, gain, rdnoise, &quot;/ 소행성 번호 :&quot;, OBJID)</code></pre>
-<h2 id="code-368">code 368. <button class="copy">복사</button></h2><pre><code>from astroquery.jplhorizons import Horizons
+<h2 id="code-Ⅲ-313">code Ⅲ-313. <button class="copy">복사</button></h2><pre><code>from astroquery.jplhorizons import Horizons
 from astroquery.mpc import MPC
 
 def asteroid_ephem(objid, times):
@@ -97,7 +97,7 @@ targ_an = CAn((xt[0], yt[0]), r_in=R_IN, r_out=R_OUT)
 print(f&quot;영상 {len(fpaths)}장, {t_mids[0].isot[11:16]} ~ {t_mids[-1].isot[11:16]} UT&quot;)
 print(f&quot;{eph_all[&#x27;targetname&#x27;][0]}: 첫 영상 (x, y) = ({xt[0]:.1f}, {yt[0]:.1f}), &quot;
       f&quot;밤사이 움직인 거리 {np.hypot(xt[-1] - xt[0], yt[-1] - yt[0]):.0f} px&quot;)</code></pre>
-<h2 id="code-369">code 369. <button class="copy">복사</button></h2><pre><code>from astroquery.vizier import Vizier
+<h2 id="code-Ⅲ-314">code Ⅲ-314. <button class="copy">복사</button></h2><pre><code>from astroquery.vizier import Vizier
 
 # 영상을 모두 덮는 원(중심 · 반지름) 안의 PS1 별을 받음
 corners = wcs.pixel_to_world([-0.5, nx - 0.5, -0.5, nx - 0.5], [-0.5, -0.5, ny - 0.5, ny - 0.5])
@@ -118,7 +118,7 @@ d_track = np.hypot(np.subtract.outer(np.asarray(q[&quot;x&quot;]), xt),
                    np.subtract.outer(np.asarray(q[&quot;y&quot;]), yt)).min(axis=1)
 print(f&quot;track : {len(q)} -&gt; {(d_track &gt; 2 * R_OUT).sum()} ({2 * R_OUT:.0f} px)&quot;)
 df_stars = q[d_track &gt; 2 * R_OUT].to_pandas()</code></pre>
-<h2 id="code-370">code 370. <button class="copy">복사</button></h2><pre><code>from astropy.stats import sigma_clip
+<h2 id="code-Ⅲ-315">code Ⅲ-315. <button class="copy">복사</button></h2><pre><code>from astropy.stats import sigma_clip
 from photutils.aperture import ApertureStats
 
 xy = np.c_[df_stars[&quot;x&quot;], df_stars[&quot;y&quot;]]
@@ -135,7 +135,7 @@ print(f&quot; -&gt; 3σ 클리핑 뒤 비교성 {len(comp_ids)}개&quot;)
 z0 = np.median(dm[good])
 print(f&quot;첫 영상: 영점 Z = {z0:.3f}, 비교성 잔차의 표준편차 {np.std(dm[good] - z0, ddof=1):.3f} mag, &quot;
       f&quot;{flt} 등급 {df_stars.loc[comp_ids, f&#x27;{flt}mag&#x27;].min():.1f} ~ {df_stars.loc[comp_ids, f&#x27;{flt}mag&#x27;].max():.1f}&quot;)</code></pre>
-<h2 id="code-371">code 371. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅲ-316">code Ⅲ-316. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(6.4, 5.6), subplot_kw={&quot;projection&quot;: wcs})
 du.zimshow(ax, hdul[0].data, cmap=&quot;gray&quot;)
@@ -160,7 +160,7 @@ handles = [Line2D([], [], ls=&quot;:&quot;, color=&quot;c&quot;, label=&quot;소
 ax.legend(handles=handles, loc=&quot;lower left&quot;, fontsize=8)
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-372">code 372. <button class="copy">복사</button></h2><pre><code>from astropy.io import fits
+<h2 id="code-Ⅲ-317">code Ⅲ-317. <button class="copy">복사</button></h2><pre><code>from astropy.io import fits
 
 def phot_frame(fpath, ra, dec, ids):
     &quot;&quot;&quot;영상 한 장에서 소행성(ra, dec)과 비교성(df_stars의 행 ids)을 구경 측광&quot;&quot;&quot;
@@ -200,7 +200,7 @@ for f, t, (_, e) in zip(fpaths, t_mids, eph_all.iterrows()):
 df_lc = pd.DataFrame(rows)
 df_lc.to_csv(proj_dir / f&quot;925_Alphonsina_{flt}_lightcurve.csv&quot;, index=False)
 df_lc.round(3)</code></pre>
-<h2 id="code-373">code 373. <button class="copy">복사</button></h2><pre><code>hours = (df_lc[&quot;jd&quot;] - df_lc[&quot;jd&quot;].iloc[0]) * 24          # 첫 영상부터 지난 시간
+<h2 id="code-Ⅲ-318">code Ⅲ-318. <button class="copy">복사</button></h2><pre><code>hours = (df_lc[&quot;jd&quot;] - df_lc[&quot;jd&quot;].iloc[0]) * 24          # 첫 영상부터 지난 시간
 fig, axs = plt.subplots(3, 1, figsize=(7.5, 6.4), sharex=True,
                         gridspec_kw={&quot;height_ratios&quot;: [2.2, 1, 1]})
 axs[0].errorbar(hours, df_lc[flt], yerr=df_lc[f&quot;e_{flt}&quot;], fmt=&quot;o&quot;, ms=4, capsize=2)
@@ -230,7 +230,7 @@ print(f&quot;소행성: {v.min():.2f} ~ {v.max():.2f} (변광 폭 {v.max() - v.m
 print(f&quot;점검성: 표준편차 {df_lc[&#x27;check&#x27;].std(ddof=1):.3f} mag, 등급 오차 중앙값 {df_lc[&#x27;e_check&#x27;].median():.3f} mag&quot;)
 print(f&quot;영점: {df_lc[&#x27;zeropt&#x27;].min():.3f} ~ {df_lc[&#x27;zeropt&#x27;].max():.3f} (폭 {df_lc[&#x27;zeropt&#x27;].max() - df_lc[&#x27;zeropt&#x27;].min():.2f} mag), &quot;
       f&quot;대기질량 {df_lc[&#x27;airmass&#x27;].min():.2f} ~ {df_lc[&#x27;airmass&#x27;].max():.2f}&quot;)</code></pre>
-<h2 id="code-374">code 374. <button class="copy">복사</button></h2><pre><code>from astropy.timeseries import LombScargle
+<h2 id="code-Ⅲ-319">code Ⅲ-319. <button class="copy">복사</button></h2><pre><code>from astropy.timeseries import LombScargle
 
 t_h, mag, emag = hours.to_numpy(), df_lc[flt].to_numpy(), df_lc[f&quot;e_{flt}&quot;].to_numpy()
 ls = LombScargle(t_h, mag, emag)

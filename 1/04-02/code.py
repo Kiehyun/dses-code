@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | IV-02. 킬링 곡선 그리기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 20.
+# %% code Ⅳ-20.
 import matplotlib.pyplot as plt
 
 # 건조 공기의 구성 성분과 부피비(%)
@@ -29,7 +29,7 @@ ax.set_title('대기의 구성 성분 (건조 공기)', fontsize=13)
 plt.tight_layout()
 plt.show()
 
-# %% code 21.
+# %% code Ⅳ-21.
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
@@ -102,7 +102,7 @@ plt.title('대기 관측소 분포 (태평양 중심 지도)', fontsize=12)
 plt.tight_layout()
 plt.show()
 
-# %% code 22.
+# %% code Ⅳ-22.
 from pathlib import Path
 
 fname = "monthly_in_situ_co2_mlo.csv"
@@ -111,13 +111,13 @@ fname = "monthly_in_situ_co2_mlo.csv"
 url = "https://keelinglabsites.ucsd.edu/websitedataco2/monthly_in_situ_co2_mlo.csv"
 du.download(url, Path(proj_dir) / fname)
 
-# %% code 23.
+# %% code Ⅳ-23.
 fpaths = du.list_files(proj_dir, "csv")
 
-# %% code 24.
+# %% code Ⅳ-24.
 du.preview_text(fpaths[0], n=70);  # 앞 70줄(설명 64줄 + 데이터)
 
-# %% code 25.
+# %% code Ⅳ-25.
 import pandas as pd
 
 df = pd.read_csv(str(fpaths[0]),
@@ -139,7 +139,7 @@ df = pd.read_csv(str(fpaths[0]),
 df = df[df.CO2 != -99.99]  # -99.99는 결측값
 print("df: ", df)
 
-# %% code 26.
+# %% code Ⅳ-26.
 # 간단한 방법: 1년을 365.25일로 근사
 df['datetime'] = pd.to_datetime(df['Date'], format='%Y') + pd.to_timedelta((df['Date'] % 1) * 365.25, unit='D')
 
@@ -163,7 +163,7 @@ df['datetime'] = decimal_year_to_datetime_vectorized(df['Date'])
 
 print(df[['Date', 'datetime']])
 
-# %% code 27.
+# %% code Ⅳ-27.
 import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(10.5,8))
@@ -181,7 +181,7 @@ ax.set_title('하와이 마우나로아 관측소\n월평균 이산화탄소 농
              fontdict={'fontsize':16})
 plt.show()
 
-# %% code 28.
+# %% code Ⅳ-28.
 import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(10.5,8))
@@ -198,7 +198,7 @@ ax.set_title('하와이 마우나로아 관측소\n월평균 이산화탄소 농
              fontdict={'fontsize':16})
 plt.show()
 
-# %% code 29.
+# %% code Ⅳ-29.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -247,7 +247,7 @@ ax.text(1.0, 1.01, f'Data through {last:%B %Y}', transform=ax.transAxes, ha='rig
 
 plt.show()
 
-# %% code 30.
+# %% code Ⅳ-30.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -269,7 +269,7 @@ axes[1].legend()
 plt.tight_layout()
 plt.show()
 
-# %% code 31.
+# %% code Ⅳ-31.
 # 계절 성분 = 관측값 - 계절 변동 제거 값
 seasonal = co2['CO2'] - co2['seasonally adjusted']
 cycle = seasonal.groupby(df['Month']).mean()
@@ -277,7 +277,7 @@ print(cycle.round(2).to_string())
 print(f"가장 높은 달: {cycle.idxmax()}월, 가장 낮은 달: {cycle.idxmin()}월, "
       f"진폭: {cycle.max() - cycle.min():.1f}ppm")
 
-# %% code 32.
+# %% code Ⅳ-32.
 # 12달이 모두 있는 해만 연평균
 annual = df.groupby('Year')['CO2'].agg(['mean', 'count'])
 annual = annual.loc[annual['count'] == 12, 'mean']
@@ -296,7 +296,7 @@ ax.set_title('마우나로아 CO₂ 농도의 10년 단위 증가율')
 plt.tight_layout()
 plt.show()
 
-# %% code 33.
+# %% code Ⅳ-33.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -326,7 +326,7 @@ ax.text(1.0, 1.01, f"Data through {df['datetime'].max():%B %Y}", transform=ax.tr
 line, = ax.plot(df['Date'].iloc[0], df['CO2'].iloc[0])
 point = ax.scatter(df['Date'].iloc[0], df['CO2'].iloc[0], s=5)
 
-# %% code 34.
+# %% code Ⅳ-34.
 def animate(i):
     line.set_data(df['Date'].iloc[:i], df['CO2'].iloc[:i])  # i번째까지 선으로
     point.set_offsets([df['Date'].iloc[i], df['CO2'].iloc[i]])  # 현재 점
@@ -352,7 +352,7 @@ except:
 
 HTML(ani.to_jshtml())
 
-# %% code 35.
+# %% code Ⅳ-35.
 fname = 'Keeling_curve_MLO'
 
 # MP4로 저장, 실패하면 GIF, 그다음 HTML
@@ -375,7 +375,7 @@ except Exception as e:
         except Exception as e3:
             print(f"HTML 저장 중 오류 발생: {e3}")
 
-# %% code 36.
+# %% code Ⅳ-36.
 import re
 import numpy as np
 import pandas as pd

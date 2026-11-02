@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | I-02. Miniconda와 VS Code로 작업 환경 만들기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 10.
+# %% code Ⅰ-10.
 import sys
 from importlib.metadata import version, PackageNotFoundError
 
@@ -16,7 +16,7 @@ for name in packages:
     except PackageNotFoundError:
         print(f"  {name:<11} 설치 안 됨 — conda install {name.lower()}")
 
-# %% code 11.
+# %% code Ⅰ-11.
 import matplotlib.pyplot as plt
 import os
 

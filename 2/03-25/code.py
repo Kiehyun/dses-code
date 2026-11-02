@@ -1,14 +1,14 @@
 # 지구과학 데이터 사이언스 2 | III-05. CCD 관측 데이터 전처리
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 130.
+# %% code Ⅲ-75.
 fname = "ccd_preprocessing_STX-16803_2016-12-09.zip"
 fid = "15TgCCi0aA-V7NHZxId-YyV7IaejVHlGK"
 
 # 저자의 구글 드라이브에 공유한 파일을 내려받음(안에서 gdown 사용)
 du.download(f"https://drive.google.com/uc?id={fid}", proj_dir / fname)
 
-# %% code 131.
+# %% code Ⅲ-76.
 from pathlib import Path
 
 # 마스터 프레임과 보정한 영상을 저장할 폴더(이미 있으면 그대로 둠)
@@ -18,7 +18,7 @@ REDUCEDDIR = proj_dir / "reduced_files"
 REDUCEDDIR.mkdir(parents=True, exist_ok=True)
 print(MASTERDIR, REDUCEDDIR)
 
-# %% code 132.
+# %% code Ⅲ-77.
 import shutil
 
 # 내려받은 압축 파일 찾기
@@ -30,10 +30,10 @@ try:
 except Exception as e:
     print(f"Error unpacking {str(fpaths[0])}: {e}")
 
-# %% code 133.
+# %% code Ⅲ-78.
 fpaths = du.list_files(proj_dir, "fit*")
 
-# %% code 134.
+# %% code Ⅲ-79.
 from astropy.io import fits
 
 fpath = Path(fpaths[0])
@@ -44,10 +44,10 @@ for k in ["NAXIS1", "NAXIS2", "DATE-OBS", "EXPTIME", "OBJECT", "FILTER"]:
         print(f"{k:9s} = {hdr[k]}")
 print(f"data : {type(data).__name__}, {data.dtype}, {data.shape}, 평균 {data.mean():.1f} ADU")
 
-# %% code 135.
+# %% code Ⅲ-80.
 bias_list = du.list_files(proj_dir, pattern="BIAS_*.fit*")
 
-# %% code 136.
+# %% code Ⅲ-81.
 fpath = bias_list[0]
 print(fpath)
 import numpy as np
@@ -72,7 +72,7 @@ fig.text(0.5, 0.02, f"Min value: {hdul[0].data.min()}, Mean value: {hdul[0].data
 plt.tight_layout(pad=1.0, rect=(0, 0.07, 1, 1))
 plt.show()
 
-# %% code 137.
+# %% code Ⅲ-82.
 from ccdproc import combine
 
 method = "median"
@@ -83,19 +83,19 @@ bias = combine(bias_list,       # ccdproc은 numpy 배열이 아니라 파이썬
 
 print("type(bias) :", type(bias))
 
-# %% code 138.
+# %% code Ⅲ-83.
 import textwrap
 public = [a for a in dir(bias) if not a.startswith("_")]   # 밑줄로 시작하는 내부용 이름은 빼기
 print(f"공개 속성 · 메서드 {len(public)}개 :")
 print(textwrap.fill(", ".join(public), width=76))
 print("type(bias.data) :", type(bias.data))
 
-# %% code 139.
+# %% code Ⅲ-84.
 print("bias.data.dtype :", type(bias.data.dtype))
 bias.data = bias.data.astype(np.float32)
 print("bias.data.dtype :", type(bias.data.dtype))
 
-# %% code 140.
+# %% code Ⅲ-85.
 def show_image_hist(data, title, hist_frac=0.1, bins=50):
     """왼쪽에 zscale 영상, 오른쪽에 화소값 히스토그램, 그림 아래에 최솟값 · 평균 · 최댓값을 그립니다.
 
@@ -114,18 +114,18 @@ def show_image_hist(data, title, hist_frac=0.1, bins=50):
     plt.tight_layout(pad=1.0, rect=(0, 0.07, 1, 1))
     plt.show()
 
-# %% code 141.
+# %% code Ⅲ-86.
 show_image_hist(bias.data, "The master bias by median combine", hist_frac=None)
 
-# %% code 142.
+# %% code Ⅲ-87.
 show_image_hist(bias.data, "The master bias by median combine")
 
-# %% code 143.
+# %% code Ⅲ-88.
 fpath = bias_list[0]
 print(fpath)
 show_image_hist(fits.getdata(fpath), "The bias image (one file)")
 
-# %% code 144.
+# %% code Ⅲ-89.
 import matplotlib.patches as patches
 from astropy.nddata import Cutout2D
 
@@ -173,17 +173,17 @@ def plot_image_with_cutouts(all_data, cutsizes=101, location=500):
     plt.tight_layout()
     plt.show()
 
-# %% code 145.
+# %% code Ⅲ-90.
 # 함수 사용 예
 plot_image_with_cutouts(bias.data)
 
-# %% code 146.
+# %% code Ⅲ-91.
 dark_list = du.list_files(proj_dir, pattern="DARK_*.fit*")
 
-# %% code 147.
+# %% code Ⅲ-92.
 dark_150sec_list = du.list_files(proj_dir, pattern="DARK_*_150sec_*.fit*")
 
-# %% code 148.
+# %% code Ⅲ-93.
 import numpy as np
 from ccdproc import combine
 
@@ -196,12 +196,12 @@ dark0_150sec = combine(dark_150sec_list,       # ccdproc은 numpy 배열이 아�
 # float32로 변환
 dark0_150sec.data = dark0_150sec.data.astype(np.float32)
 
-# %% code 149.
+# %% code Ⅲ-94.
 dark0_150sec.write(f"{MASTERDIR}/master_dark0_150sec_{method}.fits",
                    overwrite =True)
 print(f"{MASTERDIR}/master_dark0_150sec_{method}.fits is created...")
 
-# %% code 150.
+# %% code Ⅲ-95.
 # 30초 다크도 150초와 같은 방법으로 합성해 저장
 dark_30sec_list = du.list_files(proj_dir, pattern="DARK_*_30sec_*.fit*")
 dark0_30sec = combine(dark_30sec_list, method = method, unit = 'adu')
@@ -211,23 +211,23 @@ dark0_30sec.write(f"{MASTERDIR}/master_dark0_30sec_{method}.fits",
                    overwrite =True)
 print(f"{MASTERDIR}/master_dark0_30sec_{method}.fits is created...")
 
-# %% code 151.
+# %% code Ⅲ-96.
 show_image_hist(dark0_150sec.data, "The master dark0_150sec by median combine")
 
-# %% code 152.
+# %% code Ⅲ-97.
 show_image_hist(dark0_30sec.data, "The master dark0_30sec by median combine")
 
-# %% code 153.
+# %% code Ⅲ-98.
 fpath = dark_150sec_list[0]
 print(fpath)
 show_image_hist(fits.getdata(fpath), "The dark image 150sec (one file)")
 
-# %% code 154.
+# %% code Ⅲ-99.
 fpath = dark_30sec_list[0]
 print(fpath)
 show_image_hist(fits.getdata(fpath), "The dark image 30sec (one file)")
 
-# %% code 155.
+# %% code Ⅲ-100.
 from ccdproc import CCDData, ccd_process
 # 바이어스 빼기
 dark_150sec = ccd_process(dark0_150sec, master_bias = bias)
@@ -236,13 +236,13 @@ dark_30sec = ccd_process(dark0_30sec, master_bias = bias)
 dark_150sec.data = dark_150sec.data.astype(np.float32)
 dark_30sec.data = dark_30sec.data.astype(np.float32)
 
-# %% code 156.
+# %% code Ⅲ-101.
 show_image_hist(dark_150sec.data, "The master dark_150sec by median combine")
 
-# %% code 157.
+# %% code Ⅲ-102.
 show_image_hist(dark_30sec.data, "The master dark_30sec by median combine")
 
-# %% code 158.
+# %% code Ⅲ-103.
 # 저장
 dark_150sec.write(f"{MASTERDIR}/master_dark_150sec_{method}.fits",
                   overwrite =True)
@@ -252,13 +252,13 @@ dark_30sec.write(f"{(MASTERDIR)}/master_dark_30sec_{method}.fits",
                   overwrite =True)
 print(f"{(MASTERDIR)}/master_dark_30sec_{method}.fits is created...")
 
-# %% code 159.
+# %% code Ⅲ-104.
 plot_image_with_cutouts(dark_150sec.data)
 
-# %% code 160.
+# %% code Ⅲ-105.
 flat_list = du.list_files(proj_dir, pattern="FLAT_V_*.fit*")
 
-# %% code 161.
+# %% code Ⅲ-106.
 flat0 = combine(flat_list,       # ccdproc은 numpy 배열이 아니라 파이썬 리스트만 받음
                method='median',         # 기본값이 average라서 median으로 지정
                unit='adu')
@@ -266,20 +266,20 @@ flat0 = combine(flat_list,       # ccdproc은 numpy 배열이 아니라 파이�
 # float32로 변환
 flat0.data = flat0.data.astype(np.float32)
 
-# %% code 162.
+# %% code Ⅲ-107.
 # FITS 파일로 저장
 flat0.write(f"{MASTERDIR}/master_flat0_{method}.fits", overwrite =True)
 print(f"{MASTERDIR}/master_flat0_{method}.fits is created...")
 
-# %% code 163.
+# %% code Ⅲ-108.
 show_image_hist(flat0.data, "The master flat0 by median combine", hist_frac=0.3)
 
-# %% code 164.
+# %% code Ⅲ-109.
 fpath = flat_list[0]
 print(fpath)
 show_image_hist(fits.getdata(fpath), "The flat image (one file)")
 
-# %% code 165.
+# %% code Ⅲ-110.
 import astropy.units as u
 
 # 플랫마다 바이어스와 다크를 뺌(다크는 플랫의 노출 시간에 맞춰 줄임)
@@ -305,26 +305,26 @@ flat.data = flat.data.astype(np.float32)
 flat.write(f"{MASTERDIR}/master_flat_{method}.fits", overwrite =True)
 print(f"{MASTERDIR}/master_flat_{method}.fits is created...")
 
-# %% code 166.
+# %% code Ⅲ-111.
 show_image_hist(flat.data, "The master flat by median combine", hist_frac=0.2)
 
-# %% code 167.
+# %% code Ⅲ-112.
 plot_image_with_cutouts(flat.data)
 
-# %% code 168.
+# %% code Ⅲ-113.
 flat_norm = flat.copy()
 flat_norm.data = flat.data/np.median(flat.data)   # 중앙값 = 1
 
 flat_norm.write(f"{MASTERDIR}/master_flat_norm_{method}.fits", overwrite =True)
 print(f"{(MASTERDIR)}/master_flat_norm_{method}.fits is created...")
 
-# %% code 169.
+# %% code Ⅲ-114.
 show_image_hist(flat_norm.data, "The master normalized flat by median combine", hist_frac=0.2)
 
-# %% code 170.
+# %% code Ⅲ-115.
 object_BLCAM_list = du.list_files(proj_dir, pattern="BL-CAM*.fit*")
 
-# %% code 171.
+# %% code Ⅲ-116.
 # 노출 시간이 같은 150초 다크를 쓰므로 크기 조정(dark scale) 없이 그대로 뺌
 from ccdproc import CCDData, ccd_process, flat_correct
 import astropy.units as u
@@ -343,18 +343,18 @@ for fpath in object_BLCAM_list:
     reduced.write(f"{REDUCEDDIR}/reduced_{fpath.name}", overwrite =True)
     print(f"{REDUCEDDIR}/reduced_{fpath.name} is created...")
 
-# %% code 172.
+# %% code Ⅲ-117.
 fpath = object_BLCAM_list[0]
 print(fpath)
 show_image_hist(fits.getdata(fpath), "Before preprocessing")
 
-# %% code 173.
+# %% code Ⅲ-118.
 reduced_fpath = REDUCEDDIR / f"reduced_{fpath.name}"
 print(reduced_fpath)
 hdul_af = fits.open(str(reduced_fpath))
 show_image_hist(hdul_af[0].data, "After preprocessing (No dark scale)")
 
-# %% code 174.
+# %% code Ⅲ-119.
 from ccdproc import CCDData, ccd_process, flat_correct
 import astropy.units as u
 
@@ -375,14 +375,14 @@ for fpath in object_BLCAM_list:
                          overwrite =True)
     print(f"{REDUCEDDIR}/reduced_darksc_{fpath.name} is created... (median: {np.median(reduced_darksc.data):.1f})")
 
-# %% code 175.
+# %% code Ⅲ-120.
 fpath = object_BLCAM_list[0]
 reduced_darksc_fpath = REDUCEDDIR / f"reduced_darksc_{fpath.name}"
 print(reduced_darksc_fpath)
 hdul_af_darksc = fits.open(str(reduced_darksc_fpath))
 show_image_hist(hdul_af_darksc[0].data, "After preprocessing (dark scale)")
 
-# %% code 176.
+# %% code Ⅲ-121.
 # 두 보정 결과(150초 다크 vs 30초 다크를 늘려 씀)의 차이를 수치로 비교
 diff = hdul_af_darksc[0].data - hdul_af[0].data
 print(f"보정 결과 중앙값 (150초 다크)      : {np.median(hdul_af[0].data):.1f} ADU")
@@ -398,19 +398,19 @@ m150, m30 = np.median(dark_150sec.data), np.median(dark_30sec.data)
 print(f"다크 중앙값  150초: {m150:.2f} ADU, 30초: {m30:.2f} ADU")
 print(f"30초 값이 노출에 비례한다면 150초 다크의 중앙값: {m30*150/30:.2f} ADU")
 
-# %% code 177.
+# %% code Ⅲ-122.
 plot_image_with_cutouts(hdul_af[0].data)
 
-# %% code 178.
+# %% code Ⅲ-123.
 plot_image_with_cutouts(hdul_af_darksc[0].data)
 
-# %% code 179.
+# %% code Ⅲ-124.
 import pandas as pd
 import astropy.units as u
 from astropy.io import fits
 from ccdproc import CCDData, combine, ccd_process, subtract_bias, flat_correct
 
-# %% code 180.
+# %% code Ⅲ-125.
 KEYS = ("IMAGETYP", "OBJECT", "EXPTIME", "FILTER")
 
 def make_summary(fpaths, keys=KEYS):
@@ -427,7 +427,7 @@ summary = make_summary(du.list_files(proj_dir, "fit*", show=False))
 print("len(summary):", len(summary))
 summary
 
-# %% code 181.
+# %% code Ⅲ-126.
 bias_files = summary.loc[summary["IMAGETYP"] == "BIAS", "file"].tolist()
 print("len(bias_files):", len(bias_files))
 
@@ -438,7 +438,7 @@ fname = MASTERDIR / "master_bias.fits"
 mbias.write(fname, overwrite=True)
 print(f"{fname} is created...")
 
-# %% code 182.
+# %% code Ⅲ-127.
 dark_df = summary.loc[summary["IMAGETYP"] == "DARK"]
 mdarks = {}                         # 노출 시간 -> 마스터 다크
 
@@ -452,12 +452,12 @@ for exptime, group in dark_df.groupby("EXPTIME"):
     mdarks[exptime] = mdark
     print(f"{fname} is created... ({len(group)} files)")
 
-# %% code 183.
+# %% code Ⅲ-128.
 flat_df = summary.loc[summary["IMAGETYP"] == "FLAT"]
 print("len(flat_df):", len(flat_df))
 flat_df
 
-# %% code 184.
+# %% code Ⅲ-129.
 mflats = {}                          # 필터 -> 마스터 플랫(정규화 전)
 
 for filt, group in flat_df.groupby("FILTER"):
@@ -478,7 +478,7 @@ for filt, group in flat_df.groupby("FILTER"):
     mflats[filt] = mflat
     print(f"{fname} is created... ({len(group)} files)")
 
-# %% code 185.
+# %% code Ⅲ-130.
 mflats_norm = {}                     # 필터 -> 정규화한 마스터 플랫
 
 for filt, mflat in mflats.items():
@@ -490,7 +490,7 @@ for filt, mflat in mflats.items():
     mflats_norm[filt] = mflat_norm
     print(f"{fname} is created... (median: {np.median(mflat.data):.1f})")
 
-# %% code 186.
+# %% code Ⅲ-131.
 df_light = summary.loc[summary["IMAGETYP"] == "LIGHT"]
 df_light_bl = df_light.loc[df_light["OBJECT"] == "BL-CAM"]
 df_light_bl = df_light_bl.reset_index(drop=True)
@@ -515,7 +515,7 @@ for _, row in df_light_bl.iterrows():
     red.write(fname, overwrite=True)
     print(f"{fname} is created... (median: {np.median(red.data):.1f})")
 
-# %% code 187.
+# %% code Ⅲ-132.
 for _, row in df_light_bl.iterrows():
     fpath = Path(row["file"])
     ccd = CCDData.read(fpath, unit="adu")
@@ -534,7 +534,7 @@ for _, row in df_light_bl.iterrows():
     red.write(fname, overwrite=True)
     print(f"{fname} is created... (median: {np.median(red.data):.1f})")
 
-# %% code 188.
+# %% code Ⅲ-133.
 df_light_tt = df_light.loc[df_light["OBJECT"] == "TT-ARI"].reset_index(drop=True)
 print("len(df_light_tt):", len(df_light_tt))
 

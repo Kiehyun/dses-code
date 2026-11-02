@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>II-02. 플랑크 곡선 그리기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/02-02/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-13">13</a> <a href="#code-14">14</a> <a href="#code-15">15</a> <a href="#code-16">16</a> <a href="#code-17">17</a> <a href="#code-18">18</a> <a href="#code-19">19</a> <a href="#code-20">20</a> <a href="#code-21">21</a></p>
-<h2 id="code-13">code 13. <button class="copy">복사</button></h2><pre><code>h = 6.626e-34  # J s, 플랑크 상수
+<p class="jump"><a href="#code-Ⅱ-13">Ⅱ-13</a> <a href="#code-Ⅱ-14">Ⅱ-14</a> <a href="#code-Ⅱ-15">Ⅱ-15</a> <a href="#code-Ⅱ-16">Ⅱ-16</a> <a href="#code-Ⅱ-17">Ⅱ-17</a> <a href="#code-Ⅱ-18">Ⅱ-18</a> <a href="#code-Ⅱ-19">Ⅱ-19</a> <a href="#code-Ⅱ-20">Ⅱ-20</a> <a href="#code-Ⅱ-21">Ⅱ-21</a></p>
+<h2 id="code-Ⅱ-13">code Ⅱ-13. <button class="copy">복사</button></h2><pre><code>h = 6.626e-34  # J s, 플랑크 상수
 c = 3.0e+8     # m/s, 광속
 k = 1.38e-23   # J/K, 볼츠만 상수
 
@@ -30,7 +30,7 @@ intensities = a / ( (wavelengths**5) * (np.exp(b) - 1.0) )  # 파장별 복사 �
 
 print (&quot;len(wavelengths): {}&quot;.format(len(wavelengths)))
 print (&quot;len(intensities): {}&quot;.format(len(intensities)))</code></pre>
-<h2 id="code-14">code 14. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅱ-14">code Ⅱ-14. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 plt.plot(wavelengths*1e9, intensities, &#x27;b-&#x27;, label = &#x27;6000 K&#x27;)  # 파장을 nm로 바꿔 그리기
 
@@ -43,7 +43,7 @@ plt.ylabel(r&#x27;분광 복사휘도 [W m$^{-2}$ m$^{-1}$ sr$^{-1}$]&#x27;)
 plt.legend()
 
 plt.show()</code></pre>
-<h2 id="code-15">code 15. <button class="copy">복사</button></h2><pre><code>from astropy import units as u
+<h2 id="code-Ⅱ-15">code Ⅱ-15. <button class="copy">복사</button></h2><pre><code>from astropy import units as u
 h = 6.626e-34 * u.J * u.s      # 플랑크 상수
 c = 3.0e+8  * u.m / u.s        # 광속
 k = 1.38e-23 * u.J / u.K       # 볼츠만 상수
@@ -55,12 +55,12 @@ print (&quot;c: {}&quot;.format(c))
 print (&quot;k: {}&quot;.format(k))
 print (&quot;wavelengths: {}&quot;.format(wavelengths))
 print (&quot;T: {}&quot;.format(T))</code></pre>
-<h2 id="code-16">code 16. <button class="copy">복사</button></h2><pre><code>from astropy import constants as const
+<h2 id="code-Ⅱ-16">code Ⅱ-16. <button class="copy">복사</button></h2><pre><code>from astropy import constants as const
 
 print(&quot;const.h:{}&quot;.format(const.h))
 print(&quot;const.c:{}&quot;.format(const.c))
 print(&quot;const.k_B:{}&quot;.format(const.k_B))</code></pre>
-<h2 id="code-17">code 17. <button class="copy">복사</button></h2><pre><code>def planckQ(wavelengths, T):
+<h2 id="code-Ⅱ-17">code Ⅱ-17. <button class="copy">복사</button></h2><pre><code>def planckQ(wavelengths, T):
     a = 2.0 * const.h * const.c**2
     b = const.h * const.c / (wavelengths * const.k_B * T)
     # 분광 복사휘도: 단위 면적 · 단위 파장 · 단위 입체각(sr)당 일률
@@ -94,7 +94,7 @@ plt.ylabel(f&#x27;분광 복사휘도 [{I_unit:latex_inline}]&#x27;)
 plt.legend()
 
 plt.show()</code></pre>
-<h2 id="code-18">code 18. <button class="copy">복사</button></h2><pre><code>from astropy.modeling.models import BlackBody
+<h2 id="code-Ⅱ-18">code Ⅱ-18. <button class="copy">복사</button></h2><pre><code>from astropy.modeling.models import BlackBody
 
 bb_temp = 5778*u.K  # 태양 표면 온도
 bb = BlackBody(temperature = bb_temp)
@@ -106,7 +106,7 @@ print(&quot;type(bb_temp)&quot;, type(bb_temp))
 print(&#x27;wavelength : {}&#x27;.format(wavelength))
 print(&#x27;flux : {}&#x27;.format(flux))
 print(&quot;type(flux)&quot;, type(flux))</code></pre>
-<h2 id="code-19">code 19. <button class="copy">복사</button></h2><pre><code>print(f&#x27;flux: {flux.value:0.1f} {flux.unit}&#x27;)
+<h2 id="code-Ⅱ-19">code Ⅱ-19. <button class="copy">복사</button></h2><pre><code>print(f&#x27;flux: {flux.value:0.1f} {flux.unit}&#x27;)
 print(f&#x27;flux: {flux.value:0.8f} {flux.unit:fits}&#x27;)
 print(f&#x27;flux: {flux.value:0.0f} {flux.unit:cds}&#x27;)
 print(f&#x27;flux: {flux.value:0.0f} {flux.unit:latex}&#x27;)
@@ -116,7 +116,7 @@ print(&#x27;wavelength.to(u.micron)  : {0.value:0.02f} {0.unit:FITS}&#x27;\
       .format(wavelength.to(u.micron) ))
 print(&#x27;flux.to(u.W / (u.m**2 * u.Hz * u.sr)) : {0.value:0.08f} {0.unit:FITS}&#x27;\
       .format(flux.to(u.W / (u.m**2 * u.Hz * u.sr))))</code></pre>
-<h2 id="code-20">code 20. <button class="copy">복사</button></h2><pre><code>from astropy.visualization import quantity_support
+<h2 id="code-Ⅱ-20">code Ⅱ-20. <button class="copy">복사</button></h2><pre><code>from astropy.visualization import quantity_support
 
 bb = BlackBody(temperature=5778*u.K)  # 태양 표면 온도
 
@@ -134,7 +134,7 @@ with quantity_support():  # 단위가 붙은 값을 바로 그리기
     plt.ylabel(r&#x27;분광 복사휘도 [W m$^{-2}$ Hz$^{-1}$ sr$^{-1}$]&#x27;)
     du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;02_02_Plotting_Planck_curve_01&quot;))
     plt.show()</code></pre>
-<h2 id="code-21">code 21. <button class="copy">복사</button></h2><pre><code>from astropy import units as u
+<h2 id="code-Ⅱ-21">code Ⅱ-21. <button class="copy">복사</button></h2><pre><code>from astropy import units as u
 from astropy import constants as const
 import matplotlib.pyplot as plt
 import numpy as np

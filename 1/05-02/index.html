@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>V-02. 세계의 지진대</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/05-02/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-12">12</a> <a href="#code-13">13</a> <a href="#code-14">14</a> <a href="#code-15">15</a> <a href="#code-16">16</a> <a href="#code-17">17</a> <a href="#code-18">18</a> <a href="#code-19">19</a> <a href="#code-20">20</a> <a href="#code-21">21</a> <a href="#code-22">22</a> <a href="#code-23">23</a></p>
-<h2 id="code-12">code 12. <button class="copy">복사</button></h2><pre><code># USGS 지진 목록(GeoJSON): 최근 30일 전체, 규모 4.5 이상
+<p class="jump"><a href="#code-Ⅴ-12">Ⅴ-12</a> <a href="#code-Ⅴ-13">Ⅴ-13</a> <a href="#code-Ⅴ-14">Ⅴ-14</a> <a href="#code-Ⅴ-15">Ⅴ-15</a> <a href="#code-Ⅴ-16">Ⅴ-16</a> <a href="#code-Ⅴ-17">Ⅴ-17</a> <a href="#code-Ⅴ-18">Ⅴ-18</a> <a href="#code-Ⅴ-19">Ⅴ-19</a> <a href="#code-Ⅴ-20">Ⅴ-20</a> <a href="#code-Ⅴ-21">Ⅴ-21</a> <a href="#code-Ⅴ-22">Ⅴ-22</a> <a href="#code-Ⅴ-23">Ⅴ-23</a></p>
+<h2 id="code-Ⅴ-12">code Ⅴ-12. <button class="copy">복사</button></h2><pre><code># USGS 지진 목록(GeoJSON): 최근 30일 전체, 규모 4.5 이상
 usgs_feeds = {
     &quot;01_usgs_all_month.geojson&quot;: &quot;https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson&quot;,
     &quot;02_usgs_4.5_month.geojson&quot;: &quot;https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_month.geojson&quot;,
@@ -30,8 +30,8 @@ if len(fpaths) == 0:
 
 print(f&quot;fpaths: {fpaths}&quot;)
 print(f&quot;len(fpaths): {len(fpaths)}&quot;)</code></pre>
-<h2 id="code-13">code 13. <button class="copy">복사</button></h2><pre><code>du.preview_text(fpaths[0], n=10);</code></pre>
-<h2 id="code-14">code 14. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+<h2 id="code-Ⅴ-13">code Ⅴ-13. <button class="copy">복사</button></h2><pre><code>du.preview_text(fpaths[0], n=10);</code></pre>
+<h2 id="code-Ⅴ-14">code Ⅴ-14. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 import json
 
 def earthquake_json_to_dataframe(json_path):
@@ -78,13 +78,13 @@ def earthquake_json_to_dataframe(json_path):
 df, data = earthquake_json_to_dataframe(fpaths[0])
 
 print(f&quot;파일명: {fpaths[0].name}&quot;)</code></pre>
-<h2 id="code-15">code 15. <button class="copy">복사</button></h2><pre><code># 위도 · 경도 · 깊이(km) · 규모(mag) 열이 들어 있는지 확인
+<h2 id="code-Ⅴ-15">code Ⅴ-15. <button class="copy">복사</button></h2><pre><code># 위도 · 경도 · 깊이(km) · 규모(mag) 열이 들어 있는지 확인
 print(f&quot;파일명: {fpaths[0].name}&quot;)
 print(f&quot;데이터프레임 크기: {df.shape}&quot;)
 print(f&quot;열: {df.columns.tolist()}&quot;)
 print(f&quot;자료형:\n{df.dtypes}&quot;)
 display(df.head(3))</code></pre>
-<h2 id="code-16">code 16. <button class="copy">복사</button></h2><pre><code>import hashlib
+<h2 id="code-Ⅴ-16">code Ⅴ-16. <button class="copy">복사</button></h2><pre><code>import hashlib
 from pathlib import Path
 
 # 파일 내용의 SHA-256 해시(같은 파일인지 비교용)
@@ -112,7 +112,7 @@ def save_csv_if_changed(df_obj, output_path):
     print(f&quot;저장 완료: {output_path}&quot;)
 
 save_csv_if_changed(df, proj_dir/&quot;usgs_all_month.csv&quot;)</code></pre>
-<h2 id="code-17">code 17. <button class="copy">복사</button></h2><pre><code># 폴더의 GeoJSON 파일 목록 다시 확인(두 번째 파일을 쓸 차례)
+<h2 id="code-Ⅴ-17">code Ⅴ-17. <button class="copy">복사</button></h2><pre><code># 폴더의 GeoJSON 파일 목록 다시 확인(두 번째 파일을 쓸 차례)
 fpaths = sorted((proj_dir).glob(&quot;*.geojson&quot;)) + sorted((proj_dir).glob(&quot;*.json&quot;))
 fpaths = list(dict.fromkeys(fpaths))
 
@@ -121,7 +121,7 @@ if len(fpaths) &lt; 2:
 
 print(f&quot;fpaths: {fpaths}&quot;)
 print(f&quot;len(fpaths): {len(fpaths)}&quot;)</code></pre>
-<h2 id="code-18">code 18. <button class="copy">복사</button></h2><pre><code>import json
+<h2 id="code-Ⅴ-18">code Ⅴ-18. <button class="copy">복사</button></h2><pre><code>import json
 
 # 두 번째 파일(규모 4.5 이상) 읽기 · 구조 확인
 print(f&quot;파일명: {fpaths[1].name}&quot;)
@@ -148,12 +148,12 @@ print(&quot;\n=== DataFrame 확인 ===&quot;)
 print(f&quot;데이터프레임 크기: {df1.shape}&quot;)
 print(f&quot;열: {df1.columns.tolist()}&quot;)
 display(df1.head(3))</code></pre>
-<h2 id="code-19">code 19. <button class="copy">복사</button></h2><pre><code># df1: 규모 4.5 이상 지진(df와 같은 열 구성)
+<h2 id="code-Ⅴ-19">code Ⅴ-19. <button class="copy">복사</button></h2><pre><code># df1: 규모 4.5 이상 지진(df와 같은 열 구성)
 print(f&quot;파일명: {fpaths[1].name}&quot;)
 print(f&quot;데이터프레임 크기: {df1.shape}&quot;)
 print(f&quot;열: {df1.columns.tolist()}&quot;)
 display(df1.head(3))</code></pre>
-<h2 id="code-20">code 20. <button class="copy">복사</button></h2><pre><code>import folium
+<h2 id="code-Ⅴ-20">code Ⅴ-20. <button class="copy">복사</button></h2><pre><code>import folium
 from folium import plugins
 import numpy as np
 
@@ -209,7 +209,7 @@ m.save(str(map_path))
 print(f&quot;\n지도 저장 완료: {map_path}&quot;)
 print(f&quot;지도에 표시된 지진 수: {len(df_clean)}&quot;)
 m</code></pre>
-<h2 id="code-21">code 21. <button class="copy">복사</button></h2><pre><code>import folium
+<h2 id="code-Ⅴ-21">code Ⅴ-21. <button class="copy">복사</button></h2><pre><code>import folium
 import numpy as np
 
 # 1) 위경도가 있는 지진만(df1: 규모 4.5 이상)
@@ -269,7 +269,7 @@ m1.save(str(map_path1))
 print(f&quot;\n지도 저장 완료: {map_path1}&quot;)
 print(f&quot;지도에 표시된 지진 수: {len(df1_clean)}&quot;)
 m1</code></pre>
-<h2 id="code-22">code 22. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅴ-22">code Ⅴ-22. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 
@@ -318,7 +318,7 @@ du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;05_02_Visualizing_global_
 plt.show()
 
 print(f&quot;지도에 표시된 지진 수: {len(df1_clean)}&quot;)</code></pre>
-<h2 id="code-23">code 23. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅴ-23">code Ⅴ-23. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import numpy as np

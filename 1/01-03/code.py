@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | I-03. Python 코딩 시작하기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 1.
+# %% code Ⅰ-1.
 # 괄호 안에서는 원하는 곳에서 줄을 바꿀 수 있음
 planets = ['수성', '금성', '지구', '화성',
            '목성', '토성', '천왕성', '해왕성']
@@ -20,23 +20,23 @@ x = 1; y = 2  # 세미콜론으로 한 줄에 두 문장(권장하지 않음)
 print(len(planets), total, area, x + y)
 print(message)
 
-# %% code 2.
+# %% code Ⅰ-2.
 x = 0              # x에 0 저장
 y = 'Hello world'  # y에 문자열 'Hello world' 저장
 x                  # x의 값 출력(셀의 마지막 줄)
 
-# %% code 3.
+# %% code Ⅰ-3.
 y = 'Hello world'
 y
 
-# %% code 4.
+# %% code Ⅰ-4.
 y1      =      'Hello world'  # = 앞뒤의 공백은 상관없음
 y1
 
-# %% code 5.
+# %% code Ⅰ-5.
 class = 'Hello world'  # class는 예약어라 식별자로 쓸 수 없음
 
-# %% code 6.
+# %% code Ⅰ-6.
 print('괄호 안의 글자가 그대로 출력됩니다.')  # 괄호 안의 내용 출력
 y = 'Hello world'
 y           # 마지막 줄이 아니면 출력되지 않음
@@ -44,7 +44,7 @@ print(y)    # print()는 항상 출력
 print("y")  # 문자 "y" 출력
 y           # 마지막 줄이면 자동 출력
 
-# %% code 7.
+# %% code Ⅰ-7.
 a = 3     # 정수(int)
 b = 3.14  # 실수(float, 부동소수점수)
 c = 3.14159
@@ -61,7 +61,7 @@ need_coffee = False
 print("type(hungry): ", type(hungry), "hungry: ", hungry)
 print("type(need_coffee): ", type(need_coffee), "need_coffee: ", need_coffee)
 
-# %% code 8.
+# %% code Ⅰ-8.
 my_value1 = 'I love programming in Python.'  # 작은따옴표로 감싼 문자열
 print(my_value1)
 my_value2 = "'I love programming in Python.'"  # 큰따옴표 안에 작은따옴표
@@ -70,13 +70,13 @@ print(my_value2)
 my_value3 = '"I love programming in Python."'  # 작은따옴표 안에 큰따옴표
 print(my_value3)
 
-# %% code 9.
+# %% code Ⅰ-9.
 my_value4 = '\'I love programming in Python.\''  # \'는 따옴표 문자(이스케이프 문자)
 print(my_value4)
 my_value5 = "\n\t   Hello      wo\nrld!   \n\n\t\nBye."  # \n 줄바꿈, \t 탭
 print(my_value5)
 
-# %% code 10.
+# %% code Ⅰ-10.
 my_value5 ="""MIRANDA
 O, wonder!
 How many goodly creatures are there here!
@@ -91,14 +91,14 @@ How beauteous mankind is! O brave new world
 That has such people in't!'''
 print("my_value6 :", my_value6)
 
-# %% code 11.
+# %% code Ⅰ-11.
 text_add1 = 'abc' + ' ' +'def'
 print("text_add1 :", text_add1)
 
 text_add2 = "=+"*5  # 문자열 5번 반복
 print("text_add2 :", text_add2)
 
-# %% code 12.
+# %% code Ⅰ-12.
 our_string = 'python is the best language ever'
 print("our_string.capitalize() :", our_string.capitalize())  # 첫 글자를 대문자로
 filename = '../data/PTF_d022683_f02_c06_u000114210_p12_refimg.fits'
@@ -107,22 +107,22 @@ our_string ='python is the best language ever'
 print("our_string.find('the') :", our_string.find('the'))  # 'the'가 처음 나오는 위치
 print("our_string.split(' ') :", our_string.split(' '))  # 공백 기준으로 나눠 리스트로
 
-# %% code 13.
+# %% code Ⅰ-13.
 z = 10
 print ('I am a fan of the number: ' + z)  # 정수와 문자열은 더할 수 없음 → TypeError
 
-# %% code 14.
+# %% code Ⅰ-14.
 z = 10
 print ('I am a fan of the number: ' + str(z))  # str()로 문자열 변환 후 결합
 
-# %% code 15.
+# %% code Ⅰ-15.
 decimalValue, stringValue, floatValue = 42, 'Hello', 3.14  # 여러 변수에 한 번에 할당
 print ('출력 예:', decimalValue, stringValue, floatValue)  # (1) 쉼표로 나열
 print ('출력 예: %d %s %f' % (decimalValue, stringValue, floatValue))  # (2) % 연산자
 print ('출력 예: {0:d} {1:s} {2:f}'.format(decimalValue, stringValue, floatValue))  # (3) format() 메서드
 print (f'출력 예: {decimalValue} {stringValue} {floatValue}')  # (4) f-string
 
-# %% code 16.
+# %% code Ⅰ-16.
 print("4 + 10 =", 4 + 10)
 print("4 - 10 =", 4 - 10)
 print("5 * 10 =", 5 * 10)
@@ -130,7 +130,7 @@ print("5 / 10 =", 5 / 10)
 print("10 % 4 =", 10 % 4)
 print("2**3 =", 2**3)
 
-# %% code 17.
+# %% code Ⅰ-17.
 print("abs(9) :", abs(9))
 print("divmod(8, 4) :", divmod(8, 4))  # (몫, 나머지) 튜플
 print("pow(2, 3) :", pow(2, 3))
@@ -140,7 +140,7 @@ print("round(3.14159, 2) :", round(3.14159, 2))
 print("round(3.14159, -2) :", round(3.14159, -2))  # 십의 자리에서 반올림
 print("divmod(9, 4) :", divmod(9, 4))
 
-# %% code 18.
+# %% code Ⅰ-18.
 print("8 > 10 :", 8 > 10 )
 print("256 < 725:", 256 < 725)
 print("10 == 10 :", 10 == 10)
@@ -148,14 +148,14 @@ print("10 != 10 :", 10 != 10)
 print("10 == 10 + 1 :", 10 == 10 + 1)
 print("type(8 > 10) :", type(8 > 10))  # 비교 결과는 불(bool)
 
-# %% code 19.
+# %% code Ⅰ-19.
 print("10 == 10 and 10 > 10 :", 10 == 10 and 10 > 10)
 print("10 == 10 or 10 > 10 :", 10 == 10 or 10 > 10)
 print("not(10 == 10) :", not(10 == 10))
 print("not(10 == 10 and 10 > 10) :", not(10 == 10 and 10 > 10))
 print("not(10 == 10 or 10 > 10) :", not(10 == 10 or 10 > 10))
 
-# %% code 20.
+# %% code Ⅰ-20.
 myLst = []
 print("myLst: ", myLst)
 print("type(myLst):", type(myLst))
@@ -163,7 +163,7 @@ myLst2 = [1, 2, 3, 4, 5]
 print("myLst2 :", myLst2)
 print("type(myLst2):", type(myLst2))
 
-# %% code 21.
+# %% code Ⅰ-21.
 myStrLst = ['Hello', 'Python', 'lists']
 print("myStrLst: ", myStrLst)
 multiLst = [1, 2, 'three', 4, 'five', 'six']  # 여러 자료형을 섞은 리스트
@@ -173,7 +173,7 @@ print("comboLst: ", comboLst)
 my_newLst1 = ['new_item1', 'new_item2', [1, 2, 3, 4], 'new_item3']
 print("my_newLst1: ", my_newLst1)
 
-# %% code 22.
+# %% code Ⅰ-22.
 myStrLst = ['Hello', 'Python', 'lists'] 
 print("len(myStrLst): ", len(myStrLst))
 print("myStrLst[2]: ",  myStrLst[2])    # 인덱스는 0부터
@@ -182,7 +182,7 @@ print("myStrLst[-1]: ",  myStrLst[-1])  # 음수 인덱스는 뒤에서부터
 my_newLst2 = [1, 2, 3, ['a', 'b', 'c']]
 print("my_newLst2[-1][0]: ", my_newLst2[-1][0])  # 마지막 원소(리스트)의 첫 원소
 
-# %% code 23.
+# %% code Ⅰ-23.
 print("myStrLst[0:2]: ", myStrLst[0:2])  # 시작 인덱스는 포함, 끝 인덱스는 제외
 print("myStrLst[:2]: ", myStrLst[:2])  # 시작 생략 → 처음부터
 print("myStrLst[1:]: ", myStrLst[1:])  # 끝 생략 → 끝까지
@@ -194,7 +194,7 @@ print("newLst[0:10:1]: ", newLst[0:10:1])  # 세 번째 값은 간격(step)
 my_newLst3 = [1, 2, 3, ['a', 'b', 'c'], 4, 5]
 print("my_newLst3[3][:2]: ", my_newLst3[3][:2])  # 4번째 원소(리스트)를 다시 슬라이싱
 
-# %% code 24.
+# %% code Ⅰ-24.
 newLst1 = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
 print("newLst1:", newLst1)
 newLst1.append('h')
@@ -224,7 +224,7 @@ newLst5 = ['h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p']
 newLst5.extend(['q', 'r'])  # 다른 리스트의 원소를 끝에 추가
 print("newLst5:", newLst5)
 
-# %% code 25.
+# %% code Ⅰ-25.
 myTuple1 = ()  # 빈 튜플
 print("len(myTuple1):", len(myTuple1))
 print("myTuple1:", myTuple1)
@@ -233,7 +233,7 @@ myTuple2 = (1, 'two', 3, 'four')  # 서로 다른 자료형도 담을 수 있음
 print("len(myTuple2):", len(myTuple2))
 print("myTuple2[2]:", myTuple2[2])
 
-# %% code 26.
+# %% code Ⅰ-26.
 myDic1 = {}
 print("myDic1:", myDic1)
 print("len(myDic1):", len(myDic1))
@@ -254,11 +254,11 @@ print("myDic4:", myDic4)
 del myDic4['name']  # 키 'name'과 그 값 삭제
 print("myDic4('name' 삭제 뒤):", myDic4)
 
-# %% code 27.
+# %% code Ⅰ-27.
 myDic5 = {1: 'a', 2: 'b', 1: 'c'}  # 키 1이 중복됨
 print("myDic5:", myDic5)           # 마지막 값만 남음
 
-# %% code 28.
+# %% code Ⅰ-28.
 # 예제 1: 다중 변수 할당과 비교 연산
 a, b, c = 5, 5.0, 15 + 3
 print("a, b, c 값:", a, b, c)
@@ -306,7 +306,7 @@ elif '습도' in 날씨정보:
 else:
     print('온도와 습도 정보가 모두 없습니다')
 
-# %% code 29.
+# %% code Ⅰ-29.
 test_list = ['one', 'two', 'three']
 for i in test_list:
     print(i)
@@ -327,7 +327,7 @@ print("-"*20)
 for i in range(1, 10, 2):  # 1부터 9까지 홀수
     print(i, end=" ")  # 줄바꿈 대신 공백
 
-# %% code 30.
+# %% code Ⅰ-30.
 a = [1,2,3,4]
 result1 = []
 for num in a:
@@ -340,7 +340,7 @@ print("-"*20)
 result2 = [x*y for x in range(2,10) for y in range(1,10)]
 print("result2 :", result2)
 
-# %% code 31.
+# %% code Ⅰ-31.
 a = 1
 while a < 5:
     a = a * 2
@@ -354,7 +354,7 @@ while treeHit < 3:
     if treeHit == 3:
         print("나무 넘어갑니다.")
 
-# %% code 32.
+# %% code Ⅰ-32.
 coffee = 3  # 커피 재고
 money = 30
 while money:  # 0이 아닌 수는 True로 평가
@@ -375,7 +375,7 @@ print("-"*20)
 while True:
     print("중지 단추를 눌러야 while문을 빠져나갈 수 있습니다.")
 
-# %% code 33.
+# %% code Ⅰ-33.
 def square(n):
     return n * n
 print("square(3) :", square(3))
@@ -402,7 +402,7 @@ def calculate_area(radius):  # radius는 매개변수
 
 print("원의 넓이:", calculate_area(5))  # 5는 인수
 
-# %% code 34.
+# %% code Ⅰ-34.
 def add(a, b):  # a, b는 매개변수
     return a+b
 print("add(3, 4):", add(3, 4))  # 3, 4는 인수
@@ -416,7 +416,7 @@ seed = [1, 1]        # 시작값
 fibonacci(seed, 10)  # 원소 10개까지 생성
 print("seed :", seed)
 
-# %% code 35.
+# %% code Ⅰ-35.
 import math
 
 def sinc(x):
@@ -424,7 +424,7 @@ def sinc(x):
 
 print("sinc(0) :", sinc(0))  # x = 0이면 ZeroDivisionError
 
-# %% code 36.
+# %% code Ⅰ-36.
 import math
 
 def sinc(x):

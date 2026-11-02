@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>V-03. 지진파 데이터로 진앙 찾기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/05-03/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-24">24</a> <a href="#code-25">25</a> <a href="#code-26">26</a> <a href="#code-27">27</a> <a href="#code-28">28</a> <a href="#code-29">29</a> <a href="#code-30">30</a> <a href="#code-31">31</a> <a href="#code-32">32</a> <a href="#code-33">33</a></p>
-<h2 id="code-24">code 24. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
+<p class="jump"><a href="#code-Ⅴ-24">Ⅴ-24</a> <a href="#code-Ⅴ-25">Ⅴ-25</a> <a href="#code-Ⅴ-26">Ⅴ-26</a> <a href="#code-Ⅴ-27">Ⅴ-27</a> <a href="#code-Ⅴ-28">Ⅴ-28</a> <a href="#code-Ⅴ-29">Ⅴ-29</a> <a href="#code-Ⅴ-30">Ⅴ-30</a> <a href="#code-Ⅴ-31">Ⅴ-31</a> <a href="#code-Ⅴ-32">Ⅴ-32</a> <a href="#code-Ⅴ-33">Ⅴ-33</a></p>
+<h2 id="code-Ⅴ-24">code Ⅴ-24. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
 from datetime import datetime
 from urllib.parse import urlencode
 import xml.etree.ElementTree as ET
@@ -45,7 +45,7 @@ else:
     print(response.url)
     print(f&quot;저장 위치: {event_file}&quot;)
 print(f&quot;파일 크기: {event_file.stat().st_size:,} bytes&quot;)</code></pre>
-<h2 id="code-25">code 25. <button class="copy">복사</button></h2><pre><code># XML 도우미 함수(태그 이름 · 자식 요소 · 글자 읽기)
+<h2 id="code-Ⅴ-25">code Ⅴ-25. <button class="copy">복사</button></h2><pre><code># XML 도우미 함수(태그 이름 · 자식 요소 · 글자 읽기)
 def tag_name(element):
     return element.tag.split(&quot;}&quot;)[-1]
 
@@ -80,7 +80,7 @@ origin_info = {
 }
 
 origin_info</code></pre>
-<h2 id="code-26">code 26. <button class="copy">복사</button></h2><pre><code># 위상 판독(pick)마다 위상 · 시각 · 관측소 정보 모으기
+<h2 id="code-Ⅴ-26">code Ⅴ-26. <button class="copy">복사</button></h2><pre><code># 위상 판독(pick)마다 위상 · 시각 · 관측소 정보 모으기
 pick_rows = []
 
 for pick in [elem for elem in event.iter() if tag_name(elem) == &quot;pick&quot;]:
@@ -100,8 +100,8 @@ for pick in [elem for elem in event.iter() if tag_name(elem) == &quot;pick&quot;
 
 picks = pd.DataFrame(pick_rows)
 print(picks)</code></pre>
-<h2 id="code-27">code 27. <button class="copy">복사</button></h2><pre><code>picks[&quot;phase&quot;].value_counts(dropna=False)</code></pre>
-<h2 id="code-28">code 28. <button class="copy">복사</button></h2><pre><code># 관측소마다 가장 이른 P · S 도착 시각을 한 행으로
+<h2 id="code-Ⅴ-27">code Ⅴ-27. <button class="copy">복사</button></h2><pre><code>picks[&quot;phase&quot;].value_counts(dropna=False)</code></pre>
+<h2 id="code-Ⅴ-28">code Ⅴ-28. <button class="copy">복사</button></h2><pre><code># 관측소마다 가장 이른 P · S 도착 시각을 한 행으로
 phase_table = (
     picks[picks[&quot;phase&quot;].isin([&quot;P&quot;, &quot;S&quot;])]
     .sort_values(&quot;pick_time&quot;)
@@ -118,7 +118,7 @@ phase_table = phase_table[(phase_table[&quot;s_minus_p_sec&quot;] &gt; 0) &amp; 
 phase_table = phase_table.sort_values(&quot;s_minus_p_sec&quot;).reset_index(drop=True)
 
 print(phase_table)</code></pre>
-<h2 id="code-29">code 29. <button class="copy">복사</button></h2><pre><code># 관측소 위치(위도 · 경도 · 고도) 조회
+<h2 id="code-Ⅴ-29">code Ⅴ-29. <button class="copy">복사</button></h2><pre><code># 관측소 위치(위도 · 경도 · 고도) 조회
 def download_station_metadata(network, station, event_time):
     params = {
         &quot;format&quot;: &quot;text&quot;,
@@ -155,7 +155,7 @@ for row in phase_table[[&quot;network&quot;, &quot;station&quot;]].drop_duplicat
 stations = pd.DataFrame(station_rows)
 
 print(stations)</code></pre>
-<h2 id="code-30">code 30. <button class="copy">복사</button></h2><pre><code># 도착 시각 + 관측소 위치
+<h2 id="code-Ⅴ-30">code Ⅴ-30. <button class="copy">복사</button></h2><pre><code># 도착 시각 + 관측소 위치
 data = phase_table.merge(stations, on=[&quot;network&quot;, &quot;station&quot;], how=&quot;inner&quot;)
 
 # 지각 평균 속도 가정
@@ -167,7 +167,7 @@ data[&quot;estimated_distance_km&quot;] = data[&quot;s_minus_p_sec&quot;] / (1 /
 data = data.sort_values(&quot;estimated_distance_km&quot;).reset_index(drop=True)
 
 print(data[[&quot;network&quot;, &quot;station&quot;, &quot;P&quot;, &quot;S&quot;, &quot;s_minus_p_sec&quot;, &quot;estimated_distance_km&quot;, &quot;station_latitude&quot;, &quot;station_longitude&quot;]])</code></pre>
-<h2 id="code-31">code 31. <button class="copy">복사</button></h2><pre><code># 두 지점 사이 대원 거리(km)
+<h2 id="code-Ⅴ-31">code Ⅴ-31. <button class="copy">복사</button></h2><pre><code># 두 지점 사이 대원 거리(km)
 def haversine_km(lat1, lon1, lat2, lon2):
     radius = 6371.0  # 지구 평균 반지름(km)
     lat1 = np.radians(lat1)
@@ -206,7 +206,7 @@ print(f&quot;추정 진앙: lat={estimated_lat:.4f}, lon={estimated_lon:.4f}&quo
 print(f&quot;발표 진앙: lat={origin_info[&#x27;latitude&#x27;]:.4f}, lon={origin_info[&#x27;longitude&#x27;]:.4f}&quot;)
 print(f&quot;평균 거리 잔차(RMS): {best_misfit:.1f} km&quot;)
 print(f&quot;실제 진앙과의 거리 차이: {haversine_km(estimated_lat, estimated_lon, origin_info[&#x27;latitude&#x27;], origin_info[&#x27;longitude&#x27;]):.1f} km&quot;)</code></pre>
-<h2 id="code-32">code 32. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅴ-32">code Ⅴ-32. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 # 관측소와 발표 진앙 사이의 실제 거리(앞 셀의 haversine_km 사용)
 data[&quot;true_distance_km&quot;] = haversine_km(data[&quot;station_latitude&quot;], data[&quot;station_longitude&quot;],
@@ -227,7 +227,7 @@ ax.legend()
 ax.grid(alpha=0.3)
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;05_03_Finding_epicenter_with_P_and_S_waves_01&quot;))
 plt.show()</code></pre>
-<h2 id="code-33">code 33. <button class="copy">복사</button></h2><pre><code>import folium
+<h2 id="code-Ⅴ-33">code Ⅴ-33. <button class="copy">복사</button></h2><pre><code>import folium
 
 # 지도 중심: 추정 · 발표 진앙의 중간
 center_lat = np.mean([estimated_lat, origin_info[&quot;latitude&quot;]])

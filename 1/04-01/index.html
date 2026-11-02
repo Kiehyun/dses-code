@@ -11,15 +11,15 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>IV-01. 기상청 AWS 데이터 시각화하기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/04-01/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-1">1</a> <a href="#code-2">2</a> <a href="#code-3">3</a> <a href="#code-4">4</a> <a href="#code-5">5</a> <a href="#code-6">6</a> <a href="#code-7">7</a> <a href="#code-8">8</a> <a href="#code-9">9</a> <a href="#code-10">10</a> <a href="#code-11">11</a> <a href="#code-12">12</a> <a href="#code-13">13</a> <a href="#code-14">14</a> <a href="#code-15">15</a> <a href="#code-16">16</a> <a href="#code-17">17</a> <a href="#code-18">18</a> <a href="#code-19">19</a></p>
-<h2 id="code-1">code 1. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
+<p class="jump"><a href="#code-Ⅳ-1">Ⅳ-1</a> <a href="#code-Ⅳ-2">Ⅳ-2</a> <a href="#code-Ⅳ-3">Ⅳ-3</a> <a href="#code-Ⅳ-4">Ⅳ-4</a> <a href="#code-Ⅳ-5">Ⅳ-5</a> <a href="#code-Ⅳ-6">Ⅳ-6</a> <a href="#code-Ⅳ-7">Ⅳ-7</a> <a href="#code-Ⅳ-8">Ⅳ-8</a> <a href="#code-Ⅳ-9">Ⅳ-9</a> <a href="#code-Ⅳ-10">Ⅳ-10</a> <a href="#code-Ⅳ-11">Ⅳ-11</a> <a href="#code-Ⅳ-12">Ⅳ-12</a> <a href="#code-Ⅳ-13">Ⅳ-13</a> <a href="#code-Ⅳ-14">Ⅳ-14</a> <a href="#code-Ⅳ-15">Ⅳ-15</a> <a href="#code-Ⅳ-16">Ⅳ-16</a> <a href="#code-Ⅳ-17">Ⅳ-17</a> <a href="#code-Ⅳ-18">Ⅳ-18</a> <a href="#code-Ⅳ-19">Ⅳ-19</a></p>
+<h2 id="code-Ⅳ-1">code Ⅳ-1. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
 
 fname = &quot;SURFACE_ASOS_116_MI_2018-01_2018-12_2018.zip&quot;
 fid = &quot;1bUOR1wEmCPCCH8iY23shQ5d_c2td_kt-&quot;  # 구글 드라이브 파일 ID
 
 du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={fid}&quot;, Path(proj_dir) / fname)</code></pre>
-<h2 id="code-2">code 2. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;zip&quot;)</code></pre>
-<h2 id="code-3">code 3. <button class="copy">복사</button></h2><pre><code>import shutil
+<h2 id="code-Ⅳ-2">code Ⅳ-2. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;zip&quot;)</code></pre>
+<h2 id="code-Ⅳ-3">code Ⅳ-3. <button class="copy">복사</button></h2><pre><code>import shutil
 shutil.unpack_archive(str(fpaths[0]), str(Path(proj_dir)))
 
 from zipfile import ZipFile
@@ -27,14 +27,14 @@ with ZipFile(str(fpaths[0]), &#x27;r&#x27;) as zip_ref:
     zip_ref.extractall(str(Path(proj_dir)))
 
 fpaths = du.list_files(proj_dir, &quot;csv&quot;)</code></pre>
-<h2 id="code-4">code 4. <button class="copy">복사</button></h2><pre><code>du.preview_text(fpaths[0], n=10);  # 앞 10줄(인코딩 자동)</code></pre>
-<h2 id="code-5">code 5. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+<h2 id="code-Ⅳ-4">code Ⅳ-4. <button class="copy">복사</button></h2><pre><code>du.preview_text(fpaths[0], n=10);  # 앞 10줄(인코딩 자동)</code></pre>
+<h2 id="code-Ⅳ-5">code Ⅳ-5. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 
 # 천 단위 쉼표 처리, 기상청 데이터는 EUC-KR 인코딩
 df = pd.read_csv(str(fpaths[0]), thousands=&#x27;,&#x27;, encoding=&#x27;euc-kr&#x27;)
 
 print(f&quot;df :\n{df}&quot;)</code></pre>
-<h2 id="code-6">code 6. <button class="copy">복사</button></h2><pre><code># 월별 파일 모두 합치기
+<h2 id="code-Ⅳ-6">code Ⅳ-6. <button class="copy">복사</button></h2><pre><code># 월별 파일 모두 합치기
 import pandas as pd
 
 df_month = pd.DataFrame()
@@ -47,7 +47,7 @@ for fpath in fpaths:
 df = df.drop_duplicates()  # 첫 달 파일이 두 번 들어가므로 중복 제거
 print(f&quot;총 레코드 수(중복 제거 후): {len(df)}&quot;)
 print(f&quot;df :\n{df}&quot;)</code></pre>
-<h2 id="code-7">code 7. <button class="copy">복사</button></h2><pre><code># 문자열 &#x27;일시&#x27;를 datetime으로 변환
+<h2 id="code-Ⅳ-7">code Ⅳ-7. <button class="copy">복사</button></h2><pre><code># 문자열 &#x27;일시&#x27;를 datetime으로 변환
 print(f&quot;type(df[&#x27;일시&#x27;][0]): {type(df[&#x27;일시&#x27;][0])}&quot;)
 df[&#x27;dt_YmdHM&#x27;] = pd.to_datetime(df[&#x27;일시&#x27;])
 print(f&quot;type(df[&#x27;dt_YmdHM&#x27;][0]): {type(df[&#x27;dt_YmdHM&#x27;][0])}&quot;)
@@ -58,7 +58,7 @@ from datetime import timedelta
 df[&#x27;dt_YmdHM-1min&#x27;] = df[&#x27;dt_YmdHM&#x27;] - timedelta(minutes=1)
 df.index = df[&#x27;dt_YmdHM-1min&#x27;]
 print(f&quot;df :\n{df}&quot;)</code></pre>
-<h2 id="code-8">code 8. <button class="copy">복사</button></h2><pre><code>from datetime import datetime, timedelta
+<h2 id="code-Ⅳ-8">code Ⅳ-8. <button class="copy">복사</button></h2><pre><code>from datetime import datetime, timedelta
 
 # 같은 날짜를 고르는 세 가지 방법
 df_jan51 = df[df[&#x27;일시&#x27;].str.contains(&#x27;2018-01-05&#x27;)]
@@ -69,7 +69,7 @@ print(f&quot;df_jan52 :\n{df_jan52}&quot;)
 
 df_jan53 = df[(df[&#x27;dt_YmdHM-1min&#x27;] &gt;= &#x27;2018-01-12 00:00&#x27;) &amp; (df[&#x27;dt_YmdHM-1min&#x27;] &lt; &#x27;2018-01-13 00:00&#x27;)]
 print(f&quot;df_jan53 :\n{df_jan53}&quot;)</code></pre>
-<h2 id="code-9">code 9. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅳ-9">code Ⅳ-9. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 from datetime import datetime, timedelta
@@ -106,7 +106,7 @@ ax1.legend(lines1 + lines2, labels1 + labels2, loc=&#x27;upper left&#x27;)
 
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-10">code 10. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+<h2 id="code-Ⅳ-10">code Ⅳ-10. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 import numpy as np
 
 df[&#x27;date&#x27;] = df[&#x27;dt_YmdHM-1min&#x27;].dt.date  # 날짜만(시각 제거)
@@ -146,7 +146,7 @@ months = [&#x27;1월&#x27;, &#x27;2월&#x27;, &#x27;3월&#x27;, &#x27;4월&#x27;
           &#x27;7월&#x27;, &#x27;8월&#x27;, &#x27;9월&#x27;, &#x27;10월&#x27;, &#x27;11월&#x27;, &#x27;12월&#x27;]
 for month_num, count in monthly_count.items():
     print(f&quot;{months[month_num-1]}: {count}일&quot;)</code></pre>
-<h2 id="code-11">code 11. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅳ-11">code Ⅳ-11. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import numpy as np
@@ -259,7 +259,7 @@ print(f&quot;평균 강수량: {rainy_days[&#x27;누적강수량(mm)&#x27;].mean
 print(f&quot;최대 강수량: {rainy_days[&#x27;누적강수량(mm)&#x27;].max():.2f}mm&quot;)
 print(f&quot;최소 강수량: {rainy_days[&#x27;누적강수량(mm)&#x27;].min():.2f}mm&quot;)
 print(f&quot;중간값: {rainy_days[&#x27;누적강수량(mm)&#x27;].median():.2f}mm&quot;)</code></pre>
-<h2 id="code-12">code 12. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+<h2 id="code-Ⅳ-12">code Ⅳ-12. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 import numpy as np
 from datetime import datetime
 
@@ -418,14 +418,14 @@ def plot_temperature_comparison(results):
 results = calculate_temperature_averages(df, &#x27;dt_YmdHM-1min&#x27;, &#x27;기온(°C)&#x27;)
 
 plot_temperature_comparison(results)</code></pre>
-<h2 id="code-13">code 13. <button class="copy">복사</button></h2><pre><code># resample()만으로는 값이 아니라 Resampler 객체
+<h2 id="code-Ⅳ-13">code Ⅳ-13. <button class="copy">복사</button></h2><pre><code># resample()만으로는 값이 아니라 Resampler 객체
 print(&quot;type(df.resample(&#x27;D&#x27;): {}&quot;.format(type(df.resample(&#x27;D&#x27;))))
 print(&quot;df.resample(&#x27;D&#x27;) :&quot;, df.resample(&#x27;D&#x27;))
 
 # 하루(&#x27;D&#x27;) 단위로 묶어 날마다 최댓값
 df_daily_max = df.resample(&#x27;D&#x27;).max()
 print(&quot;df_daily_max :\n{}&quot;.format(df_daily_max))</code></pre>
-<h2 id="code-14">code 14. <button class="copy">복사</button></h2><pre><code>print(f&quot;원본 데이터 형태: {df.shape}&quot;)
+<h2 id="code-Ⅳ-14">code Ⅳ-14. <button class="copy">복사</button></h2><pre><code>print(f&quot;원본 데이터 형태: {df.shape}&quot;)
 print(f&quot;인덱스 타입: {type(df.index)}&quot;)
 print(f&quot;인덱스 빈도: {df.index.freq}&quot;)
 print(f&quot;인덱스 범위: {df.index.min()} ~ {df.index.max()}&quot;)
@@ -484,7 +484,7 @@ print(&quot;df.resample(&#x27;ME&#x27;).max().index.month: {}&quot;.format(df.re
 print(&quot;df.resample(&#x27;ME&#x27;).max().index.month_name(): {}&quot;.format(df.resample(&#x27;ME&#x27;).max().index.month_name()))
 print(f&quot;YYYY-MM: {df.resample(&#x27;ME&#x27;).max().index.strftime(&#x27;%Y-%m&#x27;)[:5].values}&quot;)
 print(f&quot;Month Year: {df.resample(&#x27;ME&#x27;).max().index.strftime(&#x27;%B %Y&#x27;)[:5].values}&quot;)</code></pre>
-<h2 id="code-15">code 15. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅳ-15">code Ⅳ-15. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import numpy as np
@@ -608,7 +608,7 @@ daily_stats[&#x27;기온변화&#x27;] = daily_stats[&#x27;일평균기온&#x27;]
 print(f&quot;평균 일일 기온 변화: {daily_stats[&#x27;기온변화&#x27;].mean():.2f}°C&quot;)
 print(f&quot;최대 일일 기온 상승: {daily_stats[&#x27;기온변화&#x27;].max():.2f}°C&quot;)
 print(f&quot;최대 일일 기온 하락: {daily_stats[&#x27;기온변화&#x27;].min():.2f}°C&quot;)</code></pre>
-<h2 id="code-16">code 16. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-Ⅳ-16">code Ⅳ-16. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import numpy as np
@@ -720,7 +720,7 @@ for month, row in seasonal_avg.iterrows():
     season = seasons[month]
     print(f&quot;{month}월 ({season}): 평균 {row[&#x27;월평균기온&#x27;]:.1f}°C, &quot;
           f&quot;최고 {row[&#x27;월최고기온&#x27;]:.1f}°C, 최저 {row[&#x27;월최저기온&#x27;]:.1f}°C&quot;)</code></pre>
-<h2 id="code-17">code 17. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅳ-17">code Ⅳ-17. <button class="copy">복사</button></h2><pre><code>import numpy as np
 
 # 연습용 가상 데이터
 ws = np.random.random(100) * 6        # 풍속 0~6 m/s
@@ -735,7 +735,7 @@ from windrose import WindroseAxes
 ax = WindroseAxes.from_ax()  # 바람장미용 극좌표 축
 
 ax.bar(wd, ws)</code></pre>
-<h2 id="code-18">code 18. <button class="copy">복사</button></h2><pre><code># windrose가 쓰는 열 이름으로 복사
+<h2 id="code-Ⅳ-18">code Ⅳ-18. <button class="copy">복사</button></h2><pre><code># windrose가 쓰는 열 이름으로 복사
 df[&#x27;speed&#x27;] = df[&#x27;풍속(m/s)&#x27;]
 df[&#x27;direction&#x27;] = df[&#x27;풍향(deg)&#x27;]
 
@@ -788,7 +788,7 @@ print(f&quot;풍속 범위: {df[&#x27;speed&#x27;].min():.1f} - {df[&#x27;speed&
 print(f&quot;풍향 범위: {df[&#x27;direction&#x27;].min():.1f} - {df[&#x27;direction&#x27;].max():.1f} degrees&quot;)
 print(f&quot;평균 풍속: {df[&#x27;speed&#x27;].mean():.2f} m/s&quot;)
 print(f&quot;최빈 풍향: {df[&#x27;direction&#x27;].mode().values[0]:.1f} degrees&quot;)</code></pre>
-<h2 id="code-19">code 19. <button class="copy">복사</button></h2><pre><code>import pandas as pd
+<h2 id="code-Ⅳ-19">code Ⅳ-19. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from windrose import WindroseAxes

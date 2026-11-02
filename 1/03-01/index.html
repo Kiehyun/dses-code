@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>III-01. 천문학에서의 시간과 좌표계</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/03-01/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-1">1</a> <a href="#code-2">2</a> <a href="#code-3">3</a> <a href="#code-4">4</a> <a href="#code-5">5</a> <a href="#code-6">6</a> <a href="#code-7">7</a> <a href="#code-8">8</a> <a href="#code-9">9</a> <a href="#code-10">10</a> <a href="#code-11">11</a> <a href="#code-12">12</a> <a href="#code-13">13</a> <a href="#code-14">14</a> <a href="#code-15">15</a> <a href="#code-16">16</a> <a href="#code-17">17</a> <a href="#code-18">18</a> <a href="#code-19">19</a> <a href="#code-20">20</a> <a href="#code-21">21</a> <a href="#code-22">22</a></p>
-<h2 id="code-1">code 1. <button class="copy">복사</button></h2><pre><code>import datetime
+<p class="jump"><a href="#code-Ⅲ-1">Ⅲ-1</a> <a href="#code-Ⅲ-2">Ⅲ-2</a> <a href="#code-Ⅲ-3">Ⅲ-3</a> <a href="#code-Ⅲ-4">Ⅲ-4</a> <a href="#code-Ⅲ-5">Ⅲ-5</a> <a href="#code-Ⅲ-6">Ⅲ-6</a> <a href="#code-Ⅲ-7">Ⅲ-7</a> <a href="#code-Ⅲ-8">Ⅲ-8</a> <a href="#code-Ⅲ-9">Ⅲ-9</a> <a href="#code-Ⅲ-10">Ⅲ-10</a> <a href="#code-Ⅲ-11">Ⅲ-11</a> <a href="#code-Ⅲ-12">Ⅲ-12</a> <a href="#code-Ⅲ-13">Ⅲ-13</a> <a href="#code-Ⅲ-14">Ⅲ-14</a> <a href="#code-Ⅲ-15">Ⅲ-15</a> <a href="#code-Ⅲ-16">Ⅲ-16</a> <a href="#code-Ⅲ-17">Ⅲ-17</a> <a href="#code-Ⅲ-18">Ⅲ-18</a> <a href="#code-Ⅲ-19">Ⅲ-19</a> <a href="#code-Ⅲ-20">Ⅲ-20</a> <a href="#code-Ⅲ-21">Ⅲ-21</a> <a href="#code-Ⅲ-22">Ⅲ-22</a></p>
+<h2 id="code-Ⅲ-1">code Ⅲ-1. <button class="copy">복사</button></h2><pre><code>import datetime
 
 dt = datetime.datetime(2023, 4, 15, 12, 30, 0)
 
@@ -23,7 +23,7 @@ print(&quot;일:&quot;, dt.day)
 print(&quot;시:&quot;, dt.hour)
 print(&quot;분:&quot;, dt.minute)
 print(&quot;초:&quot;, dt.second)</code></pre>
-<h2 id="code-2">code 2. <button class="copy">복사</button></h2><pre><code>from datetime import datetime
+<h2 id="code-Ⅲ-2">code Ⅲ-2. <button class="copy">복사</button></h2><pre><code>from datetime import datetime
 
 dt = datetime(2023, 4, 15, 12, 30, 0)
 
@@ -31,10 +31,10 @@ print(&quot;날짜와 시각:&quot;, dt)
 print(&quot;연:&quot;, dt.year)
 print(&quot;월:&quot;, dt.month)
 print(&quot;일:&quot;, dt.day)</code></pre>
-<h2 id="code-3">code 3. <button class="copy">복사</button></h2><pre><code>print(&quot;날짜와 시각:&quot;, dt.strftime(&quot;%Y-%m-%d %H:%M:%S&quot;))
+<h2 id="code-Ⅲ-3">code Ⅲ-3. <button class="copy">복사</button></h2><pre><code>print(&quot;날짜와 시각:&quot;, dt.strftime(&quot;%Y-%m-%d %H:%M:%S&quot;))
 dt2 = datetime.strptime(&quot;2017-01-02 14:44&quot;, &quot;%Y-%m-%d %H:%M&quot;)
 print(&quot;날짜와 시각:&quot;, dt2.strftime(&quot;%Y-%m-%d %H:%M:%S&quot;))</code></pre>
-<h2 id="code-4">code 4. <button class="copy">복사</button></h2><pre><code>now = datetime.now()
+<h2 id="code-Ⅲ-4">code Ⅲ-4. <button class="copy">복사</button></h2><pre><code>now = datetime.now()
 print(&quot;type(now)&quot;, type(now))
 print(f&quot;현재 날짜와 시각: {now.strftime(&#x27;%Y-%m-%d %H:%M:%S&#x27;)}&quot;)
 
@@ -43,10 +43,10 @@ print(f&quot;현재 날짜와 시각: {now.strftime(&#x27;%Y-%m-%d %H:%M:%S&#x27
 from datetime import date, timedelta
 today = date.today()
 print(&quot;오늘 날짜:&quot;, today)</code></pre>
-<h2 id="code-5">code 5. <button class="copy">복사</button></h2><pre><code>diff_days = timedelta(days=5)
+<h2 id="code-Ⅲ-5">code Ⅲ-5. <button class="copy">복사</button></h2><pre><code>diff_days = timedelta(days=5)
 print(&quot;시간 간격(일):&quot;, diff_days.days)
 print(&quot;5일 뒤 날짜:&quot;, today + diff_days)</code></pre>
-<h2 id="code-6">code 6. <button class="copy">복사</button></h2><pre><code>from datetime import datetime, timedelta
+<h2 id="code-Ⅲ-6">code Ⅲ-6. <button class="copy">복사</button></h2><pre><code>from datetime import datetime, timedelta
 import pytz
 
 # 토성의 2023년 충(UTC)
@@ -62,7 +62,7 @@ saturn_opposition_2024_kst = saturn_opposition_2024_utc.astimezone(KST)
 
 print(&quot;2024년 토성의 충 (KST, 근삿값):&quot;, 
       saturn_opposition_2024_kst.strftime(&quot;%Y-%m-%d %H:%M:%S %Z%z&quot;))</code></pre>
-<h2 id="code-7">code 7. <button class="copy">복사</button></h2><pre><code>from datetime import datetime, timedelta
+<h2 id="code-Ⅲ-7">code Ⅲ-7. <button class="copy">복사</button></h2><pre><code>from datetime import datetime, timedelta
 from dateutil import relativedelta        # 월 · 연 단위도 되는 시간 간격
 
 def create_datetime_list(
@@ -93,7 +93,7 @@ dt_list = create_datetime_list(start_time, end_time,
                         tdelta=timedelta(minutes=30))
 
 print(&quot;dt_list : \n&quot;, dt_list)</code></pre>
-<h2 id="code-8">code 8. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅲ-8">code Ⅲ-8. <button class="copy">복사</button></h2><pre><code>import numpy as np
 from astropy.time import Time
 
 t1 = Time(&#x27;1999-01-01T00:00:00.123456789&#x27;)
@@ -102,7 +102,7 @@ print(&quot;Time in UTC:&quot;, t1.utc.iso)
 times = [&#x27;1999-01-01T00:00:00.123456789&#x27;, &#x27;2010-01-01T00:00:00&#x27;]
 t2 = Time(times, scale=&#x27;utc&#x27;)
 print(&quot;Time in UTC:&quot;, t2.utc.iso)</code></pre>
-<h2 id="code-9">code 9. <button class="copy">복사</button></h2><pre><code>t3_string = &#x27;1999-01-01T00:00:00.123456789&#x27;
+<h2 id="code-Ⅲ-9">code Ⅲ-9. <button class="copy">복사</button></h2><pre><code>t3_string = &#x27;1999-01-01T00:00:00.123456789&#x27;
 t3 = Time(t3_string, format=&#x27;isot&#x27;)
 print(&quot;t3 :&quot;, t3)
 print(&quot;t3.format: &quot;, t3.format)
@@ -117,7 +117,7 @@ print(&quot;type(t3_mjd): &quot;, type(t3_mjd))
 
 t3.format = &#x27;fits&#x27;
 print(&quot;t3 :&quot;, t3)</code></pre>
-<h2 id="code-10">code 10. <button class="copy">복사</button></h2><pre><code>from astropy import units as u
+<h2 id="code-Ⅲ-10">code Ⅲ-10. <button class="copy">복사</button></h2><pre><code>from astropy import units as u
 from astropy.timeseries import TimeSeries
 
 ts1 = TimeSeries(
@@ -126,7 +126,7 @@ ts1 = TimeSeries(
 
 print(&quot;type(ts1): &quot;, type(ts1))
 print(&quot;ts1: \n&quot;, ts1)</code></pre>
-<h2 id="code-11">code 11. <button class="copy">복사</button></h2><pre><code>ts2 = TimeSeries(time=[&#x27;2016-03-22T12:30:31&#x27;,
+<h2 id="code-Ⅲ-11">code Ⅲ-11. <button class="copy">복사</button></h2><pre><code>ts2 = TimeSeries(time=[&#x27;2016-03-22T12:30:31&#x27;,
                         &#x27;2016-03-22T12:30:38&#x27;,
                         &#x27;2016-03-22T12:34:40&#x27;])
 print(&quot;type(ts2): &quot;, type(ts2))
@@ -139,7 +139,7 @@ print(&quot;type(ts3.time): &quot;, type(ts3.time))
 print(&quot;ts3.time.jd: \n&quot;, ts3.time.jd)
 print(&quot;ts3.time.mjd: \n&quot;, ts3.time.mjd)
 print(&quot;ts3.time.isot: \n&quot;, ts3.time.isot)</code></pre>
-<h2 id="code-12">code 12. <button class="copy">복사</button></h2><pre><code>from astropy.time import Time
+<h2 id="code-Ⅲ-12">code Ⅲ-12. <button class="copy">복사</button></h2><pre><code>from astropy.time import Time
 import astropy.units as u
 
 def create_time_list(
@@ -170,7 +170,7 @@ t_list = create_time_list(start_time, end_time, time_delta=30*u.min)
 
 print(&quot;len(t_list) : \n&quot;, len(t_list))
 print(&quot;t_list : \n&quot;, t_list)</code></pre>
-<h2 id="code-13">code 13. <button class="copy">복사</button></h2><pre><code>from astropy.coordinates import SkyCoord
+<h2 id="code-Ⅲ-13">code Ⅲ-13. <button class="copy">복사</button></h2><pre><code>from astropy.coordinates import SkyCoord
 
 # 문자열로 적경 · 적위 입력
 c = SkyCoord(ra=&#x27;20h41m25.9s&#x27;, dec=&#x27;+45d16m49s&#x27;)
@@ -192,7 +192,7 @@ print(f&quot;ra=&#x27;{ra_new}&#x27;, dec=&#x27;{dec_new}&#x27;&quot;)
 from astropy import units as u
 # 도 단위로 적경 · 적위 입력(ICRS)
 c = SkyCoord(ra=10.625*u.degree, dec=41.2*u.degree, frame=&#x27;icrs&#x27;)</code></pre>
-<h2 id="code-14">code 14. <button class="copy">복사</button></h2><pre><code>print(&quot;c :&quot;, c)
+<h2 id="code-Ⅲ-14">code Ⅲ-14. <button class="copy">복사</button></h2><pre><code>print(&quot;c :&quot;, c)
 print(&quot;c.ra :&quot;, c.ra)
 print(&quot;c.dec :&quot;, c.dec)
 print(&quot;c.ra.deg :&quot;, c.ra.deg)
@@ -200,16 +200,16 @@ print(&quot;c.dec.deg :&quot;, c.dec.deg)
 print(&quot;c.icrs :&quot;, c.icrs)  # 국제 천구 기준 좌표계
 print(&quot;c.fk5 :&quot;, c.fk5)    # J2000.0 기준
 print(&quot;c.fk4 :&quot;, c.fk4)    # B1950.0 기준</code></pre>
-<h2 id="code-15">code 15. <button class="copy">복사</button></h2><pre><code>from astropy.coordinates import get_constellation
+<h2 id="code-Ⅲ-15">code Ⅲ-15. <button class="copy">복사</button></h2><pre><code>from astropy.coordinates import get_constellation
 print(&quot;get_constellation(c) :&quot;, get_constellation(c))</code></pre>
-<h2 id="code-16">code 16. <button class="copy">복사</button></h2><pre><code>print(&quot;c.galactic :&quot;, c.galactic)
+<h2 id="code-Ⅲ-16">code Ⅲ-16. <button class="copy">복사</button></h2><pre><code>print(&quot;c.galactic :&quot;, c.galactic)
 print(&quot;c.galactic.l :&quot;, c.galactic.l)  # 은하 경도
 print(&quot;c.galactic.b :&quot;, c.galactic.b)  # 은하 위도</code></pre>
-<h2 id="code-17">code 17. <button class="copy">복사</button></h2><pre><code>c_ecl = c.transform_to(&#x27;geocentricmeanecliptic&#x27;)  # 적도 좌표 → 지심 황도 좌표
+<h2 id="code-Ⅲ-17">code Ⅲ-17. <button class="copy">복사</button></h2><pre><code>c_ecl = c.transform_to(&#x27;geocentricmeanecliptic&#x27;)  # 적도 좌표 → 지심 황도 좌표
 print(&quot;c_ecl :&quot;, c_ecl)
 print(&quot;c_ecl.lon :&quot;, c_ecl.lon)
 print(&quot;c_ecl.lat :&quot;, c_ecl.lat)</code></pre>
-<h2 id="code-18">code 18. <button class="copy">복사</button></h2><pre><code>from astropy import units as u
+<h2 id="code-Ⅲ-18">code Ⅲ-18. <button class="copy">복사</button></h2><pre><code>from astropy import units as u
 from astropy.coordinates import SkyCoord
 
 c = SkyCoord(ra=10.625*u.degree, dec=41.2*u.degree, frame=&#x27;icrs&#x27;)
@@ -223,7 +223,7 @@ c_hcl = c_with_distance.transform_to(&#x27;heliocentricmeanecliptic&#x27;)
 print(&quot;c_hcl :&quot;, c_hcl)
 print(&quot;c_hcl.lon :&quot;, c_hcl.lon)
 print(&quot;c_hcl.lat :&quot;, c_hcl.lat)</code></pre>
-<h2 id="code-19">code 19. <button class="copy">복사</button></h2><pre><code>from astropy.coordinates import AltAz, EarthLocation, SkyCoord
+<h2 id="code-Ⅲ-19">code Ⅲ-19. <button class="copy">복사</button></h2><pre><code>from astropy.coordinates import AltAz, EarthLocation, SkyCoord
 from astropy.time import Time
 import astropy.units as u
 
@@ -236,7 +236,7 @@ altaz_frame = AltAz(obstime=time, location=P64)
 
 print(&quot;type(altaz_frame) :&quot;, type(altaz_frame))
 print(&quot;altaz_frame :&quot;, altaz_frame)</code></pre>
-<h2 id="code-20">code 20. <button class="copy">복사</button></h2><pre><code>print(&quot;관측 위치 (위도, 경도, 고도):&quot;, P64.lat, P64.lon, P64.height)
+<h2 id="code-Ⅲ-20">code Ⅲ-20. <button class="copy">복사</button></h2><pre><code>print(&quot;관측 위치 (위도, 경도, 고도):&quot;, P64.lat, P64.lon, P64.height)
 print(&quot;관측 시각:&quot;, time.iso)
 print(&quot;AltAz 프레임:&quot;, altaz_frame)
 
@@ -245,7 +245,7 @@ print(&quot;c:&quot;, c)
 c_altaz = c.transform_to(altaz_frame)
 
 print(f&quot;고도: {c_altaz.alt:.2f}, 방위각: {c_altaz.az:.2f}&quot;)</code></pre>
-<h2 id="code-21">code 21. <button class="copy">복사</button></h2><pre><code>from datetime import datetime
+<h2 id="code-Ⅲ-21">code Ⅲ-21. <button class="copy">복사</button></h2><pre><code>from datetime import datetime
 import matplotlib.pyplot as plt
 from zoneinfo import ZoneInfo
 from starplot import MapPlot, Projection, Star, _
@@ -279,7 +279,7 @@ p.constellation_labels()
 
 # 성도를 파일로 저장
 # p.export(f&quot;star_chart_basic.png&quot;, transparent=True, padding=0.1)</code></pre>
-<h2 id="code-22">code 22. <button class="copy">복사</button></h2><pre><code>p = MapPlot(
+<h2 id="code-Ⅲ-22">code Ⅲ-22. <button class="copy">복사</button></h2><pre><code>p = MapPlot(
     projection=Projection.ZENITH,
     lat=33.363484,                 # 관측 위치
     lon=-116.836394,

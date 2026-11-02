@@ -11,11 +11,11 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>III-04. 인공위성의 궤도 나타내기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/03-04/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-41">41</a> <a href="#code-42">42</a> <a href="#code-43">43</a> <a href="#code-44">44</a> <a href="#code-45">45</a> <a href="#code-46">46</a> <a href="#code-47">47</a> <a href="#code-48">48</a> <a href="#code-49">49</a> <a href="#code-50">50</a> <a href="#code-51">51</a> <a href="#code-52">52</a> <a href="#code-53">53</a> <a href="#code-54">54</a></p>
-<h2 id="code-41">code 41. <button class="copy">복사</button></h2><pre><code>TLE_NOAA14 = &#x27;&#x27;&#x27;NOAA 14                 
+<p class="jump"><a href="#code-Ⅲ-41">Ⅲ-41</a> <a href="#code-Ⅲ-42">Ⅲ-42</a> <a href="#code-Ⅲ-43">Ⅲ-43</a> <a href="#code-Ⅲ-44">Ⅲ-44</a> <a href="#code-Ⅲ-45">Ⅲ-45</a> <a href="#code-Ⅲ-46">Ⅲ-46</a> <a href="#code-Ⅲ-47">Ⅲ-47</a> <a href="#code-Ⅲ-48">Ⅲ-48</a> <a href="#code-Ⅲ-49">Ⅲ-49</a> <a href="#code-Ⅲ-50">Ⅲ-50</a> <a href="#code-Ⅲ-51">Ⅲ-51</a> <a href="#code-Ⅲ-52">Ⅲ-52</a> <a href="#code-Ⅲ-53">Ⅲ-53</a> <a href="#code-Ⅲ-54">Ⅲ-54</a></p>
+<h2 id="code-Ⅲ-41">code Ⅲ-41. <button class="copy">복사</button></h2><pre><code>TLE_NOAA14 = &#x27;&#x27;&#x27;NOAA 14                 
 1 23455U 94089A   97320.90946019  .00000140  00000-0  10191-3 0  2621
 2 23455  99.0090 272.6745 0008546 223.1686 136.8816 14.11711747148495&#x27;&#x27;&#x27;</code></pre>
-<h2 id="code-42">code 42. <button class="copy">복사</button></h2><pre><code>fname = &quot;elements.txt&quot;
+<h2 id="code-Ⅲ-42">code Ⅲ-42. <button class="copy">복사</button></h2><pre><code>fname = &quot;elements.txt&quot;
 
 # CelesTrak에서 최근 30일 발사 위성의 TLE 받기
 from pathlib import Path
@@ -25,7 +25,7 @@ try:
     du.download(&quot;https://celestrak.org/NORAD/elements/gp.php?GROUP=last-30-days&amp;FORMAT=tle&quot;, Path(proj_dir) / (fname), overwrite=True)
 except Exception:
     du.download(&quot;https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&amp;FORMAT=tle&quot;, Path(proj_dir) / (fname), overwrite=True)</code></pre>
-<h2 id="code-43">code 43. <button class="copy">복사</button></h2><pre><code>from skyfield.api import Loader
+<h2 id="code-Ⅲ-43">code Ⅲ-43. <button class="copy">복사</button></h2><pre><code>from skyfield.api import Loader
 
 # Skyfield 데이터 파일 저장 위치
 load = Loader(str(proj_dir))  
@@ -39,7 +39,7 @@ print(&quot;planets: {}&quot;.format(planets))
 
 earth   = planets[&#x27;earth&#x27;]
 print(&quot;earth: {}&quot;.format(earth))</code></pre>
-<h2 id="code-44">code 44. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-Ⅲ-44">code Ⅲ-44. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
 re = 6378.  # 지구 반지름(km)
@@ -77,7 +77,7 @@ plot_earth(ax)
 ax.set_aspect(&#x27;equal&#x27;)
 
 plt.show()</code></pre>
-<h2 id="code-45">code 45. <button class="copy">복사</button></h2><pre><code>from skyfield.api import EarthSatellite, Loader
+<h2 id="code-Ⅲ-45">code Ⅲ-45. <button class="copy">복사</button></h2><pre><code>from skyfield.api import EarthSatellite, Loader
 import numpy as np
 
 # NOAA 14 기상 위성의 TLE(기준 시각 1997-11-16)
@@ -106,7 +106,7 @@ Rpos = satellite.at(time).position.km                # 배열 모양: (3, N)
 Rposecl = satellite.at(time).ecliptic_position().km
 print(&quot;Rpos.shape: {}&quot;.format(Rpos.shape))
 print(&quot;Rposecl.shape: {}&quot;.format(Rposecl.shape))</code></pre>
-<h2 id="code-46">code 46. <button class="copy">복사</button></h2><pre><code>fig = plt.figure(figsize=[10, 10])
+<h2 id="code-Ⅲ-46">code Ⅲ-46. <button class="copy">복사</button></h2><pre><code>fig = plt.figure(figsize=[10, 10])
 ax  = fig.add_subplot(1, 1, 1, projection=&#x27;3d&#x27;)
 
 plot_earth(ax)   # 앞에서 만든 함수로 지구 그리기
@@ -118,7 +118,7 @@ ax.plot(x, y, z)
 ax.set_aspect(&#x27;equal&#x27;)
 
 plt.show()</code></pre>
-<h2 id="code-47">code 47. <button class="copy">복사</button></h2><pre><code>def makecubelimits(axis, centers=None, hw=None):
+<h2 id="code-Ⅲ-47">code Ⅲ-47. <button class="copy">복사</button></h2><pre><code>def makecubelimits(axis, centers=None, hw=None):
     &quot;&quot;&quot;
     3D 플롯의 축 비율을 고정하여 정육면체 형태의 플롯 영역을 만드는 함수
 
@@ -176,7 +176,7 @@ print(f&quot;축 반폭: {hw}&quot;)
 ax.set_aspect(&#x27;equal&#x27;)
 
 plt.show()</code></pre>
-<h2 id="code-48">code 48. <button class="copy">복사</button></h2><pre><code># TLE epoch(1997-11-16) 무렵의 위성 위치
+<h2 id="code-Ⅲ-48">code Ⅲ-48. <button class="copy">복사</button></h2><pre><code># TLE epoch(1997-11-16) 무렵의 위성 위치
 time = ts.utc(1997, 11, 16, hours)
 Rpos = satellite.at(time).position.km
 
@@ -208,7 +208,7 @@ print(f&quot;평균 고도: {alt_sat.mean():.2f} km&quot;)
 
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-49">code 49. <button class="copy">복사</button></h2><pre><code># 스타링크 위성 TLE(STARLINK-1007, 기준 시각 2024-05-21)
+<h2 id="code-Ⅲ-49">code Ⅲ-49. <button class="copy">복사</button></h2><pre><code># 스타링크 위성 TLE(STARLINK-1007, 기준 시각 2024-05-21)
 # TLE는 글자 위치로 값을 읽는 고정 폭 형식이라 빈칸 수를 바꾸면 안 됨
 TLE = &quot;&quot;&quot;STARLINK-1007
 1 44713U 19074A   24142.62636216  .00014211  00000+0  97051-3 0  9998
@@ -278,7 +278,7 @@ ax.set_aspect(&#x27;equal&#x27;)
 
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-50">code 50. <button class="copy">복사</button></h2><pre><code>import requests
+<h2 id="code-Ⅲ-50">code Ⅲ-50. <button class="copy">복사</button></h2><pre><code>import requests
 
 # CelesTrak 새 주소(예전 stations.txt는 404)
 url = &quot;https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&amp;FORMAT=tle&quot;
@@ -321,7 +321,7 @@ if response:
                 print(f&quot;  - {line}&quot;)
 else:
     print(&quot;네트워크 오류로 인해 TLE 데이터를 가져올 수 없습니다.&quot;)</code></pre>
-<h2 id="code-51">code 51. <button class="copy">복사</button></h2><pre><code>from datetime import date
+<h2 id="code-Ⅲ-51">code Ⅲ-51. <button class="copy">복사</button></h2><pre><code>from datetime import date
 from skyfield.api import EarthSatellite
 
 # ISS 위성 객체(앞에서 받은 최신 TLE: 이름, 1행, 2행)
@@ -337,7 +337,7 @@ time = ts.utc(today.year, today.month, today.day, hours)
 # 위성의 위치(지구 중심 좌표, km)
 Rpos = sat.at(time).position.km
 print(&quot;Rpos.shape:&quot;, Rpos.shape)</code></pre>
-<h2 id="code-52">code 52. <button class="copy">복사</button></h2><pre><code>fig = plt.figure(figsize=[10, 10])
+<h2 id="code-Ⅲ-52">code Ⅲ-52. <button class="copy">복사</button></h2><pre><code>fig = plt.figure(figsize=[10, 10])
 ax  = fig.add_subplot(1, 1, 1, projection=&#x27;3d&#x27;)
 
 plot_earth(ax, linewidth=0.5)
@@ -352,7 +352,7 @@ ax.set_aspect(&#x27;equal&#x27;)
 ax.set_title(&#x27;국제우주정거장(ISS) 궤도&#x27;)
 ax.legend()
 plt.show()</code></pre>
-<h2 id="code-53">code 53. <button class="copy">복사</button></h2><pre><code># 지구 중심 거리와 고도
+<h2 id="code-Ⅲ-53">code Ⅲ-53. <button class="copy">복사</button></h2><pre><code># 지구 중심 거리와 고도
 r_sat = np.sqrt((Rpos**2).sum(axis=0))
 alt_sat = r_sat - re
 
@@ -368,7 +368,7 @@ plt.show()
 print(f&quot;최대 고도: {alt_sat.max():.2f} km&quot;)
 print(f&quot;최소 고도: {alt_sat.min():.2f} km&quot;)
 print(f&quot;평균 고도: {alt_sat.mean():.2f} km&quot;)</code></pre>
-<h2 id="code-54">code 54. <button class="copy">복사</button></h2><pre><code>import requests
+<h2 id="code-Ⅲ-54">code Ⅲ-54. <button class="copy">복사</button></h2><pre><code>import requests
 from skyfield.api import EarthSatellite
 
 # 1) 스타링크 TLE 내려받기

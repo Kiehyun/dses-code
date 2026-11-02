@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 1 | V-01. 세계의 화산대
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 1.
+# %% code Ⅴ-1.
 from pathlib import Path
 
 # 세계 화산 목록(VAAC용) 엑셀 파일, 구글 드라이브 파일 ID
@@ -10,13 +10,13 @@ fid = "17wbUIiJCxRz3XIgz6ZUM_1o4D2jOSA5P"
 
 du.download(f"https://docs.google.com/uc?export=download&id={fid}", Path(proj_dir) / fname)
 
-# %% code 2.
+# %% code Ⅴ-2.
 fpaths = du.list_files(proj_dir, "xls")
 
-# %% code 3.
+# %% code Ⅴ-3.
 du.preview_text(fpaths[0], n=10);  # 앞 10줄(인코딩 자동)
 
-# %% code 4.
+# %% code Ⅴ-4.
 import pandas as pd
 import lxml.etree as ET
 
@@ -53,16 +53,16 @@ for col in df_vol.columns:
 print(f"화산 수: {len(df_vol)}")
 print("df_vol :", df_vol)
 
-# %% code 5.
+# %% code Ⅴ-5.
 df_vol.columns
 
-# %% code 6.
+# %% code Ⅴ-6.
 # 십진 도(°) 단위 위도 · 경도를 짧은 열 이름으로
 df_vol['Latitude'] = df_vol['LatitudeDecimal']
 df_vol['Longitude'] = df_vol['LongitudeDecimal']
 print(df_vol[['Latitude', 'Longitude']])
 
-# %% code 7.
+# %% code Ⅴ-7.
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -85,7 +85,7 @@ plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "05_01_Plotting_ring_of_fire_01"))
 plt.show()
 
-# %% code 8.
+# %% code Ⅴ-8.
 import pandas as pd
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
@@ -121,7 +121,7 @@ plt.tight_layout()
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "05_01_Plotting_ring_of_fire_02"))
 plt.show()
 
-# %% code 9.
+# %% code Ⅴ-9.
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
@@ -142,7 +142,7 @@ plt.legend(loc='lower left')
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "05_01_Plotting_ring_of_fire_03"))
 plt.show()
 
-# %% code 10.
+# %% code Ⅴ-10.
 import folium
 from folium.plugins import MarkerCluster
 import pandas as pd
@@ -161,7 +161,7 @@ for idx, row in df_vol.iterrows():
 m.save('world_volcanoes_folium.html')
 display(m)
 
-# %% code 11.
+# %% code Ⅴ-11.
 import plotly.graph_objects as go
 import plotly.express as px
 
