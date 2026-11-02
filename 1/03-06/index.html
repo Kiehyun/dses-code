@@ -17,7 +17,7 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 fname = &quot;20170228_231038_1024_HMII.jpg&quot;
 url = &quot;https://sdo.gsfc.nasa.gov/assets/img/browse/2017/02/28/&quot; + fname
 
-# NASA SDO 누리집에서 직접 받기(실패하면 구글 드라이브 사본)
+# NASA SDO 웹사이트에서 직접 받기(실패하면 구글 드라이브 사본)
 try:
     du.download(url, Path(proj_dir) / fname)
 except Exception:
@@ -245,7 +245,7 @@ for y in range(0, im_height):
                 sunspot_data.append([int(x_average), int(y_average), num_pixel])
 print (&#x27;*&#x27;*80)
 print (&#x27;흑점 개수 : &#x27;, len(sunspot_data))
-print (&#x27;흑점 자료 [x, y, 픽셀 수] : &#x27;, sunspot_data)</code></pre>
+print (&#x27;흑점 데이터 [x, y, 픽셀 수] : &#x27;, sunspot_data)</code></pre>
 <h2 id="code-88">code 88. <button class="copy">복사</button></h2><pre><code>sunspot_data = np.asarray(sunspot_data)
 print(&quot;sunspot_data:\n&quot;, sunspot_data)
 

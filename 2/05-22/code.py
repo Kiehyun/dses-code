@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | V-02. 마그마 조성과 화성암 분류
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 523.
+# %% code 525.
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -45,7 +45,7 @@ print(f"우리나라 시료 수: {len(geo):,}")
 geo[["LOCATION", "ROCK NAME", "ROCK TYPE", "MATERIAL", "SIO2(WT%)", "NA2O(WT%)",
      "K2O(WT%)"]].head()
 
-# %% code 524.
+# %% code 526.
 # 화산암(VOL)의 전암(WR) 분석만
 geo = geo[(geo["ROCK TYPE"] == "VOL")
           & geo["MATERIAL"].str.startswith("WR", na=False)].copy()
@@ -93,7 +93,7 @@ print(f"화산암 전암 분석(합 확인 전): {n_before:,}")
 print(f"합 94~102%를 만족해 분석에 쓰는 시료: {len(tas):,}")
 print(tas["region"].value_counts().reindex(region_order).to_string())
 
-# %% code 525.
+# %% code 527.
 def silica_group(sio2):
     """SiO2 함량(wt.%)에 따른 전통적 화성암 조성 구분"""
     if sio2 < 45:
@@ -109,7 +109,7 @@ tas["silica_group"] = tas["SiO2"].apply(silica_group)
 pd.crosstab(tas["region"], tas["silica_group"], margins=True, margins_name="합계") \
     .reindex(index=region_order + ["합계"], columns=group_order + ["합계"])
 
-# %% code 526.
+# %% code 528.
 from matplotlib.patches import Polygon
 from matplotlib.path import Path as MplPath
 
@@ -177,7 +177,7 @@ tas_counts = pd.crosstab(tas["tas_name"], tas["region"]).reindex(columns=region_
 tas_counts["합계"] = tas_counts.sum(axis=1)
 tas_counts.sort_values("합계", ascending=False)
 
-# %% code 527.
+# %% code 529.
 fig, ax = plt.subplots(figsize=(7.8, 4))
 sns.boxplot(data=tas, x="SiO2", y="region", order=region_order, ax=ax,
             color="lightsteelblue")

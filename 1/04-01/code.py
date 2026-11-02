@@ -1,4 +1,4 @@
-# 지구과학 데이터 사이언스 1 | IV-01. 기상청 AWS 자료 시각화하기
+# 지구과학 데이터 사이언스 1 | IV-01. 기상청 AWS 데이터 시각화하기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
 # %% code 1.
@@ -28,7 +28,7 @@ du.preview_text(fpaths[0], n=10);  # 앞 10줄(인코딩 자동)
 # %% code 5.
 import pandas as pd
 
-# 천 단위 쉼표 처리, 기상청 자료는 EUC-KR 인코딩
+# 천 단위 쉼표 처리, 기상청 데이터는 EUC-KR 인코딩
 df = pd.read_csv(str(fpaths[0]), thousands=',', encoding='euc-kr')
 
 print(f"df :\n{df}")
@@ -281,8 +281,8 @@ def calculate_temperature_averages(df, datetime_col='dt_YmdHM-1min', temp_col='�
     
     Parameters:
     df: DataFrame with datetime and temperature columns
-    datetime_col: 날짜시간 컬럼명
-    temp_col: 기온 컬럼명
+    datetime_col: 날짜시간 열 이름
+    temp_col: 기온 열 이름
     """
 
     df[datetime_col] = pd.to_datetime(df[datetime_col])
@@ -507,7 +507,7 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 
-# 1분 자료를 하루 단위로 묶어 일평균 · 일최고 · 일최저를 구함
+# 1분 데이터를 하루 단위로 묶어 일평균 · 일최고 · 일최저를 구함
 daily_stats = df.resample('D').agg(
     일평균기온=('기온(°C)', 'mean'),
     일최고기온=('기온(°C)', 'max'),
@@ -744,7 +744,7 @@ for month, row in seasonal_avg.iterrows():
 # %% code 17.
 import numpy as np
 
-# 연습용 가상 자료
+# 연습용 가상 데이터
 ws = np.random.random(100) * 6        # 풍속 0~6 m/s
 wd = 80 + np.random.random(100) * 20  # 풍향 90° ± 10°
 

@@ -11,7 +11,7 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>I-04. 코딩 에이전트로 분석 프로젝트 하기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/01-24/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-16">16</a> <a href="#code-17">17</a> <a href="#code-18">18</a></p>
+<p class="jump"><a href="#code-16">16</a> <a href="#code-17">17</a> <a href="#code-18">18</a> <a href="#code-19">19</a> <a href="#code-20">20</a></p>
 <h2 id="code-16">code 16. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
 
 guide = &#x27;&#x27;&#x27;# 프로젝트 지침 — 우리 학교 기상 관측 데이터 분석
@@ -79,6 +79,49 @@ if nb_paths:
     print(f&quot;오류가 남은 노트북: {(report[&#x27;오류 셀&#x27;] &gt; 0).sum()}개&quot;)
 else:
     print(f&quot;{folder.name} 폴더에는 노트북 파일(.ipynb)이 없습니다.&quot;)</code></pre>
+<h2 id="code-19">code 19. <button class="copy">복사</button></h2><pre><code>import numpy as np
+import matplotlib.pyplot as plt
+
+# 1) 연습용 원시 데이터: 2025년 가상의 일평균 기온(°C)
+rng = np.random.default_rng(42)
+days = pd.date_range(&quot;2025-01-01&quot;, &quot;2025-12-31&quot;, freq=&quot;D&quot;)
+temp = 13 - 13 * np.cos(2 * np.pi * (days.dayofyear - 20) / 365) + rng.normal(0, 2, len(days))
+pd.DataFrame({&quot;date&quot;: days, &quot;temp&quot;: temp.round(1)}).to_csv(proj_dir / &quot;aws_daily.csv&quot;, index=False)
+
+# 2) 에이전트가 만들었다고 가정한 결과: 그림 파일
+df = pd.read_csv(proj_dir / &quot;aws_daily.csv&quot;, parse_dates=[&quot;date&quot;])
+monthly = df.set_index(&quot;date&quot;)[&quot;temp&quot;].resample(&quot;MS&quot;).mean()   # 월평균
+fig, ax = plt.subplots(figsize=(6, 3))
+ax.plot(monthly.index.month, monthly.values, marker=&quot;o&quot;)
+ax.set(xlabel=&quot;월&quot;, ylabel=&quot;월평균 기온 (°C)&quot;, title=&quot;2025년 월평균 기온&quot;)
+fig.savefig(proj_dir / &quot;monthly_temp.png&quot;, dpi=100)
+plt.close(fig)                                                  # 화면에 띄우지 않음
+
+# 3) 에이전트가 만들었다고 가정한 결과: 실행을 마친 노트북
+agent_code = &quot;&quot;&quot;df = pd.read_csv(&quot;aws_daily.csv&quot;, parse_dates=[&quot;date&quot;])
+print(&quot;결측값:&quot;, df[&quot;temp&quot;].isna().sum(), &quot;개&quot;)
+monthly = df.set_index(&quot;date&quot;)[&quot;temp&quot;].resample(&quot;MS&quot;).mean()&quot;&quot;&quot;
+agent_nb = {&quot;cells&quot;: [{&quot;cell_type&quot;: &quot;code&quot;, &quot;execution_count&quot;: 1, &quot;metadata&quot;: {},
+                       &quot;source&quot;: agent_code.splitlines(keepends=True),
+                       &quot;outputs&quot;: [{&quot;output_type&quot;: &quot;stream&quot;, &quot;name&quot;: &quot;stdout&quot;,
+                                    &quot;text&quot;: [&quot;결측값: 0 개\n&quot;]}]}],
+            &quot;metadata&quot;: {}, &quot;nbformat&quot;: 4, &quot;nbformat_minor&quot;: 5}
+(proj_dir / &quot;agent_monthly.ipynb&quot;).write_text(
+    json.dumps(agent_nb, ensure_ascii=False, indent=1), encoding=&quot;utf-8&quot;)
+
+print(&quot;만든 파일:&quot;, sorted(p.name for p in proj_dir.iterdir()
+                        if p.suffix in (&quot;.csv&quot;, &quot;.png&quot;, &quot;.ipynb&quot;)))</code></pre>
+<h2 id="code-20">code 20. <button class="copy">복사</button></h2><pre><code># 1) 노트북 점검: 이 장에서 만든 check_notebook 재사용
+display(check_notebook(proj_dir / &quot;agent_monthly.ipynb&quot;))
+
+# 2) 요청한 그림 파일이 있는지
+fig_path = proj_dir / &quot;monthly_temp.png&quot;
+print(&quot;그림 파일:&quot;, fig_path.name, f&quot;({fig_path.stat().st_size:,} 바이트)&quot; if fig_path.exists() else &quot;없음&quot;)
+
+# 3) 다른 방법으로 월평균을 다시 계산해 견주기
+check = df.groupby(df[&quot;date&quot;].dt.month)[&quot;temp&quot;].mean()
+print(&quot;월 개수:&quot;, len(monthly), &quot;| 결측 월:&quot;, monthly.isna().sum())
+print(&quot;두 방법의 월평균이 같은가:&quot;, np.allclose(monthly.values, check.values))</code></pre>
 <script>
 document.querySelectorAll('button.copy').forEach(function (b) {
   b.addEventListener('click', function () {

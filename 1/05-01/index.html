@@ -130,7 +130,7 @@ ax.add_feature(cfeature.BORDERS, linestyle=&#x27;:&#x27;)
 plt.scatter(df_vol[&#x27;Longitude&#x27;], df_vol[&#x27;Latitude&#x27;], 
             c=&#x27;red&#x27;, s=15, alpha=0.6, marker=&#x27;^&#x27;, 
             edgecolors=&#x27;darkred&#x27;, linewidth=0.3, 
-            transform=ccrs.PlateCarree(), label=&#x27;화산&#x27;)  # 자료 좌표: 경위도
+            transform=ccrs.PlateCarree(), label=&#x27;화산&#x27;)  # 데이터 좌표: 경위도
 plt.title(&#x27;전 세계 화산 분포 (Cartopy)&#x27;, fontsize=16, fontweight=&#x27;bold&#x27;)
 plt.legend(loc=&#x27;lower left&#x27;)
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;05_01_Plotting_ring_of_fire_03&quot;))

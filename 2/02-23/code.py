@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | II-03. 시계열에서 주기 찾기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 33.
+# %% code 35.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -19,7 +19,7 @@ series = 350 + trend + seasonal + noise    # 셋을 겹친 관측값
 print(f"데이터 길이 : {series.size}개 ({YEARS}년 치, 월 1회)")
 print(f"값의 범위 : {series.min():.1f} ~ {series.max():.1f}")
 
-# %% code 34.
+# %% code 36.
 fig, ax = plt.subplots(figsize=(8.5, 3.8))
 ax.plot(time, series, "o-", ms=3, lw=0.8, color="steelblue", label="관측값")
 ax.plot(time, 350 + trend, "r--", lw=2, label="숨어 있는 추세")
@@ -31,7 +31,7 @@ ax.grid(alpha=0.3)
 du.save_figure(fig, os.path.join(proj_dir, "timeseries"))
 plt.show()
 
-# %% code 35.
+# %% code 37.
 def moving_average(values, window):
     """가운데를 맞춘 이동평균(가장자리를 잘라내지 않고 같은 길이로 돌려줌)."""
     if window % 2 == 0:                    # 짝수 창: 양 끝 값에 절반 무게(window+1개)
@@ -55,7 +55,7 @@ ax.grid(alpha=0.3)
 du.save_figure(fig, os.path.join(proj_dir, "moving_average"))
 plt.show()
 
-# %% code 36.
+# %% code 38.
 trend_estimated = moving_average(series, 12)  # 12개월 평균 = 추세 추정
 detrended = series - trend_estimated          # 추세를 뺀 나머지
 
@@ -63,7 +63,7 @@ print(f"원시 데이터 표준편차 : {series.std():.2f}")
 print(f"추세 제거 후 표준편차: {detrended.std():.2f}")
 print(f"넣어 둔 계절 진폭    : 5.0  ->  추정 진폭 약 {detrended.std()*np.sqrt(2):.2f}")
 
-# %% code 37.
+# %% code 39.
 values = detrended - detrended.mean()             # 평균도 0으로 맞춘다
 n = values.size
 dt = 1 / PER_YEAR                                 # 표본 간격(년)
@@ -76,7 +76,7 @@ peak = np.argmax(power[1:]) + 1                   # 0번(평균) 제외하고 �
 print(f"가장 강한 진동수 : {freqs[peak]:.3f}회/년")
 print(f"그에 해당하는 주기: {1/freqs[peak]:.2f} 년")
 
-# %% code 38.
+# %% code 40.
 fig, ax = plt.subplots(figsize=(8.5, 4))
 ax.plot(freqs[1:], power[1:], color="steelblue")
 ax.axvline(1.0, color="red", ls="--", lw=1, label="1년 주기(넣어 둔 값)")
@@ -89,7 +89,7 @@ ax.grid(alpha=0.3)
 du.save_figure(fig, os.path.join(proj_dir, "periodogram"))
 plt.show()
 
-# %% code 39.
+# %% code 41.
 nyquist = 1 / (2 * dt)
 print(f"표본 간격 : {dt*12:.0f}개월")
 print(f"나이키스트 진동수 : {nyquist:.1f}회/년  (최소 {1/nyquist*12:.0f}개월 주기까지)")

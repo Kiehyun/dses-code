@@ -126,7 +126,7 @@ ax.scatter(places["lng"], places["lat"], color="red", marker="*", s=120, label="
 for row in places.itertuples(index=False):
     ax.text(row.lng + 0.08, row.lat, row.name, fontsize=10, zorder=6)
 
-ax.set_title("Macrostrat 자료로 그린 대한민국 주변 지질 단위")
+ax.set_title("Macrostrat 데이터로 그린 대한민국 주변 지질 단위")
 ax.set_xlabel("경도")
 ax.set_ylabel("위도")
 ax.legend(loc="upper right")
@@ -199,7 +199,7 @@ print(f"지도 저장 위치: {map_file}")
 m
 
 # %% code 40.
-# 자료 출처(source_id)별 다각형 수와 문헌
+# 데이터 출처(source_id)별 다각형 수와 문헌
 source_summary = (
     gdf.groupby("source_id")
     .size()

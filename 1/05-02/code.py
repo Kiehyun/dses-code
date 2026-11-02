@@ -29,7 +29,7 @@ import pandas as pd
 import json
 
 def earthquake_json_to_dataframe(json_path):
-    """USGS GeoJSON 또는 일반 JSON 지진 자료를 DataFrame으로 변환합니다."""
+    """USGS GeoJSON 또는 일반 JSON 지진 데이터를 DataFrame으로 변환합니다."""
     with open(json_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
@@ -77,7 +77,7 @@ print(f"파일명: {fpaths[0].name}")
 # 위도 · 경도 · 깊이(km) · 규모(mag) 열이 들어 있는지 확인
 print(f"파일명: {fpaths[0].name}")
 print(f"데이터프레임 크기: {df.shape}")
-print(f"컬럼: {df.columns.tolist()}")
+print(f"열: {df.columns.tolist()}")
 print(f"자료형:\n{df.dtypes}")
 display(df.head(3))
 
@@ -117,7 +117,7 @@ fpaths = sorted((proj_dir).glob("*.geojson")) + sorted((proj_dir).glob("*.json")
 fpaths = list(dict.fromkeys(fpaths))
 
 if len(fpaths) < 2:
-    raise FileNotFoundError("비교할 두 번째 JSON/GeoJSON 파일이 없습니다. 앞의 다운로드 셀을 먼저 실행해 주세요.")
+    raise FileNotFoundError("비교할 두 번째 JSON/GeoJSON 파일이 없습니다. 앞의 내려받기 셀을 먼저 실행해 주세요.")
 
 print(f"fpaths: {fpaths}")
 print(f"len(fpaths): {len(fpaths)}")
@@ -148,14 +148,14 @@ elif isinstance(data, list):
 
 print("\n=== DataFrame 확인 ===")
 print(f"데이터프레임 크기: {df1.shape}")
-print(f"컬럼: {df1.columns.tolist()}")
+print(f"열: {df1.columns.tolist()}")
 display(df1.head(3))
 
 # %% code 19.
 # df1: 규모 4.5 이상 지진(df와 같은 열 구성)
 print(f"파일명: {fpaths[1].name}")
 print(f"데이터프레임 크기: {df1.shape}")
-print(f"컬럼: {df1.columns.tolist()}")
+print(f"열: {df1.columns.tolist()}")
 display(df1.head(3))
 
 # %% code 20.
@@ -365,7 +365,7 @@ ax.scatter(
     alpha=0.7,
     edgecolor='black',
     linewidth=0.5,
-    transform=ccrs.PlateCarree(),  # 자료가 경위도 좌표임을 알림
+    transform=ccrs.PlateCarree(),  # 데이터가 경위도 좌표임을 알림
     zorder=5                       # 지도 요소 위에
 )
 

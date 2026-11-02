@@ -7,7 +7,7 @@ from pathlib import Path
 fname = "20170228_231038_1024_HMII.jpg"
 url = "https://sdo.gsfc.nasa.gov/assets/img/browse/2017/02/28/" + fname
 
-# NASA SDO 누리집에서 직접 받기(실패하면 구글 드라이브 사본)
+# NASA SDO 웹사이트에서 직접 받기(실패하면 구글 드라이브 사본)
 try:
     du.download(url, Path(proj_dir) / fname)
 except Exception:
@@ -253,7 +253,7 @@ for y in range(0, im_height):
                 sunspot_data.append([int(x_average), int(y_average), num_pixel])
 print ('*'*80)
 print ('흑점 개수 : ', len(sunspot_data))
-print ('흑점 자료 [x, y, 픽셀 수] : ', sunspot_data)
+print ('흑점 데이터 [x, y, 픽셀 수] : ', sunspot_data)
 
 # %% code 88.
 sunspot_data = np.asarray(sunspot_data)

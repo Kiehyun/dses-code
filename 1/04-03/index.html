@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IV-03. 에어코리아 자료 시각화하기</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IV-03. 에어코리아 데이터 시각화하기</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
@@ -8,7 +8,7 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
-<h1>IV-03. 에어코리아 자료 시각화하기</h1>
+<h1>IV-03. 에어코리아 데이터 시각화하기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/04-03/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
 <p class="jump"><a href="#code-37">37</a> <a href="#code-38">38</a> <a href="#code-39">39</a> <a href="#code-40">40</a> <a href="#code-41">41</a> <a href="#code-42">42</a> <a href="#code-43">43</a> <a href="#code-44">44</a> <a href="#code-45">45</a> <a href="#code-46">46</a> <a href="#code-47">47</a> <a href="#code-48">48</a> <a href="#code-49">49</a> <a href="#code-50">50</a> <a href="#code-51">51</a> <a href="#code-52">52</a> <a href="#code-53">53</a> <a href="#code-54">54</a> <a href="#code-55">55</a> <a href="#code-56">56</a> <a href="#code-57">57</a> <a href="#code-58">58</a> <a href="#code-59">59</a> <a href="#code-60">60</a> <a href="#code-61">61</a> <a href="#code-62">62</a> <a href="#code-63">63</a> <a href="#code-64">64</a> <a href="#code-65">65</a></p>
@@ -239,7 +239,7 @@ df_weekday = df_O.groupby(df_O.index.dayofweek).mean().T
 df_weekday.columns = Weekday_lst
 print(df_weekday)
 
-# 요일별 자료 개수(시간)
+# 요일별 데이터 개수(시간)
 print(df_O.groupby(df_O.index.dayofweek).size().set_axis(Weekday_lst))</code></pre>
 <h2 id="code-63">code 63. <button class="copy">복사</button></h2><pre><code>DATA_column3 = &quot;SO2&quot;
 print(&quot;df_weekday.columns: {}&quot;.format(df_weekday.columns))

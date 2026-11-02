@@ -12,7 +12,7 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/04-05/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
 <p class="jump"><a href="#code-78">78</a> <a href="#code-79">79</a> <a href="#code-80">80</a> <a href="#code-81">81</a> <a href="#code-82">82</a> <a href="#code-83">83</a> <a href="#code-84">84</a> <a href="#code-85">85</a> <a href="#code-86">86</a> <a href="#code-87">87</a> <a href="#code-88">88</a> <a href="#code-89">89</a> <a href="#code-90">90</a> <a href="#code-91">91</a> <a href="#code-92">92</a> <a href="#code-93">93</a> <a href="#code-94">94</a> <a href="#code-95">95</a> <a href="#code-96">96</a> <a href="#code-97">97</a> <a href="#code-98">98</a></p>
-<h2 id="code-78">code 78. <button class="copy">복사</button></h2><pre><code># 스마트 조석예보 자료 내려받기 주소와 조건(지점 코드, 지점 이름, 연월)
+<h2 id="code-78">code 78. <button class="copy">복사</button></h2><pre><code># 스마트 조석예보 데이터 내려받기 주소와 조건(지점 코드, 지점 이름, 연월)
 from pathlib import Path
 from urllib.parse import urlencode
 
@@ -57,7 +57,7 @@ else:
 
 # 결측은 선형 보간, 양 끝처럼 보간이 안 되는 결측은 앞뒤 값으로(숫자 열만)
 df_60min[&#x27;height(cm)&#x27;] = df_60min[&#x27;height(cm)&#x27;].interpolate(method=&#x27;linear&#x27;).bfill().ffill()</code></pre>
-<h2 id="code-84">code 84. <button class="copy">복사</button></h2><pre><code># 10분 간격 자료: 읽기 → 정렬 → 결측 처리
+<h2 id="code-84">code 84. <button class="copy">복사</button></h2><pre><code># 10분 간격 데이터: 읽기 → 정렬 → 결측 처리
 df_10min = pd.read_csv(
     str(fpaths[0]), skiprows=5, thousands=&#x27;,&#x27;,
     names=[&#x27;str_YmdHM&#x27;, &#x27;height(cm)&#x27;], encoding=&#x27;unicode_escape&#x27;
@@ -68,7 +68,7 @@ df_10min = df_10min.sort_index()
 df_10min[&#x27;height(cm)&#x27;] = df_10min[&#x27;height(cm)&#x27;].interpolate(method=&#x27;linear&#x27;).bfill().ffill()
 print(&quot;df_10min :&quot;, df_10min)
 
-# 1분 간격 자료도 같은 방법으로
+# 1분 간격 데이터도 같은 방법으로
 df_1min = pd.read_csv(
     str(fpaths[1]), skiprows=5, thousands=&#x27;,&#x27;,
     names=[&#x27;str_YmdHM&#x27;, &#x27;height(cm)&#x27;], encoding=&#x27;unicode_escape&#x27;
@@ -85,7 +85,7 @@ from datetime import datetime, timedelta
 
 fig, ax = plt.subplots(figsize=(15,5))
 ax.plot(df_60min[&#x27;dt_YmdHM&#x27;], df_60min[&#x27;height(cm)&#x27;], color=&#x27;royalblue&#x27;, label=&#x27;해수면 높이&#x27;)
-ax.set_title(&#x27;2020년 6월 인천 해수면 높이 변동(1시간 간격 자료)&#x27;,
+ax.set_title(&#x27;2020년 6월 인천 해수면 높이 변동(1시간 간격 데이터)&#x27;,
            fontsize=18, fontweight=&#x27;bold&#x27;)
 ax.set_xlabel(&#x27;시간&#x27;, fontsize=14)
 ax.set_ylabel(&#x27;해수면 높이 (cm)&#x27;, fontsize=14)
@@ -101,7 +101,7 @@ import matplotlib.dates as dates
 import matplotlib.ticker as ticker
 
 dfs = [df_60min, df_10min, df_1min]
-titles = [&#x27;1시간 간격 자료&#x27;, &#x27;10분 간격 자료&#x27;, &#x27;1분 간격 자료&#x27;]
+titles = [&#x27;1시간 간격 데이터&#x27;, &#x27;10분 간격 데이터&#x27;, &#x27;1분 간격 데이터&#x27;]
 
 fig, axes = plt.subplots(3, 1, figsize=(16, 16), sharey=True)
 
@@ -141,7 +141,7 @@ fig.suptitle(&#x27;2020년 6월 인천 해수면 높이 변동 (1시간/10분/1�
             fontsize=20, fontweight=&#x27;bold&#x27;, y=0.98)
 fig.tight_layout(rect=[0, 0, 1, 0.97])
 plt.show()</code></pre>
-<h2 id="code-87">code 87. <button class="copy">복사</button></h2><pre><code># 6월 7~9일 자료만
+<h2 id="code-87">code 87. <button class="copy">복사</button></h2><pre><code># 6월 7~9일 데이터만
 start_date = df_1min[&#x27;dt_YmdHM&#x27;].dt.floor(&#x27;D&#x27;).min().replace(day=7)
 end_date = df_1min[&#x27;dt_YmdHM&#x27;].dt.floor(&#x27;D&#x27;).min().replace(day=10)
 df_1min_selected = df_1min[(df_1min[&#x27;dt_YmdHM&#x27;] &gt;= start_date) &amp; (df_1min[&#x27;dt_YmdHM&#x27;] &lt; end_date)]
@@ -216,7 +216,7 @@ plt.xlabel(&#x27;시(hour)&#x27;)
 plt.ylabel(&#x27;날짜 (6월)&#x27;)
 plt.title(&#x27;2020년 6월 인천 해수면 높이(1분 간격) 히트맵&#x27;)
 plt.tight_layout()</code></pre>
-<h2 id="code-89">code 89. <button class="copy">복사</button></h2><pre><code># 2024년 1~12월 60분 간격 자료를 달마다 내려받기
+<h2 id="code-89">code 89. <button class="copy">복사</button></h2><pre><code># 2024년 1~12월 60분 간격 데이터를 달마다 내려받기
 year_dir = Path(proj_dir) / &quot;2024&quot;
 for month in range(1, 13):
     yyyymm = f&quot;2024{month:02d}&quot;

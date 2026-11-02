@@ -56,7 +56,7 @@ print("type(c): ", type(c), "c: ", c)
 print("type(d): ", type(d), "d: ", d)
 print("type(e): ", type(e), "e: ", e)
 
-hungry = True  # 불린(bool)
+hungry = True  # 불(bool)
 need_coffee = False
 print("type(hungry): ", type(hungry), "hungry: ", hungry)
 print("type(need_coffee): ", type(need_coffee), "need_coffee: ", need_coffee)
@@ -146,7 +146,7 @@ print("256 < 725:", 256 < 725)
 print("10 == 10 :", 10 == 10)
 print("10 != 10 :", 10 != 10)
 print("10 == 10 + 1 :", 10 == 10 + 1)
-print("type(8 > 10) :", type(8 > 10))  # 비교 결과는 불린(bool)
+print("type(8 > 10) :", type(8 > 10))  # 비교 결과는 불(bool)
 
 # %% code 19.
 print("10 == 10 and 10 > 10 :", 10 == 10 and 10 > 10)

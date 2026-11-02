@@ -1,14 +1,14 @@
 # 지구과학 데이터 사이언스 2 | III-07. FITS 이미지 정렬과 합성
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 210.
+# %% code 212.
 # 구글 드라이브에 공유해 둔 압축 파일 받기(du.download 가 gdown 을 조용히 사용)
 fname = "IC1848_Light_H_2017-01-16.zip"
 fid = "1EHVrbmZoPMH4tXpL7bL7KWOV2QZD1E4S"
 
 du.download(f"https://drive.google.com/uc?id={fid}", proj_dir / fname)
 
-# %% code 211.
+# %% code 213.
 import os
 from pathlib import Path
 if not (proj_dir).exists():
@@ -17,7 +17,7 @@ if not (proj_dir).exists():
 else : 
     print (f"{str(proj_dir)} already exists...")
 
-# %% code 212.
+# %% code 214.
 import shutil
 
 # 내려받은 압축 파일 찾기
@@ -26,10 +26,10 @@ fpaths = du.list_files(proj_dir, "zip")
 shutil.unpack_archive(str(fpaths[0]), str(proj_dir))
 print(str(fpaths[0]), "is unpacked to", str(proj_dir))
 
-# %% code 213.
+# %% code 215.
 fpaths = du.list_files(proj_dir, pattern="*wcs.fit*")
 
-# %% code 214.
+# %% code 216.
 from astropy.io import fits
 
 hdul1 = fits.open(fpaths[0])
@@ -39,7 +39,7 @@ for k in ["DATE-OBS", "EXPTIME", "FILTER"]:
     print(f"{k:9s} = {hdul1[0].header.get(k)}")
 print("영상 배열 :", hdul1[0].data.dtype, hdul1[0].data.shape, hdul2[0].data.shape)
 
-# %% code 215.
+# %% code 217.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -65,7 +65,7 @@ fig.colorbar(im, cax=cbar_ax)
 plt.suptitle('IC1848 images', fontsize=12)
 plt.show()
 
-# %% code 216.
+# %% code 218.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -92,7 +92,7 @@ fig.colorbar(im, cax=cbar_ax)
 plt.suptitle('IC1848 images [:100, :100]', fontsize=12)
 plt.show()
 
-# %% code 217.
+# %% code 219.
 import numpy as np
 import astroalign as aa
 
@@ -107,7 +107,7 @@ registered_image2, footprint2 = aa.register(target_data, source_data)
 print(type(registered_image1))
 print(type(footprint1))
 
-# %% code 218.
+# %% code 220.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -140,7 +140,7 @@ fig.colorbar(im, cax=cbar_ax)
 plt.suptitle('IC1848 images [:100, :100]', fontsize=13)
 plt.show()
 
-# %% code 219.
+# %% code 221.
 import numpy as np
 from astropy.io import fits
 
@@ -156,10 +156,10 @@ save_aligned(f"{fpaths[1].parent/fpaths[1].stem}_aligned.fit", registered_image1
 # 2nd 영상에 맞춘 1st 영상
 save_aligned(f"{fpaths[0].parent/fpaths[0].stem}_aligned.fit", registered_image2, hdul2[0].header)
 
-# %% code 220.
+# %% code 222.
 aligned_list = du.list_files(proj_dir, pattern="*_aligned.fit")
 
-# %% code 221.
+# %% code 223.
 from astropy.io import fits
 
 hdul3 = fits.open(f"{fpaths[0].parent/fpaths[0].stem}_aligned.fit")
@@ -188,7 +188,7 @@ fig.colorbar(im, cax=cbar_ax)
 plt.suptitle('IC1848 images', fontsize=12)
 plt.show()
 
-# %% code 222.
+# %% code 224.
 from astropy.io import fits
 
 import numpy as np
@@ -221,7 +221,7 @@ plt.suptitle('IC1848 images [:100, :100]', fontsize=12)
 
 plt.show()
 
-# %% code 223.
+# %% code 225.
 from astropy.io import fits
 import numpy as np
 import matplotlib.pyplot as plt
@@ -259,7 +259,7 @@ fig.colorbar(im, cax=cbar_ax)
 plt.suptitle('IC1848 images [:100, :100]', fontsize=13)
 plt.show()
 
-# %% code 224.
+# %% code 226.
 from astropy.io import fits
 
 hduls_data = []
@@ -289,7 +289,7 @@ plt.suptitle('IC1848 images', fontsize=13)
 
 plt.show()
 
-# %% code 225.
+# %% code 227.
 import numpy as np
 import astroalign as aa
 
@@ -331,7 +331,7 @@ plt.suptitle('IC1848 images (aligned)', fontsize=13)
 
 plt.show()
 
-# %% code 226.
+# %% code 228.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -354,7 +354,7 @@ plt.suptitle('IC1848 images [:100, :100] (aligned)', fontsize=13)
 
 plt.show()
 
-# %% code 227.
+# %% code 229.
 def centroid(img, x, y, half=5):
     """(x, y) 주변 상자에서 밝기 가중 평균으로 별의 중심을 구함"""
     xi, yi = int(round(x)), int(round(y))
@@ -378,7 +378,7 @@ for i in range(len(hduls_data)):
     after = np.median(np.hypot(*(ali_c - ref_c).T))
     print(f"image({i}): 정렬 전 {before:5.2f} px  ->  정렬 후 {after:5.2f} px")
 
-# %% code 228.
+# %% code 230.
 import os
 from pathlib import Path
 if not (proj_dir).exists():
@@ -394,7 +394,7 @@ np_median = np.median(aligned_hduls_data, axis=0)
 print("np_average.shape:", np_average.shape)
 print("np_median.shape:", np_median.shape)
 
-# %% code 229.
+# %% code 231.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -420,7 +420,7 @@ fig.colorbar(im, cax=cbar_ax)
 plt.suptitle('IC1848 images', fontsize=12)
 plt.show()
 
-# %% code 230.
+# %% code 232.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -450,7 +450,7 @@ plt.suptitle('IC1848 images [:100, :100]', fontsize=12)
 
 plt.show()
 
-# %% code 231.
+# %% code 233.
 import numpy as np
 from astropy.nddata import CCDData
 from astropy.stats import mad_std
@@ -479,17 +479,17 @@ print(type(combined_light_avg_sigma_True))
 print(type(combined_light_med_sigma_False))
 print(type(combined_light_med_sigma_True))
 
-# %% code 232.
+# %% code 234.
 print("type(combined_light_avg_sigma_False): {}".format(type(combined_light_avg_sigma_False)))
 print("combined_light_avg_sigma_False.shape: {}".format(combined_light_avg_sigma_False.shape))
 print("combined_light_avg_sigma_False: {}".format(combined_light_avg_sigma_False))
 
-# %% code 233.
+# %% code 235.
 out_path = proj_dir / "IC1848_combined.fit"
 combined_light_avg_sigma_True.write(out_path, overwrite=True)
 print(out_path.name, "저장됨")
 
-# %% code 234.
+# %% code 236.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -518,7 +518,7 @@ fig.colorbar(im, cax=cbar_ax)
 plt.suptitle('IC1848 images', fontsize=12)
 plt.show()
 
-# %% code 235.
+# %% code 237.
 from astropy.stats import sigma_clipped_stats
 
 box = (slice(1750, 1900), slice(3100, 3250))   # 별·성운이 거의 없는 영역 (y, x)
@@ -539,17 +539,17 @@ for name, image in results.items():
     print(f"{name:24s} 배경 {med:7.1f} ADU, 잡음 {std:6.1f} ADU, 1장 대비 {noise1/std:4.2f}배 감소")
 print(f"이론값 sqrt(N) = {np.sqrt(N):.2f}")
 
-# %% code 236.
+# %% code 238.
 from astropy.stats import sigma_clip, mad_std
 
 stack = np.ma.masked_array(aligned_hduls_data, mask=footprints)   # 가장자리는 미리 가림
 clipped = sigma_clip(stack, sigma=5, axis=0,
                      cenfunc=np.ma.median, stdfunc=mad_std, masked=True)
-clip_mask = clipped.mask & ~np.array(footprints)                 # 클리핑으로 걸러진 픽셀만
+clip_mask = clipped.mask & ~np.array(footprints)                 # 클리핑으로 걸러진 화소만
 
 n_clip = clip_mask.reshape(N, -1).sum(axis=1)
 for i, n in enumerate(n_clip):
-    print(f"image({i}): 걸러진 픽셀 {n:7d}개 ({n/clip_mask[i].size*100:.2f}%)")
+    print(f"image({i}): 걸러진 화소 {n:7d}개 ({n/clip_mask[i].size*100:.2f}%)")
 
 k = int(np.argmax(n_clip))
 fig, ax = plt.subplots(figsize=(5, 4))

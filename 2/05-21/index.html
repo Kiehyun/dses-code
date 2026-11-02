@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>V-01. 암석 데이터 분류하기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/05-21/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-517">517</a> <a href="#code-518">518</a> <a href="#code-519">519</a> <a href="#code-520">520</a> <a href="#code-521">521</a> <a href="#code-522">522</a></p>
-<h2 id="code-517">code 517. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
+<p class="jump"><a href="#code-519">519</a> <a href="#code-520">520</a> <a href="#code-521">521</a> <a href="#code-522">522</a> <a href="#code-523">523</a> <a href="#code-524">524</a></p>
+<h2 id="code-519">code 519. <button class="copy">복사</button></h2><pre><code>from pathlib import Path
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -40,16 +40,16 @@ print(response.url)
 print(f&quot;데이터 개수: {len(rocks):,}&quot;)
 print(f&quot;저장 위치: {csv_file}&quot;)
 rocks.head()</code></pre>
-<h2 id="code-518">code 518. <button class="copy">복사</button></h2><pre><code># 분석에 사용할 핵심 열만 먼저 확인
+<h2 id="code-520">code 520. <button class="copy">복사</button></h2><pre><code># 분석에 사용할 핵심 열만 먼저 확인
 cols = [&quot;lith_id&quot;, &quot;name&quot;, &quot;class&quot;, &quot;type&quot;, &quot;group&quot;, &quot;color&quot;, &quot;t_units&quot;]
 rocks[cols].head(15)</code></pre>
-<h2 id="code-519">code 519. <button class="copy">복사</button></h2><pre><code># 빈칸은 결측값이라기보다 상위 그룹이 지정되지 않은 경우가 많음
+<h2 id="code-521">code 521. <button class="copy">복사</button></h2><pre><code># 빈칸은 결측값이라기보다 상위 그룹이 지정되지 않은 경우가 많음
 rocks[&quot;group&quot;] = rocks[&quot;group&quot;].replace(&quot;&quot;, &quot;not specified&quot;)
 rocks[&quot;class&quot;] = rocks[&quot;class&quot;].replace(&quot;&quot;, &quot;not specified&quot;)
 
 class_counts = rocks[&quot;class&quot;].value_counts().rename_axis(&quot;class&quot;).reset_index(name=&quot;count&quot;)
 class_counts</code></pre>
-<h2 id="code-520">code 520. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(7.7, 4.2))
+<h2 id="code-522">code 522. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(7.7, 4.2))
 sns.barplot(data=class_counts, x=&quot;count&quot;, y=&quot;class&quot;, hue=&quot;class&quot;, legend=False,
             ax=ax, palette=&quot;Set2&quot;)
 ax.set_title(&quot;Macrostrat 암상 정의의 대분류&quot;)
@@ -58,7 +58,7 @@ ax.set_ylabel(&quot;암석 대분류&quot;)
 ax.grid(axis=&quot;x&quot;, alpha=0.3)
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f&quot;{proj_dir.name}_01&quot;))
 plt.show()</code></pre>
-<h2 id="code-521">code 521. <button class="copy">복사</button></h2><pre><code>def simple_rock_classifier(name):
+<h2 id="code-523">code 523. <button class="copy">복사</button></h2><pre><code>def simple_rock_classifier(name):
     &quot;&quot;&quot;암석 이름에 들어 있는 단어로 대략적인 암석 분류를 반환&quot;&quot;&quot;
     text = str(name).lower()
 
@@ -82,7 +82,7 @@ plt.show()</code></pre>
 
 rocks[&quot;rule_class&quot;] = rocks[&quot;name&quot;].apply(simple_rock_classifier)
 rocks[[&quot;name&quot;, &quot;class&quot;, &quot;rule_class&quot;]].head(20)</code></pre>
-<h2 id="code-522">code 522. <button class="copy">복사</button></h2><pre><code># 규칙 기반 분류가 Macrostrat의 class와 얼마나 비슷한지 비교
+<h2 id="code-524">code 524. <button class="copy">복사</button></h2><pre><code># 규칙 기반 분류가 Macrostrat의 class와 얼마나 비슷한지 비교
 comparison = pd.crosstab(rocks[&quot;class&quot;], rocks[&quot;rule_class&quot;])
 
 # 대각선(실제 분류 = 규칙 분류) 개수로 정확도 계산

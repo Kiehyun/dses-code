@@ -35,7 +35,7 @@ print(f&quot;len(fpaths): {len(fpaths)}&quot;)</code></pre>
 import json
 
 def earthquake_json_to_dataframe(json_path):
-    &quot;&quot;&quot;USGS GeoJSON 또는 일반 JSON 지진 자료를 DataFrame으로 변환합니다.&quot;&quot;&quot;
+    &quot;&quot;&quot;USGS GeoJSON 또는 일반 JSON 지진 데이터를 DataFrame으로 변환합니다.&quot;&quot;&quot;
     with open(json_path, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:
         data = json.load(f)
 
@@ -81,7 +81,7 @@ print(f&quot;파일명: {fpaths[0].name}&quot;)</code></pre>
 <h2 id="code-15">code 15. <button class="copy">복사</button></h2><pre><code># 위도 · 경도 · 깊이(km) · 규모(mag) 열이 들어 있는지 확인
 print(f&quot;파일명: {fpaths[0].name}&quot;)
 print(f&quot;데이터프레임 크기: {df.shape}&quot;)
-print(f&quot;컬럼: {df.columns.tolist()}&quot;)
+print(f&quot;열: {df.columns.tolist()}&quot;)
 print(f&quot;자료형:\n{df.dtypes}&quot;)
 display(df.head(3))</code></pre>
 <h2 id="code-16">code 16. <button class="copy">복사</button></h2><pre><code>import hashlib
@@ -117,7 +117,7 @@ fpaths = sorted((proj_dir).glob(&quot;*.geojson&quot;)) + sorted((proj_dir).glob
 fpaths = list(dict.fromkeys(fpaths))
 
 if len(fpaths) &lt; 2:
-    raise FileNotFoundError(&quot;비교할 두 번째 JSON/GeoJSON 파일이 없습니다. 앞의 다운로드 셀을 먼저 실행해 주세요.&quot;)
+    raise FileNotFoundError(&quot;비교할 두 번째 JSON/GeoJSON 파일이 없습니다. 앞의 내려받기 셀을 먼저 실행해 주세요.&quot;)
 
 print(f&quot;fpaths: {fpaths}&quot;)
 print(f&quot;len(fpaths): {len(fpaths)}&quot;)</code></pre>
@@ -146,12 +146,12 @@ elif isinstance(data, list):
 
 print(&quot;\n=== DataFrame 확인 ===&quot;)
 print(f&quot;데이터프레임 크기: {df1.shape}&quot;)
-print(f&quot;컬럼: {df1.columns.tolist()}&quot;)
+print(f&quot;열: {df1.columns.tolist()}&quot;)
 display(df1.head(3))</code></pre>
 <h2 id="code-19">code 19. <button class="copy">복사</button></h2><pre><code># df1: 규모 4.5 이상 지진(df와 같은 열 구성)
 print(f&quot;파일명: {fpaths[1].name}&quot;)
 print(f&quot;데이터프레임 크기: {df1.shape}&quot;)
-print(f&quot;컬럼: {df1.columns.tolist()}&quot;)
+print(f&quot;열: {df1.columns.tolist()}&quot;)
 display(df1.head(3))</code></pre>
 <h2 id="code-20">code 20. <button class="copy">복사</button></h2><pre><code>import folium
 from folium import plugins
@@ -353,7 +353,7 @@ ax.scatter(
     alpha=0.7,
     edgecolor=&#x27;black&#x27;,
     linewidth=0.5,
-    transform=ccrs.PlateCarree(),  # 자료가 경위도 좌표임을 알림
+    transform=ccrs.PlateCarree(),  # 데이터가 경위도 좌표임을 알림
     zorder=5                       # 지도 요소 위에
 )
 

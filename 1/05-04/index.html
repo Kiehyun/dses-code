@@ -130,7 +130,7 @@ ax.scatter(places[&quot;lng&quot;], places[&quot;lat&quot;], color=&quot;red&quo
 for row in places.itertuples(index=False):
     ax.text(row.lng + 0.08, row.lat, row.name, fontsize=10, zorder=6)
 
-ax.set_title(&quot;Macrostrat 자료로 그린 대한민국 주변 지질 단위&quot;)
+ax.set_title(&quot;Macrostrat 데이터로 그린 대한민국 주변 지질 단위&quot;)
 ax.set_xlabel(&quot;경도&quot;)
 ax.set_ylabel(&quot;위도&quot;)
 ax.legend(loc=&quot;upper right&quot;)
@@ -197,7 +197,7 @@ map_file = Path(proj_dir) / &quot;macrostrat_geologic_map_korea.html&quot;
 m.save(map_file)
 print(f&quot;지도 저장 위치: {map_file}&quot;)
 m</code></pre>
-<h2 id="code-40">code 40. <button class="copy">복사</button></h2><pre><code># 자료 출처(source_id)별 다각형 수와 문헌
+<h2 id="code-40">code 40. <button class="copy">복사</button></h2><pre><code># 데이터 출처(source_id)별 다각형 수와 문헌
 source_summary = (
     gdf.groupby(&quot;source_id&quot;)
     .size()

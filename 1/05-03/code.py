@@ -250,7 +250,7 @@ folium.Marker(
 ).add_to(m)
 
 folium.Marker(
-    [estimated_lat, estimated_lon], popup="S-P 자료로 추정한 진앙",
+    [estimated_lat, estimated_lon], popup="S-P 데이터로 추정한 진앙",
     icon=folium.Icon(color="blue", icon="info-sign"),
 ).add_to(m)
 

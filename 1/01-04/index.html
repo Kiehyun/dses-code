@@ -11,7 +11,7 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>I-04. Python 모듈</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/01-04/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-37">37</a> <a href="#code-38">38</a> <a href="#code-39">39</a> <a href="#code-40">40</a> <a href="#code-41">41</a> <a href="#code-42">42</a> <a href="#code-43">43</a> <a href="#code-44">44</a> <a href="#code-45">45</a> <a href="#code-46">46</a> <a href="#code-47">47</a> <a href="#code-48">48</a> <a href="#code-49">49</a> <a href="#code-50">50</a> <a href="#code-51">51</a> <a href="#code-52">52</a> <a href="#code-53">53</a> <a href="#code-54">54</a> <a href="#code-55">55</a> <a href="#code-56">56</a> <a href="#code-57">57</a> <a href="#code-58">58</a> <a href="#code-59">59</a> <a href="#code-60">60</a> <a href="#code-61">61</a> <a href="#code-62">62</a> <a href="#code-63">63</a> <a href="#code-64">64</a> <a href="#code-65">65</a> <a href="#code-66">66</a> <a href="#code-67">67</a> <a href="#code-68">68</a> <a href="#code-69">69</a> <a href="#code-70">70</a></p>
+<p class="jump"><a href="#code-37">37</a> <a href="#code-38">38</a> <a href="#code-39">39</a> <a href="#code-40">40</a> <a href="#code-41">41</a> <a href="#code-42">42</a> <a href="#code-43">43</a> <a href="#code-44">44</a> <a href="#code-45">45</a> <a href="#code-46">46</a> <a href="#code-47">47</a> <a href="#code-48">48</a> <a href="#code-49">49</a> <a href="#code-50">50</a> <a href="#code-51">51</a> <a href="#code-52">52</a> <a href="#code-53">53</a> <a href="#code-54">54</a> <a href="#code-55">55</a> <a href="#code-56">56</a> <a href="#code-57">57</a> <a href="#code-58">58</a> <a href="#code-59">59</a> <a href="#code-60">60</a> <a href="#code-61">61</a> <a href="#code-62">62</a> <a href="#code-63">63</a> <a href="#code-64">64</a> <a href="#code-65">65</a> <a href="#code-66">66</a> <a href="#code-67">67</a> <a href="#code-68">68</a> <a href="#code-69">69</a> <a href="#code-70">70</a> <a href="#code-71">71</a> <a href="#code-72">72</a> <a href="#code-73">73</a> <a href="#code-74">74</a> <a href="#code-75">75</a> <a href="#code-76">76</a> <a href="#code-77">77</a> <a href="#code-78">78</a> <a href="#code-79">79</a></p>
 <h2 id="code-37">code 37. <button class="copy">복사</button></h2><pre><code>import math
 help(math)                                # 도움말 출력
 print(f&quot;math.sin(0.5): {math.sin(0.5)}&quot;)  # 각도 단위는 라디안
@@ -202,7 +202,7 @@ s3.index=[&#x27;d&#x27;, &#x27;b&#x27;, &#x27;a&#x27;, &#x27;c&#x27;, &#x27;e&#x
 print(&quot;-&quot;*20+&quot;\ns3:\n&quot;, s3)</code></pre>
 <h2 id="code-52">code 52. <button class="copy">복사</button></h2><pre><code>print(&quot;-&quot;*20+&quot;\ns1[:3]:&quot;, s1[:3])
 print(&quot;-&quot;*20+&quot;\ns1[1:4]:&quot;, s1[1:4])  # 위치 1~3
-print(&quot;-&quot;*20+&quot;\ns1[s1 &gt; s1.median()]:&quot;, s1[s1 &gt; s1.median()])  # 중앙값보다 큰 원소만(불린 인덱싱)
+print(&quot;-&quot;*20+&quot;\ns1[s1 &gt; s1.median()]:&quot;, s1[s1 &gt; s1.median()])  # 중앙값보다 큰 원소만(불 인덱싱)
 print(&quot;-&quot;*20+&quot;\ns1.iloc[[4, 3, 1]]:&quot;, s1.iloc[[4, 3, 1]])  # 위치로 고르기</code></pre>
 <h2 id="code-53">code 53. <button class="copy">복사</button></h2><pre><code>print(&quot;s2.dtype:&quot;, s2.dtype)
 print(&quot;np.exp(s2):&quot;, np.exp(s2))  # 원소마다 지수 함수 적용
@@ -327,7 +327,7 @@ print(&quot;-&quot;*20+&quot;\ndf:\n&quot;, df)
 df[&#x27;net_points&#x27;] = df[&#x27;points&#x27;] - df[&#x27;penalty&#x27;]
 print(&quot;-&quot;*20+&quot;\ndf:\n&quot;, df)
 
-# 조건식으로 불린 열 추가
+# 조건식으로 불 열 추가
 df[&#x27;high_points&#x27;] = df[&#x27;net_points&#x27;] &gt; 2.0
 print(&quot;-&quot;*20+&quot;\ndf:\n&quot;, df)
 
@@ -510,7 +510,7 @@ ax.text(4.0, -0.4, &quot;Made with http://matplotlib.org&quot;,
 
 plt.show()</code></pre>
 <h2 id="code-64">code 64. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
-# 한글 폰트를 설정하지 않으면 &#x27;축&#x27; 같은 한글이 표시되지 않음
+# 한글 글꼴을 설정하지 않으면 &#x27;축&#x27; 같은 한글이 표시되지 않음
 
 x = [1, 2, 3, 4, 5]
 y = [2, 4, 6, 8, 10]
@@ -544,7 +544,7 @@ axes[1, 0].grid(True)
 # 네 번째 그래프 (1,1)
 data_dict = {&#x27;data_x&#x27;: [1, 2, 3, 4, 5], &#x27;data_y&#x27;: [2, 3, 5, 10, 8]}
 axes[1, 1].plot(&#x27;data_x&#x27;, &#x27;data_y&#x27;, data=data_dict)
-axes[1, 1].set_title(&#x27;그래프 4: 딕셔너리 자료&#x27;)
+axes[1, 1].set_title(&#x27;그래프 4: 딕셔너리 데이터&#x27;)
 axes[1, 1].grid(True)
 
 plt.tight_layout()
@@ -553,7 +553,7 @@ plt.show()</code></pre>
 
 fig, axes = plt.subplots(2, 3, figsize=(15, 10))
 
-# 첫 번째 플롯 (0,0) - 폰트 스타일링
+# 첫 번째 플롯 (0,0) - 글꼴 스타일링
 axes[0,0].plot([1, 2, 3, 4], [2, 3, 5, 10])
 axes[0,0].set_xlabel(&#x27;X-Axis&#x27;, labelpad=15, 
     fontdict={&#x27;family&#x27;: &#x27;serif&#x27;, &#x27;color&#x27;: &#x27;b&#x27;, &#x27;weight&#x27;: &#x27;bold&#x27;, &#x27;size&#x27;: 14})
@@ -618,14 +618,14 @@ chart_png = plt.imread(fname)
 plt.imshow(chart_png, interpolation=&#x27;none&#x27;)
 
 plt.show()</code></pre>
-<h2 id="code-69">code 69. <button class="copy">복사</button></h2><pre><code># 한글 폰트 설정과 깨짐 해결
+<h2 id="code-69">code 69. <button class="copy">복사</button></h2><pre><code># 한글 글꼴 설정과 깨짐 해결
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 import platform
 
 def setup_korean_font():
     &quot;&quot;&quot;
-    공개 글꼴을 먼저 찾고, 없으면 운영체제 글꼴로 한글 폰트를 설정하는 함수
+    공개 글꼴을 먼저 찾고, 없으면 운영체제 글꼴로 한글 글꼴을 설정하는 함수
     &quot;&quot;&quot;
     system = platform.system()
     font_candidates = [&#x27;NanumGothic&#x27;, &#x27;Noto Sans CJK KR&#x27;]  # 공개 글꼴
@@ -634,18 +634,18 @@ def setup_korean_font():
     elif system == &#x27;Darwin&#x27;:  # macOS
         font_candidates += [&#x27;AppleGothic&#x27;]
     
-    # 설치된 폰트 이름 목록
+    # 설치된 글꼴 이름 목록
     available_fonts = [f.name for f in fm.fontManager.ttflist]
     
     for font in font_candidates:
         if font in available_fonts:
             plt.rcParams[&#x27;font.family&#x27;] = font
-            print(f&quot;한글 폰트 설정 완료: {font}&quot;)
+            print(f&quot;한글 글꼴 설정 완료: {font}&quot;)
             break
     else:
-        # 후보 폰트가 없을 때(for-else)
+        # 후보 글꼴이 없을 때(for-else)
         plt.rcParams[&#x27;font.family&#x27;] = &#x27;DejaVu Sans&#x27;
-        print(&quot;기본 폰트로 설정됨 (한글이 깨질 수 있음)&quot;)
+        print(&quot;기본 글꼴로 설정됨 (한글이 깨질 수 있음)&quot;)
     
     # 마이너스 기호 깨짐 방지
     plt.rcParams[&#x27;axes.unicode_minus&#x27;] = False
@@ -654,10 +654,10 @@ def setup_korean_font():
 
 current_font = setup_korean_font()
 
-# 폰트 테스트
+# 글꼴 테스트
 fig, ax = plt.subplots(figsize=(8, 4))
-ax.text(0.5, 0.7, &#x27;한글 폰트 테스트&#x27;, fontsize=20, ha=&#x27;center&#x27;, transform=ax.transAxes)
-ax.text(0.5, 0.5, f&#x27;현재 설정된 폰트: {current_font}&#x27;, fontsize=14, ha=&#x27;center&#x27;, transform=ax.transAxes)
+ax.text(0.5, 0.7, &#x27;한글 글꼴 테스트&#x27;, fontsize=20, ha=&#x27;center&#x27;, transform=ax.transAxes)
+ax.text(0.5, 0.5, f&#x27;현재 설정된 글꼴: {current_font}&#x27;, fontsize=14, ha=&#x27;center&#x27;, transform=ax.transAxes)
 ax.text(0.5, 0.3, &#x27;위성의 궤도 분석&#x27;, fontsize=16, ha=&#x27;center&#x27;, transform=ax.transAxes)
 ax.set_xlim(0, 1)
 ax.set_ylim(0, 1)
@@ -665,9 +665,108 @@ ax.set_title(&#x27;한글 표시 테스트&#x27;)
 plt.show()
 
 print(f&quot;\n현재 시스템: {platform.system()}&quot;)
-print(f&quot;설정된 폰트: {current_font}&quot;)
+print(f&quot;설정된 글꼴: {current_font}&quot;)
 print(&quot;한글이 정상적으로 표시되면 설정이 완료되었습니다.&quot;)</code></pre>
-<h2 id="code-70">code 70. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-70">code 70. <button class="copy">복사</button></h2><pre><code>import numpy as np
+import pandas as pd
+
+np.random.seed(1)  # 실행할 때마다 같은 난수
+times = pd.date_range(&quot;2025-07-01&quot;, periods=28, freq=&quot;6h&quot;)  # 7일 × 하루 4번
+hour = times.hour.to_numpy()
+temp = 26 + 4 * np.sin((hour - 8) / 24 * 2 * np.pi) + np.random.randn(28)  # 낮에 높은 기온
+df = pd.DataFrame({&quot;일시&quot;: times.strftime(&quot;%Y-%m-%d %H:%M&quot;),  # 날짜를 문자열로
+                   &quot;기온(°C)&quot;: temp.round(1),
+                   &quot;습도(%)&quot;: np.random.randint(55, 95, 28)})
+
+fpath = proj_dir / &quot;temp_week.csv&quot;
+df.to_csv(fpath, index=False, encoding=&quot;euc-kr&quot;)  # 기상청 파일처럼 EUC-KR로 저장
+
+df_r = pd.read_csv(fpath, encoding=&quot;euc-kr&quot;)      # 저장할 때와 같은 인코딩으로 읽기
+print(df_r.head())
+print(&quot;-&quot; * 20)
+print(df_r.dtypes)</code></pre>
+<h2 id="code-71">code 71. <button class="copy">복사</button></h2><pre><code>try:
+    pd.read_csv(fpath, encoding=&quot;utf-8&quot;)  # 저장한 인코딩과 다르게 읽기
+except UnicodeDecodeError as e:
+    print(&quot;utf-8로 읽으면 오류:&quot;, type(e).__name__)
+
+fpath_u = proj_dir / &quot;temp_week_utf8.csv&quot;
+df_r.to_csv(fpath_u, index=False, encoding=&quot;utf-8&quot;)  # 같은 표를 UTF-8로 저장
+print(&quot;utf-8로 다시 저장해 읽은 행 수:&quot;, len(pd.read_csv(fpath_u, encoding=&quot;utf-8&quot;)))</code></pre>
+<h2 id="code-72">code 72. <button class="copy">복사</button></h2><pre><code>import io
+
+text = &quot;&quot;&quot;# 가상 관측소 일평균 데이터
+# 단위: 기온 °C, 강수량 mm
+# 관측 기간: 2025-07-01 ~ 2025-07-05
+date        temp   rain
+2025-07-01  26.3    0.0
+2025-07-02  27.1   12.5
+2025-07-03  24.8   30.0
+2025-07-04  25.5    2.0
+2025-07-05  28.0    0.0
+&quot;&quot;&quot;
+df_txt = pd.read_csv(io.StringIO(text), skiprows=3, sep=r&quot;\s+&quot;,  # 설명 3줄 건너뛰기, 공백 구분
+                     parse_dates=[&quot;date&quot;])                       # date 열은 날짜로
+print(df_txt)
+print(&quot;-&quot; * 20)
+print(df_txt.dtypes)</code></pre>
+<h2 id="code-73">code 73. <button class="copy">복사</button></h2><pre><code>fpath_txt = proj_dir / &quot;station_daily.txt&quot;
+fpath_txt.write_text(text.replace(&quot;rain\n&quot;, &quot;rain\n-----------------------\n&quot;),  # 열 이름 아래에 구분선
+                     encoding=&quot;utf-8&quot;)
+
+with open(fpath_txt, encoding=&quot;utf-8&quot;) as f:  # 블록이 끝나면 파일이 저절로 닫힘
+    lines = f.readlines()                     # 모든 줄을 리스트로
+print(&quot;전체 줄 수:&quot;, len(lines))
+for line in lines[:6]:
+    print(repr(line))                         # 줄 끝의 \n까지 보이게
+
+# 구분선(-----)이 있는 줄까지 건너뛰기
+n_skip = next(i for i, line in enumerate(lines) if line.startswith(&quot;---&quot;)) + 1
+df_txt2 = pd.read_csv(fpath_txt, skiprows=n_skip, sep=r&quot;\s+&quot;, header=None,
+                      names=[&quot;date&quot;, &quot;temp&quot;, &quot;rain&quot;])
+print(&quot;건너뛴 줄 수:&quot;, n_skip)
+print(df_txt2.head(3))</code></pre>
+<h2 id="code-74">code 74. <button class="copy">복사</button></h2><pre><code>print(&quot;변환 전:&quot;, df_r[&quot;일시&quot;].dtype, type(df_r[&quot;일시&quot;][0]))
+df_r[&quot;일시&quot;] = pd.to_datetime(df_r[&quot;일시&quot;])       # 문자열 → datetime64
+print(&quot;변환 후:&quot;, df_r[&quot;일시&quot;].dtype, type(df_r[&quot;일시&quot;][0]))
+
+df_r[&quot;날짜&quot;] = df_r[&quot;일시&quot;].dt.date               # .dt로 날짜 · 시 꺼내기
+df_r[&quot;시&quot;] = df_r[&quot;일시&quot;].dt.hour
+print(df_r.head(5))
+
+print(&quot;-&quot; * 20)
+print(pd.to_datetime(&quot;20250701 1530&quot;, format=&quot;%Y%m%d %H%M&quot;))  # 형식 지정
+print(&quot;관측 기간:&quot;, df_r[&quot;일시&quot;].max() - df_r[&quot;일시&quot;].min())   # 두 시각의 차</code></pre>
+<h2 id="code-75">code 75. <button class="copy">복사</button></h2><pre><code>daily = df_r.groupby(&quot;날짜&quot;)[&quot;기온(°C)&quot;].mean()  # 날짜별 평균 기온
+print(daily.round(1))
+
+print(&quot;-&quot; * 20)
+by_hour = df_r.groupby(&quot;시&quot;)[&quot;기온(°C)&quot;].agg([&quot;mean&quot;, &quot;min&quot;, &quot;max&quot;])  # 시각별 여러 통계
+print(by_hour.round(1))</code></pre>
+<h2 id="code-76">code 76. <button class="copy">복사</button></h2><pre><code>df_t = df_r.set_index(&quot;일시&quot;)                     # 일시를 인덱스로
+print(type(df_t.index).__name__)                 # DatetimeIndex
+
+daily_r = df_t[&quot;기온(°C)&quot;].resample(&quot;D&quot;).agg([&quot;mean&quot;, &quot;min&quot;, &quot;max&quot;])  # 하루 단위
+print(daily_r.round(1))
+
+print(&quot;-&quot; * 20)
+two_day = df_t[[&quot;기온(°C)&quot;, &quot;습도(%)&quot;]].resample(&quot;2D&quot;).mean()        # 이틀 단위 평균
+print(two_day.round(1))</code></pre>
+<h2 id="code-77">code 77. <button class="copy">복사</button></h2><pre><code>f = lambda t: t * 9 / 5 + 32                     # 섭씨 → 화씨
+print(&quot;f(25) =&quot;, f(25))
+
+df_r[&quot;기온(°F)&quot;] = df_r[&quot;기온(°C)&quot;].apply(f)      # 열의 원소마다 f 적용
+df_r[&quot;구분&quot;] = df_r[&quot;기온(°C)&quot;].apply(lambda t: &quot;더움&quot; if t &gt;= 28 else &quot;보통&quot;)
+df_r[&quot;시간대&quot;] = df_r[&quot;시&quot;].map({0: &quot;밤&quot;, 6: &quot;아침&quot;, 12: &quot;낮&quot;, 18: &quot;저녁&quot;})  # 딕셔너리로 바꾸기
+print(df_r[[&quot;일시&quot;, &quot;기온(°C)&quot;, &quot;기온(°F)&quot;, &quot;구분&quot;, &quot;시간대&quot;]].head(6))
+
+print(&quot;-&quot; * 20)
+print(df_r[&quot;구분&quot;].value_counts())               # 값마다 개수 세기</code></pre>
+<h2 id="code-78">code 78. <button class="copy">복사</button></h2><pre><code>fpath_out = proj_dir / &quot;temp_week_result.csv&quot;
+df_r.to_csv(fpath_out, index=False, encoding=&quot;utf-8-sig&quot;)  # 엑셀에서도 한글이 깨지지 않게
+print(fpath_out.name, &quot;저장:&quot;, len(df_r), &quot;행,&quot;, len(df_r.columns), &quot;열&quot;)
+print(pd.read_csv(fpath_out, encoding=&quot;utf-8-sig&quot;).columns.tolist())</code></pre>
+<h2 id="code-79">code 79. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
 du.set_korean_font()  # 한글 글꼴 지정
 fig, ax = plt.subplots(figsize=(4, 3))

@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>IV-08. 우리 바다의 수온</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/04-28/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-500">500</a> <a href="#code-501">501</a> <a href="#code-502">502</a> <a href="#code-503">503</a> <a href="#code-504">504</a> <a href="#code-505">505</a> <a href="#code-506">506</a> <a href="#code-507">507</a> <a href="#code-508">508</a></p>
-<h2 id="code-500">code 500. <button class="copy">복사</button></h2><pre><code># 필요한 라이브러리 불러오기
+<p class="jump"><a href="#code-502">502</a> <a href="#code-503">503</a> <a href="#code-504">504</a> <a href="#code-505">505</a> <a href="#code-506">506</a> <a href="#code-507">507</a> <a href="#code-508">508</a> <a href="#code-509">509</a> <a href="#code-510">510</a></p>
+<h2 id="code-502">code 502. <button class="copy">복사</button></h2><pre><code># 필요한 라이브러리 불러오기
 import io
 from zipfile import ZipFile
 
@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 
 # 해역마다 쓸 색 정해 두기
 COLOR = {&quot;동해&quot;: &quot;#2b6cb0&quot;, &quot;남해&quot;: &quot;#38a169&quot;, &quot;서해&quot;: &quot;#e2553d&quot;}</code></pre>
-<h2 id="code-501">code 501. <button class="copy">복사</button></h2><pre><code># 데이터를 저장할 폴더를 만들고 압축 파일 내려받기
+<h2 id="code-503">code 503. <button class="copy">복사</button></h2><pre><code># 데이터를 저장할 폴더를 만들고 압축 파일 내려받기
 proj_dir = du.make_project_dir(du.current_notebook_name())
 
 url = &quot;https://www.nifs.go.kr/risa/cmmn/pastRisaInfoDown/total_2025.zip&quot;
@@ -40,7 +40,7 @@ print(f&quot;파일 크기: {os.path.getsize(zip_path) / 1e6:.1f} MB&quot;)
 with ZipFile(zip_path) as z:
     print(&quot;안에 들어 있는 파일:&quot;, z.namelist())
     z.extractall(proj_dir)</code></pre>
-<h2 id="code-502">code 502. <button class="copy">복사</button></h2><pre><code>SEA = {&quot;es_2025&quot;: &quot;동해&quot;, &quot;ss_2025&quot;: &quot;남해&quot;, &quot;ys_2025&quot;: &quot;서해&quot;}   # 파일 이름 : 해역 이름
+<h2 id="code-504">code 504. <button class="copy">복사</button></h2><pre><code>SEA = {&quot;es_2025&quot;: &quot;동해&quot;, &quot;ss_2025&quot;: &quot;남해&quot;, &quot;ys_2025&quot;: &quot;서해&quot;}   # 파일 이름 : 해역 이름
 USE = [&quot;관측소&quot;, &quot;관측일시&quot;, &quot;표층수온(℃)&quot;, &quot;표층수심(m)&quot;, &quot;저층수온(℃)&quot;,
        &quot;저층수심(m)&quot;]
 
@@ -67,7 +67,7 @@ df[&quot;지점&quot;] = df[&quot;관측소&quot;].str.replace(r&quot;\(.*\)$&qu
 print(f&quot;데이터 크기 : {df.shape[0]:,} 행 × {df.shape[1]} 열&quot;)
 print(f&quot;기간      : {df[&#x27;관측일시&#x27;].min()} ~ {df[&#x27;관측일시&#x27;].max()}&quot;)
 df.head()</code></pre>
-<h2 id="code-503">code 503. <button class="copy">복사</button></h2><pre><code>print(&quot;해역별 관측 지점 수&quot;)
+<h2 id="code-505">code 505. <button class="copy">복사</button></h2><pre><code>print(&quot;해역별 관측 지점 수&quot;)
 print(df.groupby(&quot;해역&quot;)[&quot;지점&quot;].nunique().to_string())
 
 print(&quot;\n해역별 데이터 수&quot;)
@@ -78,7 +78,7 @@ print((df[[&quot;표층수온&quot;, &quot;저층수온&quot;]].isna().mean() * 
 
 print(&quot;\n관측 수심의 중앙값 (m)&quot;)
 print(df.groupby(&quot;해역&quot;)[[&quot;표층수심&quot;, &quot;저층수심&quot;]].median().to_string())</code></pre>
-<h2 id="code-504">code 504. <button class="copy">복사</button></h2><pre><code># 하루 단위로 묶어 해역별 평균 수온 구하기
+<h2 id="code-506">code 506. <button class="copy">복사</button></h2><pre><code># 하루 단위로 묶어 해역별 평균 수온 구하기
 daily = (df.set_index(&quot;관측일시&quot;)
            .groupby(&quot;해역&quot;)[&quot;표층수온&quot;]
            .resample(&quot;D&quot;).mean()
@@ -99,7 +99,7 @@ ax.grid(True, linestyle=&quot;:&quot;, alpha=0.5)
 
 plt.tight_layout()
 plt.show()</code></pre>
-<h2 id="code-505">code 505. <button class="copy">복사</button></h2><pre><code>df[&quot;월&quot;] = df[&quot;관측일시&quot;].dt.month
+<h2 id="code-507">code 507. <button class="copy">복사</button></h2><pre><code>df[&quot;월&quot;] = df[&quot;관측일시&quot;].dt.month
 
 # 행은 월, 열은 해역인 표 만들기
 monthly = df.pivot_table(index=&quot;월&quot;, columns=&quot;해역&quot;, values=&quot;표층수온&quot;,
@@ -132,7 +132,7 @@ plt.tight_layout()
 plt.show()
 
 print(monthly.round(1).to_string())</code></pre>
-<h2 id="code-506">code 506. <button class="copy">복사</button></h2><pre><code># 표층과 저층이 모두 기록된 데이터만 고르기
+<h2 id="code-508">code 508. <button class="copy">복사</button></h2><pre><code># 표층과 저층이 모두 기록된 데이터만 고르기
 both = df.dropna(subset=[&quot;표층수온&quot;, &quot;저층수온&quot;]).copy()
 both[&quot;수온차&quot;] = both[&quot;표층수온&quot;] - both[&quot;저층수온&quot;]
 
@@ -170,7 +170,7 @@ plt.show()
 
 print(&quot;월별 표층 − 저층 수온차 (°C)&quot;)
 print(samcheok[&quot;수온차&quot;].groupby(samcheok.index.month).mean().round(1).to_string())</code></pre>
-<h2 id="code-507">code 507. <button class="copy">복사</button></h2><pre><code>df[&quot;날짜&quot;] = df[&quot;관측일시&quot;].dt.normalize()
+<h2 id="code-509">code 509. <button class="copy">복사</button></h2><pre><code>df[&quot;날짜&quot;] = df[&quot;관측일시&quot;].dt.normalize()
 
 # 정시·30분 관측만 사용 (불규칙 시각은 표본이 한두 개뿐이라 제외)
 reg = df[df[&quot;관측일시&quot;].dt.minute.isin([0, 30])].copy()
@@ -212,7 +212,7 @@ for label, months in SEASONS.items():
         c = curve[sea]
         print(f&quot;  {sea} : 변화 폭 {c.max() - c.min():.2f} °C, &quot;
               f&quot;가장 높은 시각 {c.idxmax():4.1f}시, 가장 낮은 시각 {c.idxmin():4.1f}시&quot;)</code></pre>
-<h2 id="code-508">code 508. <button class="copy">복사</button></h2><pre><code>import matplotlib.dates as mdates
+<h2 id="code-510">code 510. <button class="copy">복사</button></h2><pre><code>import matplotlib.dates as mdates
 
 THRESHOLD = 28.0     # 고수온 주의보 기준 (°C)
 

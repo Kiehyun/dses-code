@@ -76,7 +76,7 @@ def get_infobox_value(page, aliases):
             return clean_text(" ".join(str(x) for x in row.tolist()[1:]))
     return ""
 
-# JSON 자료 1: 태양계 비교표를 주는 MediaWiki API
+# JSON 데이터 1: 태양계 비교표를 주는 MediaWiki API
 js = requests.get(
     "https://en.wikipedia.org/w/api.php",
     params={
@@ -109,7 +109,7 @@ w.columns = [
 # 항목명(field)을 인덱스로 바꿔 이후 조회를 단순화
 w = w.dropna(subset=["field"]).set_index("field")
 
-# JSON 자료 2: 행성별 정보상자 API(편평도, 반사율)
+# JSON 데이터 2: 행성별 정보상자 API(편평도, 반사율)
 planet_pages = {
     "Mercury": "Mercury_(planet)",
     "Venus": "Venus", "Earth": "Earth", "Mars": "Mars", 

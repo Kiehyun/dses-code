@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | III-02. 허블-르메트르 법칙
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 67.
+# %% code 69.
 # NED-D 거리 목록(2020년 4월 판)을 프로젝트 폴더에 내려받기(이미 있으면 건너뜀)
 fname = "NED30.5.1-D-17.1.2-20200415.csv"
 url = "https://ned.ipac.caltech.edu/Archive/Distances/" + fname
@@ -12,7 +12,7 @@ fpaths = sorted(proj_dir.glob("*.csv"))
 for p in fpaths:
     print(f"{p.name}  ({p.stat().st_size / 1e6:.1f} MB)")
 
-# %% code 68.
+# %% code 70.
 # 파일 앞 16줄만 읽어 머리말과 첫 데이터 줄 확인
 with open(fpaths[0], encoding="utf-8") as f:
     for i, line in enumerate(f):
@@ -20,7 +20,7 @@ with open(fpaths[0], encoding="utf-8") as f:
             break
         print(line.rstrip()[:150])
 
-# %% code 69.
+# %% code 71.
 import numpy as np
 import pandas as pd
 
@@ -39,7 +39,7 @@ for col in ["m-M", "err", "D (Mpc)", "redshift (z)", "Hubble const."]:
 print(f"측정값(행) {len(df):,}개, 천체 {df['Galaxy ID'].nunique():,}개")
 display(df[["Galaxy ID", "m-M", "err", "D (Mpc)", "Method"]].head(8))
 
-# %% code 70.
+# %% code 72.
 print(f"거리 측정 방법: {df['Method'].nunique()}가지")
 method_table = pd.DataFrame({
     "측정값 수": df["Method"].value_counts(),
@@ -51,7 +51,7 @@ display(method_table.sort_values("측정값 수", ascending=False).head(10))
 print("[적색편이가 함께 적힌 방법 6개]")
 display(method_table.sort_values("적색편이가 있는 수", ascending=False).head(6))
 
-# %% code 71.
+# %% code 73.
 c = 299792.458  # 빛의 속력(km/s)
 
 z = df["redshift (z)"]
@@ -69,7 +69,7 @@ for z0 in [0.01, 0.05, 0.1, 0.5, 1.0, 2.0]:
     v_r = c * ((1 + z0)**2 - 1) / ((1 + z0)**2 + 1)
     print(f"{z0:4.2f}  {v_a:10,.0f}  {v_r:12,.0f}   {100 * (v_a - v_r) / v_r:5.1f}%")
 
-# %% code 72.
+# %% code 74.
 import matplotlib.pyplot as plt
 
 def fit_through_origin(x, y):
@@ -135,7 +135,7 @@ print("\n속도가 가장 큰 측정값:")
 display(df[mask_pos][["Galaxy ID", "D (Mpc)", "redshift (z)", "v_approx", "err", "Method"]]
         .sort_values("v_approx", ascending=False).head(8).round({"v_approx": 0}))
 
-# %% code 73.
+# %% code 75.
 trusted_methods = ["SNIa", "SNIa SDSS", "SNII optical"]
 
 sel = df.dropna(subset=["Galaxy ID", "D (Mpc)", "redshift (z)", "err",
@@ -189,7 +189,7 @@ plt.show()
 display(gal.sort_values("n_meas", ascending=False).head(8)
         .round({"v_approx": 0, "v_rel": 0}))
 
-# %% code 74.
+# %% code 76.
 rows["assumed_H0"] = rows["Hubble const."].round(0)
 print("가정한 H0   은하 수   맞춘 기울기 (km/s/Mpc)")
 for assumed, group in rows.dropna(subset=["assumed_H0"]).groupby("assumed_H0"):
@@ -199,7 +199,7 @@ for assumed, group in rows.dropna(subset=["assumed_H0"]).groupby("assumed_H0"):
     slope, se, _ = fit_through_origin(per_gal["D (Mpc)"], per_gal["v_approx"])
     print(f"{assumed:8.0f}   {len(per_gal):6d}   {slope:6.1f} ± {se:.1f}")
 
-# %% code 75.
+# %% code 77.
 fig, axes = plt.subplots(1, 2, figsize=(7.5, 3.2), sharey=True)
 results = {}
 for ax, col, title in zip(axes, ["v_approx", "v_rel"],
@@ -228,7 +228,7 @@ H0_a, H0_r = results["v_approx"][0], results["v_rel"][0]
 print(f"비상대론 근사: {H0_a:.1f} km/s/Mpc, 상대론적 관계: {H0_r:.1f} km/s/Mpc, "
       f"차이 {100 * (H0_a - H0_r) / H0_r:.1f}%")
 
-# %% code 76.
+# %% code 78.
 from astropy.cosmology import Planck18
 
 print(f"이 장, 간단한 범위로 고른 표본 : {H0_local:6.2f} ± {se_local:.2f} km/s/Mpc")

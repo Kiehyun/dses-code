@@ -1,4 +1,4 @@
-# 지구과학 데이터 사이언스 1 | IV-03. 에어코리아 자료 시각화하기
+# 지구과학 데이터 사이언스 1 | IV-03. 에어코리아 데이터 시각화하기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
 # %% code 37.
@@ -279,7 +279,7 @@ df_weekday = df_O.groupby(df_O.index.dayofweek).mean().T
 df_weekday.columns = Weekday_lst
 print(df_weekday)
 
-# 요일별 자료 개수(시간)
+# 요일별 데이터 개수(시간)
 print(df_O.groupby(df_O.index.dayofweek).size().set_axis(Weekday_lst))
 
 # %% code 63.

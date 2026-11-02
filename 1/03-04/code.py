@@ -12,7 +12,7 @@ fname = "elements.txt"
 # CelesTrak에서 최근 30일 발사 위성의 TLE 받기
 from pathlib import Path
 
-# 그 기간 발사 위성이 없으면 404 오류 → 우주정거장(stations) 자료
+# 그 기간 발사 위성이 없으면 404 오류 → 우주정거장(stations) 데이터
 try:
     du.download("https://celestrak.org/NORAD/elements/gp.php?GROUP=last-30-days&FORMAT=tle", Path(proj_dir) / (fname), overwrite=True)
 except Exception:
@@ -21,7 +21,7 @@ except Exception:
 # %% code 43.
 from skyfield.api import Loader
 
-# Skyfield 자료 파일 저장 위치
+# Skyfield 데이터 파일 저장 위치
 load = Loader(str(proj_dir))  
 
 ts   = load.timescale()
@@ -295,12 +295,12 @@ try:
     response = requests.get(url, timeout=30)
     response.raise_for_status()  # HTTP 오류면 예외 발생
     
-    print("TLE 데이터 다운로드 완료!")
+    print("TLE 데이터 내려받기 완료!")
     print(f"응답 상태 코드: {response.status_code}")
     print(f"데이터 크기: {len(response.text)} bytes")
     
 except requests.exceptions.RequestException as e:
-    print(f"TLE 데이터 다운로드 실패: {e}")
+    print(f"TLE 데이터 내려받기 실패: {e}")
     response = None
 
 iss_tle = []  # 내려받기에 실패해도 이름은 있도록 미리 비워 두기
@@ -392,7 +392,7 @@ url = "https://celestrak.org/NORAD/elements/gp.php?GROUP=starlink&FORMAT=tle"
 
 tle_file = proj_dir / "starlink.tle"  # 받은 파일을 저장해 두고 다시 씀
 try:
-    # CelesTrak은 같은 자료를 짧은 간격으로 다시 받으면 403 오류를 돌려줌
+    # CelesTrak은 같은 데이터를 짧은 간격으로 다시 받으면 403 오류를 돌려줌
     if not tle_file.exists():
         response = requests.get(url, timeout=30)
         response.raise_for_status()
@@ -400,7 +400,7 @@ try:
     lines = tle_file.read_text(encoding="utf-8").splitlines()
     print(f"스타링크 TLE 총 줄 수: {len(lines)}")
 except requests.exceptions.RequestException as e:
-    print(f"스타링크 TLE 데이터 다운로드 실패: {e}")
+    print(f"스타링크 TLE 데이터 내려받기 실패: {e}")
     lines = []
 
 # 2) 첫 번째 스타링크 위성의 TLE 찾기: 이름 줄 다음에 '1 ', '2 '로 시작하는 두 줄

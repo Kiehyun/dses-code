@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | V-03. 화석 산출과 지질 시대
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 528.
+# %% code 530.
 from pathlib import Path
 from io import StringIO
 import numpy as np
@@ -36,13 +36,13 @@ print(f"데이터 개수: {len(fossils):,}")
 print(f"저장 위치: {csv_file}")
 fossils.head()
 
-# %% code 529.
+# %% code 531.
 use_cols = ["accepted_name", "accepted_rank", "early_interval",
             "late_interval", "max_ma", "min_ma", "lng", "lat", "phylum",
             "class", "order", "family", "genus", "lithology1"]
 fossils[use_cols].head(10)
 
-# %% code 530.
+# %% code 532.
 # 분석을 위해 숫자형 열과 대표 연대 정리
 fossils["max_ma"] = pd.to_numeric(fossils["max_ma"], errors="coerce")
 fossils["min_ma"] = pd.to_numeric(fossils["min_ma"], errors="coerce")
@@ -52,7 +52,7 @@ fossils["mid_ma"] = (fossils["max_ma"] + fossils["min_ma"]) / 2
 fossils_geo = fossils.dropna(subset=["lng", "lat"]).copy()
 print(f"좌표가 있는 데이터: {len(fossils_geo):,}")
 
-# %% code 531.
+# %% code 533.
 # 국제 연대층서표(ICS v2026/06)의 고생대 기 경계 (Ma)
 period_edges = [251.902, 298.9, 358.86, 419.62, 443.1, 486.85, 538.8]
 period_names = ["페름기", "석탄기", "데본기", "실루리아기", "오르도비스기", "캄브리아기"]
@@ -79,7 +79,7 @@ ax.grid(axis="x", alpha=0.3)
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f"{proj_dir.name}_01"))
 plt.show()
 
-# %% code 532.
+# %% code 534.
 fig, ax = plt.subplots(figsize=(8.4, 3.8))
 ax.hist(fossils["mid_ma"].dropna(), bins=40, color="slateblue", alpha=0.8)
 ax.axvline(251.9, color="red", ls="--", lw=1, label="페름기 말 대멸종 (251.9 Ma)")
@@ -92,7 +92,7 @@ ax.grid(alpha=0.3)
 du.save_figure(plt.gcf(), os.path.join(str(proj_dir), f"{proj_dir.name}_02"))
 plt.show()
 
-# %% code 533.
+# %% code 535.
 import folium
 
 # 너무 많은 점을 모두 표시하면 지도가 느려질 수 있어 일부만 사용

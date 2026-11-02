@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IV-01. 기상청 AWS 자료 시각화하기</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IV-01. 기상청 AWS 데이터 시각화하기</title><style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:860px;margin:0 auto;padding:16px;
 color:#222;background:#fff;line-height:1.6}a{color:#0a6b5e}pre{background:#e8f2f4;padding:10px 12px;
 overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e;margin:28px 0 4px}
 .links a{margin-right:14px}.note{color:#666;font-size:13px}
@@ -8,7 +8,7 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 @media (prefers-color-scheme:dark){body{background:#16191a;color:#ddd}pre{background:#1f2b2e}a,h2{color:#5cc5b3}}</style></head>
 <body>
 <p class="note"><a href="../">지구과학 데이터 사이언스 1</a></p>
-<h1>IV-01. 기상청 AWS 자료 시각화하기</h1>
+<h1>IV-01. 기상청 AWS 데이터 시각화하기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/1/04-01/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
 <p class="jump"><a href="#code-1">1</a> <a href="#code-2">2</a> <a href="#code-3">3</a> <a href="#code-4">4</a> <a href="#code-5">5</a> <a href="#code-6">6</a> <a href="#code-7">7</a> <a href="#code-8">8</a> <a href="#code-9">9</a> <a href="#code-10">10</a> <a href="#code-11">11</a> <a href="#code-12">12</a> <a href="#code-13">13</a> <a href="#code-14">14</a> <a href="#code-15">15</a> <a href="#code-16">16</a> <a href="#code-17">17</a> <a href="#code-18">18</a> <a href="#code-19">19</a></p>
@@ -30,7 +30,7 @@ fpaths = du.list_files(proj_dir, &quot;csv&quot;)</code></pre>
 <h2 id="code-4">code 4. <button class="copy">복사</button></h2><pre><code>du.preview_text(fpaths[0], n=10);  # 앞 10줄(인코딩 자동)</code></pre>
 <h2 id="code-5">code 5. <button class="copy">복사</button></h2><pre><code>import pandas as pd
 
-# 천 단위 쉼표 처리, 기상청 자료는 EUC-KR 인코딩
+# 천 단위 쉼표 처리, 기상청 데이터는 EUC-KR 인코딩
 df = pd.read_csv(str(fpaths[0]), thousands=&#x27;,&#x27;, encoding=&#x27;euc-kr&#x27;)
 
 print(f&quot;df :\n{df}&quot;)</code></pre>
@@ -269,8 +269,8 @@ def calculate_temperature_averages(df, datetime_col=&#x27;dt_YmdHM-1min&#x27;, t
     
     Parameters:
     df: DataFrame with datetime and temperature columns
-    datetime_col: 날짜시간 컬럼명
-    temp_col: 기온 컬럼명
+    datetime_col: 날짜시간 열 이름
+    temp_col: 기온 열 이름
     &quot;&quot;&quot;
 
     df[datetime_col] = pd.to_datetime(df[datetime_col])
@@ -489,7 +489,7 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 
-# 1분 자료를 하루 단위로 묶어 일평균 · 일최고 · 일최저를 구함
+# 1분 데이터를 하루 단위로 묶어 일평균 · 일최고 · 일최저를 구함
 daily_stats = df.resample(&#x27;D&#x27;).agg(
     일평균기온=(&#x27;기온(°C)&#x27;, &#x27;mean&#x27;),
     일최고기온=(&#x27;기온(°C)&#x27;, &#x27;max&#x27;),
@@ -722,7 +722,7 @@ for month, row in seasonal_avg.iterrows():
           f&quot;최고 {row[&#x27;월최고기온&#x27;]:.1f}°C, 최저 {row[&#x27;월최저기온&#x27;]:.1f}°C&quot;)</code></pre>
 <h2 id="code-17">code 17. <button class="copy">복사</button></h2><pre><code>import numpy as np
 
-# 연습용 가상 자료
+# 연습용 가상 데이터
 ws = np.random.random(100) * 6        # 풍속 0~6 m/s
 wd = 80 + np.random.random(100) * 20  # 풍향 90° ± 10°
 

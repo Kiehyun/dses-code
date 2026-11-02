@@ -88,13 +88,13 @@ print(f'distance.value:0.2f:{distance.value:0.2f}, distance.unit:latex: {distanc
 h = 6.626e-34 * u.J * u.s                  # 플랑크 상수
 c = 3.0e+8  * u.m / u.s                    # 광속
 k = 1.38e-23 * u.J / u.K                   # 볼츠만 상수
-sigma = 5.67e-8 * u.W / (u.m**2 * u.K**4)  # 스테판-볼츠만 상수
+sigma = 5.67e-8 * u.W / (u.m**2 * u.K**4)  # 슈테판-볼츠만 상수
 G = 6.67e-11 * u.m**3 / (u.kg * u.s**2)    # 중력 상수
 
 print("h (플랑크 상수): {}".format(h))
 print("c (광속): {}".format(c))
 print("k (볼츠만 상수): {}".format(k))
-print("σ (스테판-볼츠만 상수): {}".format(sigma))
+print("σ (슈테판-볼츠만 상수): {}".format(sigma))
 print("G (중력 상수): {}".format(G))
 
 # 자유낙하 시간

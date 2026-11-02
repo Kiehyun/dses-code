@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>II-02. 곡선 맞춤과 모형 평가</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/02-22/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-25">25</a> <a href="#code-26">26</a> <a href="#code-27">27</a> <a href="#code-28">28</a> <a href="#code-29">29</a> <a href="#code-30">30</a> <a href="#code-31">31</a> <a href="#code-32">32</a></p>
-<h2 id="code-25">code 25. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<p class="jump"><a href="#code-27">27</a> <a href="#code-28">28</a> <a href="#code-29">29</a> <a href="#code-30">30</a> <a href="#code-31">31</a> <a href="#code-32">32</a> <a href="#code-33">33</a> <a href="#code-34">34</a></p>
+<h2 id="code-27">code 27. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
 rng = np.random.default_rng(1)
@@ -24,7 +24,7 @@ y = TRUE_SLOPE * x + TRUE_INTERCEPT + rng.normal(0, 1.5, x.size)
 print(&quot;데이터 점 개수:&quot;, x.size)
 print(&quot;x 범위 :&quot;, x.min(), &quot;~&quot;, x.max())
 print(&quot;y 범위 :&quot;, round(y.min(), 2), &quot;~&quot;, round(y.max(), 2))</code></pre>
-<h2 id="code-26">code 26. <button class="copy">복사</button></h2><pre><code>slope, intercept = np.polyfit(x, y, 1)  # 1차 = 직선 맞춤
+<h2 id="code-28">code 28. <button class="copy">복사</button></h2><pre><code>slope, intercept = np.polyfit(x, y, 1)  # 1차 = 직선 맞춤
 y_fit = slope * x + intercept           # 맞춘 직선의 예측값
 residual = y - y_fit                    # 잔차 = 실제값 - 예측값
 
@@ -32,7 +32,7 @@ print(f&quot;맞춘 기울기 : {slope:.3f}  (참값 {TRUE_SLOPE})&quot;)
 print(f&quot;맞춘 절편   : {intercept:.3f}  (참값 {TRUE_INTERCEPT})&quot;)
 print(f&quot;잔차 제곱합 : {np.sum(residual**2):.2f}&quot;)
 print(f&quot;잔차 평균   : {residual.mean():.3e}  (최소제곱이면 거의 0)&quot;)</code></pre>
-<h2 id="code-27">code 27. <button class="copy">복사</button></h2><pre><code>fig, axes = plt.subplots(2, 1, figsize=(8.5, 5.5), sharex=True,
+<h2 id="code-29">code 29. <button class="copy">복사</button></h2><pre><code>fig, axes = plt.subplots(2, 1, figsize=(8.5, 5.5), sharex=True,
                          gridspec_kw={&quot;height_ratios&quot;: [2, 1]})
 
 axes[0].scatter(x, y, color=&quot;steelblue&quot;, label=&quot;관측값&quot;)
@@ -51,7 +51,7 @@ axes[1].grid(alpha=0.3)
 
 du.save_figure(fig, os.path.join(proj_dir, &quot;linear_fit&quot;))
 plt.show()</code></pre>
-<h2 id="code-28">code 28. <button class="copy">복사</button></h2><pre><code>from scipy.optimize import curve_fit
+<h2 id="code-30">code 30. <button class="copy">복사</button></h2><pre><code>from scipy.optimize import curve_fit
 
 def decay(t, amplitude, tau, offset):
     &quot;&quot;&quot;지수 감소 모형: 바닥값 위의 몫이 시간상수 tau마다 1/e(약 0.37)배로 줄어듦&quot;&quot;&quot;
@@ -68,7 +68,7 @@ for name, fit, err, true in zip([&quot;진폭&quot;, &quot;시간상수&quot;, &
                                 params, errors, true_params):
     pad = &quot; &quot; * (10 - 2 * len(name))                    # 한글 한 글자는 두 칸 너비
     print(f&quot;{name}{pad}: {fit:7.2f} +/- {err:5.2f}   (참값 {true})&quot;)</code></pre>
-<h2 id="code-29">code 29. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(8.5, 4.2))
+<h2 id="code-31">code 31. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(8.5, 4.2))
 ax.scatter(t, signal, s=25, color=&quot;steelblue&quot;, label=&quot;관측값&quot;)
 t_smooth = np.linspace(t.min(), t.max(), 300)
 ax.plot(t_smooth, decay(t_smooth, *params), &quot;r-&quot;, lw=2, label=&quot;맞춘 곡선&quot;)
@@ -79,7 +79,7 @@ ax.legend()
 ax.grid(alpha=0.3)
 du.save_figure(fig, os.path.join(proj_dir, &quot;curve_fit&quot;))
 plt.show()</code></pre>
-<h2 id="code-30">code 30. <button class="copy">복사</button></h2><pre><code>def r_squared(observed, predicted):
+<h2 id="code-32">code 32. <button class="copy">복사</button></h2><pre><code>def r_squared(observed, predicted):
     &quot;&quot;&quot;결정계수: 1에 가까울수록 모형이 데이터의 변동을 잘 설명한 것.&quot;&quot;&quot;
     ss_residual = np.sum((observed - predicted) ** 2)
     ss_total = np.sum((observed - observed.mean()) ** 2)
@@ -92,7 +92,7 @@ print(&quot;\n다항식 차수별 R^2 (같은 데이터)&quot;)
 for degree in (1, 3, 7, 15):
     coefficients = np.polyfit(x, y, degree)
     print(f&quot;  {degree:2d}차 : {r_squared(y, np.polyval(coefficients, x)):.4f}&quot;)</code></pre>
-<h2 id="code-31">code 31. <button class="copy">복사</button></h2><pre><code>x_dense = np.linspace(x.min() - 0.5, x.max() + 0.5, 400)   # 데이터 범위보다 조금 넓게
+<h2 id="code-33">code 33. <button class="copy">복사</button></h2><pre><code>x_dense = np.linspace(x.min() - 0.5, x.max() + 0.5, 400)   # 데이터 범위보다 조금 넓게
 
 fig, ax = plt.subplots(figsize=(8.5, 4.4))
 ax.scatter(x, y, color=&quot;steelblue&quot;, zorder=3, label=&quot;관측값&quot;)
@@ -108,7 +108,7 @@ ax.legend()
 ax.grid(alpha=0.3)
 du.save_figure(fig, os.path.join(proj_dir, &quot;overfitting&quot;))
 plt.show()</code></pre>
-<h2 id="code-32">code 32. <button class="copy">복사</button></h2><pre><code>SIGMA = 1.5                                    # 데이터를 만들 때 넣은 잡음의 크기
+<h2 id="code-34">code 34. <button class="copy">복사</button></h2><pre><code>SIGMA = 1.5                                    # 데이터를 만들 때 넣은 잡음의 크기
 N = x.size
 
 print(&quot; 차수  카이제곱  자유도 환산 카이제곱       BIC&quot;)

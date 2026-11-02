@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | III-06. FITS 파일 천체 위치 보정
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 187.
+# %% code 189.
 # 파일 ID와 저장 경로를 리스트로 정의
 files = [
     ("1USKkCup8BTHmBVyg8iC4od1gV19v2MEg",
@@ -15,18 +15,18 @@ files = [
      "TEC140x75_STL-11000M_-19C_1bin.fit")
 ]
 
-# for 루프를 사용하여 파일 다운로드
+# for 루프를 사용하여 파일 내려받기
 for file_id, output_path in files:
     du.download(f"https://docs.google.com/uc?export=download&id={file_id}",
                 PROJ / output_path)
 
-# %% code 188.
+# %% code 190.
 fpaths = du.list_files(PROJ, "fit*")
 
-# %% code 189.
+# %% code 191.
 fpaths[0]
 
-# %% code 190.
+# %% code 192.
 from pathlib import Path
 from astropy.io import fits
 
@@ -38,7 +38,7 @@ hdul = fits.open(fpath)
 print("type(hdul) :", type(hdul))
 print("hdul :", hdul)
 
-# %% code 191.
+# %% code 193.
 import matplotlib.pyplot as plt
 
 from astropy.visualization import (MinMaxInterval, SqrtStretch,
@@ -62,10 +62,10 @@ fig.colorbar(im1, ax = axs[0], fraction=0.035, pad=0.04)
 fig.colorbar(im2, ax = axs[1], fraction=0.035, pad=0.04)
 plt.tight_layout()
 
-# %% code 192.
+# %% code 194.
 # 영상 표시 함수 znorm · zimshow · norm_imshow 는 Ⅲ-04 「FITS 파일 다루기」에서 설명했고 dses_utils 에 들어 있음
 
-# %% code 193.
+# %% code 195.
 def checkPSolve(fpath,
                     **kwargs,
                     ):
@@ -121,7 +121,7 @@ def checkPSolve(fpath,
 
     return SOLVE, ASTAP, LOCAL
 
-# %% code 194.
+# %% code 196.
 SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[0]))
 print("SOLVE, ASTAP, LOCAL :", SOLVE, ASTAP, LOCAL)
 SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[1]))
@@ -129,7 +129,7 @@ print("SOLVE, ASTAP, LOCAL :", SOLVE, ASTAP, LOCAL)
 SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[2]))
 print("SOLVE, ASTAP, LOCAL :", SOLVE, ASTAP, LOCAL)
 
-# %% code 195.
+# %% code 197.
 import os
 from astroquery.astrometry_net import AstrometryNet
 
@@ -144,7 +144,7 @@ else:
     print("환경 변수 ASTROMETRY_NET_API_KEY 가 없습니다. 새 파일을 위치 보정하려면 키를 설정하세요.\n"
           "(이미 위치 보정된 파일은 키 없이 다룰 수 있습니다)")
 
-# %% code 196.
+# %% code 198.
 print(fpaths[0])
 SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[0]))
 print("SOLVE, ASTAP, LOCAL :", SOLVE, ASTAP, LOCAL)
@@ -172,7 +172,7 @@ else:
         SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[0]))
         print("SOLVE, ASTAP, LOCAL :", SOLVE, ASTAP, LOCAL)
 
-# %% code 197.
+# %% code 199.
 #########################################
 # 천체 위치 보정기(AstrometrySolver)
 #########################################
@@ -249,12 +249,12 @@ def AstrometrySolver(fpath,
 
     return SOLVE, ASTAP, LOCAL
 
-# %% code 198.
+# %% code 200.
 AstrometrySolver(fpaths[0])
 AstrometrySolver(fpaths[1])
 AstrometrySolver(fpaths[2])
 
-# %% code 199.
+# %% code 201.
 SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[0]))
 print("SOLVE, ASTAP, LOCAL :", SOLVE, ASTAP, LOCAL)
 SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[1]))
@@ -262,7 +262,7 @@ print("SOLVE, ASTAP, LOCAL :", SOLVE, ASTAP, LOCAL)
 SOLVE, ASTAP, LOCAL = checkPSolve(str(fpaths[2]))
 print("SOLVE, ASTAP, LOCAL :", SOLVE, ASTAP, LOCAL)
 
-# %% code 200.
+# %% code 202.
 def show_header(header, n_head=8):
     """헤더 앞부분과 WCS 관련 카드만 출력하고 나머지는 줄임"""
     cards = list(header.cards)
@@ -279,17 +279,17 @@ print("fpaths[0] :", fpaths[0])
 hdul0 = fits.open(str(fpaths[0]))
 show_header(hdul0[0].header)
 
-# %% code 201.
+# %% code 203.
 print("fpaths[1] :", fpaths[1])
 hdul1 = fits.open(str(fpaths[1]))
 show_header(hdul1[0].header)
 
-# %% code 202.
+# %% code 204.
 print("fpaths[2] :", fpaths[2])
 hdul2 = fits.open(str(fpaths[2]))
 show_header(hdul2[0].header)
 
-# %% code 203.
+# %% code 205.
 from astropy import units as u
 from astropy.time import Time
 from astropy.coordinates import SkyCoord
@@ -299,14 +299,14 @@ wcs0 = WCS(hdul0[0].header)
 wcs1 = WCS(hdul1[0].header)
 wcs2 = WCS(hdul2[0].header)
 
-# %% code 204.
+# %% code 206.
 print("wcs0 :", wcs0)
 print("wcs1 :", wcs1)
 print("wcs2 :", wcs2)
 print("wcs0.world_axis_physical_types :", wcs0.world_axis_physical_types)
 print("wcs1.world_axis_physical_types :", wcs1.world_axis_physical_types)
 
-# %% code 205.
+# %% code 207.
 import numpy as np
 from astropy.wcs.utils import proj_plane_pixel_scales
 
@@ -318,9 +318,9 @@ for name, w, h in [("hdul0", wcs0, hdul0[0].header),
     fov_y = scale[1] * h["NAXIS2"] / 60
     print(f"{name}: CRVAL = ({w.wcs.crval[0]:.4f}, {w.wcs.crval[1]:.4f}) deg, "
           f"CRPIX = ({w.wcs.crpix[0]:.1f}, {w.wcs.crpix[1]:.1f}), "
-          f"픽셀 축척 = {scale[0]:.3f}″/px, 시야 = {fov_x:.1f}′ × {fov_y:.1f}′")
+          f"화소 축척 = {scale[0]:.3f}″/px, 시야 = {fov_x:.1f}′ × {fov_y:.1f}′")
 
-# %% code 206.
+# %% code 208.
 fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1, projection=wcs1)   # hdul1(IC434) 영상의 WCS
 im = plt.imshow(hdul1[0].data, origin='lower', cmap="viridis",)
@@ -349,7 +349,7 @@ fig.colorbar(im, fraction=0.035, pad=0.04)
 plt.tight_layout(pad=0.4, w_pad=1, h_pad=1.0)
 plt.show()
 
-# %% code 207.
+# %% code 209.
 fig, axs = plt.subplots(1, 1, sharex=False, sharey=False, gridspec_kw=None,
                         subplot_kw={'projection': wcs0})
 
@@ -385,7 +385,7 @@ fig.colorbar(im, fraction=0.035, pad=0.04)
 plt.tight_layout()
 plt.show()
 
-# %% code 208.
+# %% code 210.
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 2.5),
                         sharex=False, sharey=False, gridspec_kw=None,
                         subplot_kw={'projection': wcs1})
@@ -422,7 +422,7 @@ fig.colorbar(im1, ax = axs[1], fraction=0.0315, pad=0.04)
 plt.tight_layout(pad=0.4, w_pad=1, h_pad=1.0)
 plt.show()
 
-# %% code 209.
+# %% code 211.
 fig, axs = plt.subplots(2, 1, figsize=(5.3, 8),
                         sharex=False, sharey=False, gridspec_kw=None,
                         subplot_kw={'projection': wcs2})

@@ -73,3 +73,50 @@ if nb_paths:
     print(f"오류가 남은 노트북: {(report['오류 셀'] > 0).sum()}개")
 else:
     print(f"{folder.name} 폴더에는 노트북 파일(.ipynb)이 없습니다.")
+
+# %% code 19.
+import numpy as np
+import matplotlib.pyplot as plt
+
+# 1) 연습용 원시 데이터: 2025년 가상의 일평균 기온(°C)
+rng = np.random.default_rng(42)
+days = pd.date_range("2025-01-01", "2025-12-31", freq="D")
+temp = 13 - 13 * np.cos(2 * np.pi * (days.dayofyear - 20) / 365) + rng.normal(0, 2, len(days))
+pd.DataFrame({"date": days, "temp": temp.round(1)}).to_csv(proj_dir / "aws_daily.csv", index=False)
+
+# 2) 에이전트가 만들었다고 가정한 결과: 그림 파일
+df = pd.read_csv(proj_dir / "aws_daily.csv", parse_dates=["date"])
+monthly = df.set_index("date")["temp"].resample("MS").mean()   # 월평균
+fig, ax = plt.subplots(figsize=(6, 3))
+ax.plot(monthly.index.month, monthly.values, marker="o")
+ax.set(xlabel="월", ylabel="월평균 기온 (°C)", title="2025년 월평균 기온")
+fig.savefig(proj_dir / "monthly_temp.png", dpi=100)
+plt.close(fig)                                                  # 화면에 띄우지 않음
+
+# 3) 에이전트가 만들었다고 가정한 결과: 실행을 마친 노트북
+agent_code = """df = pd.read_csv("aws_daily.csv", parse_dates=["date"])
+print("결측값:", df["temp"].isna().sum(), "개")
+monthly = df.set_index("date")["temp"].resample("MS").mean()"""
+agent_nb = {"cells": [{"cell_type": "code", "execution_count": 1, "metadata": {},
+                       "source": agent_code.splitlines(keepends=True),
+                       "outputs": [{"output_type": "stream", "name": "stdout",
+                                    "text": ["결측값: 0 개\n"]}]}],
+            "metadata": {}, "nbformat": 4, "nbformat_minor": 5}
+(proj_dir / "agent_monthly.ipynb").write_text(
+    json.dumps(agent_nb, ensure_ascii=False, indent=1), encoding="utf-8")
+
+print("만든 파일:", sorted(p.name for p in proj_dir.iterdir()
+                        if p.suffix in (".csv", ".png", ".ipynb")))
+
+# %% code 20.
+# 1) 노트북 점검: 이 장에서 만든 check_notebook 재사용
+display(check_notebook(proj_dir / "agent_monthly.ipynb"))
+
+# 2) 요청한 그림 파일이 있는지
+fig_path = proj_dir / "monthly_temp.png"
+print("그림 파일:", fig_path.name, f"({fig_path.stat().st_size:,} 바이트)" if fig_path.exists() else "없음")
+
+# 3) 다른 방법으로 월평균을 다시 계산해 견주기
+check = df.groupby(df["date"].dt.month)["temp"].mean()
+print("월 개수:", len(monthly), "| 결측 월:", monthly.isna().sum())
+print("두 방법의 월평균이 같은가:", np.allclose(monthly.values, check.values))

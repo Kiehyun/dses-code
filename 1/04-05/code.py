@@ -2,7 +2,7 @@
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
 # %% code 78.
-# 스마트 조석예보 자료 내려받기 주소와 조건(지점 코드, 지점 이름, 연월)
+# 스마트 조석예보 데이터 내려받기 주소와 조건(지점 코드, 지점 이름, 연월)
 from pathlib import Path
 from urllib.parse import urlencode
 
@@ -59,7 +59,7 @@ else:
 df_60min['height(cm)'] = df_60min['height(cm)'].interpolate(method='linear').bfill().ffill()
 
 # %% code 84.
-# 10분 간격 자료: 읽기 → 정렬 → 결측 처리
+# 10분 간격 데이터: 읽기 → 정렬 → 결측 처리
 df_10min = pd.read_csv(
     str(fpaths[0]), skiprows=5, thousands=',',
     names=['str_YmdHM', 'height(cm)'], encoding='unicode_escape'
@@ -70,7 +70,7 @@ df_10min = df_10min.sort_index()
 df_10min['height(cm)'] = df_10min['height(cm)'].interpolate(method='linear').bfill().ffill()
 print("df_10min :", df_10min)
 
-# 1분 간격 자료도 같은 방법으로
+# 1분 간격 데이터도 같은 방법으로
 df_1min = pd.read_csv(
     str(fpaths[1]), skiprows=5, thousands=',',
     names=['str_YmdHM', 'height(cm)'], encoding='unicode_escape'
@@ -89,7 +89,7 @@ from datetime import datetime, timedelta
 
 fig, ax = plt.subplots(figsize=(15,5))
 ax.plot(df_60min['dt_YmdHM'], df_60min['height(cm)'], color='royalblue', label='해수면 높이')
-ax.set_title('2020년 6월 인천 해수면 높이 변동(1시간 간격 자료)',
+ax.set_title('2020년 6월 인천 해수면 높이 변동(1시간 간격 데이터)',
            fontsize=18, fontweight='bold')
 ax.set_xlabel('시간', fontsize=14)
 ax.set_ylabel('해수면 높이 (cm)', fontsize=14)
@@ -107,7 +107,7 @@ import matplotlib.dates as dates
 import matplotlib.ticker as ticker
 
 dfs = [df_60min, df_10min, df_1min]
-titles = ['1시간 간격 자료', '10분 간격 자료', '1분 간격 자료']
+titles = ['1시간 간격 데이터', '10분 간격 데이터', '1분 간격 데이터']
 
 fig, axes = plt.subplots(3, 1, figsize=(16, 16), sharey=True)
 
@@ -149,7 +149,7 @@ fig.tight_layout(rect=[0, 0, 1, 0.97])
 plt.show()
 
 # %% code 87.
-# 6월 7~9일 자료만
+# 6월 7~9일 데이터만
 start_date = df_1min['dt_YmdHM'].dt.floor('D').min().replace(day=7)
 end_date = df_1min['dt_YmdHM'].dt.floor('D').min().replace(day=10)
 df_1min_selected = df_1min[(df_1min['dt_YmdHM'] >= start_date) & (df_1min['dt_YmdHM'] < end_date)]
@@ -228,7 +228,7 @@ plt.title('2020년 6월 인천 해수면 높이(1분 간격) 히트맵')
 plt.tight_layout()
 
 # %% code 89.
-# 2024년 1~12월 60분 간격 자료를 달마다 내려받기
+# 2024년 1~12월 60분 간격 데이터를 달마다 내려받기
 year_dir = Path(proj_dir) / "2024"
 for month in range(1, 13):
     yyyymm = f"2024{month:02d}"

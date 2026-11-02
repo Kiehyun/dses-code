@@ -306,7 +306,7 @@ ax.text(0.0, 1.01, &#x27;Data from Scripps CO₂ Program&#x27;, transform=ax.tra
 ax.text(1.0, 1.01, f&quot;Data through {df[&#x27;datetime&#x27;].max():%B %Y}&quot;, transform=ax.transAxes,
         ha=&#x27;right&#x27;, fontsize=12)
 
-# 첫 자료점만 그려 두고 애니메이션에서 갱신
+# 첫 데이터 점만 그려 두고 애니메이션에서 갱신
 line, = ax.plot(df[&#x27;Date&#x27;].iloc[0], df[&#x27;CO2&#x27;].iloc[0])
 point = ax.scatter(df[&#x27;Date&#x27;].iloc[0], df[&#x27;CO2&#x27;].iloc[0], s=5)</code></pre>
 <h2 id="code-34">code 34. <button class="copy">복사</button></h2><pre><code>def animate(i):
@@ -361,9 +361,9 @@ import matplotlib.pyplot as plt
 import requests
 from io import StringIO
 
-url = &quot;https://keelinglabsites.ucsd.edu/websitedataco2/monthly_flask_co2_spo.csv&quot;  # 남극점(SPO) 플라스크 자료
+url = &quot;https://keelinglabsites.ucsd.edu/websitedataco2/monthly_flask_co2_spo.csv&quot;  # 남극점(SPO) 플라스크 데이터
 
-# 1) 최신 자료를 내려받아 데이터 행만 고르기
+# 1) 최신 데이터를 내려받아 데이터 행만 고르기
 response = requests.get(url)
 response.raise_for_status()
 
@@ -407,7 +407,7 @@ df1[&#x27;datetime&#x27;] = decimal_year_to_datetime_vectorized(df1[&#x27;Date&#
 
 print(&quot;처리 전 데이터 정보:&quot;)
 print(f&quot;DataFrame 크기: {df1.shape}&quot;)
-print(&quot;각 컬럼별 NaN 개수:&quot;)
+print(&quot;열별 NaN 개수:&quot;)
 print(df1.isnull().sum())
 
 # 3) 시간 간격에 맞춘 보간(양 끝 바깥은 채우지 않음)
@@ -422,7 +422,7 @@ df1_final = df1_final.dropna(subset=[&#x27;Date&#x27;, &#x27;seasonally adjusted
 print(&quot;시간 기반 인터폴레이션 완료!&quot;)
 print(&quot;처리 후 데이터 정보:&quot;)
 print(f&quot;DataFrame 크기: {df1_final.shape}&quot;)
-print(&quot;각 컬럼별 NaN 개수:&quot;)
+print(&quot;열별 NaN 개수:&quot;)
 print(df1_final.isnull().sum())
 
 df1 = df1_final.copy()
@@ -430,7 +430,7 @@ df1 = df1_final.copy()
 # 4) 비교할 마우나로아 계절 보정값(앞에서 읽은 df, 결측 -99.99 제외)
 mlo = df[df[&#x27;seasonally adjusted&#x27;] &gt; 0]
 
-# 축 범위: 최솟값은 10 단위로 내리고, 최댓값은 10 단위로 올림(자료가 잘리지 않게)
+# 축 범위: 최솟값은 10 단위로 내리고, 최댓값은 10 단위로 올림(데이터가 잘리지 않게)
 x_min = int(np.floor(min(df1[&#x27;Date&#x27;].min(), mlo[&#x27;Date&#x27;].min()) / 10) * 10)
 x_max = int(np.ceil(max(df1[&#x27;Date&#x27;].max(), mlo[&#x27;Date&#x27;].max()) / 10) * 10)
 

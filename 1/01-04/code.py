@@ -222,7 +222,7 @@ print("-"*20+"\ns3:\n", s3)
 # %% code 52.
 print("-"*20+"\ns1[:3]:", s1[:3])
 print("-"*20+"\ns1[1:4]:", s1[1:4])  # 위치 1~3
-print("-"*20+"\ns1[s1 > s1.median()]:", s1[s1 > s1.median()])  # 중앙값보다 큰 원소만(불린 인덱싱)
+print("-"*20+"\ns1[s1 > s1.median()]:", s1[s1 > s1.median()])  # 중앙값보다 큰 원소만(불 인덱싱)
 print("-"*20+"\ns1.iloc[[4, 3, 1]]:", s1.iloc[[4, 3, 1]])  # 위치로 고르기
 
 # %% code 53.
@@ -363,7 +363,7 @@ print("-"*20+"\ndf:\n", df)
 df['net_points'] = df['points'] - df['penalty']
 print("-"*20+"\ndf:\n", df)
 
-# 조건식으로 불린 열 추가
+# 조건식으로 불 열 추가
 df['high_points'] = df['net_points'] > 2.0
 print("-"*20+"\ndf:\n", df)
 
@@ -554,7 +554,7 @@ plt.show()
 
 # %% code 64.
 import matplotlib.pyplot as plt
-# 한글 폰트를 설정하지 않으면 '축' 같은 한글이 표시되지 않음
+# 한글 글꼴을 설정하지 않으면 '축' 같은 한글이 표시되지 않음
 
 x = [1, 2, 3, 4, 5]
 y = [2, 4, 6, 8, 10]
@@ -590,7 +590,7 @@ axes[1, 0].grid(True)
 # 네 번째 그래프 (1,1)
 data_dict = {'data_x': [1, 2, 3, 4, 5], 'data_y': [2, 3, 5, 10, 8]}
 axes[1, 1].plot('data_x', 'data_y', data=data_dict)
-axes[1, 1].set_title('그래프 4: 딕셔너리 자료')
+axes[1, 1].set_title('그래프 4: 딕셔너리 데이터')
 axes[1, 1].grid(True)
 
 plt.tight_layout()
@@ -601,7 +601,7 @@ import matplotlib.pyplot as plt
 
 fig, axes = plt.subplots(2, 3, figsize=(15, 10))
 
-# 첫 번째 플롯 (0,0) - 폰트 스타일링
+# 첫 번째 플롯 (0,0) - 글꼴 스타일링
 axes[0,0].plot([1, 2, 3, 4], [2, 3, 5, 10])
 axes[0,0].set_xlabel('X-Axis', labelpad=15, 
     fontdict={'family': 'serif', 'color': 'b', 'weight': 'bold', 'size': 14})
@@ -672,14 +672,14 @@ plt.imshow(chart_png, interpolation='none')
 plt.show()
 
 # %% code 69.
-# 한글 폰트 설정과 깨짐 해결
+# 한글 글꼴 설정과 깨짐 해결
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 import platform
 
 def setup_korean_font():
     """
-    공개 글꼴을 먼저 찾고, 없으면 운영체제 글꼴로 한글 폰트를 설정하는 함수
+    공개 글꼴을 먼저 찾고, 없으면 운영체제 글꼴로 한글 글꼴을 설정하는 함수
     """
     system = platform.system()
     font_candidates = ['NanumGothic', 'Noto Sans CJK KR']  # 공개 글꼴
@@ -688,18 +688,18 @@ def setup_korean_font():
     elif system == 'Darwin':  # macOS
         font_candidates += ['AppleGothic']
     
-    # 설치된 폰트 이름 목록
+    # 설치된 글꼴 이름 목록
     available_fonts = [f.name for f in fm.fontManager.ttflist]
     
     for font in font_candidates:
         if font in available_fonts:
             plt.rcParams['font.family'] = font
-            print(f"한글 폰트 설정 완료: {font}")
+            print(f"한글 글꼴 설정 완료: {font}")
             break
     else:
-        # 후보 폰트가 없을 때(for-else)
+        # 후보 글꼴이 없을 때(for-else)
         plt.rcParams['font.family'] = 'DejaVu Sans'
-        print("기본 폰트로 설정됨 (한글이 깨질 수 있음)")
+        print("기본 글꼴로 설정됨 (한글이 깨질 수 있음)")
     
     # 마이너스 기호 깨짐 방지
     plt.rcParams['axes.unicode_minus'] = False
@@ -708,10 +708,10 @@ def setup_korean_font():
 
 current_font = setup_korean_font()
 
-# 폰트 테스트
+# 글꼴 테스트
 fig, ax = plt.subplots(figsize=(8, 4))
-ax.text(0.5, 0.7, '한글 폰트 테스트', fontsize=20, ha='center', transform=ax.transAxes)
-ax.text(0.5, 0.5, f'현재 설정된 폰트: {current_font}', fontsize=14, ha='center', transform=ax.transAxes)
+ax.text(0.5, 0.7, '한글 글꼴 테스트', fontsize=20, ha='center', transform=ax.transAxes)
+ax.text(0.5, 0.5, f'현재 설정된 글꼴: {current_font}', fontsize=14, ha='center', transform=ax.transAxes)
 ax.text(0.5, 0.3, '위성의 궤도 분석', fontsize=16, ha='center', transform=ax.transAxes)
 ax.set_xlim(0, 1)
 ax.set_ylim(0, 1)
@@ -719,10 +719,127 @@ ax.set_title('한글 표시 테스트')
 plt.show()
 
 print(f"\n현재 시스템: {platform.system()}")
-print(f"설정된 폰트: {current_font}")
+print(f"설정된 글꼴: {current_font}")
 print("한글이 정상적으로 표시되면 설정이 완료되었습니다.")
 
 # %% code 70.
+import numpy as np
+import pandas as pd
+
+np.random.seed(1)  # 실행할 때마다 같은 난수
+times = pd.date_range("2025-07-01", periods=28, freq="6h")  # 7일 × 하루 4번
+hour = times.hour.to_numpy()
+temp = 26 + 4 * np.sin((hour - 8) / 24 * 2 * np.pi) + np.random.randn(28)  # 낮에 높은 기온
+df = pd.DataFrame({"일시": times.strftime("%Y-%m-%d %H:%M"),  # 날짜를 문자열로
+                   "기온(°C)": temp.round(1),
+                   "습도(%)": np.random.randint(55, 95, 28)})
+
+fpath = proj_dir / "temp_week.csv"
+df.to_csv(fpath, index=False, encoding="euc-kr")  # 기상청 파일처럼 EUC-KR로 저장
+
+df_r = pd.read_csv(fpath, encoding="euc-kr")      # 저장할 때와 같은 인코딩으로 읽기
+print(df_r.head())
+print("-" * 20)
+print(df_r.dtypes)
+
+# %% code 71.
+try:
+    pd.read_csv(fpath, encoding="utf-8")  # 저장한 인코딩과 다르게 읽기
+except UnicodeDecodeError as e:
+    print("utf-8로 읽으면 오류:", type(e).__name__)
+
+fpath_u = proj_dir / "temp_week_utf8.csv"
+df_r.to_csv(fpath_u, index=False, encoding="utf-8")  # 같은 표를 UTF-8로 저장
+print("utf-8로 다시 저장해 읽은 행 수:", len(pd.read_csv(fpath_u, encoding="utf-8")))
+
+# %% code 72.
+import io
+
+text = """# 가상 관측소 일평균 데이터
+# 단위: 기온 °C, 강수량 mm
+# 관측 기간: 2025-07-01 ~ 2025-07-05
+date        temp   rain
+2025-07-01  26.3    0.0
+2025-07-02  27.1   12.5
+2025-07-03  24.8   30.0
+2025-07-04  25.5    2.0
+2025-07-05  28.0    0.0
+"""
+df_txt = pd.read_csv(io.StringIO(text), skiprows=3, sep=r"\s+",  # 설명 3줄 건너뛰기, 공백 구분
+                     parse_dates=["date"])                       # date 열은 날짜로
+print(df_txt)
+print("-" * 20)
+print(df_txt.dtypes)
+
+# %% code 73.
+fpath_txt = proj_dir / "station_daily.txt"
+fpath_txt.write_text(text.replace("rain\n", "rain\n-----------------------\n"),  # 열 이름 아래에 구분선
+                     encoding="utf-8")
+
+with open(fpath_txt, encoding="utf-8") as f:  # 블록이 끝나면 파일이 저절로 닫힘
+    lines = f.readlines()                     # 모든 줄을 리스트로
+print("전체 줄 수:", len(lines))
+for line in lines[:6]:
+    print(repr(line))                         # 줄 끝의 \n까지 보이게
+
+# 구분선(-----)이 있는 줄까지 건너뛰기
+n_skip = next(i for i, line in enumerate(lines) if line.startswith("---")) + 1
+df_txt2 = pd.read_csv(fpath_txt, skiprows=n_skip, sep=r"\s+", header=None,
+                      names=["date", "temp", "rain"])
+print("건너뛴 줄 수:", n_skip)
+print(df_txt2.head(3))
+
+# %% code 74.
+print("변환 전:", df_r["일시"].dtype, type(df_r["일시"][0]))
+df_r["일시"] = pd.to_datetime(df_r["일시"])       # 문자열 → datetime64
+print("변환 후:", df_r["일시"].dtype, type(df_r["일시"][0]))
+
+df_r["날짜"] = df_r["일시"].dt.date               # .dt로 날짜 · 시 꺼내기
+df_r["시"] = df_r["일시"].dt.hour
+print(df_r.head(5))
+
+print("-" * 20)
+print(pd.to_datetime("20250701 1530", format="%Y%m%d %H%M"))  # 형식 지정
+print("관측 기간:", df_r["일시"].max() - df_r["일시"].min())   # 두 시각의 차
+
+# %% code 75.
+daily = df_r.groupby("날짜")["기온(°C)"].mean()  # 날짜별 평균 기온
+print(daily.round(1))
+
+print("-" * 20)
+by_hour = df_r.groupby("시")["기온(°C)"].agg(["mean", "min", "max"])  # 시각별 여러 통계
+print(by_hour.round(1))
+
+# %% code 76.
+df_t = df_r.set_index("일시")                     # 일시를 인덱스로
+print(type(df_t.index).__name__)                 # DatetimeIndex
+
+daily_r = df_t["기온(°C)"].resample("D").agg(["mean", "min", "max"])  # 하루 단위
+print(daily_r.round(1))
+
+print("-" * 20)
+two_day = df_t[["기온(°C)", "습도(%)"]].resample("2D").mean()        # 이틀 단위 평균
+print(two_day.round(1))
+
+# %% code 77.
+f = lambda t: t * 9 / 5 + 32                     # 섭씨 → 화씨
+print("f(25) =", f(25))
+
+df_r["기온(°F)"] = df_r["기온(°C)"].apply(f)      # 열의 원소마다 f 적용
+df_r["구분"] = df_r["기온(°C)"].apply(lambda t: "더움" if t >= 28 else "보통")
+df_r["시간대"] = df_r["시"].map({0: "밤", 6: "아침", 12: "낮", 18: "저녁"})  # 딕셔너리로 바꾸기
+print(df_r[["일시", "기온(°C)", "기온(°F)", "구분", "시간대"]].head(6))
+
+print("-" * 20)
+print(df_r["구분"].value_counts())               # 값마다 개수 세기
+
+# %% code 78.
+fpath_out = proj_dir / "temp_week_result.csv"
+df_r.to_csv(fpath_out, index=False, encoding="utf-8-sig")  # 엑셀에서도 한글이 깨지지 않게
+print(fpath_out.name, "저장:", len(df_r), "행,", len(df_r.columns), "열")
+print(pd.read_csv(fpath_out, encoding="utf-8-sig").columns.tolist())
+
+# %% code 79.
 import matplotlib.pyplot as plt
 
 du.set_korean_font()  # 한글 글꼴 지정

@@ -89,7 +89,7 @@ map1.drawmapboundary(fill_color='aqua')  # 바다 색
 map1.drawmeridians(np.arange(0,360,30))
 map1.drawparallels(np.arange(-90,90,30))
 
-# 등고선용 가상 자료(위도 · 경도 격자, 라디안)
+# 등고선용 가상 데이터(위도 · 경도 격자, 라디안)
 nlats = 73; nlons = 145; delta = 2.*np.pi/(nlons-1)
 lats = (0.5*np.pi-delta*np.indices((nlats,nlons))[0,:,:])
 lons = (delta*np.indices((nlats,nlons))[1,:,:])
@@ -429,7 +429,7 @@ import numpy as np
 
 def create_heatmap():
     """히트맵을 생성하는 함수"""
-    # 서울 주변 가상 자료
+    # 서울 주변 가상 데이터
     np.random.seed(42)  # 난수 고정
     
     n_points = 1000
@@ -464,7 +464,7 @@ import pandas as pd
 def create_bubble_map():
     """한국 시도별 인구 데이터를 원의 크기 · 색으로 표시하는 버블 지도"""
     
-    # 시도별 인구(가상 자료)
+    # 시도별 인구(가상 데이터)
     population_data = {
         '서울특별시': 9720846,
         '경기도': 13427014,

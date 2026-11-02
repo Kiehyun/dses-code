@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | II-02. 곡선 맞춤과 모형 평가
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 25.
+# %% code 27.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -15,7 +15,7 @@ print("데이터 점 개수:", x.size)
 print("x 범위 :", x.min(), "~", x.max())
 print("y 범위 :", round(y.min(), 2), "~", round(y.max(), 2))
 
-# %% code 26.
+# %% code 28.
 slope, intercept = np.polyfit(x, y, 1)  # 1차 = 직선 맞춤
 y_fit = slope * x + intercept           # 맞춘 직선의 예측값
 residual = y - y_fit                    # 잔차 = 실제값 - 예측값
@@ -25,7 +25,7 @@ print(f"맞춘 절편   : {intercept:.3f}  (참값 {TRUE_INTERCEPT})")
 print(f"잔차 제곱합 : {np.sum(residual**2):.2f}")
 print(f"잔차 평균   : {residual.mean():.3e}  (최소제곱이면 거의 0)")
 
-# %% code 27.
+# %% code 29.
 fig, axes = plt.subplots(2, 1, figsize=(8.5, 5.5), sharex=True,
                          gridspec_kw={"height_ratios": [2, 1]})
 
@@ -46,7 +46,7 @@ axes[1].grid(alpha=0.3)
 du.save_figure(fig, os.path.join(proj_dir, "linear_fit"))
 plt.show()
 
-# %% code 28.
+# %% code 30.
 from scipy.optimize import curve_fit
 
 def decay(t, amplitude, tau, offset):
@@ -65,7 +65,7 @@ for name, fit, err, true in zip(["진폭", "시간상수", "바닥값"],
     pad = " " * (10 - 2 * len(name))                    # 한글 한 글자는 두 칸 너비
     print(f"{name}{pad}: {fit:7.2f} +/- {err:5.2f}   (참값 {true})")
 
-# %% code 29.
+# %% code 31.
 fig, ax = plt.subplots(figsize=(8.5, 4.2))
 ax.scatter(t, signal, s=25, color="steelblue", label="관측값")
 t_smooth = np.linspace(t.min(), t.max(), 300)
@@ -78,7 +78,7 @@ ax.grid(alpha=0.3)
 du.save_figure(fig, os.path.join(proj_dir, "curve_fit"))
 plt.show()
 
-# %% code 30.
+# %% code 32.
 def r_squared(observed, predicted):
     """결정계수: 1에 가까울수록 모형이 데이터의 변동을 잘 설명한 것."""
     ss_residual = np.sum((observed - predicted) ** 2)
@@ -93,7 +93,7 @@ for degree in (1, 3, 7, 15):
     coefficients = np.polyfit(x, y, degree)
     print(f"  {degree:2d}차 : {r_squared(y, np.polyval(coefficients, x)):.4f}")
 
-# %% code 31.
+# %% code 33.
 x_dense = np.linspace(x.min() - 0.5, x.max() + 0.5, 400)   # 데이터 범위보다 조금 넓게
 
 fig, ax = plt.subplots(figsize=(8.5, 4.4))
@@ -111,7 +111,7 @@ ax.grid(alpha=0.3)
 du.save_figure(fig, os.path.join(proj_dir, "overfitting"))
 plt.show()
 
-# %% code 32.
+# %% code 34.
 SIGMA = 1.5                                    # 데이터를 만들 때 넣은 잡음의 크기
 N = x.size
 

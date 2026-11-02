@@ -11,8 +11,8 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>IV-03. 종관일기도 그리기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/04-23/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-432">432</a> <a href="#code-433">433</a> <a href="#code-434">434</a> <a href="#code-435">435</a> <a href="#code-436">436</a> <a href="#code-437">437</a> <a href="#code-438">438</a> <a href="#code-439">439</a> <a href="#code-440">440</a></p>
-<h2 id="code-432">code 432. <button class="copy">복사</button></h2><pre><code>import warnings
+<p class="jump"><a href="#code-434">434</a> <a href="#code-435">435</a> <a href="#code-436">436</a> <a href="#code-437">437</a> <a href="#code-438">438</a> <a href="#code-439">439</a> <a href="#code-440">440</a> <a href="#code-441">441</a> <a href="#code-442">442</a></p>
+<h2 id="code-434">code 434. <button class="copy">복사</button></h2><pre><code>import warnings
 warnings.filterwarnings(&quot;ignore&quot;)           # 데이터 서버가 보내는 참고용 경고 숨기기
 
 from datetime import datetime, timedelta
@@ -32,7 +32,7 @@ ncss = catalog.datasets[file_name].subset()  # 잘라 받기(NCSS) 기능 사용
 print(&quot;데이터 파일 :&quot;, file_name)
 print(&quot;제공 변수 :&quot;, len(ncss.variables), &quot;개&quot;)
 print(&quot;사용 시각 :&quot;, valid_time, &quot;UTC  =&quot;, valid_time + timedelta(hours=9), &quot;KST&quot;)</code></pre>
-<h2 id="code-433">code 433. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-435">code 435. <button class="copy">복사</button></h2><pre><code>import numpy as np
 
 # 관심 영역(동아시아)과 연직면
 NORTH, SOUTH, EAST, WEST = 55, 20, 150, 100
@@ -63,7 +63,7 @@ data_zsfc = fetch(&quot;Geopotential_height_surface&quot;)      # 지형 높이
 lat = to_array(data_mslp, &quot;latitude&quot;)
 lon = to_array(data_mslp, &quot;longitude&quot;)
 print(f&quot;격자 크기 : 위도 {lat.size}개 x 경도 {lon.size}개&quot;)</code></pre>
-<h2 id="code-434">code 434. <button class="copy">복사</button></h2><pre><code>from metpy.units import units
+<h2 id="code-436">code 436. <button class="copy">복사</button></h2><pre><code>from metpy.units import units
 import metpy.calc as mpcalc
 
 mslp = to_array(data_mslp, &quot;Pressure_reduced_to_MSL_msl&quot;) / 100.0   # Pa -&gt; hPa
@@ -86,7 +86,7 @@ print(f&quot;500 hPa 고도: {z500.min():7.0f} ~ {z500.max():7.0f} m&quot;)
 # 서울(37.57°N, 126.97°E)에서 가장 가까운 격자의 850 hPa 기온
 iy, ix = np.abs(lat - 37.57).argmin(), np.abs(lon - 126.97).argmin()
 print(f&quot;서울 상공 850 hPa 기온: {t850[iy, ix]:.1f} °C&quot;)</code></pre>
-<h2 id="code-435">code 435. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-437">code 437. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 
@@ -106,7 +106,7 @@ def make_map(ax):
     return ax
 
 print(&quot;지도 바탕 함수 준비 완료&quot;)</code></pre>
-<h2 id="code-436">code 436. <button class="copy">복사</button></h2><pre><code>fig = plt.figure(figsize=(5.6, 4.9))
+<h2 id="code-438">code 438. <button class="copy">복사</button></h2><pre><code>fig = plt.figure(figsize=(5.6, 4.9))
 ax = make_map(plt.axes(projection=PROJ))
 
 # 850 hPa 기온을 색으로 표시
@@ -129,7 +129,7 @@ ax.set_title(f&quot;지상일기도  해면기압(hPa) + 850 hPa 기온\n&quot;
 
 du.save_figure(fig, os.path.join(proj_dir, &quot;surface_chart&quot;))
 plt.show()</code></pre>
-<h2 id="code-437">code 437. <button class="copy">복사</button></h2><pre><code>from scipy.ndimage import maximum_filter, minimum_filter
+<h2 id="code-439">code 439. <button class="copy">복사</button></h2><pre><code>from scipy.ndimage import maximum_filter, minimum_filter
 
 def find_extrema(field, lon, lat, kind=&quot;min&quot;, size=25, count=4,
                  terrain=None, max_height=HIGH_TERRAIN):
@@ -157,7 +157,7 @@ for x, y, v in zip(low_lon, low_lat, low_val):
 print(&quot;고기압 중심 (경도, 위도, hPa)&quot;)
 for x, y, v in zip(high_lon, high_lat, high_val):
     print(f&quot;  H  {x:6.1f}E {y:5.1f}N  {v:7.1f}&quot;)</code></pre>
-<h2 id="code-438">code 438. <button class="copy">복사</button></h2><pre><code>fig = plt.figure(figsize=(5.6, 4.9))
+<h2 id="code-440">code 440. <button class="copy">복사</button></h2><pre><code>fig = plt.figure(figsize=(5.6, 4.9))
 ax = make_map(plt.axes(projection=PROJ))
 
 isobars = ax.contour(lon, lat, mslp_smooth, levels=np.arange(940, 1061, 4),
@@ -176,7 +176,7 @@ for x, y in zip(high_lon, high_lat):
 ax.set_title(f&quot;기압계 배치  {valid_time:%Y-%m-%d %H}UTC&quot;, fontsize=10)
 du.save_figure(fig, os.path.join(proj_dir, &quot;pressure_systems&quot;))
 plt.show()</code></pre>
-<h2 id="code-439">code 439. <button class="copy">복사</button></h2><pre><code>fig = plt.figure(figsize=(5.6, 4.9))
+<h2 id="code-441">code 441. <button class="copy">복사</button></h2><pre><code>fig = plt.figure(figsize=(5.6, 4.9))
 ax = make_map(plt.axes(projection=PROJ))
 
 heights = ax.contour(lon, lat, z500_smooth, levels=np.arange(4800, 6061, 60),
@@ -188,7 +188,7 @@ ax.set_title(f&quot;500 hPa 상층일기도  등고선 간격 60 m\n&quot;
              f&quot;GFS 분석장 {valid_time:%Y-%m-%d %H}UTC&quot;, fontsize=10)
 du.save_figure(fig, os.path.join(proj_dir, &quot;upper_chart&quot;))
 plt.show()</code></pre>
-<h2 id="code-440">code 440. <button class="copy">복사</button></h2><pre><code>fig, axes = plt.subplots(1, 2, figsize=(7.5, 3.3),
+<h2 id="code-442">code 442. <button class="copy">복사</button></h2><pre><code>fig, axes = plt.subplots(1, 2, figsize=(7.5, 3.3),
                          subplot_kw={&quot;projection&quot;: PROJ})
 
 # 왼쪽: 지상일기도

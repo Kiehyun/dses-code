@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | III-08. 구경 측광
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 237.
+# %% code 239.
 fname = ("TrES-4b_LIGHT_R_2024-06-13-15-09-52_"
          "120sec_GSON300_STF-8300M_-10c_1bin.fit")
 fid = "1_ha7akgPnktWVQ8_s-r0BGqmqk-c1F_q"
@@ -9,10 +9,10 @@ fid = "1_ha7akgPnktWVQ8_s-r0BGqmqk-c1F_q"
 du.download(f"https://docs.google.com/uc?export=download&id={fid}",
             proj_dir / fname)
 
-# %% code 238.
+# %% code 240.
 fpaths = du.list_files(proj_dir, "fit*")
 
-# %% code 239.
+# %% code 241.
 from astropy.io import fits
 
 hdul = fits.open(str(fpaths[0]))
@@ -21,12 +21,12 @@ for k in ["NAXIS1", "NAXIS2", "DATE-OBS", "EXPTIME", "OBJECT", "FILTER"]:
         print(f"{k:9s} = {hdul[0].header[k]}")
 print("data :", hdul[0].data.dtype, hdul[0].data.shape)
 
-# %% code 240.
+# %% code 242.
 # 위치 보정 여부 확인 — Ⅲ-06 「FITS 파일 천체 위치 보정」에서 만든 du.checkPSolve(dses_utils)
 SOLVE, ASTAP, LOCAL = du.checkPSolve(str(fpaths[0]))
 print("SOLVE :", SOLVE)
 
-# %% code 241.
+# %% code 243.
 from astropy.coordinates import SkyCoord
 from astropy import units as u
 
@@ -35,7 +35,7 @@ from astropy import units as u
 if 'PIXSCALE' in hdul[0].header:
     PIX2ARCSEC = hdul[0].header['PIXSCALE']
 else :
-    # 픽셀 크기(um, 비닝 반영)와 초점 거리(mm)로 계산
+    # 화소 크기(um, 비닝 반영)와 초점 거리(mm)로 계산
     PIX2ARCSEC = 206.265 * hdul[0].header['XPIXSZ'] / hdul[0].header['FOCALLEN']
 
 if hdul[0].header["CCDNAME"] == "STF-8300M" :
@@ -48,7 +48,7 @@ if hdul[0].header["CCDNAME"] == "STX-16803" :
 
 print("rdnoise, gain, PIX2ARCSEC :", rdnoise, gain, PIX2ARCSEC)
 
-# %% code 242.
+# %% code 244.
 from astropy.time import Time
 from astropy.wcs import WCS
 from astropy.nddata import Cutout2D
@@ -60,9 +60,9 @@ t_middle = t_start + t_expos / 2 # 시작 시각 + 노출 시간의 절반
 
 print(f"t_start: {t_start}, t_expos: {t_expos}, t_middle: {t_middle}")
 
-# %% code 243.
+# %% code 245.
 #######################################################
-# FWHM 초기 추정값(픽셀)
+# FWHM 초기 추정값(화소)
 FWHM_INIT = 6
 
 FWHM = FWHM_INIT
@@ -84,7 +84,7 @@ R_OUT = 6 * FWHM_INIT   # 고리(annulus) 바깥쪽 반지름
 
 print("FWHM, thresh :", FWHM, thresh)
 
-# %% code 244.
+# %% code 246.
 from photutils.detection import DAOStarFinder
 
 fpath = fpaths[0]
@@ -107,24 +107,24 @@ DAOfind = DAOStarFinder(
 DAOfound = DAOfind(hdul[0].data)
 print("len(DAOfound) :",len(DAOfound))
 
-# %% code 245.
+# %% code 247.
 print("type(DAOfound) :", type(DAOfound))
 print(DAOfound.colnames)
 DAOfound
 
-# %% code 246.
+# %% code 248.
 DAOfound.write(f"{proj_dir}/{fpath.stem}_DAOStarfinder_fwhm_{FWHM}_{thresh}.csv",
                             overwrite = True, format='ascii.fast_csv')
 
-# %% code 247.
+# %% code 249.
 df = DAOfound.to_pandas()
 print(type(df))
 df
 
-# %% code 248.
+# %% code 250.
 # 영상 표시 함수 znorm · zimshow · norm_imshow 는 Ⅲ-04 「FITS 파일 다루기」에서 설명했고 dses_utils 에 들어 있음
 
-# %% code 249.
+# %% code 251.
 import numpy as np
 # 중심 열 이름: photutils 3.0부터 x_centroid, 그 전 판은 xcentroid
 xc, yc = ("x_centroid", "y_centroid") if "x_centroid" in DAOfound.colnames else ("xcentroid", "ycentroid")
@@ -134,7 +134,7 @@ print("type(pos) :", type(pos))
 print("pos.shape :", pos.shape)
 print("pos :", pos)
 
-# %% code 250.
+# %% code 252.
 from astropy.wcs import WCS
 
 wcs = WCS(hdul[0].header)
@@ -142,7 +142,7 @@ print("wcs :", wcs)
 
 wcs.pixel_n_dim
 
-# %% code 251.
+# %% code 253.
 from photutils.aperture import CircularAperture as CAp
 from photutils.aperture import CircularAnnulus as CAn
 apert = CAp(pos, r=R_AP)
@@ -150,7 +150,7 @@ apert = CAp(pos, r=R_AP)
 annul = CAn(positions=pos, r_in=R_IN, r_out=R_OUT)
 #고리(annulus)
 
-# %% code 252.
+# %% code 254.
 import matplotlib.pyplot as plt
 
 fig, axs = plt.subplots(1, 1, figsize=(7.5, 5),
@@ -202,7 +202,7 @@ plt.savefig(proj_dir / f"{fpath.stem}_starfinder.png")
 plt.show()
 #plt.close()
 
-# %% code 253.
+# %% code 255.
 idx = 7
 mask_apert = (apert.to_mask(method='center'))[idx]
 star_apply  = mask_apert.multiply(hdul[0].data)
@@ -230,11 +230,11 @@ plt.colorbar(im1, ax=axs[1], fraction=0.0455, pad=0.04, )
 plt.tight_layout()
 plt.show()
 
-# %% code 254.
+# %% code 256.
 print("starimg :", starimg)
 print("star_apply :", star_apply)
 
-# %% code 255.
+# %% code 257.
 import matplotlib.pyplot as plt
 from astropy.nddata import Cutout2D
 
@@ -282,7 +282,7 @@ def plot_cutouts(apert, data, indices, cols, figsize=(6.4, 6.6)):
 # 사용 예시
 plot_cutouts(apert, hdul[0].data, range(0, 16), 4,  figsize=(6.4, 6.6))
 
-# %% code 256.
+# %% code 258.
 from photutils.aperture import aperture_photometry as apphot
 apphot_result = apphot(hdul[0].data, apert, method='exact')
 print(type(apphot_result))
@@ -290,11 +290,11 @@ apphot_result
 df_apphot = apphot_result.to_pandas()
 df_apphot
 
-# %% code 257.
+# %% code 259.
 ap_area   = apert.area
 ap_area
 
-# %% code 258.
+# %% code 260.
 idx = 7
 mask_annul = (annul.to_mask(method='center'))[idx]
 sky_apply  = mask_annul.multiply(hdul[0].data)
@@ -328,11 +328,11 @@ plt.colorbar(im1, ax=axs[1], fraction=0.0455, pad=0.04, )
 plt.tight_layout()
 plt.show()
 
-# %% code 259.
+# %% code 261.
 print("skyimg :", skyimg)
 print("sky_apply :", sky_apply)
 
-# %% code 260.
+# %% code 262.
 import matplotlib.pyplot as plt
 from astropy.nddata import Cutout2D
 
@@ -383,20 +383,20 @@ def plot_cutouts(apert, data, indices, cols, figsize=(6.4, 6.6)):
 # 사용 예시 (mask_annul, hdul[0].data, 그리고 그릴 인덱스를 지정)
 plot_cutouts(annul, hdul[0].data, range(0, 16), 4,  figsize=(6.4, 6.6))
 
-# %% code 261.
+# %% code 263.
 import numpy as np
 from astropy.stats import sigma_clip
 
-# %% code 262.
+# %% code 264.
 def sky_fit(all_sky, method='mode', sky_nsigma=3, sky_iter=5, \
             mode_option='sex', med_factor=2.5, mean_factor=1.5):
     '''
-    고리 안 픽셀값에서 하늘 배경값을 어림합니다.
+    고리 안 화소값에서 하늘 배경값을 어림합니다.
 
     Parameters
     ----------
     all_sky : numpy.ndarray
-        고리 안 픽셀값(1차원 배열이어야 함)
+        고리 안 화소값(1차원 배열이어야 함)
     method : {"mean", "median", "mode"}, optional
         하늘값을 정하는 방법. "mode"는 photutils의 Mode Estimator Background와
         비슷하며, 세부 방식은 mode_option으로 고름
@@ -415,9 +415,9 @@ def sky_fit(all_sky, method='mode', sky_nsigma=3, sky_iter=5, \
     std : float
         시그마 클리핑 뒤 하늘값의 표본 표준편차
     nsky : int
-        시그마 클리핑 뒤 하늘값 어림에 쓴 픽셀 수
+        시그마 클리핑 뒤 하늘값 어림에 쓴 화소 수
     nrej : int
-        시그마 클리핑으로 버린 픽셀 수
+        시그마 클리핑으로 버린 화소 수
     (method가 "mean"이나 "median"이면 sky와 std만 돌려줌)
     '''
     sky = all_sky.copy()
@@ -463,7 +463,7 @@ def sky_fit(all_sky, method='mode', sky_nsigma=3, sky_iter=5, \
 
         return sky, std, nsky, nrej
 
-# %% code 263.
+# %% code 265.
 idx = 1
 mask_annul = (annul.to_mask(method='center'))[idx]
 annul_weighted = mask_annul.multiply(hdul[0].data)
@@ -475,7 +475,7 @@ msky, sky_std, nsky, nrej = sky_fit(sky_pixel, method='mode',
 
 print("msky, sky_std, nsky, nrej :", msky, sky_std, nsky, nrej)
 
-# %% code 264.
+# %% code 266.
 import numpy as np
 
 # 플럭스로 기기 등급과 그 오차를 계산해 돌려줌
@@ -489,10 +489,10 @@ def mag_inst(flux, ferr):
         merr = 2.5 / np.log(10) * ferr / flux
     return m_inst, merr
 
-# %% code 265.
+# %% code 267.
 print(2.5 / np.log(10) * 0.01)  # 플럭스 오차 1% 에 해당하는 등급 오차
 
-# %% code 266.
+# %% code 268.
 # 모든 별의 고리 마스크를 한 번에 만들어 둠
 mask_annul = annul.to_mask(method='center')
 
@@ -525,23 +525,23 @@ plt.ylabel('Instrumental mag')
 plt.grid(ls=':')
 plt.show()
 
-# %% code 267.
+# %% code 269.
 fcsv = proj_dir / f"{fpath.stem}_m_inst.csv"
 df_apphot.to_csv(fcsv)
 print(fcsv)
 
 df_apphot
 
-# %% code 268.
+# %% code 270.
 from photutils.aperture import aperture_photometry
 
 def apphot_annulus(data, aperture, annulus, gain=1.0, rdnoise=0.0, method="exact"):
     """구경 측광 + 고리의 하늘값 빼기 + ADU 단위 오차를 판다스 표로 돌려줌."""
     # 1. 화소별 오차 지도(ADU)
     error = np.sqrt(np.clip(data, 0, None) / gain + (rdnoise / gain)**2)
-    # 2. 구경 안 픽셀값의 합과 그 오차
+    # 2. 구경 안 화소값의 합과 그 오차
     phot = aperture_photometry(data, aperture, error=error, method=method).to_pandas()
-    # 3. 고리 안 픽셀로 하늘값 어림(sky_fit: 3σ 클리핑 뒤 최빈값)
+    # 3. 고리 안 화소로 하늘값 어림(sky_fit: 3σ 클리핑 뒤 최빈값)
     masks = annulus.to_mask(method="center")
     if not isinstance(masks, list):          # 위치가 하나뿐일 때
         masks = [masks]
@@ -564,7 +564,7 @@ d_err = np.abs(phot_all["merr"] - df_apphot["merr_inst"])
 print(f"별 {len(phot_all)}개: 반복문과의 차이 — 등급 최대 {np.nanmax(d_mag):.1e}, 등급 오차 최대 {np.nanmax(d_err):.1e}")
 phot_all[["id", "msky", "source_sum", "source_sum_err", "mag", "merr", "snr"]].head()
 
-# %% code 269.
+# %% code 271.
 from photutils.aperture import aperture_photometry as apphot
 
 # 가장자리에서 떨어지고 주변이 깨끗한, 밝기가 중간쯤인 별 3개
@@ -575,7 +575,7 @@ ok = ((df_apphot["x_center"] > R_OUT) & (df_apphot["x_center"] < nx - R_OUT)
       & (df_apphot["flux_star"] > 5e4) & (df_apphot["flux_star"] < 5e5))
 sel = df_apphot[ok].sort_values("flux_star", ascending=False).index[:3]
 
-radii = np.arange(2, 21, 1.0)   # 구경 반지름(픽셀)
+radii = np.arange(2, 21, 1.0)   # 구경 반지름(화소)
 fig, ax = plt.subplots(figsize=(8, 4.2))
 for idx in sel:
     x0, y0 = pos[idx]

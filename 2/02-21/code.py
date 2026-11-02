@@ -1,7 +1,7 @@
 # 지구과학 데이터 사이언스 2 | II-01. 측정과 오차 다루기
 # 책에 실린 코드만 모았습니다. 설명은 책을 참고하세요.
 
-# %% code 19.
+# %% code 21.
 import numpy as np
 
 rng = np.random.default_rng(0)          # 결과를 재현할 수 있게 씨앗 고정
@@ -13,7 +13,7 @@ measurements = rng.normal(TRUE_PERIOD, SIGMA, size=20)   # 20번 측정
 print("측정값 (앞 5개):", np.round(measurements[:5], 3))
 print(f"측정 횟수 : {measurements.size}회")
 
-# %% code 20.
+# %% code 22.
 mean = measurements.mean()              # 평균
 std = measurements.std(ddof=1)          # 표준편차(표본)
 sem = std / np.sqrt(measurements.size)  # 표준오차
@@ -24,7 +24,7 @@ print(f"표준오차 : {sem:.4f} 초   (평균의 오차)")
 print(f"결과     : {mean:.3f} +/- {sem:.3f} 초")
 print(f"참값과의 차이: {abs(mean - TRUE_PERIOD):.4f} 초")
 
-# %% code 21.
+# %% code 23.
 import matplotlib.pyplot as plt
 
 counts = np.arange(2, 201)                          # 측정 횟수 2회부터 200회까지
@@ -43,7 +43,7 @@ ax.grid(alpha=0.3)
 du.save_figure(fig, os.path.join(proj_dir, "standard_error"))
 plt.show()
 
-# %% code 22.
+# %% code 24.
 L, L_err = 1.000, 0.002  # 진자 길이 (m)
 T, T_err = 2.000, 0.011  # 주기 (초)
 
@@ -58,7 +58,7 @@ print(f"길이 상대오차 : {rel_L*100:.2f}%")
 print(f"주기 상대오차 : {rel_T*100:.2f}%  (제곱이라 {2*rel_T*100:.2f}%로 반영)")
 print(f"g = {g:.2f} +/- {g_err:.2f} m/s^2  (상대오차 {rel_g*100:.2f}%)")
 
-# %% code 23.
+# %% code 25.
 N = 100_000
 L_samples = rng.normal(L, L_err, N)                  # 길이를 N번 뽑고
 T_samples = rng.normal(T, T_err, N)                  # 주기도 N번 뽑아
@@ -79,7 +79,7 @@ ax.legend()
 du.save_figure(fig, os.path.join(proj_dir, "error_propagation"))
 plt.show()
 
-# %% code 24.
+# %% code 26.
 def format_result(value, error, sig=1):
     """측정값과 오차를 자릿수를 맞춰 보기 좋게 적는다."""
     if error <= 0:

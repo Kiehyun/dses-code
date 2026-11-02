@@ -11,16 +11,16 @@ overflow-x:auto;font-size:13px;border-radius:4px}h2{font-size:15px;color:#0a6b5e
 <h1>IV-02. 단열선도(Skew T-log P) 그리기</h1>
 <p class="links"><a href="https://colab.research.google.com/github/Kiehyun/dses-code/blob/main/2/04-22/code.ipynb">Colab에서 열기</a><a href="code.ipynb" download>노트북(.ipynb)</a><a href="code.py" download>파이썬(.py)</a></p>
 <p class="note">책에 실린 코드만 있습니다. 설명과 실행 결과는 책을 참고하세요.</p>
-<p class="jump"><a href="#code-399">399</a> <a href="#code-400">400</a> <a href="#code-401">401</a> <a href="#code-402">402</a> <a href="#code-403">403</a> <a href="#code-404">404</a> <a href="#code-405">405</a> <a href="#code-406">406</a> <a href="#code-407">407</a> <a href="#code-408">408</a> <a href="#code-409">409</a> <a href="#code-410">410</a> <a href="#code-411">411</a> <a href="#code-412">412</a> <a href="#code-413">413</a> <a href="#code-414">414</a> <a href="#code-415">415</a> <a href="#code-416">416</a> <a href="#code-417">417</a> <a href="#code-418">418</a> <a href="#code-419">419</a> <a href="#code-420">420</a> <a href="#code-421">421</a> <a href="#code-422">422</a> <a href="#code-423">423</a> <a href="#code-424">424</a> <a href="#code-425">425</a> <a href="#code-426">426</a> <a href="#code-427">427</a> <a href="#code-428">428</a> <a href="#code-429">429</a> <a href="#code-430">430</a> <a href="#code-431">431</a></p>
-<h2 id="code-399">code 399. <button class="copy">복사</button></h2><pre><code>fname = &quot;UPPER_SONDE_47122_ALL_2018_2018_2019.csv&quot;
+<p class="jump"><a href="#code-401">401</a> <a href="#code-402">402</a> <a href="#code-403">403</a> <a href="#code-404">404</a> <a href="#code-405">405</a> <a href="#code-406">406</a> <a href="#code-407">407</a> <a href="#code-408">408</a> <a href="#code-409">409</a> <a href="#code-410">410</a> <a href="#code-411">411</a> <a href="#code-412">412</a> <a href="#code-413">413</a> <a href="#code-414">414</a> <a href="#code-415">415</a> <a href="#code-416">416</a> <a href="#code-417">417</a> <a href="#code-418">418</a> <a href="#code-419">419</a> <a href="#code-420">420</a> <a href="#code-421">421</a> <a href="#code-422">422</a> <a href="#code-423">423</a> <a href="#code-424">424</a> <a href="#code-425">425</a> <a href="#code-426">426</a> <a href="#code-427">427</a> <a href="#code-428">428</a> <a href="#code-429">429</a> <a href="#code-430">430</a> <a href="#code-431">431</a> <a href="#code-432">432</a> <a href="#code-433">433</a></p>
+<h2 id="code-401">code 401. <button class="copy">복사</button></h2><pre><code>fname = &quot;UPPER_SONDE_47122_ALL_2018_2018_2019.csv&quot;
 fid = &quot;1HYYmP07A8pMeRNxJIBcPiMaAkCuxIWpF&quot;
 
 # du.download()로 파일 내려받기
 du.download(f&quot;https://docs.google.com/uc?export=download&amp;id={fid}&quot;,
             proj_dir / fname)</code></pre>
-<h2 id="code-400">code 400. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;csv&quot;)</code></pre>
-<h2 id="code-401">code 401. <button class="copy">복사</button></h2><pre><code>du.preview_text(fpaths[0], n=10)</code></pre>
-<h2 id="code-402">code 402. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-402">code 402. <button class="copy">복사</button></h2><pre><code>fpaths = du.list_files(proj_dir, &quot;csv&quot;)</code></pre>
+<h2 id="code-403">code 403. <button class="copy">복사</button></h2><pre><code>du.preview_text(fpaths[0], n=10)</code></pre>
+<h2 id="code-404">code 404. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from metpy.plots import SkewT
@@ -117,7 +117,7 @@ def draw_skewt_paper(skew, xlim=(-40, 40), ylim=(1050, 100), *,
                    for k in draw]
         skew.ax.legend(handles=handles, loc=&#x27;upper right&#x27;, fontsize=7.5)
     return skew</code></pre>
-<h2 id="code-403">code 403. <button class="copy">복사</button></h2><pre><code># 단열선도 전체 그리기 (지상 1050 hPa ~ 100 hPa)
+<h2 id="code-405">code 405. <button class="copy">복사</button></h2><pre><code># 단열선도 전체 그리기 (지상 1050 hPa ~ 100 hPa)
 xxlim = [-40, 40]        # 기온 축 범위 (°C)
 yylim = [1050, 100]      # 기압 축 범위 (hPa)
 
@@ -132,7 +132,7 @@ plt.savefig(f&#x27;{str(proj_dir)}/SkewTlogP_paper_{xxlim[0]}_{xxlim[1]}_{yylim[
 plt.savefig(f&#x27;{str(proj_dir)}/SkewTlogP_paper_{xxlim[0]}_{xxlim[1]}_{yylim[0]}_{yylim[1]}_kr.pdf&#x27;)
 plt.show()
 plt.close()</code></pre>
-<h2 id="code-404">code 404. <button class="copy">복사</button></h2><pre><code># 아래쪽 일부만 확대해 보기 — 범위와 간격만 바꾸어 같은 함수 호출
+<h2 id="code-406">code 406. <button class="copy">복사</button></h2><pre><code># 아래쪽 일부만 확대해 보기 — 범위와 간격만 바꾸어 같은 함수 호출
 xxlim = [-30, 10]        # 기온 축 범위 (°C)
 yylim = [1050, 700]      # 기압 축 범위 (hPa)
 
@@ -149,7 +149,7 @@ plt.savefig(f&#x27;{str(proj_dir)}/SkewTlogP_crop_{xxlim[0]}_{xxlim[1]}_{yylim[0
             dpi=150)
 plt.show()
 plt.close()</code></pre>
-<h2 id="code-405">code 405. <button class="copy">복사</button></h2><pre><code>import urllib.request
+<h2 id="code-407">code 407. <button class="copy">복사</button></h2><pre><code>import urllib.request
 from IPython.display import Image, display
 
 try:
@@ -184,7 +184,7 @@ doc.close()
 
 # 3) 노트북에 표시
 display(Image(filename=png_path, width=1000))</code></pre>
-<h2 id="code-406">code 406. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-408">code 408. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 from metpy.plots import SkewT
 
 # 새 그림 만들기
@@ -200,7 +200,7 @@ skew.ax.set_ylabel(r&#x27;기압 (${\mathrm{hPa}}$)&#x27;, fontsize=9)
 skew.ax.tick_params(labelsize=8)
 
 plt.show()</code></pre>
-<h2 id="code-407">code 407. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
+<h2 id="code-409">code 409. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 from metpy.plots import SkewT
 
 # 새 그림 만들기
@@ -260,7 +260,7 @@ def add_isothermal(skew) :
 add_isothermal(skew)
 
 plt.show()</code></pre>
-<h2 id="code-408">code 408. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-410">code 410. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import matplotlib.pyplot as plt
 from metpy.plots import SkewT
 
@@ -314,7 +314,7 @@ def add_isobar(skew):
 add_isobar(skew)
  
 plt.show()</code></pre>
-<h2 id="code-409">code 409. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-411">code 411. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import metpy.calc as mpcalc
 import matplotlib.pyplot as plt
 from metpy.plots import SkewT
@@ -363,7 +363,7 @@ skew.ax.set_xlim(xxlim[0], xxlim[1])
 skew.ax.set_ylim(yylim[0], yylim[1])
 
 plt.show()</code></pre>
-<h2 id="code-410">code 410. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-412">code 412. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import metpy.calc as mpcalc
 import matplotlib.pyplot as plt
 from metpy.plots import SkewT
@@ -421,7 +421,7 @@ skew.ax.set_xlim(xxlim[0], xxlim[1])
 skew.ax.set_ylim(yylim[0], yylim[1])
 
 plt.show()</code></pre>
-<h2 id="code-411">code 411. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-413">code 413. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import metpy.calc as mpcalc
 import matplotlib.pyplot as plt
 from metpy.plots import SkewT
@@ -471,7 +471,7 @@ skew.ax.set_xlim(xxlim[0], xxlim[1])
 skew.ax.set_ylim(yylim[0], yylim[1])
 
 plt.show()</code></pre>
-<h2 id="code-412">code 412. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-414">code 414. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import metpy.calc as mpcalc
 import matplotlib.pyplot as plt
 from metpy.plots import SkewT
@@ -510,31 +510,31 @@ add_mixing_lines(skew, label_p=850, label_every=2)
 plt.legend(loc=&#x27;upper left&#x27;, fontsize=7)
 
 plt.show()</code></pre>
-<h2 id="code-413">code 413. <button class="copy">복사</button></h2><pre><code># 패키지 불러오기
+<h2 id="code-415">code 415. <button class="copy">복사</button></h2><pre><code># 패키지 불러오기
 import pandas as pd
 
 # CSV 파일을 데이터프레임으로 읽기
 df = pd.read_csv(str(fpaths[0]), thousands = &#x27;,&#x27;, encoding= &#x27;euc-kr&#x27;)
 print(&quot;행 · 열 :&quot;, df.shape)
 df.head()</code></pre>
-<h2 id="code-414">code 414. <button class="copy">복사</button></h2><pre><code># 기온·이슬점이 모두 NaN인 행 제거
+<h2 id="code-416">code 416. <button class="copy">복사</button></h2><pre><code># 기온·이슬점이 모두 NaN인 행 제거
 df = df.dropna(subset=(&#x27;기온(°C)&#x27;, &#x27;이슬점온도(°C)&#x27;), how=&#x27;all&#x27;).reset_index(drop=True)
 print(&quot;행 · 열 :&quot;, df.shape)
 df.head()</code></pre>
-<h2 id="code-415">code 415. <button class="copy">복사</button></h2><pre><code>print(&quot;df[&#x27;일시(UTC)&#x27;].iloc[0]:{}&quot;.format(df[&#x27;일시(UTC)&#x27;].iloc[0]))
+<h2 id="code-417">code 417. <button class="copy">복사</button></h2><pre><code>print(&quot;df[&#x27;일시(UTC)&#x27;].iloc[0]:{}&quot;.format(df[&#x27;일시(UTC)&#x27;].iloc[0]))
 print(&quot;type(df[&#x27;일시(UTC)&#x27;].iloc[0]):{}&quot;.format(type(df[&#x27;일시(UTC)&#x27;].iloc[0])))</code></pre>
-<h2 id="code-416">code 416. <button class="copy">복사</button></h2><pre><code>df[&#x27;dt_YmdHM&#x27;] = pd.to_datetime(df[&#x27;일시(UTC)&#x27;])
+<h2 id="code-418">code 418. <button class="copy">복사</button></h2><pre><code>df[&#x27;dt_YmdHM&#x27;] = pd.to_datetime(df[&#x27;일시(UTC)&#x27;])
 print(&quot;type(df[&#x27;dt_YmdHM&#x27;].iloc[0]):{}&quot;.format(type(df[&#x27;dt_YmdHM&#x27;].iloc[0])))
 
 df.index = df[&#x27;dt_YmdHM&#x27;]
 df.head(3)</code></pre>
-<h2 id="code-417">code 417. <button class="copy">복사</button></h2><pre><code>from datetime import datetime
+<h2 id="code-419">code 419. <button class="copy">복사</button></h2><pre><code>from datetime import datetime
 
 # 원하는 관측시간을 입력
 target_date = datetime(2018, 1, 12, 12)
 target_date_strf = target_date.strftime(&#x27;%Y-%m-%d %H:%M&#x27;)
 target_date_strf</code></pre>
-<h2 id="code-418">code 418. <button class="copy">복사</button></h2><pre><code>from datetime import datetime
+<h2 id="code-420">code 420. <button class="copy">복사</button></h2><pre><code>from datetime import datetime
 
 # 원하는 관측시간을 입력
 target_date = datetime(2018, 1, 12, 12)
@@ -549,13 +549,13 @@ df_selected_time = df_selected_time.sort_values(&#x27;기압(hPa)&#x27;, ascendi
 
 print(&quot;층 수 :&quot;, len(df_selected_time))
 df_selected_time.head()</code></pre>
-<h2 id="code-419">code 419. <button class="copy">복사</button></h2><pre><code>f = lambda s: target_date_strf in s
+<h2 id="code-421">code 421. <button class="copy">복사</button></h2><pre><code>f = lambda s: target_date_strf in s
 ids  = df[&#x27;일시(UTC)&#x27;].apply(f)
 
 df_selected_time = df[ids]
 df_selected_time = df_selected_time.sort_values(&#x27;기압(hPa)&#x27;, ascending=False)
 print(&quot;층 수 :&quot;, len(df_selected_time))   # 앞 셀과 같은 46개 층</code></pre>
-<h2 id="code-420">code 420. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-422">code 422. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import metpy.calc as mpcalc
 from metpy.units import units as u
 
@@ -571,7 +571,7 @@ levels = [1025, 1000, 925, 867, 850, 800, 700, 500, 300, 200]   # hPa
 def show_levels(cols):
     &quot;&quot;&quot;정한 기압 층(levels)에서 cols 열만 보여 준다.&quot;&quot;&quot;
     return df_selected_time.set_index(&#x27;기압(hPa)&#x27;).loc[levels, cols]</code></pre>
-<h2 id="code-421">code 421. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-423">code 423. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import metpy.calc as mpcalc
 from metpy.units import units as u
 
@@ -580,7 +580,7 @@ df_selected_time[&#x27;u_wind&#x27;], df_selected_time[&#x27;v_wind&#x27;] = mpc
                           np.deg2rad(df_selected_time[&#x27;풍향(deg)&#x27;].values * u.deg))
 
 show_levels([&#x27;u_wind&#x27;, &#x27;v_wind&#x27;])</code></pre>
-<h2 id="code-422">code 422. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-424">code 424. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import metpy.calc as mpcalc
 from metpy.units import units as u
                    
@@ -589,7 +589,7 @@ df_selected_time[&#x27;wet_bulb_T&#x27;] = \
         mpcalc.wet_bulb_temperature(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa, 
                 df_selected_time[&#x27;기온(°C)&#x27;].values * u.degC,
                 df_selected_time[&#x27;이슬점온도(°C)&#x27;].values * u.degC)</code></pre>
-<h2 id="code-423">code 423. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-425">code 425. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import metpy.calc as mpcalc
 from metpy.units import units as u
                    
@@ -599,13 +599,13 @@ df_selected_time[&#x27;potential_T&#x27;] = \
                 df_selected_time[&#x27;기온(°C)&#x27;].values * u.degC)
 
 show_levels([&#x27;potential_T&#x27;])</code></pre>
-<h2 id="code-424">code 424. <button class="copy">복사</button></h2><pre><code># 상대습도 계산
+<h2 id="code-426">code 426. <button class="copy">복사</button></h2><pre><code># 상대습도 계산
 df_selected_time[&#x27;relative_humidity_from_dewpoint&#x27;] = \
         mpcalc.relative_humidity_from_dewpoint(df_selected_time[&#x27;기온(°C)&#x27;].values * u.degC,
                 df_selected_time[&#x27;이슬점온도(°C)&#x27;].values * u.degC)
 
 show_levels([&#x27;relative_humidity_from_dewpoint&#x27;])</code></pre>
-<h2 id="code-425">code 425. <button class="copy">복사</button></h2><pre><code># 혼합비 계산 (단위 kg/kg)
+<h2 id="code-427">code 427. <button class="copy">복사</button></h2><pre><code># 혼합비 계산 (단위 kg/kg)
 df_selected_time[&#x27;saturation_mixing_ratio&#x27;] = \
         mpcalc.saturation_mixing_ratio(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa,
                 df_selected_time[&#x27;기온(°C)&#x27;].values * u.degC)
@@ -616,7 +616,7 @@ df_selected_time[&#x27;mixing_ratio_from_relative_humidity&#x27;] = \
         
 show_levels([&#x27;saturation_mixing_ratio&#x27;,
              &#x27;mixing_ratio_from_relative_humidity&#x27;])</code></pre>
-<h2 id="code-426">code 426. <button class="copy">복사</button></h2><pre><code># 수증기압 계산 — 두 값 모두 hPa로 맞춘 뒤 숫자만 저장
+<h2 id="code-428">code 428. <button class="copy">복사</button></h2><pre><code># 수증기압 계산 — 두 값 모두 hPa로 맞춘 뒤 숫자만 저장
 df_selected_time[&#x27;saturation_vapor_pressure(hPa)&#x27;] = \
         mpcalc.saturation_vapor_pressure(df_selected_time[&#x27;기온(°C)&#x27;].values * u.degC).to(&#x27;hPa&#x27;).m
 df_selected_time[&#x27;vapor_pressure(hPa)&#x27;] = \
@@ -624,14 +624,14 @@ df_selected_time[&#x27;vapor_pressure(hPa)&#x27;] = \
                 df_selected_time[&#x27;mixing_ratio_from_relative_humidity&#x27;].values * u.dimensionless).to(&#x27;hPa&#x27;).m
 
 show_levels([&#x27;saturation_vapor_pressure(hPa)&#x27;, &#x27;vapor_pressure(hPa)&#x27;])</code></pre>
-<h2 id="code-427">code 427. <button class="copy">복사</button></h2><pre><code># 상대습도 계산 (결과는 0~1 비율, 100을 곱하면 %)
+<h2 id="code-429">code 429. <button class="copy">복사</button></h2><pre><code># 상대습도 계산 (결과는 0~1 비율, 100을 곱하면 %)
 df_selected_time[&#x27;relative_humidity_from_mixing_ratio&#x27;] =\
         mpcalc.relative_humidity_from_mixing_ratio(df_selected_time[&#x27;기압(hPa)&#x27;].values * u.hPa,
                 df_selected_time[&#x27;기온(°C)&#x27;].values * u.degC,
                 df_selected_time[&#x27;mixing_ratio_from_relative_humidity&#x27;].values * u.dimensionless)
 
 show_levels([&#x27;relative_humidity_from_mixing_ratio&#x27;])</code></pre>
-<h2 id="code-428">code 428. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-430">code 430. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import metpy.calc as mpcalc
 from metpy.units import units as u
                    
@@ -647,7 +647,7 @@ df_selected_time[&#x27;virtual_potential_temperature&#x27;] =\
                 df_selected_time[&#x27;mixing_ratio_from_relative_humidity&#x27;].values * u.dimensionless)
 
 show_levels([&#x27;virtual_temperature&#x27;, &#x27;virtual_potential_temperature&#x27;])</code></pre>
-<h2 id="code-429">code 429. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-431">code 431. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import metpy.calc as mpcalc
 import matplotlib.pyplot as plt
 from metpy.plots import SkewT
@@ -773,7 +773,7 @@ plt.legend(loc=&#x27;upper left&#x27;, fontsize=7)
 plt.savefig(f&quot;{proj_dir}/{fpaths[0].stem}_{target_date.strftime(&#x27;%Y%m%d_%HUTC&#x27;)}.pdf&quot;)   # 파일 이름에 &#x27;:&#x27;를 쓰지 않음
 
 plt.show()</code></pre>
-<h2 id="code-430">code 430. <button class="copy">복사</button></h2><pre><code>import numpy as np
+<h2 id="code-432">code 432. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import metpy.calc as mpcalc
@@ -875,7 +875,7 @@ stamp = pd.Timestamp(summer_time).strftime(&#x27;%Y%m%d_%HUTC&#x27;)    # 파일
 plt.savefig(f&#x27;{proj_dir}/{fpaths[0].stem}_{stamp}.pdf&#x27;)
 plt.savefig(f&#x27;{proj_dir}/{fpaths[0].stem}_{stamp}.png&#x27;, dpi=150)
 plt.show()</code></pre>
-<h2 id="code-431">code 431. <button class="copy">복사</button></h2><pre><code>rows = {}
+<h2 id="code-433">code 433. <button class="copy">복사</button></h2><pre><code>rows = {}
 for label, t in [(&#x27;겨울 2018-01-12 12 UTC&#x27;, &#x27;2018-01-12 12:00&#x27;),
                  (&#x27;여름 2018-08-28 12 UTC&#x27;, &#x27;2018-08-28 12:00&#x27;)]:
     r = sounding_indices(select_sounding(df, t))

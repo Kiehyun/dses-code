@@ -55,7 +55,7 @@ print("CI:\n {}".format(DAO_array[:,5]-DAO_array[:,6]))
 import numpy as np
 import matplotlib.pyplot as plt
 
-# 색등급도(CMD)
+# 색등급도
 plt.plot(DAO_array[:,5]-DAO_array[:,6], DAO_array[:,5], 'o', ms=2, alpha=0.2)
 
 # 등급 축 뒤집기(밝을수록 위)
@@ -85,7 +85,7 @@ print("tf:\n {}".format(tf))
 
 print("num1's selected elements:\n {}".format(num1[tf]))  # tf가 True인 자리만
 
-# 실제 자료에 마스킹
+# 실제 데이터에 마스킹
 mask  = np.zeros(len(DAO_array)).astype(bool)
 
 # -999는 측정 실패 표시
@@ -107,7 +107,7 @@ print("DAO_array_masked[:5]:\n {}".format(DAO_array_masked[:5]))
 import numpy as np
 import matplotlib.pyplot as plt
 
-# 색등급도(CMD)
+# 색등급도
 plt.plot(DAO_array[mask,5]-DAO_array[mask,6], DAO_array[mask,5], 'o', ms=2, alpha=0.2)
 
 # 등급 축 뒤집기(밝을수록 위)
@@ -137,7 +137,7 @@ ax.set_title('{}의 색등급도 ({}, MagAP2)'.format(object_name, data_type),
 ax.grid()
 plt.gca().invert_yaxis()  # 등급 축 뒤집기
 
-plt.annotate('허블 우주 망원경 자료(HLA)',
+plt.annotate('허블 우주 망원경 데이터(HLA)',
         xy=(1, 0), xytext=(0, -50), va='top', ha='right',
         xycoords='axes fraction', textcoords='offset points')
 
@@ -186,7 +186,7 @@ ax1.set_title(f'{object_name}의 색등급도 ({data_type1})',
 ax2.set_title(f'{object_name}의 색등급도 ({data_type2})',
              fontdict={'fontsize':16})
 
-plt.annotate('허블 우주 망원경 자료(HLA)',
+plt.annotate('허블 우주 망원경 데이터(HLA)',
         xy=(1, 0), xytext=(0, -50), va='top', ha='right',
         xycoords='axes fraction', textcoords='offset points')
 
@@ -244,7 +244,7 @@ ax2.invert_yaxis()
 ax2.grid()
 
 # 아래쪽에 출처 표기
-plt.annotate('허블 우주 망원경 자료(HLA)',
+plt.annotate('허블 우주 망원경 데이터(HLA)',
         xy=(1, 0), xytext=(0, -50), va='top', ha='right',
         xycoords='axes fraction', textcoords='offset points')
 
@@ -314,7 +314,7 @@ color[mask]
 import numpy as np
 import matplotlib.pyplot as plt
 
-# 색등급도(CMD)
+# 색등급도
 plt.plot(color[mask], F450_array[mask, mag_col], 'o', ms=2, alpha=0.2)
 
 # 등급 축 뒤집기(밝을수록 위)

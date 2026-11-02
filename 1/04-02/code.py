@@ -322,7 +322,7 @@ ax.text(0.0, 1.01, 'Data from Scripps CO₂ Program', transform=ax.transAxes, fo
 ax.text(1.0, 1.01, f"Data through {df['datetime'].max():%B %Y}", transform=ax.transAxes,
         ha='right', fontsize=12)
 
-# 첫 자료점만 그려 두고 애니메이션에서 갱신
+# 첫 데이터 점만 그려 두고 애니메이션에서 갱신
 line, = ax.plot(df['Date'].iloc[0], df['CO2'].iloc[0])
 point = ax.scatter(df['Date'].iloc[0], df['CO2'].iloc[0], s=5)
 
@@ -383,9 +383,9 @@ import matplotlib.pyplot as plt
 import requests
 from io import StringIO
 
-url = "https://keelinglabsites.ucsd.edu/websitedataco2/monthly_flask_co2_spo.csv"  # 남극점(SPO) 플라스크 자료
+url = "https://keelinglabsites.ucsd.edu/websitedataco2/monthly_flask_co2_spo.csv"  # 남극점(SPO) 플라스크 데이터
 
-# 1) 최신 자료를 내려받아 데이터 행만 고르기
+# 1) 최신 데이터를 내려받아 데이터 행만 고르기
 response = requests.get(url)
 response.raise_for_status()
 
@@ -429,7 +429,7 @@ df1['datetime'] = decimal_year_to_datetime_vectorized(df1['Date'])
 
 print("처리 전 데이터 정보:")
 print(f"DataFrame 크기: {df1.shape}")
-print("각 컬럼별 NaN 개수:")
+print("열별 NaN 개수:")
 print(df1.isnull().sum())
 
 # 3) 시간 간격에 맞춘 보간(양 끝 바깥은 채우지 않음)
@@ -444,7 +444,7 @@ df1_final = df1_final.dropna(subset=['Date', 'seasonally adjusted filled']).copy
 print("시간 기반 인터폴레이션 완료!")
 print("처리 후 데이터 정보:")
 print(f"DataFrame 크기: {df1_final.shape}")
-print("각 컬럼별 NaN 개수:")
+print("열별 NaN 개수:")
 print(df1_final.isnull().sum())
 
 df1 = df1_final.copy()
@@ -452,7 +452,7 @@ df1 = df1_final.copy()
 # 4) 비교할 마우나로아 계절 보정값(앞에서 읽은 df, 결측 -99.99 제외)
 mlo = df[df['seasonally adjusted'] > 0]
 
-# 축 범위: 최솟값은 10 단위로 내리고, 최댓값은 10 단위로 올림(자료가 잘리지 않게)
+# 축 범위: 최솟값은 10 단위로 내리고, 최댓값은 10 단위로 올림(데이터가 잘리지 않게)
 x_min = int(np.floor(min(df1['Date'].min(), mlo['Date'].min()) / 10) * 10)
 x_max = int(np.ceil(max(df1['Date'].max(), mlo['Date'].max()) / 10) * 10)
 
