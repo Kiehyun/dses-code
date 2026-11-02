@@ -134,7 +134,8 @@ ax.set_title(&quot;Macrostrat 데이터로 그린 대한민국 주변 지질 단
 ax.set_xlabel(&quot;경도&quot;)
 ax.set_ylabel(&quot;위도&quot;)
 ax.legend(loc=&quot;upper right&quot;)
-ax.set_aspect(1 / np.cos(np.deg2rad(36)))  # 위도 36°에서 경도 1° 길이는 위도 1°의 cos 36°배
+# 위도 36°에서 경도 1° 길이는 위도 1°의 cos 36°배
+ax.set_aspect(1 / np.cos(np.deg2rad(36)))
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;05_04_Geologic_map_basics_01&quot;))
 plt.show()</code></pre>
 <h2 id="code-Ⅴ-38">code Ⅴ-38. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt

@@ -244,7 +244,8 @@ for cls, (name, f) in lum_classes.items():
     plot_lum_class(masks[cls], colors[cls], f'{cls}: {name}')
 
 ax.tick_params(axis='both', labelsize=14)
-legend = ax.legend(loc='lower left', scatterpoints=1, markerscale = 5, shadow=True)  # 자리 고정(별이 많으면 'best' 계산이 느림)
+# 자리 고정(별이 많으면 'best' 계산이 느림)
+legend = ax.legend(loc='lower left', scatterpoints=1, markerscale = 5, shadow=True)
 frame = legend.get_frame()
 
 frame.set_facecolor('0.90')

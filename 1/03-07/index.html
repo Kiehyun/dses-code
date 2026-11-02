@@ -224,7 +224,8 @@ for cls, (name, f) in lum_classes.items():
     plot_lum_class(masks[cls], colors[cls], f&#x27;{cls}: {name}&#x27;)
 
 ax.tick_params(axis=&#x27;both&#x27;, labelsize=14)
-legend = ax.legend(loc=&#x27;lower left&#x27;, scatterpoints=1, markerscale = 5, shadow=True)  # 자리 고정(별이 많으면 &#x27;best&#x27; 계산이 느림)
+# 자리 고정(별이 많으면 &#x27;best&#x27; 계산이 느림)
+legend = ax.legend(loc=&#x27;lower left&#x27;, scatterpoints=1, markerscale = 5, shadow=True)
 frame = legend.get_frame()
 
 frame.set_facecolor(&#x27;0.90&#x27;)

@@ -191,8 +191,8 @@ coef_t, *_ = np.linalg.lstsq(X_t.values, y_t.values, rcond=None)
 yhat_t = X_t.values @ coef_t
 r2_t = 1 - ((y_t - yhat_t) ** 2).sum() / ((y_t - y_t.mean()) ** 2).sum()
 
-r_ct = np.corrcoef(X["CO2"], X_t["시간"])[0, 1]          # CO2 강제력과 시간의 상관
-r_pred = np.corrcoef(yhat, yhat_t)[0, 1]                   # 두 모형 예측값의 상관
+r_ct = np.corrcoef(X["CO2"], X_t["시간"])[0, 1]  # CO2 강제력과 시간의 상관
+r_pred = np.corrcoef(yhat, yhat_t)[0, 1]          # 두 모형 예측값의 상관
 
 print(f"CO2 강제력과 시간의 상관 r = {r_ct:.4f}")
 print(f"CO2 모형  R² = {r2:.3f}   CO2 항의 추세 기여 {trend['CO2']:+.3f} °C/10년")

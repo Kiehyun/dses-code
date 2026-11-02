@@ -96,8 +96,8 @@ print(f"각속도 변화 (처음 12개): {Z[:12, 1]}")
 fig, ax = plt.subplots(figsize=(8,8))
 
 # 단진자 추의 (x, y) 좌표
-length = 1  # 진자 길이
-angle = 45  # 도
+length = 1                             # 진자 길이
+angle = 45                             # 도
 x = length*np.sin(np.radians(angle))
 y = -length*np.cos(np.radians(angle))  # 음수: 고정점 아래쪽
 
@@ -205,7 +205,7 @@ plt.show()
 # %% code Ⅱ-45.
 def animate(i):
     """애니메이션의 각 프레임을 업데이트하는 함수"""
-    theta = Z[i, 0]  # i번째 시각의 각도
+    theta = Z[i, 0]              # i번째 시각의 각도
     x = length*np.sin(theta)
     y = -length*np.cos(theta)
     line.set_data([0, x], [0, y])
@@ -247,7 +247,8 @@ class Pendulum(object):
  
         Z0 = np.array([self.init_angle, 0])
  
-        self.Z = odeint(self.odefun, Z0, self.t, args=(9.81/length,))  # [각도, 각속도] 시계열
+        # [각도, 각속도] 시계열
+        self.Z = odeint(self.odefun, Z0, self.t, args=(9.81/length,))
  
     def odefun(self, Z, t, k):
         dZdt = np.zeros(2)
@@ -327,5 +328,6 @@ output_path.parent.mkdir(parents=True, exist_ok=True)
 if shutil.which('ffmpeg') is None:
     print('ffmpeg가 설치되어 있지 않아 MP4 저장을 건너뜁니다.')
 else:
-    ani.save(str(output_path), fps=int(round(1/pend.dt)), dpi=150)  # dt = 0.05 s → 초당 20프레임(실제 속도)
+    # dt = 0.05 s → 초당 20프레임(실제 속도)
+    ani.save(str(output_path), fps=int(round(1/pend.dt)), dpi=150)
     print(f"애니메이션 저장: {output_path}")

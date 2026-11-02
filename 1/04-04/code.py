@@ -113,11 +113,8 @@ df = pd.read_csv(fpaths[0],
                  encoding='euc-kr')
 
 print("type(df['일시'][0]):{}".format(type(df['일시'][0])))
-
 df['dt_YmdHM'] = pd.to_datetime(df['일시'])  # 문자열 → datetime
-
 print("type(df['dt_YmdHM'][0]):{}".format(type(df['dt_YmdHM'][0])))
-
 df.index = df['dt_YmdHM']
 
 from datetime import timedelta
@@ -126,7 +123,6 @@ from datetime import timedelta
 df['dt_YmdHM-1min'] = df['dt_YmdHM'] - timedelta(minutes=1)
 
 df.index = df['dt_YmdHM-1min']
-
 print(f"df :\n{df}")
 
 # %% code Ⅳ-73.

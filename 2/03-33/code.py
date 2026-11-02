@@ -25,10 +25,10 @@ from astropy.coordinates import SkyCoord, EarthLocation, AltAz
 from photutils.aperture import CircularAperture as CAp
 from photutils.aperture import CircularAnnulus as CAn
 
-fpath = Path(fpaths[0])                      # 첫 영상
+fpath = Path(fpaths[0])  # 첫 영상
 hdul = fits.open(str(fpath))
 hdr = hdul[0].header
-flt = hdr["FILTER"]                          # 영상의 필터(이 데이터는 V)
+flt = hdr["FILTER"]      # 영상의 필터(이 데이터는 V)
 for _k in ["NAXIS1", "NAXIS2", "DATE-OBS", "EXPTIME", "OBJECT", "FILTER", "CCDNAME"]:
     print(f"{_k:9s} = {hdr[_k]}")
 
@@ -46,7 +46,8 @@ wcs = WCS(hdr)
 SKYC_KW = dict(unit=u.deg, frame="icrs")
 Suwon = EarthLocation(lon=127.005 * u.deg, lat=37.308889 * u.deg, height=101 * u.m)
 observatory_code = "P64"
-OBJID = str(int(re.match(r"\d+", fpath.name).group()))   # 파일 이름 앞의 소행성 번호(0000925 -> 925)
+# 파일 이름 앞의 소행성 번호(0000925 -> 925)
+OBJID = str(int(re.match(r"\d+", fpath.name).group()))
 print("gain, rdnoise :", gain, rdnoise, "/ 소행성 번호 :", OBJID)
 
 # %% code Ⅲ-313.
@@ -67,7 +68,8 @@ def asteroid_ephem(objid, times):
                                 step=1 * u.min, number=n)
         dt = (Time(eph["Date"]) - t0).to_value(u.min)
         x = (times - t0).to_value(u.min)
-        return pd.DataFrame({"targetname": f"{objid} " + hdr["OBJECT"].split("-", 1)[-1].title(),   # 0000925-ALPHONSINA -> Alphonsina
+        # 0000925-ALPHONSINA -> Alphonsina
+        return pd.DataFrame({"targetname": f"{objid} " + hdr["OBJECT"].split("-", 1)[-1].title(),
                              "datetime_str": times.isot,
                              "RA": np.interp(x, dt, eph["RA"]),
                              "DEC": np.interp(x, dt, eph["Dec"])})
@@ -106,10 +108,11 @@ vquery = Vizier(columns=["**", "+_r"], row_limit=-1, timeout=300,
 q = vquery.query_region(img_center, radius=rad, catalog="II/349/ps1")[0]
 print(f"PS1   : {len(q)} (반지름 {rad:.3f})")
 
-q = du.select_in_fov(q, wcs, hdul[0].data.shape, bezel=5 * FWHM_INIT)   # 가장자리 30 px 안쪽
-q = du.drop_ps1_flags(q, drop_by_kron=True)                             # 품질 깃발 · 은하
-q = du.drop_star_groups(q, crit_sep=6 * FWHM_INIT)                      # 36 px 안의 쌍
-q = du.add_jc_mags(q)                                                   # g, r -> B, V, R
+# 가장자리 30 px 안쪽
+q = du.select_in_fov(q, wcs, hdul[0].data.shape, bezel=5 * FWHM_INIT)
+q = du.drop_ps1_flags(q, drop_by_kron=True)         # 품질 깃발 · 은하
+q = du.drop_star_groups(q, crit_sep=6 * FWHM_INIT)  # 36 px 안의 쌍
+q = du.add_jc_mags(q)                               # g, r -> B, V, R
 
 # 소행성이 지나간 길에서 2 * R_OUT 안에 드는 별 빼기
 d_track = np.hypot(np.subtract.outer(np.asarray(q["x"]), xt),
@@ -124,13 +127,13 @@ from photutils.aperture import ApertureStats
 xy = np.c_[df_stars["x"], df_stars["y"]]
 ph = du.apphot_annulus(hdul[0].data, CAp(xy, r=R_AP), CAn(xy, r_in=R_IN, r_out=R_OUT),
                        gain=gain, rdnoise=rdnoise)
-dm = ph["mag"].to_numpy() - df_stars[f"{flt}mag"].to_numpy()   # 별마다의 m - M
+dm = ph["mag"].to_numpy() - df_stars[f"{flt}mag"].to_numpy()  # 별마다의 m - M
 peak = ApertureStats(hdul[0].data, CAp(xy, r=R_AP)).max
 good = (ph["merr"].to_numpy() < 0.1) & (peak < 40000) & np.isfinite(dm)
 print(f"후보 {len(df_stars)}개 -> 오차 · 포화 조건 {good.sum()}개", end="")
 clip = sigma_clip(dm[good], sigma=3, maxiters=5, cenfunc="median", stdfunc="mad_std")
 good[np.flatnonzero(good)[clip.mask]] = False
-comp_ids = np.flatnonzero(good)                                 # 비교성(df_stars의 행 번호)
+comp_ids = np.flatnonzero(good)  # 비교성(df_stars의 행 번호)
 print(f" -> 3σ 클리핑 뒤 비교성 {len(comp_ids)}개")
 z0 = np.median(dm[good])
 print(f"첫 영상: 영점 Z = {z0:.3f}, 비교성 잔차의 표준편차 {np.std(dm[good] - z0, ddof=1):.3f} mag, "
@@ -243,8 +246,8 @@ from astropy.timeseries import LombScargle
 t_h, mag, emag = hours.to_numpy(), df_lc[flt].to_numpy(), df_lc[f"e_{flt}"].to_numpy()
 ls = LombScargle(t_h, mag, emag)
 freq, power = ls.autopower(minimum_frequency=1 / 20, maximum_frequency=1 / 2, samples_per_peak=50)
-P_half = 1 / freq[np.argmax(power)]               # 가장 높은 봉우리의 주기(h)
-P_rot = 2 * P_half                                # 자전 주기 = 두 배
+P_half = 1 / freq[np.argmax(power)]  # 가장 높은 봉우리의 주기(h)
+P_rot = 2 * P_half                   # 자전 주기 = 두 배
 print(f"주기도의 가장 높은 봉우리 {P_half:.2f} h -> 자전 주기 {P_rot:.2f} h")
 
 # 자전 주기로 접기: 위상 0~1, 두 배음 사인 곡선(nterms=2)으로 모양을 맞춤

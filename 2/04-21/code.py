@@ -56,7 +56,7 @@ with Dataset(file_path, 'r') as nc_file:
     mask = nc_file.variables['mask'][:]  # 'mask' 변수 읽기
     mask = mask[0, :, :]                 # 첫 번째 시간 단계 선택
     mask = mask.astype(float)
-    mask[mask == 0] = np.nan  # 육지 부분을 np.nan으로 변환
+    mask[mask == 0] = np.nan             # 육지 부분을 np.nan으로 변환
 
 print("마스크 준비 끝: 바다", int(np.isfinite(mask).sum()), "칸, 육지는 NaN")
 
@@ -68,7 +68,7 @@ from matplotlib.colors import LinearSegmentedColormap
 
 # NetCDF 파일 경로
 file_path = str(PROJ / "sst.wkmean.1990-present.nc")  # SST 데이터 파일 경로
-mask_path = str(PROJ / "lsmask.nc")  # Land-sea mask 파일 경로
+mask_path = str(PROJ / "lsmask.nc")                   # Land-sea mask 파일 경로
 
 # 변수명 확인
 with Dataset(file_path, 'r') as sst_file:
@@ -107,8 +107,8 @@ with Dataset(file_path, 'r') as sst_file, Dataset(mask_path, 'r') as mask_file:
 # 데이터 전처리
 sst = np.mean(sst, axis=0)  # 시간 평균 (scale_factor 는 netCDF4 가 이미 적용해 °C 단위)
 mask = mask.astype(float)
-mask[mask == 0] = np.nan  # 육지 부분을 NaN으로 설정
-sst *= mask               # 육지 부분 제거
+mask[mask == 0] = np.nan    # 육지 부분을 NaN으로 설정
+sst *= mask                 # 육지 부분 제거
 sst_c = np.ma.filled(sst, np.nan)
 print(f"평균 SST 범위: {np.nanmin(sst_c):.1f} ~ {np.nanmax(sst_c):.1f} °C")
 
@@ -176,8 +176,8 @@ from mpl_toolkits.basemap import Basemap
 latitude = nc.groups['navigation_data']['latitude'][:]
 longitude = nc.groups['navigation_data']['longitude'][:]
 sst = nc.groups['geophysical_data']['sst'][:]
-qual = nc.groups['geophysical_data']['qual_sst'][:]   # 품질 플래그 (0 최상, 클수록 나쁨)
-sst = np.ma.masked_where(qual > 1, sst)               # 품질 0·1 화소만 남김
+qual = nc.groups['geophysical_data']['qual_sst'][:]  # 품질 플래그 (0 최상, 클수록 나쁨)
+sst = np.ma.masked_where(qual > 1, sst)              # 품질 0·1 화소만 남김
 print(f"품질 0·1 화소 수: {sst.count():,} / {sst.size:,}")
 
 # %% code Ⅳ-15.
@@ -302,8 +302,8 @@ print(f"savefig: {PROJ}/{sst_l2.stem}_{DATAFIELD_NAME}.pdf")
 plt.show()
 
 # %% code Ⅳ-20.
-Llon, Rlon, Slat, Nlat = 100, 150, 10, 60     # 지도 영역(경도 · 위도)
-RES = 24                                      # 4 km 격자: 1도에 24칸
+Llon, Rlon, Slat, Nlat = 100, 150, 10, 60  # 지도 영역(경도 · 위도)
+RES = 24                                   # 4 km 격자: 1도에 24칸
 
 i0, i1 = int((90 - Nlat) * RES), int((90 - Slat) * RES)   # 위도 칸(북 → 남)
 j0, j1 = int((Llon + 180) * RES), int((Rlon + 180) * RES) # 경도 칸(서 → 동)
@@ -381,7 +381,8 @@ bins = np.logspace(-2, 2, 61)                 # 0.01 ~ 100 mg/m³, 로그 간격
 fig, ax = plt.subplots(figsize=(8.2, 4.0))
 ax.hist(valid, bins=bins, color="tab:green", alpha=0.8)
 ax.set_xscale("log")
-ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda v, _: f"{v:g}"))   # 0.01, 0.1, 1 … 로 표시
+# 0.01, 0.1, 1 … 로 표시
+ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda v, _: f"{v:g}"))
 ax.axvline(np.median(valid), color="k", ls="--",
            label=f"중앙값 {np.median(valid):.2f} mg/m³")
 ax.set_xlabel("엽록소 농도 (mg/m³)")

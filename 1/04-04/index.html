@@ -111,11 +111,8 @@ df = pd.read_csv(fpaths[0],
                  encoding=&#x27;euc-kr&#x27;)
 
 print(&quot;type(df[&#x27;일시&#x27;][0]):{}&quot;.format(type(df[&#x27;일시&#x27;][0])))
-
 df[&#x27;dt_YmdHM&#x27;] = pd.to_datetime(df[&#x27;일시&#x27;])  # 문자열 → datetime
-
 print(&quot;type(df[&#x27;dt_YmdHM&#x27;][0]):{}&quot;.format(type(df[&#x27;dt_YmdHM&#x27;][0])))
-
 df.index = df[&#x27;dt_YmdHM&#x27;]
 
 from datetime import timedelta
@@ -124,7 +121,6 @@ from datetime import timedelta
 df[&#x27;dt_YmdHM-1min&#x27;] = df[&#x27;dt_YmdHM&#x27;] - timedelta(minutes=1)
 
 df.index = df[&#x27;dt_YmdHM-1min&#x27;]
-
 print(f&quot;df :\n{df}&quot;)</code></pre>
 <h2 id="code-Ⅳ-73">code Ⅳ-73. <button class="copy">복사</button></h2><pre><code>print(&quot;df : \n&quot;, df)</code></pre>
 <h2 id="code-Ⅳ-74">code Ⅳ-74. <button class="copy">복사</button></h2><pre><code># 현지기압 관측값이 없으므로 1000 hPa로 가정

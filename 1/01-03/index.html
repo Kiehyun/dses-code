@@ -39,12 +39,12 @@ y1</code></pre>
 <h2 id="code-Ⅰ-5">code Ⅰ-5. <button class="copy">복사</button></h2><pre><code>class = &#x27;Hello world&#x27;  # class는 예약어라 식별자로 쓸 수 없음</code></pre>
 <h2 id="code-Ⅰ-6">code Ⅰ-6. <button class="copy">복사</button></h2><pre><code>print(&#x27;괄호 안의 글자가 그대로 출력됩니다.&#x27;)  # 괄호 안의 내용 출력
 y = &#x27;Hello world&#x27;
-y           # 마지막 줄이 아니면 출력되지 않음
-print(y)    # print()는 항상 출력
-print(&quot;y&quot;)  # 문자 &quot;y&quot; 출력
-y           # 마지막 줄이면 자동 출력</code></pre>
-<h2 id="code-Ⅰ-7">code Ⅰ-7. <button class="copy">복사</button></h2><pre><code>a = 3     # 정수(int)
-b = 3.14  # 실수(float, 부동소수점수)
+y                                                 # 마지막 줄이 아니면 출력되지 않음
+print(y)                                          # print()는 항상 출력
+print(&quot;y&quot;)                                        # 문자 &quot;y&quot; 출력
+y                                                 # 마지막 줄이면 자동 출력</code></pre>
+<h2 id="code-Ⅰ-7">code Ⅰ-7. <button class="copy">복사</button></h2><pre><code>a = 3           # 정수(int)
+b = 3.14        # 실수(float, 부동소수점수)
 c = 3.14159
 d = 5.1e10      # 과학적 표기법 5.1×10^10
 e = 2.5 + 5.3j  # 복소수(complex)
@@ -58,7 +58,7 @@ hungry = True  # 불(bool)
 need_coffee = False
 print(&quot;type(hungry): &quot;, type(hungry), &quot;hungry: &quot;, hungry)
 print(&quot;type(need_coffee): &quot;, type(need_coffee), &quot;need_coffee: &quot;, need_coffee)</code></pre>
-<h2 id="code-Ⅰ-8">code Ⅰ-8. <button class="copy">복사</button></h2><pre><code>my_value1 = &#x27;I love programming in Python.&#x27;  # 작은따옴표로 감싼 문자열
+<h2 id="code-Ⅰ-8">code Ⅰ-8. <button class="copy">복사</button></h2><pre><code>my_value1 = &#x27;I love programming in Python.&#x27;    # 작은따옴표로 감싼 문자열
 print(my_value1)
 my_value2 = &quot;&#x27;I love programming in Python.&#x27;&quot;  # 큰따옴표 안에 작은따옴표
 print(type(my_value1))
@@ -101,7 +101,8 @@ print (&#x27;I am a fan of the number: &#x27; + str(z))  # str()로 문자열 �
 <h2 id="code-Ⅰ-15">code Ⅰ-15. <button class="copy">복사</button></h2><pre><code>decimalValue, stringValue, floatValue = 42, &#x27;Hello&#x27;, 3.14  # 여러 변수에 한 번에 할당
 print (&#x27;출력 예:&#x27;, decimalValue, stringValue, floatValue)  # (1) 쉼표로 나열
 print (&#x27;출력 예: %d %s %f&#x27; % (decimalValue, stringValue, floatValue))  # (2) % 연산자
-print (&#x27;출력 예: {0:d} {1:s} {2:f}&#x27;.format(decimalValue, stringValue, floatValue))  # (3) format() 메서드
+# (3) format() 메서드
+print (&#x27;출력 예: {0:d} {1:s} {2:f}&#x27;.format(decimalValue, stringValue, floatValue))
 print (f&#x27;출력 예: {decimalValue} {stringValue} {floatValue}&#x27;)  # (4) f-string</code></pre>
 <h2 id="code-Ⅰ-16">code Ⅰ-16. <button class="copy">복사</button></h2><pre><code>print(&quot;4 + 10 =&quot;, 4 + 10)
 print(&quot;4 - 10 =&quot;, 4 - 10)
@@ -110,9 +111,9 @@ print(&quot;5 / 10 =&quot;, 5 / 10)
 print(&quot;10 % 4 =&quot;, 10 % 4)
 print(&quot;2**3 =&quot;, 2**3)</code></pre>
 <h2 id="code-Ⅰ-17">code Ⅰ-17. <button class="copy">복사</button></h2><pre><code>print(&quot;abs(9) :&quot;, abs(9))
-print(&quot;divmod(8, 4) :&quot;, divmod(8, 4))  # (몫, 나머지) 튜플
+print(&quot;divmod(8, 4) :&quot;, divmod(8, 4))              # (몫, 나머지) 튜플
 print(&quot;pow(2, 3) :&quot;, pow(2, 3))
-print(&quot;pow(2, 3, 5) :&quot;, pow(2, 3, 5))  # (2**3) % 5
+print(&quot;pow(2, 3, 5) :&quot;, pow(2, 3, 5))              # (2**3) % 5
 print(&quot;round(3.14159) :&quot;, round(3.14159))
 print(&quot;round(3.14159, 2) :&quot;, round(3.14159, 2))
 print(&quot;round(3.14159, -2) :&quot;, round(3.14159, -2))  # 십의 자리에서 반올림
@@ -138,7 +139,7 @@ print(&quot;type(myLst2):&quot;, type(myLst2))</code></pre>
 print(&quot;myStrLst: &quot;, myStrLst)
 multiLst = [1, 2, &#x27;three&#x27;, 4, &#x27;five&#x27;, &#x27;six&#x27;]  # 여러 자료형을 섞은 리스트
 print(&quot;multiLst: &quot;, multiLst)
-comboLst = [1, myStrLst, multiLst]  # 리스트를 원소로 갖는 리스트
+comboLst = [1, myStrLst, multiLst]            # 리스트를 원소로 갖는 리스트
 print(&quot;comboLst: &quot;, comboLst)
 my_newLst1 = [&#x27;new_item1&#x27;, &#x27;new_item2&#x27;, [1, 2, 3, 4], &#x27;new_item3&#x27;]
 print(&quot;my_newLst1: &quot;, my_newLst1)</code></pre>
@@ -150,13 +151,13 @@ print(&quot;myStrLst[-1]: &quot;,  myStrLst[-1])  # 음수 인덱스는 뒤에�
 my_newLst2 = [1, 2, 3, [&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;]]
 print(&quot;my_newLst2[-1][0]: &quot;, my_newLst2[-1][0])  # 마지막 원소(리스트)의 첫 원소</code></pre>
 <h2 id="code-Ⅰ-23">code Ⅰ-23. <button class="copy">복사</button></h2><pre><code>print(&quot;myStrLst[0:2]: &quot;, myStrLst[0:2])  # 시작 인덱스는 포함, 끝 인덱스는 제외
-print(&quot;myStrLst[:2]: &quot;, myStrLst[:2])  # 시작 생략 → 처음부터
-print(&quot;myStrLst[1:]: &quot;, myStrLst[1:])  # 끝 생략 → 끝까지
+print(&quot;myStrLst[:2]: &quot;, myStrLst[:2])    # 시작 생략 → 처음부터
+print(&quot;myStrLst[1:]: &quot;, myStrLst[1:])    # 끝 생략 → 끝까지
 
-myStrLst_copy = myStrLst[:]  # 리스트 사본
+myStrLst_copy = myStrLst[:]                      # 리스트 사본
 print(&quot;myStrLst_copy: &quot;, myStrLst_copy)
 newLst = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
-print(&quot;newLst[0:10:1]: &quot;, newLst[0:10:1])  # 세 번째 값은 간격(step)
+print(&quot;newLst[0:10:1]: &quot;, newLst[0:10:1])        # 세 번째 값은 간격(step)
 my_newLst3 = [1, 2, 3, [&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;], 4, 5]
 print(&quot;my_newLst3[3][:2]: &quot;, my_newLst3[3][:2])  # 4번째 원소(리스트)를 다시 슬라이싱</code></pre>
 <h2 id="code-Ⅰ-24">code Ⅰ-24. <button class="copy">복사</button></h2><pre><code>newLst1 = [&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;, &#x27;d&#x27;, &#x27;e&#x27;, &#x27;f&#x27;, &#x27;g&#x27;]
@@ -198,7 +199,8 @@ print(&quot;myTuple2[2]:&quot;, myTuple2[2])</code></pre>
 print(&quot;myDic1:&quot;, myDic1)
 print(&quot;len(myDic1):&quot;, len(myDic1))
 
-myDic2 = {&#x27;name&#x27;: &#x27;GRB 130702A&#x27;, &#x27;redshift&#x27;: 0.145, &#x27;ra&#x27;: (14, 29, 14.78), &#x27;dec&#x27;: (15, 46, 26.4)}  # 감마선 폭발(GRB) 천체 정보
+# 감마선 폭발(GRB) 천체 정보
+myDic2 = {&#x27;name&#x27;: &#x27;GRB 130702A&#x27;, &#x27;redshift&#x27;: 0.145, &#x27;ra&#x27;: (14, 29, 14.78), &#x27;dec&#x27;: (15, 46, 26.4)}
 print(&quot;myDic2:&quot;, myDic2)
 print(&quot;len(myDic2):&quot;, len(myDic2))
 print(&quot;myDic2[&#x27;ra&#x27;]:&quot;, myDic2[&#x27;ra&#x27;])    # 적경(시, 분, 초)
@@ -303,7 +305,7 @@ while treeHit &lt; 3:
     print(&quot;나무를 %d번 찍었습니다.&quot; % treeHit)
     if treeHit == 3:
         print(&quot;나무 넘어갑니다.&quot;)</code></pre>
-<h2 id="code-Ⅰ-32">code Ⅰ-32. <button class="copy">복사</button></h2><pre><code>coffee = 3  # 커피 재고
+<h2 id="code-Ⅰ-32">code Ⅰ-32. <button class="copy">복사</button></h2><pre><code>coffee = 3    # 커피 재고
 money = 30
 while money:  # 0이 아닌 수는 True로 평가
     print(&quot;돈을 받았으니 커피를 줍니다.&quot;)

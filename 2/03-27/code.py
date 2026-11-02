@@ -145,8 +145,8 @@ import numpy as np
 from astropy.io import fits
 
 def save_aligned(fname, data, ref_header):
-    hdr = ref_header.copy()                    # 기준 영상의 헤더를 복사
-    for key in ("BZERO", "BSCALE"):            # 정수형 저장용 키워드는 지움
+    hdr = ref_header.copy()          # 기준 영상의 헤더를 복사
+    for key in ("BZERO", "BSCALE"):  # 정수형 저장용 키워드는 지움
         hdr.remove(key, ignore_missing=True)
     fits.writeto(fname, data.astype(np.float32), header=hdr, overwrite=True)
     print(f"{fname} is created...")
@@ -293,8 +293,8 @@ plt.show()
 import numpy as np
 import astroalign as aa
 
-r = 0 # 기준 이미지 번호
-target = np.asarray(hduls_data[r], dtype=np.float32)    # 기준 영상
+r = 0                                                 # 기준 이미지 번호
+target = np.asarray(hduls_data[r], dtype=np.float32)  # 기준 영상
 
 aligned_hduls_data = []
 footprints = []
@@ -336,9 +336,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 fig, axs = plt.subplots(4, 3, figsize=(6.2, 7.0), constrained_layout=True)   # 영상 10장
-
 axs = axs.ravel()
-
 vmax = int(np.median(aligned_hduls_data[0][:100, :100])*1.1)
 
 for i in range(len(aligned_hduls_data)):
@@ -351,7 +349,6 @@ for ax in axs[len(aligned_hduls_data):]:          # 남는 칸은 비움
 fig.colorbar(im, ax=axs.tolist(), shrink=0.6, pad=0.02)
 
 plt.suptitle('IC1848 images [:100, :100] (aligned)', fontsize=13)
-
 plt.show()
 
 # %% code Ⅲ-174.
@@ -365,7 +362,8 @@ def centroid(img, x, y, half=5):
 
 ny, nx = target.shape
 _, (_, ref_pts) = aa.find_transform(np.asarray(hduls_data[1], dtype=np.float32), target)
-ref_pts = [p for p in ref_pts if 10 < p[0] < nx-10 and 10 < p[1] < ny-10]   # 가장자리 별 제외
+# 가장자리 별 제외
+ref_pts = [p for p in ref_pts if 10 < p[0] < nx-10 and 10 < p[1] < ny-10]
 ref_c = np.array([centroid(target, x, y) for x, y in ref_pts])
 print(f"비교에 쓴 별: {len(ref_c)}개")
 

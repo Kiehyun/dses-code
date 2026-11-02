@@ -130,7 +130,8 @@ ax.set_title("Macrostrat 데이터로 그린 대한민국 주변 지질 단위")
 ax.set_xlabel("경도")
 ax.set_ylabel("위도")
 ax.legend(loc="upper right")
-ax.set_aspect(1 / np.cos(np.deg2rad(36)))  # 위도 36°에서 경도 1° 길이는 위도 1°의 cos 36°배
+# 위도 36°에서 경도 1° 길이는 위도 1°의 cos 36°배
+ax.set_aspect(1 / np.cos(np.deg2rad(36)))
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "05_04_Geologic_map_basics_01"))
 plt.show()
 

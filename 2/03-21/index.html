@@ -208,7 +208,8 @@ for ax, (name, plate, mjd, fiber, z) in zip(axes, spectra):
     for line, lam in LINES.items():
         if rest.min() &lt; lam &lt; rest.max():
             ax.axvline(lam, color=&quot;crimson&quot;, ls=&quot;:&quot;, lw=0.8)
-            ax.text(lam, top * (0.9 if line in (&quot;[OIII]&quot;, &quot;[NII]&quot;) else 1.02), line,   # 가까운 두 선은 높이를 달리
+            # 가까운 두 선은 높이를 달리
+            ax.text(lam, top * (0.9 if line in (&quot;[OIII]&quot;, &quot;[NII]&quot;) else 1.02), line,
                     color=&quot;crimson&quot;, fontsize=9,
                     ha=&quot;center&quot;)
     ax.set_ylim(0, top * 1.15)
@@ -231,8 +232,8 @@ y = np.log10(bpt[&quot;oiii_5007_flux&quot;] / bpt[&quot;h_beta_flux&quot;])
 ok = np.isfinite(x) &amp; np.isfinite(y)
 x, y = x[ok], y[ok]
 
-kauff = lambda v: 0.61 / (v - 0.05) + 1.30      # v &lt; 0.05
-kewley = lambda v: 0.61 / (v - 0.47) + 1.19     # v &lt; 0.47
+kauff = lambda v: 0.61 / (v - 0.05) + 1.30   # v &lt; 0.05
+kewley = lambda v: 0.61 / (v - 0.47) + 1.19  # v &lt; 0.47
 sf = (x &lt; 0.05) &amp; (y &lt; kauff(x))
 agn = (x &gt;= 0.47) | (y &gt; kewley(x))
 comp = ~sf &amp; ~agn

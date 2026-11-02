@@ -88,7 +88,8 @@ try:
     html = requests.get(page, headers={"User-Agent": "Mozilla/5.0"}, timeout=60).text
     url2 = base + re.search(r"/sites/default/files/[\w-]+/SOI\.signal\.txt", html).group(0)
 except Exception:
-    url2 = base + "/sites/default/files/2026-04/SOI.signal.txt"  # 2026년 11월 확인한 주소
+    # 2026년 11월 확인한 주소
+    url2 = base + "/sites/default/files/2026-04/SOI.signal.txt"
 soi_path = Path(proj_dir) / "SOI.signal.txt"
 print("SOI 주소:", url2)
 

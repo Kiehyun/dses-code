@@ -140,7 +140,7 @@ def find_extrema(field, lon, lat, kind="min", size=25, count=4,
     margin = size // 2          # 경계에서 창 절반 이내는 제외
     is_ext[:margin, :] = is_ext[-margin:, :] = False
     is_ext[:, :margin] = is_ext[:, -margin:] = False
-    if terrain is not None:                           # 높은 고원 위의 점 제외
+    if terrain is not None:     # 높은 고원 위의 점 제외
         is_ext &= terrain < max_height
     rows, cols = np.where(is_ext)
     values = field[rows, cols]

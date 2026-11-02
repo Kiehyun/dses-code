@@ -65,7 +65,8 @@ plt.show()</code></pre>
 import matplotlib.pyplot as plt
 
 fig = plt.figure(figsize=(5, 5))
-m = Basemap(projection=&#x27;lcc&#x27;, width=8E6, height=8E6,  # 람베르트 정각원추 도법, 8000 km 범위
+# 람베르트 정각원추 도법, 8000 km 범위
+m = Basemap(projection=&#x27;lcc&#x27;, width=8E6, height=8E6,
             lat_0=38, lon_0=127,)
 m.etopo(scale=0.5, alpha=0.5)
 
@@ -108,12 +109,13 @@ plt.sca(ax2)
 map2 = Basemap(projection=&#x27;mill&#x27;,lon_0=180)
 map2.drawcoastlines()
 map2.drawparallels(np.arange(-90,90,30),labels=[1,0,0,0])  # 왼쪽에 위도 표시
-map2.drawmeridians(np.arange(map2.lonmin,map2.lonmax+30,60),labels=[0,0,0,1])  # 아래쪽에 경도 표시
+# 아래쪽에 경도 표시
+map2.drawmeridians(np.arange(map2.lonmin,map2.lonmax+30,60),labels=[0,0,0,1])
 map2.drawmapboundary(fill_color=&#x27;aqua&#x27;)
 map2.fillcontinents(color=&#x27;coral&#x27;,lake_color=&#x27;aqua&#x27;)
 
 date = datetime.now(timezone.utc)  # 현재 UTC 시각
-CS = map2.nightshade(date)  # 밤 지역에 그림자
+CS = map2.nightshade(date)         # 밤 지역에 그림자
 ax2.set_title(&#x27;%s (UTC) 주야 구분 지도&#x27; % date.strftime(&quot;%d %b %Y %H:%M:%S&quot;))
 
 plt.tight_layout()
@@ -141,13 +143,10 @@ for i, res in enumerate([&#x27;l&#x27;, &#x27;i&#x27;, &#x27;h&#x27;]):  # 해�
     # 심사 도법(gnomonic), 충남 당진 부근 중심, 폭 · 높이 단위 m
     m = Basemap(projection=&#x27;gnom&#x27;, lat_0=37, lon_0=126.5,
                 width=100000, height=150000, resolution=res, ax=ax[i])
-    
+
     m.fillcontinents(color=&quot;#FFDDCC&quot;, lake_color=&#x27;#DDEEFF&#x27;)
-    
     m.drawmapboundary(fill_color=&quot;#DDEEFF&quot;)  # 바다 색
-    
     m.drawcoastlines()
-    
     ax[i].set_title(&quot;해상도=&#x27;{0}&#x27;&quot;.format(res));</code></pre>
 <h2 id="code-Ⅱ-28">code Ⅱ-28. <button class="copy">복사</button></h2><pre><code>plt.figure(figsize=(8, 6))
 
@@ -157,7 +156,8 @@ clat = (loglat[3]+loglat[1])/2
 
 m = Basemap(llcrnrlon = loglat[0], llcrnrlat = loglat[1],
             urcrnrlon = loglat[2], urcrnrlat = loglat[3],
-            resolution = res, projection = &#x27;aea&#x27;,  # res는 앞 셀의 &#x27;h&#x27;, aea: 앨버스 정적원추 도법
+            # res는 앞 셀의 &#x27;h&#x27;, aea: 앨버스 정적원추 도법
+            resolution = res, projection = &#x27;aea&#x27;,
             lon_0 = clog, lat_0 = clat)
             
 m.drawcoastlines(linewidth = 0.25)
@@ -174,7 +174,8 @@ plt.show()   </code></pre>
 import matplotlib.pyplot as plt
 import cartopy.feature as cfeature
 
-fig, axes = plt.subplots(1, 2, figsize=(12.0, 4.8), subplot_kw={&#x27;projection&#x27;: ccrs.PlateCarree()})  # 정거 원통 도법
+# 정거 원통 도법
+fig, axes = plt.subplots(1, 2, figsize=(12.0, 4.8), subplot_kw={&#x27;projection&#x27;: ccrs.PlateCarree()})
 
 ax1 = axes[0]
 ax1.coastlines(resolution=&#x27;110m&#x27;)
@@ -225,7 +226,8 @@ ax2.add_feature(cfeature.OCEAN)
 
 ax2.gridlines(draw_labels=True)  # 위경도 표기
 
-ax2.set_extent([60, 180, -50, 60], ccrs.PlateCarree())  # [서쪽 경도, 동쪽 경도, 남쪽 위도, 북쪽 위도]
+# [서쪽 경도, 동쪽 경도, 남쪽 위도, 북쪽 위도]
+ax2.set_extent([60, 180, -50, 60], ccrs.PlateCarree())
 
 ax2.stock_img()  # Natural Earth 음영 기복 배경
 
@@ -250,7 +252,8 @@ import cartopy.feature as cfeature
 
 fig = plt.figure(figsize=[12, 6])
 
-ax1 = fig.add_subplot(1, 2, 1, projection=ccrs.SouthPolarStereo())  # 남극 중심 평사 도법
+# 남극 중심 평사 도법
+ax1 = fig.add_subplot(1, 2, 1, projection=ccrs.SouthPolarStereo())
 ax2 = fig.add_subplot(1, 2, 2, projection=ccrs.SouthPolarStereo(),
                         sharex=ax1, sharey=ax1)
 fig.subplots_adjust(bottom=0.05, top=0.95, left=0.04, right=0.95, wspace=0.02)
@@ -280,17 +283,11 @@ plt.show()</code></pre>
 import matplotlib.pyplot as plt
 
 fig = plt.figure(figsize=(10, 10))
-
 ax = plt.axes(projection=ccrs.PlateCarree())
-
 ax.add_feature(cfeature.LAND)
-
 ax.gridlines(draw_labels = True)
-
 ax.set_extent([111, 145, 25, 50], ccrs.PlateCarree())  # 경도 111~145°, 위도 25~50°
-
 ax.coastlines(resolution=&#x27;50m&#x27;)  # 1:5천만 축척 해안선
-
 plt.title(&#x27;우리나라 주변 지도&#x27;, fontsize=18)
 
 du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;02_03_Drawing_maps_06&quot;))
@@ -298,18 +295,18 @@ plt.show()</code></pre>
 <h2 id="code-Ⅱ-33">code Ⅱ-33. <button class="copy">복사</button></h2><pre><code>import folium
 from IPython.display import display
 
-basic_map = folium.Map(location=[37.5665, 126.9780], zoom_start=12)  # 서울 중심, [위도, 경도] 순서
+# 서울 중심, [위도, 경도] 순서
+basic_map = folium.Map(location=[37.5665, 126.9780], zoom_start=12)
 
 display(basic_map)</code></pre>
 <h2 id="code-Ⅱ-34">code Ⅱ-34. <button class="copy">복사</button></h2><pre><code>import folium
 
 seoul_coords = [37.5665, 126.9780]  # 서울(위도, 경도)
-
 basic_map = folium.Map(location=seoul_coords, zoom_start=12)  # 확대 수준 12
 
 folium.Marker(
         seoul_coords,
-        popup=&#x27;서울특별시&#x27;,       # 클릭하면 보이는 글
+        popup=&#x27;서울특별시&#x27;,          # 클릭하면 보이는 글
         tooltip=&#x27;대한민국의 수도&#x27;,  # 마우스를 올리면 보이는 글
         icon=folium.Icon(color=&#x27;red&#x27;, icon=&#x27;info-sign&#x27;)
     ).add_to(basic_map)
@@ -360,7 +357,8 @@ if check_internet_connection():
     print(&quot;✓ 인터넷 연결됨&quot;)
     maps = safe_tile_loader()
 else:
-    # Folium 지도는 Leaflet 스크립트와 바탕 타일을 인터넷에서 불러오므로 오프라인에서는 보이지 않음
+    # Folium 지도는 Leaflet 스크립트와 바탕 타일을
+    # 인터넷에서 불러오므로 오프라인에서는 보이지 않음
     print(&quot;✗ 인터넷 연결 없음 - 지도를 표시할 수 없음&quot;)
     maps = {}
 

@@ -178,9 +178,9 @@ plt.show()</code></pre>
 print(&quot;np.nanmax(longitude):{}&quot;.format(np.nanmax(longitude))) 
 print(&quot;np.nanmin(latitude):{}&quot;.format(np.nanmin(latitude)))
 print(&quot;np.nanmax(latitude):{}&quot;.format(np.nanmax(latitude)))</code></pre>
-<h2 id="code-Ⅳ-122">code Ⅳ-122. <button class="copy">복사</button></h2><pre><code>Wlon, Elon = np.nanmin(longitude), np.nanmax(longitude)     # 서 · 동 경계
-Slat, Nlat = np.nanmin(latitude), np.nanmax(latitude)       # 남 · 북 경계
-Clon, Clat = (Wlon + Elon) / 2, (Slat + Nlat) / 2           # 중심 좌표
+<h2 id="code-Ⅳ-122">code Ⅳ-122. <button class="copy">복사</button></h2><pre><code>Wlon, Elon = np.nanmin(longitude), np.nanmax(longitude)  # 서 · 동 경계
+Slat, Nlat = np.nanmin(latitude), np.nanmax(latitude)  # 남 · 북 경계
+Clon, Clat = (Wlon + Elon) / 2, (Slat + Nlat) / 2  # 중심 좌표
 
 print(f&quot;서 {Wlon:.2f}°, 동 {Elon:.2f}°, 남 {Slat:.2f}°, 북 {Nlat:.2f}°&quot;)
 print(f&quot;중심 ({Clon:.2f}°E, {Clat:.2f}°N)&quot;)</code></pre>

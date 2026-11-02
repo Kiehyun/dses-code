@@ -25,11 +25,12 @@ wcs = WCS(hdr)
 for k in ["OBJECT", "DATE-OBS", "EXPTIME", "FILTER", "OPTIC", "CCDNAME", "NAXIS1", "NAXIS2"]:
     print(f"{k:9s} = {hdr[k]}")
 
-plt.rcParams.update({"xtick.labelsize": 9, "ytick.labelsize": 9})   # 책 판형에 맞춘 눈금 글자 크기
-gain, rdnoise = 0.37, 9.3                                  # STF-8300M (e-/ADU, e-)
-pixscale = proj_plane_pixel_scales(wcs).mean() * 3600      # 화소 하나의 각크기(arcsec)
-m13 = SkyCoord("16h41m41.6s", "+36d27m41s")                # M13 중심
-cx, cy = wcs.world_to_pixel(m13)                           # 성단 중심의 화소 좌표
+# 책 판형에 맞춘 눈금 글자 크기
+plt.rcParams.update({"xtick.labelsize": 9, "ytick.labelsize": 9})
+gain, rdnoise = 0.37, 9.3                    # STF-8300M (e-/ADU, e-)
+pixscale = proj_plane_pixel_scales(wcs).mean() * 3600  # 화소 하나의 각크기(arcsec)
+m13 = SkyCoord("16h41m41.6s", "+36d27m41s")  # M13 중심
+cx, cy = wcs.world_to_pixel(m13)             # 성단 중심의 화소 좌표
 print(f"화소 축척 {pixscale:.3f} arcsec/px, 성단 중심 (x, y) = ({cx:.1f}, {cy:.1f})")
 
 # %% code Ⅲ-219.
@@ -41,7 +42,8 @@ def show(ax, img, title, percent=99.5):
     ax.set_title(title, fontsize=9)
     return im
 
-core = (slice(int(cy) - 100, int(cy) + 100), slice(int(cx) - 100, int(cx) + 100))  # 중심부 200x200 화소
+# 중심부 200x200 화소
+core = (slice(int(cy) - 100, int(cy) + 100), slice(int(cx) - 100, int(cx) + 100))
 
 fig, axs = plt.subplots(1, 2, figsize=(7.5, 3.8))
 show(axs[0], data, "M13, V 60 s (1500x1500 px)")
@@ -154,7 +156,8 @@ axs[0].set_title("ePSF (2배 오버샘플링)", fontsize=9)
 axs[1].semilogy(r_mid, prof, "o", ms=3, label="ePSF")
 axs[1].semilogy(r_mid, gauss, "-", label=f"가우스 (FWHM {FWHM:.2f} px)")
 axs[1].set_ylim(1e-4, 1.5)
-axs[1].yaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}"))   # 0.001 처럼 소수로 표시
+# 0.001 처럼 소수로 표시
+axs[1].yaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}"))
 axs[1].set_xlabel("반지름 (px)"); axs[1].set_ylabel("상대 밝기")
 axs[1].legend(fontsize=8); axs[1].grid(ls=":")
 plt.tight_layout()
@@ -170,7 +173,8 @@ psfphot = PSFPhotometry(epsf, FIT_SHAPE, grouper=grouper,
                         xy_bounds=(2, 2), group_warning_threshold=1000)
 
 init = Table({"x": found[xc], "y": found[yc], "flux": found["flux"]})
-error = np.sqrt(np.clip(sub + bkg.background, 0, None) / gain + (rdnoise / gain)**2)  # 화소 오차(ADU)
+# 화소 오차(ADU)
+error = np.sqrt(np.clip(sub + bkg.background, 0, None) / gain + (rdnoise / gain)**2)
 psf_tab = psfphot(sub, error=error, init_params=init)
 
 gsize = np.asarray(psf_tab["group_size"])
@@ -248,11 +252,11 @@ m_psf = -2.5 * np.log10(np.asarray(pt["flux_fit"]))
 with np.errstate(invalid="ignore"):
     m_ap = -2.5 * np.log10(np.asarray(ap_tab["aperture_sum"]))
 dm = m_ap - m_psf
-dnn = cKDTree(np.c_[xf, yf]).query(np.c_[xf, yf], k=2)[0][:, 1]   # 가장 가까운 이웃 거리
-r_cl = np.hypot(xf - cx, yf - cy)                                  # 성단 중심 거리
+dnn = cKDTree(np.c_[xf, yf]).query(np.c_[xf, yf], k=2)[0][:, 1]  # 가장 가까운 이웃 거리
+r_cl = np.hypot(xf - cx, yf - cy)  # 성단 중심 거리
 
-iso = (dnn > 3 * R_AP) & (m_psf < -10) & np.isfinite(dm)           # 고립된 밝은 별
-crowd = (dnn < 2 * R_AP) & np.isfinite(dm)                          # 구경이 이웃과 겹치는 별
+iso = (dnn > 3 * R_AP) & (m_psf < -10) & np.isfinite(dm)  # 고립된 밝은 별
+crowd = (dnn < 2 * R_AP) & np.isfinite(dm)  # 구경이 이웃과 겹치는 별
 ap_corr = np.median(dm[iso])
 print(f"고립된 밝은 별 {iso.sum()}개: Δm 중앙값 {ap_corr:+.3f} (흩어짐 {np.std(dm[iso]):.3f}) mag")
 print(f"이웃과 붙은 별 {crowd.sum()}개: Δm 중앙값 {np.median(dm[crowd]):+.3f} mag")

@@ -66,9 +66,9 @@ detrended = series - trend_estimated          # 추세를 뺀 나머지
 print(f&quot;원시 데이터 표준편차 : {series.std():.2f}&quot;)
 print(f&quot;추세 제거 후 표준편차: {detrended.std():.2f}&quot;)
 print(f&quot;넣어 둔 계절 진폭    : 5.0  -&gt;  추정 진폭 약 {detrended.std()*np.sqrt(2):.2f}&quot;)</code></pre>
-<h2 id="code-Ⅱ-19">code Ⅱ-19. <button class="copy">복사</button></h2><pre><code>values = detrended - detrended.mean()             # 평균도 0으로 맞춘다
+<h2 id="code-Ⅱ-19">code Ⅱ-19. <button class="copy">복사</button></h2><pre><code>values = detrended - detrended.mean()  # 평균도 0으로 맞춘다
 n = values.size
-dt = 1 / PER_YEAR                                 # 표본 간격(년)
+dt = 1 / PER_YEAR                      # 표본 간격(년)
 
 spectrum = np.fft.rfft(values)     # 실수 데이터용 푸리에 변환
 freqs = np.fft.rfftfreq(n, d=dt)   # 진동수 (1/년)

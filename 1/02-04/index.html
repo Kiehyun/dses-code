@@ -100,8 +100,8 @@ print(f&quot;각속도 변화 (처음 12개): {Z[:12, 1]}&quot;)</code></pre>
 <h2 id="code-Ⅱ-42">code Ⅱ-42. <button class="copy">복사</button></h2><pre><code>fig, ax = plt.subplots(figsize=(8,8))
 
 # 단진자 추의 (x, y) 좌표
-length = 1  # 진자 길이
-angle = 45  # 도
+length = 1                             # 진자 길이
+angle = 45                             # 도
 x = length*np.sin(np.radians(angle))
 y = -length*np.cos(np.radians(angle))  # 음수: 고정점 아래쪽
 
@@ -203,7 +203,7 @@ du.save_figure(plt.gcf(), os.path.join(proj_dir, &quot;02_04_Simple_pendulum_mot
 plt.show()</code></pre>
 <h2 id="code-Ⅱ-45">code Ⅱ-45. <button class="copy">복사</button></h2><pre><code>def animate(i):
     &quot;&quot;&quot;애니메이션의 각 프레임을 업데이트하는 함수&quot;&quot;&quot;
-    theta = Z[i, 0]  # i번째 시각의 각도
+    theta = Z[i, 0]              # i번째 시각의 각도
     x = length*np.sin(theta)
     y = -length*np.cos(theta)
     line.set_data([0, x], [0, y])
@@ -243,7 +243,8 @@ HTML(ani.to_jshtml())
  
         Z0 = np.array([self.init_angle, 0])
  
-        self.Z = odeint(self.odefun, Z0, self.t, args=(9.81/length,))  # [각도, 각속도] 시계열
+        # [각도, 각속도] 시계열
+        self.Z = odeint(self.odefun, Z0, self.t, args=(9.81/length,))
  
     def odefun(self, Z, t, k):
         dZdt = np.zeros(2)
@@ -319,7 +320,8 @@ output_path.parent.mkdir(parents=True, exist_ok=True)
 if shutil.which(&#x27;ffmpeg&#x27;) is None:
     print(&#x27;ffmpeg가 설치되어 있지 않아 MP4 저장을 건너뜁니다.&#x27;)
 else:
-    ani.save(str(output_path), fps=int(round(1/pend.dt)), dpi=150)  # dt = 0.05 s → 초당 20프레임(실제 속도)
+    # dt = 0.05 s → 초당 20프레임(실제 속도)
+    ani.save(str(output_path), fps=int(round(1/pend.dt)), dpi=150)
     print(f&quot;애니메이션 저장: {output_path}&quot;)</code></pre>
 <script>
 document.querySelectorAll('button.copy').forEach(function (b) {

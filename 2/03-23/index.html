@@ -52,9 +52,9 @@ display(curvature)</code></pre>
 <h2 id="code-Ⅲ-27">code Ⅲ-27. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 from astropy.cosmology import FlatLambdaCDM
 
-Hubble_const = 67.8 * u.km / u.s / u.Mpc   # 허블 상수
-Omega_m = 0.3                               # 물질 밀도 계수(보통 물질 + 암흑 물질)
-Omega_Lambda = 0.7                          # 암흑 에너지 밀도 계수
+Hubble_const = 67.8 * u.km / u.s / u.Mpc  # 허블 상수
+Omega_m = 0.3                             # 물질 밀도 계수(보통 물질 + 암흑 물질)
+Omega_Lambda = 0.7                        # 암흑 에너지 밀도 계수
 
 cosmo_flat = FlatLambdaCDM(H0=Hubble_const, Om0=Omega_m, Tcmb0=2.725,
                            Neff=3.046)
@@ -93,8 +93,8 @@ for name, cosmo in [(&quot;WMAP9&quot;, WMAP9), (&quot;Planck18&quot;, Planck18)
 age = cosmo.age(z)
 scale = cosmo.scale_factor(z)
 
-t_hubble = cosmo.hubble_time.to(u.Gyr)      # 허블 시간 = 등속 팽창 우주의 나이
-age_now = cosmo.age(0).to(u.Gyr)            # ΛCDM 우주의 나이
+t_hubble = cosmo.hubble_time.to(u.Gyr)  # 허블 시간 = 등속 팽창 우주의 나이
+age_now = cosmo.age(0).to(u.Gyr)        # ΛCDM 우주의 나이
 
 t_const = np.linspace(0, t_hubble.value, 100)
 a_const = t_const / t_hubble.value          # 등속 팽창: a = t / t_H
@@ -134,13 +134,14 @@ ax.legend(loc=&quot;upper left&quot;)
 plt.tight_layout()
 du.save_figure(fig, proj_dir / &quot;hubble_time_vs_age_centered&quot;)
 plt.show()</code></pre>
-<h2 id="code-Ⅲ-31">code Ⅲ-31. <button class="copy">복사</button></h2><pre><code>z_t = np.concatenate([np.logspace(4, -3, 400), -np.linspace(0.001, 0.09, 40)])  # 과거 → 미래
+<h2 id="code-Ⅲ-31">code Ⅲ-31. <button class="copy">복사</button></h2><pre><code># 과거 → 미래
+z_t = np.concatenate([np.logspace(4, -3, 400), -np.linspace(0.001, 0.09, 40)])
 t_now = cosmo.age(0).to(u.Gyr).value
 t = cosmo.age(z_t).to(u.Gyr).value - t_now                       # 현재로부터의 시간
 
 D_horizon = ((cosmo.comoving_distance(1e5) - cosmo.comoving_distance(z_t)) / (1 + z_t)).to(u.Gpc)
-D_hubble = (const.c / cosmo.H(z_t)).to(u.Gpc)                    # 그 시각의 허블 길이
-D_coast = (const.c * (t + t_now) * u.Gyr).to(u.Gpc)              # 등속 팽창 우주의 c·t
+D_hubble = (const.c / cosmo.H(z_t)).to(u.Gpc)        # 그 시각의 허블 길이
+D_coast = (const.c * (t + t_now) * u.Gyr).to(u.Gpc)  # 등속 팽창 우주의 c·t
 
 fig, ax = plt.subplots(figsize=(7.5, 4.5))
 ax.plot(t, D_horizon, color=&quot;tab:green&quot;,
@@ -227,7 +228,8 @@ models = [
     {&quot;label&quot;: &quot;물질만 있는 평탄 우주&quot;, &quot;Om0&quot;: 1.0, &quot;Ode0&quot;: 0.0, &quot;ls&quot;: &quot;:&quot;,
      &quot;color&quot;: &quot;tab:green&quot;},
 ]
-ref = LambdaCDM(H0=H0_union, Om0=0.3, Ode0=0.0, Tcmb0=2.725, Neff=3.046)   # 잔차의 기준: 물질만 있는 열린 우주
+# 잔차의 기준: 물질만 있는 열린 우주
+ref = LambdaCDM(H0=H0_union, Om0=0.3, Ode0=0.0, Tcmb0=2.725, Neff=3.046)
 
 def plot_sn_models(data, xscale=&quot;linear&quot;, fig_name=None):
     z_grid = np.geomspace(0.01, 1.45, 200)
@@ -272,7 +274,8 @@ def plot_sn_models(data, xscale=&quot;linear&quot;, fig_name=None):
     axs[1].axhline(0, color=&quot;k&quot;, lw=0.8)
     for ax in axs:
         ax.set_xscale(xscale)
-        if xscale == &quot;log&quot;:   # 눈금을 0.01, 0.1, 1처럼 소수로 표기(지수 표기의 빼기 기호 글꼴 문제 방지)
+        # 눈금을 0.01, 0.1, 1처럼 소수로 표기(지수 표기의 빼기 기호 글꼴 문제 방지)
+        if xscale == &quot;log&quot;:
             ax.xaxis.set_major_formatter(mticker.FuncFormatter(lambda x,
                                                                _: f&quot;{x:g}&quot;))
             ax.xaxis.set_minor_formatter(mticker.NullFormatter())

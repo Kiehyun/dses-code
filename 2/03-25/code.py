@@ -85,7 +85,8 @@ print("type(bias) :", type(bias))
 
 # %% code Ⅲ-83.
 import textwrap
-public = [a for a in dir(bias) if not a.startswith("_")]   # 밑줄로 시작하는 내부용 이름은 빼기
+# 밑줄로 시작하는 내부용 이름은 빼기
+public = [a for a in dir(bias) if not a.startswith("_")]
 print(f"공개 속성 · 메서드 {len(public)}개 :")
 print(textwrap.fill(", ".join(public), width=76))
 print("type(bias.data) :", type(bias.data))
@@ -189,7 +190,8 @@ from ccdproc import combine
 
 method = "median"
 
-dark0_150sec = combine(dark_150sec_list,       # ccdproc은 numpy 배열이 아니라 파이썬 리스트만 받음
+# ccdproc은 numpy 배열이 아니라 파이썬 리스트만 받음
+dark0_150sec = combine(dark_150sec_list,
                         method = method,         # 기본값이 average라서 median으로 지정
                         unit = 'adu')
 
@@ -287,11 +289,11 @@ flat_ccds = []
 for fpath in flat_list:
     ccd = CCDData.read(str(fpath), unit="adu")
     ccd = ccd_process(ccd,                       # 플랫 한 장
-                      master_bias = bias,        # 마스터 바이어스
-                      dark_frame = dark_30sec,   # 노출 시간이 가장 가까운 30초 다크
-                      exposure_key='exptime',    # 노출 시간이 적힌 헤더 키워드
-                      exposure_unit=u.s,         # 노출 시간의 단위
-                      dark_scale=True)           # 다크를 플랫의 노출 시간에 맞춤
+                      master_bias = bias,       # 마스터 바이어스
+                      dark_frame = dark_30sec,  # 노출 시간이 가장 가까운 30초 다크
+                      exposure_key='exptime',   # 노출 시간이 적힌 헤더 키워드
+                      exposure_unit=u.s,        # 노출 시간의 단위
+                      dark_scale=True)          # 다크를 플랫의 노출 시간에 맞춤
     flat_ccds.append(ccd)
 
 # 밝기가 다른 플랫을 같은 수준(중앙값들의 중앙값)으로 맞춘 뒤 중앙값 합성
@@ -332,12 +334,13 @@ import astropy.units as u
 for fpath in object_BLCAM_list:
     obj = CCDData.read(str(fpath), unit='adu')
     reduced = ccd_process(obj,                         # 입력 이미지
-                          master_bias = bias,          # 마스터 바이어스
-                          dark_frame = dark_150sec,    # 노출 시간이 같은(150초) 다크
-                          exposure_key = 'exptime',    # 노출 시간 키워드
-                          exposure_unit = u.s,         # 노출 시간 단위
+                          master_bias = bias,        # 마스터 바이어스
+                          dark_frame = dark_150sec,  # 노출 시간이 같은(150초) 다크
+                          exposure_key = 'exptime',  # 노출 시간 키워드
+                          exposure_unit = u.s,       # 노출 시간 단위
                           )
-    # 플랫 나누기: norm_value를 주지 않으면 플랫을 평균으로 다시 나누므로 중앙값(=1)을 직접 줌
+    # 플랫 나누기: norm_value를 주지 않으면 플랫을
+    # 평균으로 다시 나누므로 중앙값(=1)을 직접 줌
     reduced = flat_correct(reduced, flat_norm, norm_value=np.median(flat_norm.data))
     reduced.data = reduced.data.astype(np.float32)   # 실수형으로 저장(음수도 그대로 유지)
     reduced.write(f"{REDUCEDDIR}/reduced_{fpath.name}", overwrite =True)
@@ -362,7 +365,7 @@ for fpath in object_BLCAM_list:
     obj = CCDData.read(str(fpath), unit='adu')
     reduced_darksc = ccd_process(obj,                    # 입력 이미지
                           master_bias = bias,        # 마스터 바이어스
-                          dark_frame = dark_30sec,  # 노출 시간이 다른(30초) 다크
+                          dark_frame = dark_30sec,   # 노출 시간이 다른(30초) 다크
                           exposure_key = 'exptime',  # 노출 시간 키워드
                           exposure_unit = u.s,       # 노출 시간 단위
                           dark_scale = True,         # 다크 프레임 크기를 맞출지 여부
@@ -462,11 +465,11 @@ mflats = {}                          # 필터 -> 마스터 플랫(정규화 전)
 
 for filt, group in flat_df.groupby("FILTER"):
     ccds = [ccd_process(CCDData.read(f, unit="adu"),
-                        master_bias=mbias,          # 바이어스 빼기
-                        dark_frame=mdarks[30.0],    # 다크 빼기
-                        exposure_key="exptime",     # 노출 시간 키워드
-                        exposure_unit=u.s,          # 노출 시간 단위
-                        dark_scale=True)            # 노출 시간에 맞춰 줄임
+                        master_bias=mbias,        # 바이어스 빼기
+                        dark_frame=mdarks[30.0],  # 다크 빼기
+                        exposure_key="exptime",   # 노출 시간 키워드
+                        exposure_unit=u.s,        # 노출 시간 단위
+                        dark_scale=True)          # 노출 시간에 맞춰 줄임
             for f in group["file"]]
     levels = np.array([np.median(c.data) for c in ccds])
     mflat = combine(ccds, method="median",
@@ -503,12 +506,13 @@ for _, row in df_light_bl.iterrows():
     expt = ccd.header["EXPTIME"]
     red = ccd_process(ccd,
                       master_bias=mbias,
-                      dark_frame=mdarks[expt],        # 노출 시간이 같은 다크
+                      dark_frame=mdarks[expt],  # 노출 시간이 같은 다크
                       exposure_key="exptime",
                       exposure_unit=u.s,
-                      dark_scale=False)               # 기본값 False
-    flat_n = mflats_norm[filt]                          # 필터가 같은 플랫
-    red = flat_correct(red, flat_n, norm_value=np.median(flat_n.data))  # 중앙값 정규화 유지
+                      dark_scale=False)         # 기본값 False
+    flat_n = mflats_norm[filt]  # 필터가 같은 플랫
+    # 중앙값 정규화 유지
+    red = flat_correct(red, flat_n, norm_value=np.median(flat_n.data))
     red.data = red.data.astype(np.float32)
 
     fname = REDUCEDDIR / f"red_auto_{fpath.name}"
@@ -522,12 +526,13 @@ for _, row in df_light_bl.iterrows():
     filt = ccd.header["FILTER"]
     red = ccd_process(ccd,
                       master_bias=mbias,
-                      dark_frame=mdarks[30.0],       # 노출 시간이 다른 다크
+                      dark_frame=mdarks[30.0],  # 노출 시간이 다른 다크
                       exposure_key="exptime",
                       exposure_unit=u.s,
-                      dark_scale=True)                # 노출 시간에 맞춤
-    flat_n = mflats_norm[filt]                          # 필터가 같은 플랫
-    red = flat_correct(red, flat_n, norm_value=np.median(flat_n.data))  # 중앙값 정규화 유지
+                      dark_scale=True)          # 노출 시간에 맞춤
+    flat_n = mflats_norm[filt]  # 필터가 같은 플랫
+    # 중앙값 정규화 유지
+    red = flat_correct(red, flat_n, norm_value=np.median(flat_n.data))
     red.data = red.data.astype(np.float32)
 
     fname = REDUCEDDIR / f"red_auto_darksc_{fpath.name}"

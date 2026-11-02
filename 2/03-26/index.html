@@ -63,7 +63,8 @@ fig.suptitle(f&#x27;{str(fpaths[0])}&#x27;, fontsize=8)
 fig.colorbar(im1, ax = axs[0], fraction=0.035, pad=0.04)
 fig.colorbar(im2, ax = axs[1], fraction=0.035, pad=0.04)
 plt.tight_layout()</code></pre>
-<h2 id="code-Ⅲ-139">code Ⅲ-139. <button class="copy">복사</button></h2><pre><code># 영상 표시 함수 znorm · zimshow · norm_imshow 는 Ⅲ-04 「FITS 파일 다루기」에서 설명했고 dses_utils 에 들어 있음</code></pre>
+<h2 id="code-Ⅲ-139">code Ⅲ-139. <button class="copy">복사</button></h2><pre><code># 영상 표시 함수 znorm · zimshow · norm_imshow 는 Ⅲ-04 「FITS
+# 파일 다루기」에서 설명했고 dses_utils 에 들어 있음</code></pre>
 <h2 id="code-Ⅲ-140">code Ⅲ-140. <button class="copy">복사</button></h2><pre><code>def checkPSolve(fpath,
                     **kwargs,
                     ):
@@ -196,7 +197,8 @@ def AstrometrySolver(fpath,
     if SOLVE :
         print(f&quot;{fpath.name} is already solved...&quot;)
     else :
-        if not os.environ.get(&quot;ASTROMETRY_NET_API_KEY&quot;):   # 키는 위치 보정이 필요할 때만 확인
+        # 키는 위치 보정이 필요할 때만 확인
+        if not os.environ.get(&quot;ASTROMETRY_NET_API_KEY&quot;):
             print(&quot;API 키가 없어 위치 보정을 건너뜁니다.&quot;)
             return SOLVE, ASTAP, LOCAL
         try_again = True
@@ -210,7 +212,8 @@ def AstrometrySolver(fpath,
                     else:
                         wcs_header = ast.monitor_submission(submission_id,
                                                             solve_timeout = solve_timeout)
-                except AQTimeoutError as e:            # astroquery의 시간 초과 예외(내장 TimeoutError와 다름)
+                # astroquery의 시간 초과 예외(내장 TimeoutError와 다름)
+                except AQTimeoutError as e:
                     submission_id = e.args[1]
                 else:
                     # 결과를 받았으므로 종료
@@ -287,8 +290,8 @@ from astropy.wcs.utils import proj_plane_pixel_scales
 for name, w, h in [(&quot;hdul0&quot;, wcs0, hdul0[0].header),
                    (&quot;hdul1&quot;, wcs1, hdul1[0].header),
                    (&quot;hdul2&quot;, wcs2, hdul2[0].header)]:
-    scale = proj_plane_pixel_scales(w) * 3600          # 도 → 각초
-    fov_x = scale[0] * h[&quot;NAXIS1&quot;] / 60                 # 각초 → 각분
+    scale = proj_plane_pixel_scales(w) * 3600  # 도 → 각초
+    fov_x = scale[0] * h[&quot;NAXIS1&quot;] / 60        # 각초 → 각분
     fov_y = scale[1] * h[&quot;NAXIS2&quot;] / 60
     print(f&quot;{name}: CRVAL = ({w.wcs.crval[0]:.4f}, {w.wcs.crval[1]:.4f}) deg, &quot;
           f&quot;CRPIX = ({w.wcs.crpix[0]:.1f}, {w.wcs.crpix[1]:.1f}), &quot;

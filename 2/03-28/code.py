@@ -122,7 +122,8 @@ print(type(df))
 df
 
 # %% code Ⅲ-195.
-# 영상 표시 함수 znorm · zimshow · norm_imshow 는 Ⅲ-04 「FITS 파일 다루기」에서 설명했고 dses_utils 에 들어 있음
+# 영상 표시 함수 znorm · zimshow · norm_imshow 는 Ⅲ-04 「FITS
+# 파일 다루기」에서 설명했고 dses_utils 에 들어 있음
 
 # %% code Ⅲ-196.
 import numpy as np
@@ -250,12 +251,12 @@ def plot_cutouts(apert, data, indices, cols, figsize=(6.4, 6.6)):
         figsize: 그래프 크기 (default: (6.4, 6.6))
     """
 
-    ncols = min(len(indices), cols)      # 최대 cols열
-    nrows = -(-len(indices) // ncols)    # 필요한 행 수(올림)
+    ncols = min(len(indices), cols)    # 최대 cols열
+    nrows = -(-len(indices) // ncols)  # 필요한 행 수(올림)
 
     fig, axs = plt.subplots(nrows, ncols, figsize=figsize, squeeze=False)
-    axs = axs.flatten()  # 1차원 배열로 변환
-    for ax in axs[len(indices):]:        # 남는 칸은 지움
+    axs = axs.flatten()            # 1차원 배열로 변환
+    for ax in axs[len(indices):]:  # 남는 칸은 지움
         ax.axis('off')
 
     for i, idx in enumerate(indices):

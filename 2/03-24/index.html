@@ -275,11 +275,8 @@ norm = ImageNormalize(hdul[0].data, interval=MinMaxInterval(),
                       stretch=SqrtStretch())
 
 im0 = axs[0].imshow(hdul[0].data, origin=&#x27;lower&#x27;, norm=norm)
-
 axs[0].set_title(&#x27;Normalization&#x27;, fontsize=9)
-
 im1 = zimshow(axs[1], hdul[0].data, origin=&#x27;lower&#x27;)
-
 axs[1].set_title(f&#x27;Zimshow&#x27;, fontsize=9)
 
 fig.colorbar(im0, ax = axs[0], fraction=0.035, pad=0.04)
@@ -468,7 +465,8 @@ ax2.grid(ls=&quot;:&quot;)
 ax2.set_ylim(1, 5)
 ax2.invert_yaxis()
 ax2.set_title(&#x27;log scale = magnitude scale&#x27;)
-ax1.legend(*ax2.get_legend_handles_labels(), fontsize=8, loc=&#x27;upper right&#x27;)   # 범례는 왼쪽 그래프의 빈 곳에
+# 범례는 왼쪽 그래프의 빈 곳에
+ax1.legend(*ax2.get_legend_handles_labels(), fontsize=8, loc=&#x27;upper right&#x27;)
 plt.tight_layout()
 plt.show()</code></pre>
 <h2 id="code-Ⅲ-54">code Ⅲ-54. <button class="copy">복사</button></h2><pre><code># 함수 사용 예
@@ -485,8 +483,8 @@ plt.plot(row_data)
 plt.xlabel(&#x27;Pixel Number&#x27;)
 plt.ylabel(&#x27;Pixel Value&#x27;)
 plt.title(f&#x27;Pixel Values of Row {row_index}&#x27;)
-plt.grid(True, which=&#x27;both&#x27;)  # 그리드 추가
-plt.minorticks_on()           # 마이너 틱 추가
+plt.grid(True, which=&#x27;both&#x27;)    # 그리드 추가
+plt.minorticks_on()             # 마이너 틱 추가
 plt.show()</code></pre>
 <h2 id="code-Ⅲ-56">code Ⅲ-56. <button class="copy">복사</button></h2><pre><code>import matplotlib.pyplot as plt
 
@@ -659,8 +657,8 @@ thresh_snr = thresh_snr[0][0]</code></pre>
 
 avg, med, std = sigma_clipped_stats(hdul[0].data)  # 기본값은 3σ, 5회 반복
 print(&quot;avg, med, std :&quot;, avg, med, std)
-data_sub = hdul[0].data - med                       # 배경을 뺀 영상
-thresh = 5.*std                                     # 배경 위 5σ
+data_sub = hdul[0].data - med                      # 배경을 뺀 영상
+thresh = 5.*std                                    # 배경 위 5σ
 print(&quot;thresh (배경 위 5σ) :&quot;, thresh)
 print(&quot;detect_threshold − 배경 (배경 위 3σ) :&quot;, thresh_snr - med)</code></pre>
 <h2 id="code-Ⅲ-62">code Ⅲ-62. <button class="copy">복사</button></h2><pre><code>from photutils.detection import DAOStarFinder
@@ -674,8 +672,8 @@ DAOfind = DAOStarFinder(
  # sigma_radius = 1.5,             # 기본값
  # ratio = 1.0,                    # 1.0: 원형 가우스
                         )
-DAOfound = DAOfind(data_sub)   # 배경을 뺀 영상
-if &quot;xcentroid&quot; in DAOfound.colnames:   # photutils 3.0 전 판이면 열 이름을 새 판에 맞춤
+DAOfound = DAOfind(data_sub)          # 배경을 뺀 영상
+if &quot;xcentroid&quot; in DAOfound.colnames:  # photutils 3.0 전 판이면 열 이름을 새 판에 맞춤
     DAOfound.rename_columns([&quot;xcentroid&quot;, &quot;ycentroid&quot;], [&quot;x_centroid&quot;, &quot;y_centroid&quot;])
 print(&quot;len(DAOfound) :&quot;,len(DAOfound))
 DAOfound</code></pre>

@@ -42,7 +42,7 @@ print(&quot;red :&quot;, red)</code></pre>
 <h2 id="code-Ⅳ-102">code Ⅳ-102. <button class="copy">복사</button></h2><pre><code>import numpy as np
 red_arr = np.array(red)  # 이미지 → ndarray
 print(&quot;type(red_arr) : {}&quot;.format(type(red_arr)))
-print(red_arr.shape)  # (세로, 가로, 채널)
+print(red_arr.shape)     # (세로, 가로, 채널)
 
 # 24비트 RGB → 8비트 흑백(&#x27;L&#x27;)
 red = red.convert(&#x27;L&#x27;)

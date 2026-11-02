@@ -17,7 +17,7 @@ params = {
     "base_name": "Trilobita",
     "show": "coords,phylo,strat,lith",
     "occs_created_before": "2026-10-26",  # 이 날짜 전에 등록된 기록만(결과 재현용)
-    "limit": "all",  # 숫자를 주면 등록 순서 앞쪽 기록만 받음
+    "limit": "all",                       # 숫자를 주면 등록 순서 앞쪽 기록만 받음
 }
 url = "https://paleobiodb.org/data1.2/occs/list.csv"
 

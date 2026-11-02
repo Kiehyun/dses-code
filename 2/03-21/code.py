@@ -216,7 +216,8 @@ for ax, (name, plate, mjd, fiber, z) in zip(axes, spectra):
     for line, lam in LINES.items():
         if rest.min() < lam < rest.max():
             ax.axvline(lam, color="crimson", ls=":", lw=0.8)
-            ax.text(lam, top * (0.9 if line in ("[OIII]", "[NII]") else 1.02), line,   # 가까운 두 선은 높이를 달리
+            # 가까운 두 선은 높이를 달리
+            ax.text(lam, top * (0.9 if line in ("[OIII]", "[NII]") else 1.02), line,
                     color="crimson", fontsize=9,
                     ha="center")
     ax.set_ylim(0, top * 1.15)
@@ -241,8 +242,8 @@ y = np.log10(bpt["oiii_5007_flux"] / bpt["h_beta_flux"])
 ok = np.isfinite(x) & np.isfinite(y)
 x, y = x[ok], y[ok]
 
-kauff = lambda v: 0.61 / (v - 0.05) + 1.30      # v < 0.05
-kewley = lambda v: 0.61 / (v - 0.47) + 1.19     # v < 0.47
+kauff = lambda v: 0.61 / (v - 0.05) + 1.30   # v < 0.05
+kewley = lambda v: 0.61 / (v - 0.47) + 1.19  # v < 0.47
 sf = (x < 0.05) & (y < kauff(x))
 agn = (x >= 0.47) | (y > kewley(x))
 comp = ~sf & ~agn

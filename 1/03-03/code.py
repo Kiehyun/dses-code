@@ -30,7 +30,8 @@ print(f"longitude: {location_Suwon.longitude}")
 # %% code Ⅲ-32.
 from astral import LocationInfo
 
-city_London = LocationInfo("London", "England", "Europe/London", 51.5, -0.116)  # 이름, 지역, 시간대, 위도, 경도
+# 이름, 지역, 시간대, 위도, 경도
+city_London = LocationInfo("London", "England", "Europe/London", 51.5, -0.116)
 
 print(f"type(city_London): {type(city_London)}")
 print(f"city_London: {city_London}")

@@ -116,7 +116,6 @@ x, y, z = Rpos
 ax.plot(x, y, z)
 
 ax.set_aspect('equal')
-
 plt.show()
 
 # %% code Ⅲ-47.

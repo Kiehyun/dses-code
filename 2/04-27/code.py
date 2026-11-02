@@ -218,9 +218,9 @@ print("np.nanmin(latitude):{}".format(np.nanmin(latitude)))
 print("np.nanmax(latitude):{}".format(np.nanmax(latitude)))
 
 # %% code Ⅳ-122.
-Wlon, Elon = np.nanmin(longitude), np.nanmax(longitude)     # 서 · 동 경계
-Slat, Nlat = np.nanmin(latitude), np.nanmax(latitude)       # 남 · 북 경계
-Clon, Clat = (Wlon + Elon) / 2, (Slat + Nlat) / 2           # 중심 좌표
+Wlon, Elon = np.nanmin(longitude), np.nanmax(longitude)  # 서 · 동 경계
+Slat, Nlat = np.nanmin(latitude), np.nanmax(latitude)  # 남 · 북 경계
+Clon, Clat = (Wlon + Elon) / 2, (Slat + Nlat) / 2  # 중심 좌표
 
 print(f"서 {Wlon:.2f}°, 동 {Elon:.2f}°, 남 {Slat:.2f}°, 북 {Nlat:.2f}°")
 print(f"중심 ({Clon:.2f}°E, {Clat:.2f}°N)")

@@ -149,9 +149,9 @@ from matplotlib.colors import ListedColormap
 th, s = atl["theta"].values, atl["s"].values
 depth2d = np.broadcast_to(atl.depth.values[:, None], th.shape)
 wm = np.full(th.shape, np.nan)
-wm[(th < 1.0) & (depth2d >= 3000)] = 1                                    # AABW
-wm[(th >= 1.5) & (th <= 4.0) & (s >= 34.88) & (depth2d >= 1200)] = 2      # NADW
-wm[(s <= 34.45) & (depth2d >= 400) & (depth2d <= 1500)] = 3               # AAIW
+wm[(th < 1.0) & (depth2d >= 3000)] = 1  # AABW
+wm[(th >= 1.5) & (th <= 4.0) & (s >= 34.88) & (depth2d >= 1200)] = 2  # NADW
+wm[(s <= 34.45) & (depth2d >= 400) & (depth2d <= 1500)] = 3  # AAIW
 
 cmap = ListedColormap(["#3b4cc0", "#e7a33e", "#5bb15b"])
 fig, ax = plt.subplots(figsize=(7.5, 3.4))

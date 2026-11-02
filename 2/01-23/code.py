@@ -9,9 +9,10 @@ rng = np.random.default_rng(0)                       # 같은 난수가 나오�
 days = pd.date_range("2025-01-01", "2025-12-31", freq="D")
 doy = days.dayofyear.to_numpy()
 
-season = -np.cos(2 * np.pi * (doy - 15) / 365)       # 1월 중순 -1, 7월 중순 +1
-tmean = 12.5 + 14.5 * season                         # 일평균기온의 계절 변화(°C)
-drange = 8.5 + 1.5 * np.cos(4 * np.pi * (doy - 105) / 365)  # 일교차(반년 주기: 4·10월 최대, 1·7월 최소)
+season = -np.cos(2 * np.pi * (doy - 15) / 365)  # 1월 중순 -1, 7월 중순 +1
+tmean = 12.5 + 14.5 * season                    # 일평균기온의 계절 변화(°C)
+# 일교차(반년 주기: 4·10월 최대, 1·7월 최소)
+drange = 8.5 + 1.5 * np.cos(4 * np.pi * (doy - 105) / 365)
 
 df = pd.DataFrame({
     "tmax": tmean + drange / 2 + rng.normal(0, 2.0, len(days)),

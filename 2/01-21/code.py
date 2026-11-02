@@ -11,9 +11,9 @@ import os, sys, importlib, urllib.request
 
 _url = "https://raw.githubusercontent.com/Kiehyun/dses_utils/main/dses_utils.py"
 try:
-    _new = urllib.request.urlopen(_url, timeout=10).read()   # 최신 내용을 메모리로 받아옴
+    _new = urllib.request.urlopen(_url, timeout=10).read()  # 최신 내용을 메모리로 받아옴
     _old = open("dses_utils.py", "rb").read() if os.path.exists("dses_utils.py") else None
-    if _new != _old:                                          # 내용이 다를 때만 덮어씀
+    if _new != _old:  # 내용이 다를 때만 덮어씀
         with open("dses_utils.py", "wb") as _f:
             _f.write(_new)
         if "dses_utils" in sys.modules:                       # 이미 불러왔다면 다시 불러옴
@@ -22,9 +22,9 @@ except Exception:
     pass  # 인터넷이 안 되면 기존에 받아둔 dses_utils.py 사용
 
 import dses_utils as du
-du.check_and_install(packages_str)              # 패키지 확인·설치와 버전 출력
-du.set_korean_font()                            # 그래프의 한글 글꼴 설정
-proj_dir = du.make_project_dir(du.current_notebook_name())   # 데이터 저장 폴더 생성
+du.check_and_install(packages_str)  # 패키지 확인·설치와 버전 출력
+du.set_korean_font()                # 그래프의 한글 글꼴 설정
+proj_dir = du.make_project_dir(du.current_notebook_name())  # 데이터 저장 폴더 생성
 
 # %% code Ⅰ-3.
 src = '''"""단위 변환 함수 모음(연습용 모듈)."""

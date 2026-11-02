@@ -64,9 +64,9 @@ print(f"추세 제거 후 표준편차: {detrended.std():.2f}")
 print(f"넣어 둔 계절 진폭    : 5.0  ->  추정 진폭 약 {detrended.std()*np.sqrt(2):.2f}")
 
 # %% code Ⅱ-19.
-values = detrended - detrended.mean()             # 평균도 0으로 맞춘다
+values = detrended - detrended.mean()  # 평균도 0으로 맞춘다
 n = values.size
-dt = 1 / PER_YEAR                                 # 표본 간격(년)
+dt = 1 / PER_YEAR                      # 표본 간격(년)
 
 spectrum = np.fft.rfft(values)     # 실수 데이터용 푸리에 변환
 freqs = np.fft.rfftfreq(n, d=dt)   # 진동수 (1/년)

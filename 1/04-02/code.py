@@ -12,7 +12,7 @@ colors = ['mediumpurple', 'skyblue', 'gold', 'tomato', 'lightgrey']
 fig, ax = plt.subplots(figsize=(7.5, 3.6))
 wedges, _ = ax.pie(sizes, colors=colors, startangle=90, counterclock=False,
                    wedgeprops={'edgecolor': 'white', 'linewidth': 1})
-ax.text(0.15, 0.25, '질소\n78.1 %', ha='center', fontsize=11)      # 큰 조각만 안에 쓴다
+ax.text(0.15, 0.25, '질소\n78.1 %', ha='center', fontsize=11)  # 큰 조각만 안에 쓴다
 ax.text(-0.5, 0.45, '산소\n20.9 %', ha='center', fontsize=10)
 ax.axis('equal')  # 원이 찌그러지지 않게
 
@@ -131,7 +131,7 @@ df = pd.read_csv(str(fpaths[0]),
                           'seasonally adjusted',  # 계절 변동 제거
                           'fit',                  # 맞춤 곡선
                           'seasonally adjusted fit',
-                          'CO2 filled',  # 결측을 채운 값
+                          'CO2 filled',           # 결측을 채운 값
                           'seasonally adjusted filled',
                           'Station'],
                  encoding= 'unicode_escape')
@@ -223,7 +223,8 @@ y_top = int(np.ceil(df['CO2'].max() / 10) * 10)
 ax.set_yticks([i for i in range(310, y_top + 1, 5)])
 ax.set_yticks([i for i in range(310, y_top + 1, 1)], minor=True)
 ax.set_yticklabels([i for i in range(310, y_top + 1, 5)], fontdict={'fontsize':11, 'fontweight':'bold'})
-ax.set_yticklabels(sum([[i, ''] for i in [i for i in range(310, y_top + 1, 10)]], [])[:-1])  # 10 ppm마다만 숫자
+# 10 ppm마다만 숫자
+ax.set_yticklabels(sum([[i, ''] for i in [i for i in range(310, y_top + 1, 10)]], [])[:-1])
 
 # 눈금을 안쪽으로, 네 변 모두에
 ax.tick_params(direction='in', length=8, width=1, colors='k',
@@ -383,7 +384,8 @@ import matplotlib.pyplot as plt
 import requests
 from io import StringIO
 
-url = "https://keelinglabsites.ucsd.edu/websitedataco2/monthly_flask_co2_spo.csv"  # 남극점(SPO) 플라스크 데이터
+# 남극점(SPO) 플라스크 데이터
+url = "https://keelinglabsites.ucsd.edu/websitedataco2/monthly_flask_co2_spo.csv"
 
 # 1) 최신 데이터를 내려받아 데이터 행만 고르기
 response = requests.get(url)
@@ -391,7 +393,8 @@ response.raise_for_status()
 
 lines = response.text.splitlines()
 
-data_lines = [line for line in lines if re.match(r'^\s*\d{4}\s*,', line) ]  # 연도(네 자리)로 시작하는 행
+# 연도(네 자리)로 시작하는 행
+data_lines = [line for line in lines if re.match(r'^\s*\d{4}\s*,', line) ]
 
 if len(data_lines) == 0:
     raise ValueError("CSV 안에서 데이터 행을 찾지 못했습니다. URL 또는 파일 내용을 확인하세요.")

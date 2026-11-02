@@ -219,12 +219,12 @@ dx = (b["lon"] - a["lon"]) * 111e3 * np.cos(np.deg2rad((a["lat"] + b["lat"]) / 2
 move_u, move_v = dx / 6 / 3600, dy / 6 / 3600
 print(f"이동 속도: {np.hypot(move_u, move_v):.1f} m/s, 방향: 북쪽에서 시계 방향 {np.rad2deg(np.arctan2(move_u, move_v)):.0f}°")
 
-VMAX, RMAX = 35.0, 50e3          # 최대 회전 풍속(m/s), 최대 풍속 반경(m) — 모형 값
+VMAX, RMAX = 35.0, 50e3                 # 최대 회전 풍속(m/s), 최대 풍속 반경(m) — 모형 값
 x = np.linspace(-300e3, 300e3, 121)
 X, Y = np.meshgrid(x, x)
 R = np.hypot(X, Y) + 1
-vt = np.where(R < RMAX, VMAX * R / RMAX, VMAX * RMAX / R)   # 회전 풍속
-u_rot, v_rot = -vt * Y / R, vt * X / R                     # 시계 반대 방향
+vt = np.where(R < RMAX, VMAX * R / RMAX, VMAX * RMAX / R)  # 회전 풍속
+u_rot, v_rot = -vt * Y / R, vt * X / R  # 시계 반대 방향
 U, V = u_rot + move_u, v_rot + move_v
 speed = np.hypot(U, V)
 

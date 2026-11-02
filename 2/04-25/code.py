@@ -48,8 +48,8 @@ ax.grid(alpha=0.3)
 plt.show()
 
 # %% code Ⅳ-82.
-T_a = T_e                    # 대기의 온도 = 복사 평형 온도
-T_s = 2 ** 0.25 * T_e        # 지표의 온도
+T_a = T_e              # 대기의 온도 = 복사 평형 온도
+T_s = 2 ** 0.25 * T_e  # 지표의 온도
 
 print(f"복사 평형 온도(대기 없음) : {T_e:7.2f} K = {T_e - 273.15:6.2f} °C")
 print(f"1층 대기 모형의 지표 온도 : {T_s:7.2f} K = {T_s - 273.15:6.2f} °C")
@@ -59,13 +59,13 @@ print(f"실제 지구의 평균 기온     :  288.15 K =  15.00 °C")
 print(f"실제 온실효과의 크기      : {288.15 - T_e:7.2f} K")
 
 # %% code Ⅳ-83.
-N = np.arange(0, 6)                       # 대기 층 수 (0 = 대기 없음)
+N = np.arange(0, 6)                        # 대기 층 수 (0 = 대기 없음)
 T_layers = (N + 1) ** 0.25 * T_e - 273.15  # °C
 
 fig, ax = plt.subplots(figsize=(8.3, 4.4))
 bars = ax.bar(N, T_layers, color="#4a90d9", width=0.6)
-bars[0].set_color("#9aa7b5")              # 대기 없음
-bars[1].set_color("#e2553d")              # 1층 모형
+bars[0].set_color("#9aa7b5")  # 대기 없음
+bars[1].set_color("#e2553d")  # 1층 모형
 
 for x, y in zip(N, T_layers):
     ax.text(x, y + 1.2, f"{y:.1f}", ha="center", fontsize=10,
@@ -175,7 +175,7 @@ b = budget
 # ① 지구 전체 (대기 위쪽 경계)
 check("지구 전체",
       b["입사"],
-      (b["대기 반사·산란"] + b["지표면 반사"])          # 반사 30
+      (b["대기 반사·산란"] + b["지표면 반사"])  # 반사 30
       + b["대기의 창(우주로)"] + b["대기의 복사(우주로)"])  # 방출 70
 
 # ② 지표면

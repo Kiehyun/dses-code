@@ -148,7 +148,8 @@ def jpl_sb_ident(center, half_width, epoch, mpc_code="P64", vmag_lim=20):
     """JPL SB Ident API로 시야 안 소행성 목록을 받아 SkyBoT과 같은 열 이름으로 돌려줌"""
     ra = center.ra.to_string(unit=u.hourangle, sep="-", precision=1, pad=True)
     dec = center.dec.to_string(unit=u.deg, sep="-", precision=0, pad=True, alwayssign=True)
-    dec = dec.replace("-", "M", 1) if dec.startswith("-") else dec.lstrip("+")   # 음수 적위는 M
+    # 음수 적위는 M
+    dec = dec.replace("-", "M", 1) if dec.startswith("-") else dec.lstrip("+")
     params = {"sb-kind": "a", "mpc-code": mpc_code,
               "obs-time": epoch.utc.strftime("%Y-%m-%d_%H:%M:%S"),
               "fov-ra-center": ra, "fov-dec-center": dec,
@@ -252,7 +253,8 @@ pos_pix_targ_init = np.array(pos_pix_targ_init).T
 print("pos_pix_targ_init:", pos_pix_targ_init)
 
 # %% code Ⅲ-303.
-# 영상 표시 함수 znorm · zimshow · norm_imshow는 Ⅲ-04 「FITS 파일 다루기」에서 설명했고 dses_utils에 들어 있음(du.zimshow 등으로 부름)
+# 영상 표시 함수 znorm · zimshow · norm_imshow는 Ⅲ-04 「FITS 파일
+# 다루기」에서 설명했고 dses_utils에 들어 있음(du.zimshow 등으로 부름)
 
 # %% code Ⅲ-304.
 from photutils.aperture import CircularAperture as CAp

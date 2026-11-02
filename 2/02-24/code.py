@@ -86,12 +86,12 @@ for name, M in gases.items():
 # %% code Ⅱ-25.
 rng = np.random.default_rng(42)       # 난수 씨앗 고정
 
-m_Ar = 39.948 * amu   # 아르곤 원자 질량 (kg)
-radius = 0.17e-9      # 원자 반지름 (m)
-N = 900               # 원자 수
-L = 75e-9             # 상자 한 변 (m)
-T0 = 300.0            # 온도 (K)
-v0 = np.sqrt(2 * k_B * T0 / m_Ar)   # 모든 원자의 처음 속력 (m/s)
+m_Ar = 39.948 * amu                # 아르곤 원자 질량 (kg)
+radius = 0.17e-9                   # 원자 반지름 (m)
+N = 900                            # 원자 수
+L = 75e-9                          # 상자 한 변 (m)
+T0 = 300.0                         # 온도 (K)
+v0 = np.sqrt(2 * k_B * T0 / m_Ar)  # 모든 원자의 처음 속력 (m/s)
 
 # 격자점에 놓고 조금씩 흔들기 (처음부터 겹치지 않게)
 n_side = int(np.ceil(np.sqrt(N)))
@@ -108,7 +108,7 @@ vel0 = v0 * np.column_stack([np.cos(theta), np.sin(theta)])
 # 밀도와 충돌 빈도 어림 (2차원)
 n2d = N / L**2
 fill = N * np.pi * radius**2 / L**2
-mfp = 1 / (2 * np.sqrt(2) * n2d * 2 * radius)        # 평균 자유 거리
+mfp = 1 / (2 * np.sqrt(2) * n2d * 2 * radius)       # 평균 자유 거리
 v_mean_2d = np.sqrt(np.pi * k_B * T0 / (2 * m_Ar))  # 2차원 평균 속력
 print(f"처음 속력 v0       : {v0:.1f} m/s (모든 원자 같음)")
 print(f"원반이 차지한 넓이 : {fill * 100:.2f}%")
@@ -154,9 +154,9 @@ def step(pos, vel, dt):
 # %% code Ⅱ-27.
 import time
 
-dt = 0.05e-12        # 시간 간격 (s)
-n_steps = 12000      # 600 ps
-t_eq = 200e-12       # 이 시각 뒤를 평형 구간으로 봄
+dt = 0.05e-12    # 시간 간격 (s)
+n_steps = 12000  # 600 ps
+t_eq = 200e-12   # 이 시각 뒤를 평형 구간으로 봄
 snap_times_ps = (0, 10, 40, 200)
 
 pos, vel = pos0.copy(), vel0.copy()
@@ -307,9 +307,9 @@ print(f"평형 구간 평균 모양 비율 : {shape[t_ps > 200].mean():.3f}")
 
 # %% code Ⅱ-32.
 duration = n_steps * dt - t_eq
-P_sim = impulse_eq / (duration * 4 * L)               # 측정한 압력 (N/m)
-T_sim = history["E"][-1] / (N * k_B)                  # 2차원: E/N = k_B T
-P_ideal = N * k_B * T_sim / L**2                      # 이상기체 식
+P_sim = impulse_eq / (duration * 4 * L)  # 측정한 압력 (N/m)
+T_sim = history["E"][-1] / (N * k_B)     # 2차원: E/N = k_B T
+P_ideal = N * k_B * T_sim / L**2         # 이상기체 식
 
 print(f"운동 에너지로 구한 온도 : {T_sim:.2f} K")
 print(f"벽 충돌로 잰 압력      : {P_sim:.3e} N/m")

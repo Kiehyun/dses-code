@@ -9,13 +9,9 @@ k = 1.38e-23   # J/K, 볼츠만 상수
 import numpy as np
 
 wavelengths = np.arange(1e-8, 3e-6, 1e-8)  # m, 10 nm ~ 3 μm(10 nm 간격)
-
-T = 6000.  # K
-
+T = 6000.                                  # K
 a = 2.0*h*c**2 
-
 b = h*c/(wavelengths*k*T)
-
 intensities = a / ( (wavelengths**5) * (np.exp(b) - 1.0) )  # 파장별 복사 세기
 
 print ("len(wavelengths): {}".format(len(wavelengths)))
@@ -24,16 +20,12 @@ print ("len(intensities): {}".format(len(intensities)))
 # %% code Ⅱ-14.
 import matplotlib.pyplot as plt
 
-plt.plot(wavelengths*1e9, intensities, 'b-', label = '6000 K')  # 파장을 nm로 바꿔 그리기
-
+# 파장을 nm로 바꿔 그리기
+plt.plot(wavelengths*1e9, intensities, 'b-', label = '6000 K')
 plt.title('플랑크 곡선 (6000 K)')
-
 plt.xlabel(r'파장 [$\rm{nm}$]')  # raw 문자열을 쓰면 LaTeX 수식을 넣을 수 있다
-
 plt.ylabel(r'분광 복사휘도 [W m$^{-2}$ m$^{-1}$ sr$^{-1}$]')
-
 plt.legend()
-
 plt.show()
 
 # %% code Ⅱ-15.
@@ -96,7 +88,7 @@ plt.show()
 # %% code Ⅱ-18.
 from astropy.modeling.models import BlackBody
 
-bb_temp = 5778*u.K  # 태양 표면 온도
+bb_temp = 5778*u.K         # 태양 표면 온도
 bb = BlackBody(temperature = bb_temp)
 wavelength = 10000 * u.AA  # 10000 Å = 1 μm
 flux = bb(wavelength)
@@ -122,10 +114,8 @@ print('flux.to(u.W / (u.m**2 * u.Hz * u.sr)) : {0.value:0.08f} {0.unit:FITS}'\
 # %% code Ⅱ-20.
 from astropy.visualization import quantity_support
 
-bb = BlackBody(temperature=5778*u.K)  # 태양 표면 온도
-
+bb = BlackBody(temperature=5778*u.K)         # 태양 표면 온도
 wavelength = np.arange(1000, 110000) * u.AA  # 0.1 ~ 11 μm
-
 flux = bb(wavelength)
 
 with quantity_support():  # 단위가 붙은 값을 바로 그리기
@@ -178,8 +168,10 @@ ax.tick_params(direction='in', length=3, width=1, colors='k',
                bottom=True, top=True, left=True, right=True)
 
 plt.title('플랑크 곡선', fontdict={'size':12})
-plt.xlabel(f'파장 [{wavelengths.unit:latex_inline}]', fontdict={'size':10})  # 단위를 한 줄로
-plt.ylabel(f'분광 복사휘도 [{I_unit:latex_inline}]', fontdict={'size':10})  # 단위를 한 줄로
+# 단위를 한 줄로
+plt.xlabel(f'파장 [{wavelengths.unit:latex_inline}]', fontdict={'size':10})
+# 단위를 한 줄로
+plt.ylabel(f'분광 복사휘도 [{I_unit:latex_inline}]', fontdict={'size':10})
 
 plt.legend()
 du.save_figure(plt.gcf(), os.path.join(proj_dir, "02_02_Plotting_Planck_curve_02"))

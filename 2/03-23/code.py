@@ -48,9 +48,9 @@ display(curvature)
 import matplotlib.pyplot as plt
 from astropy.cosmology import FlatLambdaCDM
 
-Hubble_const = 67.8 * u.km / u.s / u.Mpc   # 허블 상수
-Omega_m = 0.3                               # 물질 밀도 계수(보통 물질 + 암흑 물질)
-Omega_Lambda = 0.7                          # 암흑 에너지 밀도 계수
+Hubble_const = 67.8 * u.km / u.s / u.Mpc  # 허블 상수
+Omega_m = 0.3                             # 물질 밀도 계수(보통 물질 + 암흑 물질)
+Omega_Lambda = 0.7                        # 암흑 에너지 밀도 계수
 
 cosmo_flat = FlatLambdaCDM(H0=Hubble_const, Om0=Omega_m, Tcmb0=2.725,
                            Neff=3.046)
@@ -93,8 +93,8 @@ cosmo = LambdaCDM(H0=Hubble_const, Om0=Omega_m, Ode0=Omega_Lambda,
 age = cosmo.age(z)
 scale = cosmo.scale_factor(z)
 
-t_hubble = cosmo.hubble_time.to(u.Gyr)      # 허블 시간 = 등속 팽창 우주의 나이
-age_now = cosmo.age(0).to(u.Gyr)            # ΛCDM 우주의 나이
+t_hubble = cosmo.hubble_time.to(u.Gyr)  # 허블 시간 = 등속 팽창 우주의 나이
+age_now = cosmo.age(0).to(u.Gyr)        # ΛCDM 우주의 나이
 
 t_const = np.linspace(0, t_hubble.value, 100)
 a_const = t_const / t_hubble.value          # 등속 팽창: a = t / t_H
@@ -138,13 +138,14 @@ du.save_figure(fig, proj_dir / "hubble_time_vs_age_centered")
 plt.show()
 
 # %% code Ⅲ-31.
-z_t = np.concatenate([np.logspace(4, -3, 400), -np.linspace(0.001, 0.09, 40)])  # 과거 → 미래
+# 과거 → 미래
+z_t = np.concatenate([np.logspace(4, -3, 400), -np.linspace(0.001, 0.09, 40)])
 t_now = cosmo.age(0).to(u.Gyr).value
 t = cosmo.age(z_t).to(u.Gyr).value - t_now                       # 현재로부터의 시간
 
 D_horizon = ((cosmo.comoving_distance(1e5) - cosmo.comoving_distance(z_t)) / (1 + z_t)).to(u.Gpc)
-D_hubble = (const.c / cosmo.H(z_t)).to(u.Gpc)                    # 그 시각의 허블 길이
-D_coast = (const.c * (t + t_now) * u.Gyr).to(u.Gpc)              # 등속 팽창 우주의 c·t
+D_hubble = (const.c / cosmo.H(z_t)).to(u.Gpc)        # 그 시각의 허블 길이
+D_coast = (const.c * (t + t_now) * u.Gyr).to(u.Gpc)  # 등속 팽창 우주의 c·t
 
 fig, ax = plt.subplots(figsize=(7.5, 4.5))
 ax.plot(t, D_horizon, color="tab:green",
@@ -239,7 +240,8 @@ models = [
     {"label": "물질만 있는 평탄 우주", "Om0": 1.0, "Ode0": 0.0, "ls": ":",
      "color": "tab:green"},
 ]
-ref = LambdaCDM(H0=H0_union, Om0=0.3, Ode0=0.0, Tcmb0=2.725, Neff=3.046)   # 잔차의 기준: 물질만 있는 열린 우주
+# 잔차의 기준: 물질만 있는 열린 우주
+ref = LambdaCDM(H0=H0_union, Om0=0.3, Ode0=0.0, Tcmb0=2.725, Neff=3.046)
 
 def plot_sn_models(data, xscale="linear", fig_name=None):
     z_grid = np.geomspace(0.01, 1.45, 200)
@@ -284,7 +286,8 @@ def plot_sn_models(data, xscale="linear", fig_name=None):
     axs[1].axhline(0, color="k", lw=0.8)
     for ax in axs:
         ax.set_xscale(xscale)
-        if xscale == "log":   # 눈금을 0.01, 0.1, 1처럼 소수로 표기(지수 표기의 빼기 기호 글꼴 문제 방지)
+        # 눈금을 0.01, 0.1, 1처럼 소수로 표기(지수 표기의 빼기 기호 글꼴 문제 방지)
+        if xscale == "log":
             ax.xaxis.set_major_formatter(mticker.FuncFormatter(lambda x,
                                                                _: f"{x:g}"))
             ax.xaxis.set_minor_formatter(mticker.NullFormatter())

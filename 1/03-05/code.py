@@ -11,12 +11,11 @@ from astroquery.jplhorizons import Horizons
 
 # 수성의 위치 · 속도 벡터
 obj1 = Horizons(id = '199',                # 199 = 수성
-                location="@sun",          # 태양 중심 기준
-                epochs=specific_time.jd   # 줄리안 데이
+                location="@sun",         # 태양 중심 기준
+                epochs=specific_time.jd  # 율리우스일
                 ).vectors()
 
 print("type(obj1): ", type(obj1))
-
 print("obj1: ",obj1)
 
 # %% code Ⅲ-56.
@@ -32,7 +31,7 @@ specific_time = Time(specific_time_str)
 print("specific_time:", specific_time)
 print("type(specific_time): ", type(specific_time))
 
-# 줄리안 데이로 Time 객체 만들기
+# 율리우스일로 Time 객체 만들기
 specific_time_jd = Time(specific_time.jd, format="jd")
 print("type(specific_time.jd):", type(specific_time.jd))
 print("specific_time.jd: ", specific_time.jd)
@@ -85,9 +84,9 @@ ax.grid(True)
 # 태양(원점)
 plot = ax.scatter(0, 0,
                   color = "red",
-                  s = 28**2,          # 점 크기는 지름의 제곱
+                  s = 28**2,    # 점 크기는 지름의 제곱
                   edgecolors = None,
-                  zorder = 10)        # 다른 것보다 앞에 그리기
+                  zorder = 10)  # 다른 것보다 앞에 그리기
 
 # %% code Ⅲ-58.
 import matplotlib.pyplot as plt
@@ -160,8 +159,8 @@ ax.text(.03, .94,                          # 축 좌표(0~1) 기준 위치
 
 # 수성 · 금성 · 지구 · 화성
 from astroquery.jplhorizons import Horizons
-ids = ['199', '299', '399', '499']             # Horizons ID(행성 본체)
-sizes = [0.38, 0.95, 1., 0.53]                 # 상대 크기(지구 = 1)
+ids = ['199', '299', '399', '499']  # Horizons ID(행성 본체)
+sizes = [0.38, 0.95, 1., 0.53]      # 상대 크기(지구 = 1)
 names = ['수성', '금성', '지구', '화성']
 for i in range(4):
     obj = Horizons(id = ids[i],
@@ -227,7 +226,8 @@ from astroquery.jplhorizons import Horizons
 obj = Horizons(id='399', location="@sun", epochs=Time(start_time_text).jd).vectors()
 
 r = np.array([np.double(obj[xi]) for xi in ['x', 'y', 'z']], dtype=np.float64)    # AU
-v = np.array([np.double(obj[vxi]) for vxi in ['vx', 'vy', 'vz']], dtype=np.float64)  # AU/day
+# AU/day
+v = np.array([np.double(obj[vxi]) for vxi in ['vx', 'vy', 'vz']], dtype=np.float64)
 print("r: {}, v: {}".format(r, v))
 
 xs, ys = [], []
@@ -235,9 +235,10 @@ rs, vs, accs = [], [], []
 i = 0
 # 오일러-크로머 방법으로 궤도 계산
 while i < (len(dts)) :
-    r = r + v * dt                                   # 위치 갱신: r ← r + v·dt
-    acc = -2.959e-4 * r / np.sum(r**2)**(3./2)  # 새 위치의 가속도(태양 GM = 2.959e-4 AU³/day²)
-    v = v + acc * dt                                 # 속도 갱신: v ← v + a·dt
+    r = r + v * dt    # 위치 갱신: r ← r + v·dt
+    # 새 위치의 가속도(태양 GM = 2.959e-4 AU³/day²)
+    acc = -2.959e-4 * r / np.sum(r**2)**(3./2)
+    v = v + acc * dt  # 속도 갱신: v ← v + a·dt
     rs.append(r)
     vs.append(v)
     accs.append(acc)
@@ -291,9 +292,9 @@ import matplotlib
 from IPython.display import HTML
 
 # 애니메이션 설정(이 장의 모든 애니메이션에 씀)
-matplotlib.rcParams['animation.embed_limit'] = 100     # 용량 한도 100 MB(기본 약 20 MB)
-matplotlib.rcParams['animation.html'] = 'jshtml'       # 노트북에 넣는 형식
-matplotlib.rcParams['animation.writer'] = 'ffmpeg'     # MP4 저장(ffmpeg 실행 파일 필요)
+matplotlib.rcParams['animation.embed_limit'] = 100  # 용량 한도 100 MB(기본 약 20 MB)
+matplotlib.rcParams['animation.html'] = 'jshtml'    # 노트북에 넣는 형식
+matplotlib.rcParams['animation.writer'] = 'ffmpeg'  # MP4 저장(ffmpeg 실행 파일 필요)
 
 print(f"애니메이션 용량 한도: {matplotlib.rcParams['animation.embed_limit']} MB")
 print(f"애니메이션 HTML 형식: {matplotlib.rcParams['animation.html']}")
@@ -311,8 +312,8 @@ from astropy.time import Time
 from astroquery.jplhorizons import Horizons
 
 sim_start_date = "2018-01-01"
-sim_duration = 2 * 365            # 2년(일) = 애니메이션 프레임 수
-GM_sun = 2.959e-4                 # 태양 GM(AU³/day²)
+sim_duration = 2 * 365  # 2년(일) = 애니메이션 프레임 수
+GM_sun = 2.959e-4       # 태양 GM(AU³/day²)
 
 class Object:                     # 천체 하나(태양, 행성)
     def __init__(self, name, rad, color, r, v, ax):
@@ -332,7 +333,7 @@ class SolarSystem:                # 태양계 전체
     def __init__(self, thesun, ax):
         self.thesun = thesun
         self.planets = []
-        self.time = None          # 시작 시각(줄리안 데이)
+        self.time = None          # 시작 시각(율리우스일)
         text = ax.text2D if thesun.is3d else ax.text
         self.timestamp = text(.03, .94, '날짜: ', color='w', transform=ax.transAxes, fontsize='x-large')
 
@@ -341,14 +342,15 @@ class SolarSystem:                # 태양계 전체
 
     def run(self, n_days, dt=1.0):    # 궤도를 미리 계산(오일러-크로머 방법)
         self.times = self.time + dt * np.arange(1, n_days + 1)
-        self.timestamp.set_text('날짜: ' + Time(self.time, format='jd').iso[:10])  # 시작 날짜
+        # 시작 날짜
+        self.timestamp.set_text('날짜: ' + Time(self.time, format='jd').iso[:10])
         for p in self.planets:
             r, v = p.r.copy(), p.v.copy()
             p.path = np.zeros((n_days, 3))
             for k in range(n_days):
-                r = r + v * dt                                # 위치 갱신: r ← r + v·dt
-                acc = -GM_sun * r / np.sum(r**2)**(3./2)      # 새 위치의 태양 중력 가속도
-                v = v + acc * dt                              # 속도 갱신: v ← v + a·dt
+                r = r + v * dt    # 위치 갱신: r ← r + v·dt
+                acc = -GM_sun * r / np.sum(r**2)**(3./2)  # 새 위치의 태양 중력 가속도
+                v = v + acc * dt  # 속도 갱신: v ← v + a·dt
                 p.path[k] = r
 
     def draw(self, i):            # i번째 날의 모습만 그림(계산하지 않음)
@@ -356,7 +358,8 @@ class SolarSystem:                # 태양계 전체
         for p in self.planets:
             x, y, z = p.path[:i+1].T                          # 처음부터 i번째 날까지의 궤적
             if p.is3d:
-                p.plot._offsets3d = ([x[-1]], [y[-1]], [z[-1]])  # 3D 점 위치(내부 속성 사용)
+                # 3D 점 위치(내부 속성 사용)
+                p.plot._offsets3d = ([x[-1]], [y[-1]], [z[-1]])
                 p.line.set_data_3d(x, y, z)
             else:
                 p.plot.set_offsets([x[-1], y[-1]])
@@ -377,11 +380,11 @@ ax.axis('off')
 ss = SolarSystem(Object("태양", 28, 'red', [0, 0, 0], [0, 0, 0], ax), ax)
 ss.time = Time(sim_start_date).jd
 
-ids = ['199', '299', '399', '499']               # Horizons ID: 수성 · 금성 · 지구 · 화성
+ids = ['199', '299', '399', '499']  # Horizons ID: 수성 · 금성 · 지구 · 화성
 colors = ['gray', 'orange', 'blue', 'chocolate']
-sizes = [0.38, 0.95, 1., 0.53]                    # 상대 크기(지구 = 1)
+sizes = [0.38, 0.95, 1., 0.53]      # 상대 크기(지구 = 1)
 names = ['수성', '금성', '지구', '화성']
-texty = [.47, .73, 1, 1.5]                        # 이름 표시 y 위치
+texty = [.47, .73, 1, 1.5]          # 이름 표시 y 위치
 
 # 수성~화성 추가
 for i, nasaid in enumerate(ids):

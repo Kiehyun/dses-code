@@ -83,7 +83,9 @@ t_middle = t_start + t_expos / 2 # 시작 시각 + 노출 시간의 절반
 print(f"t_start: {t_start}, t_expos: {t_expos}, t_middle: {t_middle}")
 
 # %% code Ⅲ-244.
-# 영상 표시 함수 znorm · zimshow · norm_imshow: Ⅲ-04 「FITS 파일 다루기」의 「zscale로 표시하는 함수(zimshow)」 (dses_utils 에 들어 있음)
+# 영상 표시 함수 znorm · zimshow · norm_imshow: Ⅲ-04 「FITS 파일
+# 다루기」의 「zscale로 표시하는 함수(zimshow)」 (dses_utils 에 들어
+# 있음)
 
 # %% code Ⅲ-245.
 # 위치 보정 여부 확인 — Ⅲ-06에서 만든 du.checkPSolve(dses_utils)
@@ -391,11 +393,11 @@ merr_total1 = np.sqrt((df_phot_stars_na["merr"])**2 + (df_phot_stars_na[f"e_{flt
 
 # === 영점(zero point)과 오차 계산
 _xx = np.linspace(Mag_Low, Mag_High)
-dmag = df_phot_stars_na["mag"] - df_phot_stars_na[f"{flt}mag"]             # m - M (별마다의 영점)
+dmag = df_phot_stars_na["mag"] - df_phot_stars_na[f"{flt}mag"]  # m - M (별마다의 영점)
 zeropt_med = np.median(dmag)
 zeropt_avg = np.average(dmag, weights=1/merr_total1**2)
-resid = dmag - zeropt_med                      # 영점 잔차
-dzeropt = np.max([1/np.sqrt(np.sum(1/merr_total1**2)),        # 가중 평균의 오차
+resid = dmag - zeropt_med  # 영점 잔차
+dzeropt = np.max([1/np.sqrt(np.sum(1/merr_total1**2)),  # 가중 평균의 오차
                   np.std(resid, ddof=1)/np.sqrt(len(resid))])  # 잔차의 표준 오차
 merr_total2 = np.sqrt(merr_total1**2 + dzeropt**2)  # 별마다의 오차 + 영점 오차
 print(f"N = {len(resid)}, Z(중앙값) = {zeropt_med:.3f}, Z(가중 평균) = {zeropt_avg:.3f}")
@@ -484,12 +486,13 @@ good = df_phot_stars_na[~mask]
 M_cat, m_inst = good[f"{flt}mag"], good["mag"]           # 성표 등급, 기기 등급
 
 # === 영점(zero point)과 오차 계산
-merr_total1 = np.sqrt(good["merr"]**2 + good[f"e_{flt}mag"]**2)   # 기기 등급 오차 + 성표 등급 오차
-dmag = m_inst - M_cat                                     # m - M (별마다의 영점)
+# 기기 등급 오차 + 성표 등급 오차
+merr_total1 = np.sqrt(good["merr"]**2 + good[f"e_{flt}mag"]**2)
+dmag = m_inst - M_cat      # m - M (별마다의 영점)
 zeropt_med = np.median(dmag)
 zeropt_avg = np.average(dmag, weights=1/merr_total1**2)
-resid = dmag - zeropt_med                                 # 영점 잔차
-dzeropt = np.max([1/np.sqrt(np.sum(1/merr_total1**2)),         # 가중 평균의 오차
+resid = dmag - zeropt_med  # 영점 잔차
+dzeropt = np.max([1/np.sqrt(np.sum(1/merr_total1**2)),  # 가중 평균의 오차
                   np.std(resid, ddof=1)/np.sqrt(len(resid))])   # 잔차의 표준 오차
 merr_total2 = np.sqrt(merr_total1**2 + dzeropt**2)        # 별마다의 오차 + 영점 오차
 
@@ -523,7 +526,7 @@ from astropy.stats import sigma_clipped_stats
 
 FWHM = FWHM_INIT
 _, _, std = sigma_clipped_stats(hdul[0].data)  # 기본값은 3σ, 5회 반복(배경 표준편차만 씀)
-thresh = 5. * std   # 배경 위 높이(상대값)
+thresh = 5. * std                              # 배경 위 높이(상대값)
 
 from photutils.detection import DAOStarFinder
 DAOfind = DAOStarFinder(
@@ -560,9 +563,9 @@ df_apphot["DEJ2000"] = sky_coord.dec.degree
 df_apphot["filename"] = fpath.stem
 df_apphot["t_middle"] = t_middle.isot
 df_apphot["filter"] = flt
-df_apphot["zeropt"] = zeropt_med                                 # 밝은 별을 빼고 구한 영점
+df_apphot["zeropt"] = zeropt_med  # 밝은 별을 빼고 구한 영점
 df_apphot["e_zeropt"] = dzeropt
-df_apphot[f"{flt}_magnitude"] = df_apphot["mag"] - zeropt_med     # M = m - Z
+df_apphot[f"{flt}_magnitude"] = df_apphot["mag"] - zeropt_med  # M = m - Z
 df_apphot[f"e_{flt}_magnitude"] = np.hypot(df_apphot["merr"], dzeropt)
 df_apphot.to_csv(f"{proj_dir}/{fpath.stem}_result_photometry.csv")
 
@@ -580,7 +583,8 @@ axs[0].set_ylabel("별의 수", fontsize=11)
 axs[1].plot(df_apphot_sub[f"{flt}_magnitude"], df_apphot_sub["merr"], "x", ms=4)
 axs[1].set_yscale("log")
 from matplotlib.ticker import FuncFormatter
-axs[1].yaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}"))   # 0.01 꼴 눈금(수식 글꼴 대신)
+# 0.01 꼴 눈금(수식 글꼴 대신)
+axs[1].yaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}"))
 axs[1].yaxis.set_minor_formatter(FuncFormatter(lambda v, _: ""))
 axs[1].set_xlabel(f"{flt} (mag)", fontsize=11)
 axs[1].set_ylabel("등급 오차 (mag)", fontsize=11)

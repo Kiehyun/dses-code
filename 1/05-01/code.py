@@ -106,8 +106,10 @@ m.drawcountries(linewidth=0.5)
 m.drawmapboundary(fill_color='lightblue')  # 바다 색
 m.fillcontinents(color='lightgray', lake_color='lightblue')
 
-m.drawparallels(np.arange(-90, 91, 30), labels=[1,0,0,0], fontsize=8)  # 30° 간격, 왼쪽 눈금
-m.drawmeridians(np.arange(-180, 181, 60), labels=[0,0,0,1], fontsize=8)  # 60° 간격, 아래 눈금
+# 30° 간격, 왼쪽 눈금
+m.drawparallels(np.arange(-90, 91, 30), labels=[1,0,0,0], fontsize=8)
+# 60° 간격, 아래 눈금
+m.drawmeridians(np.arange(-180, 181, 60), labels=[0,0,0,1], fontsize=8)
 
 # 경위도 → 지도 좌표
 x, y = m(df_vol['Longitude'].values, df_vol['Latitude'].values)

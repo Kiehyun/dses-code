@@ -149,9 +149,9 @@ plt.show()</code></pre>
 th, s = atl[&quot;theta&quot;].values, atl[&quot;s&quot;].values
 depth2d = np.broadcast_to(atl.depth.values[:, None], th.shape)
 wm = np.full(th.shape, np.nan)
-wm[(th &lt; 1.0) &amp; (depth2d &gt;= 3000)] = 1                                    # AABW
-wm[(th &gt;= 1.5) &amp; (th &lt;= 4.0) &amp; (s &gt;= 34.88) &amp; (depth2d &gt;= 1200)] = 2      # NADW
-wm[(s &lt;= 34.45) &amp; (depth2d &gt;= 400) &amp; (depth2d &lt;= 1500)] = 3               # AAIW
+wm[(th &lt; 1.0) &amp; (depth2d &gt;= 3000)] = 1  # AABW
+wm[(th &gt;= 1.5) &amp; (th &lt;= 4.0) &amp; (s &gt;= 34.88) &amp; (depth2d &gt;= 1200)] = 2  # NADW
+wm[(s &lt;= 34.45) &amp; (depth2d &gt;= 400) &amp; (depth2d &lt;= 1500)] = 3  # AAIW
 
 cmap = ListedColormap([&quot;#3b4cc0&quot;, &quot;#e7a33e&quot;, &quot;#5bb15b&quot;])
 fig, ax = plt.subplots(figsize=(7.5, 3.4))

@@ -136,7 +136,8 @@ def jpl_sb_ident(center, half_width, epoch, mpc_code=&quot;P64&quot;, vmag_lim=2
     &quot;&quot;&quot;JPL SB Ident API로 시야 안 소행성 목록을 받아 SkyBoT과 같은 열 이름으로 돌려줌&quot;&quot;&quot;
     ra = center.ra.to_string(unit=u.hourangle, sep=&quot;-&quot;, precision=1, pad=True)
     dec = center.dec.to_string(unit=u.deg, sep=&quot;-&quot;, precision=0, pad=True, alwayssign=True)
-    dec = dec.replace(&quot;-&quot;, &quot;M&quot;, 1) if dec.startswith(&quot;-&quot;) else dec.lstrip(&quot;+&quot;)   # 음수 적위는 M
+    # 음수 적위는 M
+    dec = dec.replace(&quot;-&quot;, &quot;M&quot;, 1) if dec.startswith(&quot;-&quot;) else dec.lstrip(&quot;+&quot;)
     params = {&quot;sb-kind&quot;: &quot;a&quot;, &quot;mpc-code&quot;: mpc_code,
               &quot;obs-time&quot;: epoch.utc.strftime(&quot;%Y-%m-%d_%H:%M:%S&quot;),
               &quot;fov-ra-center&quot;: ra, &quot;fov-dec-center&quot;: dec,
@@ -230,7 +231,8 @@ pos_pix_targ_init = SkyCoord(df_targ_eph[&#x27;RA&#x27;]*u.deg, df_targ_eph[&quo
                         **SKYC_KW).to_pixel(wcs, origin=0, mode=&#x27;wcs&#x27;)
 pos_pix_targ_init = np.array(pos_pix_targ_init).T
 print(&quot;pos_pix_targ_init:&quot;, pos_pix_targ_init)</code></pre>
-<h2 id="code-Ⅲ-303">code Ⅲ-303. <button class="copy">복사</button></h2><pre><code># 영상 표시 함수 znorm · zimshow · norm_imshow는 Ⅲ-04 「FITS 파일 다루기」에서 설명했고 dses_utils에 들어 있음(du.zimshow 등으로 부름)</code></pre>
+<h2 id="code-Ⅲ-303">code Ⅲ-303. <button class="copy">복사</button></h2><pre><code># 영상 표시 함수 znorm · zimshow · norm_imshow는 Ⅲ-04 「FITS 파일
+# 다루기」에서 설명했고 dses_utils에 들어 있음(du.zimshow 등으로 부름)</code></pre>
 <h2 id="code-Ⅲ-304">code Ⅲ-304. <button class="copy">복사</button></h2><pre><code>from photutils.aperture import CircularAperture as CAp
 from photutils.aperture import CircularAnnulus as CAn
 import matplotlib.pyplot as plt

@@ -63,7 +63,8 @@ fig.colorbar(im2, ax = axs[1], fraction=0.035, pad=0.04)
 plt.tight_layout()
 
 # %% code Ⅲ-139.
-# 영상 표시 함수 znorm · zimshow · norm_imshow 는 Ⅲ-04 「FITS 파일 다루기」에서 설명했고 dses_utils 에 들어 있음
+# 영상 표시 함수 znorm · zimshow · norm_imshow 는 Ⅲ-04 「FITS
+# 파일 다루기」에서 설명했고 dses_utils 에 들어 있음
 
 # %% code Ⅲ-140.
 def checkPSolve(fpath,
@@ -206,7 +207,8 @@ def AstrometrySolver(fpath,
     if SOLVE :
         print(f"{fpath.name} is already solved...")
     else :
-        if not os.environ.get("ASTROMETRY_NET_API_KEY"):   # 키는 위치 보정이 필요할 때만 확인
+        # 키는 위치 보정이 필요할 때만 확인
+        if not os.environ.get("ASTROMETRY_NET_API_KEY"):
             print("API 키가 없어 위치 보정을 건너뜁니다.")
             return SOLVE, ASTAP, LOCAL
         try_again = True
@@ -220,7 +222,8 @@ def AstrometrySolver(fpath,
                     else:
                         wcs_header = ast.monitor_submission(submission_id,
                                                             solve_timeout = solve_timeout)
-                except AQTimeoutError as e:            # astroquery의 시간 초과 예외(내장 TimeoutError와 다름)
+                # astroquery의 시간 초과 예외(내장 TimeoutError와 다름)
+                except AQTimeoutError as e:
                     submission_id = e.args[1]
                 else:
                     # 결과를 받았으므로 종료
@@ -313,8 +316,8 @@ from astropy.wcs.utils import proj_plane_pixel_scales
 for name, w, h in [("hdul0", wcs0, hdul0[0].header),
                    ("hdul1", wcs1, hdul1[0].header),
                    ("hdul2", wcs2, hdul2[0].header)]:
-    scale = proj_plane_pixel_scales(w) * 3600          # 도 → 각초
-    fov_x = scale[0] * h["NAXIS1"] / 60                 # 각초 → 각분
+    scale = proj_plane_pixel_scales(w) * 3600  # 도 → 각초
+    fov_x = scale[0] * h["NAXIS1"] / 60        # 각초 → 각분
     fov_y = scale[1] * h["NAXIS2"] / 60
     print(f"{name}: CRVAL = ({w.wcs.crval[0]:.4f}, {w.wcs.crval[1]:.4f}) deg, "
           f"CRPIX = ({w.wcs.crpix[0]:.1f}, {w.wcs.crpix[1]:.1f}), "

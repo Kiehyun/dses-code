@@ -426,8 +426,8 @@ print(f"달 성분 표준편차 {moon.std():.1f}cm, 태양 성분 표준편차 {
       f"비 {moon.std() / sun.std():.1f}")
 
 # %% code Ⅳ-97.
-fit = A @ coef      # 분조 10개로 되살린 조위
-resid = y - fit     # 잔차
+fit = A @ coef   # 분조 10개로 되살린 조위
+resid = y - fit  # 잔차
 
 fig, axes = plt.subplots(2, 1, figsize=(15, 8), sharex=True)
 axes[0].plot(df_year.index[sel], y[sel], color='lightgray', linewidth=3.5, label='실제 데이터')

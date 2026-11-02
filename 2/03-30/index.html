@@ -75,7 +75,9 @@ t_expos = hdul[0].header[&#x27;EXPTIME&#x27;] * u.s
 t_middle = t_start + t_expos / 2 # 시작 시각 + 노출 시간의 절반
 
 print(f&quot;t_start: {t_start}, t_expos: {t_expos}, t_middle: {t_middle}&quot;)</code></pre>
-<h2 id="code-Ⅲ-244">code Ⅲ-244. <button class="copy">복사</button></h2><pre><code># 영상 표시 함수 znorm · zimshow · norm_imshow: Ⅲ-04 「FITS 파일 다루기」의 「zscale로 표시하는 함수(zimshow)」 (dses_utils 에 들어 있음)</code></pre>
+<h2 id="code-Ⅲ-244">code Ⅲ-244. <button class="copy">복사</button></h2><pre><code># 영상 표시 함수 znorm · zimshow · norm_imshow: Ⅲ-04 「FITS 파일
+# 다루기」의 「zscale로 표시하는 함수(zimshow)」 (dses_utils 에 들어
+# 있음)</code></pre>
 <h2 id="code-Ⅲ-245">code Ⅲ-245. <button class="copy">복사</button></h2><pre><code># 위치 보정 여부 확인 — Ⅲ-06에서 만든 du.checkPSolve(dses_utils)
 SOLVE, ASTAP, LOCAL = du.checkPSolve(str(fpath))
 print(&quot;SOLVE, ASTAP, LOCAL :&quot;, SOLVE, ASTAP, LOCAL)</code></pre>
@@ -353,11 +355,11 @@ df_phot_stars_na</code></pre>
 
 # === 영점(zero point)과 오차 계산
 _xx = np.linspace(Mag_Low, Mag_High)
-dmag = df_phot_stars_na[&quot;mag&quot;] - df_phot_stars_na[f&quot;{flt}mag&quot;]             # m - M (별마다의 영점)
+dmag = df_phot_stars_na[&quot;mag&quot;] - df_phot_stars_na[f&quot;{flt}mag&quot;]  # m - M (별마다의 영점)
 zeropt_med = np.median(dmag)
 zeropt_avg = np.average(dmag, weights=1/merr_total1**2)
-resid = dmag - zeropt_med                      # 영점 잔차
-dzeropt = np.max([1/np.sqrt(np.sum(1/merr_total1**2)),        # 가중 평균의 오차
+resid = dmag - zeropt_med  # 영점 잔차
+dzeropt = np.max([1/np.sqrt(np.sum(1/merr_total1**2)),  # 가중 평균의 오차
                   np.std(resid, ddof=1)/np.sqrt(len(resid))])  # 잔차의 표준 오차
 merr_total2 = np.sqrt(merr_total1**2 + dzeropt**2)  # 별마다의 오차 + 영점 오차
 print(f&quot;N = {len(resid)}, Z(중앙값) = {zeropt_med:.3f}, Z(가중 평균) = {zeropt_avg:.3f}&quot;)
@@ -438,12 +440,13 @@ good = df_phot_stars_na[~mask]
 M_cat, m_inst = good[f&quot;{flt}mag&quot;], good[&quot;mag&quot;]           # 성표 등급, 기기 등급
 
 # === 영점(zero point)과 오차 계산
-merr_total1 = np.sqrt(good[&quot;merr&quot;]**2 + good[f&quot;e_{flt}mag&quot;]**2)   # 기기 등급 오차 + 성표 등급 오차
-dmag = m_inst - M_cat                                     # m - M (별마다의 영점)
+# 기기 등급 오차 + 성표 등급 오차
+merr_total1 = np.sqrt(good[&quot;merr&quot;]**2 + good[f&quot;e_{flt}mag&quot;]**2)
+dmag = m_inst - M_cat      # m - M (별마다의 영점)
 zeropt_med = np.median(dmag)
 zeropt_avg = np.average(dmag, weights=1/merr_total1**2)
-resid = dmag - zeropt_med                                 # 영점 잔차
-dzeropt = np.max([1/np.sqrt(np.sum(1/merr_total1**2)),         # 가중 평균의 오차
+resid = dmag - zeropt_med  # 영점 잔차
+dzeropt = np.max([1/np.sqrt(np.sum(1/merr_total1**2)),  # 가중 평균의 오차
                   np.std(resid, ddof=1)/np.sqrt(len(resid))])   # 잔차의 표준 오차
 merr_total2 = np.sqrt(merr_total1**2 + dzeropt**2)        # 별마다의 오차 + 영점 오차
 
@@ -475,7 +478,7 @@ print(f&quot;남은 별 {len(dmag)}개: 영점(중앙값) {zeropt_med:.3f}, 가�
 
 FWHM = FWHM_INIT
 _, _, std = sigma_clipped_stats(hdul[0].data)  # 기본값은 3σ, 5회 반복(배경 표준편차만 씀)
-thresh = 5. * std   # 배경 위 높이(상대값)
+thresh = 5. * std                              # 배경 위 높이(상대값)
 
 from photutils.detection import DAOStarFinder
 DAOfind = DAOStarFinder(
@@ -510,9 +513,9 @@ df_apphot[&quot;DEJ2000&quot;] = sky_coord.dec.degree
 df_apphot[&quot;filename&quot;] = fpath.stem
 df_apphot[&quot;t_middle&quot;] = t_middle.isot
 df_apphot[&quot;filter&quot;] = flt
-df_apphot[&quot;zeropt&quot;] = zeropt_med                                 # 밝은 별을 빼고 구한 영점
+df_apphot[&quot;zeropt&quot;] = zeropt_med  # 밝은 별을 빼고 구한 영점
 df_apphot[&quot;e_zeropt&quot;] = dzeropt
-df_apphot[f&quot;{flt}_magnitude&quot;] = df_apphot[&quot;mag&quot;] - zeropt_med     # M = m - Z
+df_apphot[f&quot;{flt}_magnitude&quot;] = df_apphot[&quot;mag&quot;] - zeropt_med  # M = m - Z
 df_apphot[f&quot;e_{flt}_magnitude&quot;] = np.hypot(df_apphot[&quot;merr&quot;], dzeropt)
 df_apphot.to_csv(f&quot;{proj_dir}/{fpath.stem}_result_photometry.csv&quot;)
 
@@ -528,7 +531,8 @@ axs[0].set_ylabel(&quot;별의 수&quot;, fontsize=11)
 axs[1].plot(df_apphot_sub[f&quot;{flt}_magnitude&quot;], df_apphot_sub[&quot;merr&quot;], &quot;x&quot;, ms=4)
 axs[1].set_yscale(&quot;log&quot;)
 from matplotlib.ticker import FuncFormatter
-axs[1].yaxis.set_major_formatter(FuncFormatter(lambda v, _: f&quot;{v:g}&quot;))   # 0.01 꼴 눈금(수식 글꼴 대신)
+# 0.01 꼴 눈금(수식 글꼴 대신)
+axs[1].yaxis.set_major_formatter(FuncFormatter(lambda v, _: f&quot;{v:g}&quot;))
 axs[1].yaxis.set_minor_formatter(FuncFormatter(lambda v, _: &quot;&quot;))
 axs[1].set_xlabel(f&quot;{flt} (mag)&quot;, fontsize=11)
 axs[1].set_ylabel(&quot;등급 오차 (mag)&quot;, fontsize=11)

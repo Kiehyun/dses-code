@@ -6,9 +6,9 @@ import pandas as pd
 
 def classify_asteroid(a, e):
     """궤도 긴반지름 a(au)와 이심률 e로 소행성 무리를 대략 판단"""
-    q = a * (1 - e)                  # 근일점 거리
-    Q = a * (1 + e)                  # 원일점 거리
-    if q < 1.3:                      # 근지구소행성
+    q = a * (1 - e)  # 근일점 거리
+    Q = a * (1 + e)  # 원일점 거리
+    if q < 1.3:      # 근지구소행성
         if Q < 0.983:
             return "근지구 - 아티라"
         if a < 1.0:
@@ -100,7 +100,7 @@ print([d.strftime("%m-%d") for d in datetime_range(datetime(2024, 12, 1),
 # %% code Ⅲ-270.
 t = Time(dt_utc, location=("127d", "37d"))
 print("세계시      :", t.utc.iso)
-print("줄리안일    :", t.jd)
+print("율리우스일  :", t.jd)
 print("평균 항성시 :", t.sidereal_time("mean"))
 
 # %% code Ⅲ-271.
@@ -159,11 +159,11 @@ print("data.keys() :", list(data.keys()))
 print(data['obs_constraints'])
 print(data['sb_constraints'])
 print(data['fields'])
-print(data['data'][0])            # 첫 행(소행성 한 개)만
+print(data['data'][0])    # 첫 행(소행성 한 개)만
 print(type(data['fields']))
 print(len(data['fields']))
 print(len(data['data'][0]))
-print(len(data['data']))          # 행(소행성) 수
+print(len(data['data']))  # 행(소행성) 수
 
 # %% code Ⅲ-276.
 import pandas as pd
@@ -218,7 +218,8 @@ print("dts", dts)
 df_all = pd.DataFrame()
 
 for dt in dts :
-    obs_datetime = dt.strftime('%Y-%m-%dT%H:%M:%S')  # 날짜와 시간 사이에 구분자 T를 넣는 것 잊지 말 것
+    # 날짜와 시간 사이에 구분자 T를 넣는 것 잊지 말 것
+    obs_datetime = dt.strftime('%Y-%m-%dT%H:%M:%S')
     obs_date = dt.strftime('%Y%m%d')
 
     # API 주소 정의
@@ -267,7 +268,8 @@ obs_date = df['OBSdate(UT)'][0]
 from astroquery.mpc import MPC
 
 # %% code Ⅲ-282.
-t_start = Time(f"{obs_date[:4]}-{obs_date[4:6]}-{obs_date[6:]} 09:00:00")   # KST 18시 = UTC 09시
+# KST 18시 = UTC 09시
+t_start = Time(f"{obs_date[:4]}-{obs_date[4:6]}-{obs_date[6:]} 09:00:00")
 eph = MPC.get_ephemeris(asteroid_id, location='P64', start=t_start, number=15,
                         ra_format={'sep': ':', 'unit': 'hourangle',
                                    'precision': 1},
@@ -293,7 +295,8 @@ frame_fine = AltAz(obstime=t_fine, location=site)
 alt_sun = get_sun(t_fine).transform_to(frame_fine).alt
 alt_moon = get_body("moon", t_fine, site).transform_to(frame_fine).alt
 
-kst = lambda t: [d.replace(tzinfo=None) for d in t.to_datetime(timezone=KST)]   # 가로축은 KST
+# 가로축은 KST
+kst = lambda t: [d.replace(tzinfo=None) for d in t.to_datetime(timezone=KST)]
 fig, ax = plt.subplots(figsize=(7.5, 3.8))
 ax.plot(kst(t_eph), aa_ast.alt.deg, "o-", color="tab:blue", label=f"{asteroid_id} (소행성)")
 ax.plot(kst(t_fine), alt_sun.deg, color="tab:orange", label="태양")

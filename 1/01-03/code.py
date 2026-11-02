@@ -39,14 +39,14 @@ class = 'Hello world'  # class는 예약어라 식별자로 쓸 수 없음
 # %% code Ⅰ-6.
 print('괄호 안의 글자가 그대로 출력됩니다.')  # 괄호 안의 내용 출력
 y = 'Hello world'
-y           # 마지막 줄이 아니면 출력되지 않음
-print(y)    # print()는 항상 출력
-print("y")  # 문자 "y" 출력
-y           # 마지막 줄이면 자동 출력
+y                                                 # 마지막 줄이 아니면 출력되지 않음
+print(y)                                          # print()는 항상 출력
+print("y")                                        # 문자 "y" 출력
+y                                                 # 마지막 줄이면 자동 출력
 
 # %% code Ⅰ-7.
-a = 3     # 정수(int)
-b = 3.14  # 실수(float, 부동소수점수)
+a = 3           # 정수(int)
+b = 3.14        # 실수(float, 부동소수점수)
 c = 3.14159
 d = 5.1e10      # 과학적 표기법 5.1×10^10
 e = 2.5 + 5.3j  # 복소수(complex)
@@ -62,7 +62,7 @@ print("type(hungry): ", type(hungry), "hungry: ", hungry)
 print("type(need_coffee): ", type(need_coffee), "need_coffee: ", need_coffee)
 
 # %% code Ⅰ-8.
-my_value1 = 'I love programming in Python.'  # 작은따옴표로 감싼 문자열
+my_value1 = 'I love programming in Python.'    # 작은따옴표로 감싼 문자열
 print(my_value1)
 my_value2 = "'I love programming in Python.'"  # 큰따옴표 안에 작은따옴표
 print(type(my_value1))
@@ -119,7 +119,8 @@ print ('I am a fan of the number: ' + str(z))  # str()로 문자열 변환 후 �
 decimalValue, stringValue, floatValue = 42, 'Hello', 3.14  # 여러 변수에 한 번에 할당
 print ('출력 예:', decimalValue, stringValue, floatValue)  # (1) 쉼표로 나열
 print ('출력 예: %d %s %f' % (decimalValue, stringValue, floatValue))  # (2) % 연산자
-print ('출력 예: {0:d} {1:s} {2:f}'.format(decimalValue, stringValue, floatValue))  # (3) format() 메서드
+# (3) format() 메서드
+print ('출력 예: {0:d} {1:s} {2:f}'.format(decimalValue, stringValue, floatValue))
 print (f'출력 예: {decimalValue} {stringValue} {floatValue}')  # (4) f-string
 
 # %% code Ⅰ-16.
@@ -132,9 +133,9 @@ print("2**3 =", 2**3)
 
 # %% code Ⅰ-17.
 print("abs(9) :", abs(9))
-print("divmod(8, 4) :", divmod(8, 4))  # (몫, 나머지) 튜플
+print("divmod(8, 4) :", divmod(8, 4))              # (몫, 나머지) 튜플
 print("pow(2, 3) :", pow(2, 3))
-print("pow(2, 3, 5) :", pow(2, 3, 5))  # (2**3) % 5
+print("pow(2, 3, 5) :", pow(2, 3, 5))              # (2**3) % 5
 print("round(3.14159) :", round(3.14159))
 print("round(3.14159, 2) :", round(3.14159, 2))
 print("round(3.14159, -2) :", round(3.14159, -2))  # 십의 자리에서 반올림
@@ -168,7 +169,7 @@ myStrLst = ['Hello', 'Python', 'lists']
 print("myStrLst: ", myStrLst)
 multiLst = [1, 2, 'three', 4, 'five', 'six']  # 여러 자료형을 섞은 리스트
 print("multiLst: ", multiLst)
-comboLst = [1, myStrLst, multiLst]  # 리스트를 원소로 갖는 리스트
+comboLst = [1, myStrLst, multiLst]            # 리스트를 원소로 갖는 리스트
 print("comboLst: ", comboLst)
 my_newLst1 = ['new_item1', 'new_item2', [1, 2, 3, 4], 'new_item3']
 print("my_newLst1: ", my_newLst1)
@@ -184,13 +185,13 @@ print("my_newLst2[-1][0]: ", my_newLst2[-1][0])  # 마지막 원소(리스트)�
 
 # %% code Ⅰ-23.
 print("myStrLst[0:2]: ", myStrLst[0:2])  # 시작 인덱스는 포함, 끝 인덱스는 제외
-print("myStrLst[:2]: ", myStrLst[:2])  # 시작 생략 → 처음부터
-print("myStrLst[1:]: ", myStrLst[1:])  # 끝 생략 → 끝까지
+print("myStrLst[:2]: ", myStrLst[:2])    # 시작 생략 → 처음부터
+print("myStrLst[1:]: ", myStrLst[1:])    # 끝 생략 → 끝까지
 
-myStrLst_copy = myStrLst[:]  # 리스트 사본
+myStrLst_copy = myStrLst[:]                      # 리스트 사본
 print("myStrLst_copy: ", myStrLst_copy)
 newLst = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
-print("newLst[0:10:1]: ", newLst[0:10:1])  # 세 번째 값은 간격(step)
+print("newLst[0:10:1]: ", newLst[0:10:1])        # 세 번째 값은 간격(step)
 my_newLst3 = [1, 2, 3, ['a', 'b', 'c'], 4, 5]
 print("my_newLst3[3][:2]: ", my_newLst3[3][:2])  # 4번째 원소(리스트)를 다시 슬라이싱
 
@@ -238,7 +239,8 @@ myDic1 = {}
 print("myDic1:", myDic1)
 print("len(myDic1):", len(myDic1))
 
-myDic2 = {'name': 'GRB 130702A', 'redshift': 0.145, 'ra': (14, 29, 14.78), 'dec': (15, 46, 26.4)}  # 감마선 폭발(GRB) 천체 정보
+# 감마선 폭발(GRB) 천체 정보
+myDic2 = {'name': 'GRB 130702A', 'redshift': 0.145, 'ra': (14, 29, 14.78), 'dec': (15, 46, 26.4)}
 print("myDic2:", myDic2)
 print("len(myDic2):", len(myDic2))
 print("myDic2['ra']:", myDic2['ra'])    # 적경(시, 분, 초)
@@ -355,7 +357,7 @@ while treeHit < 3:
         print("나무 넘어갑니다.")
 
 # %% code Ⅰ-32.
-coffee = 3  # 커피 재고
+coffee = 3    # 커피 재고
 money = 30
 while money:  # 0이 아닌 수는 True로 평가
     print("돈을 받았으니 커피를 줍니다.")

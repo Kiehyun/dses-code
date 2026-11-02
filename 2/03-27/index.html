@@ -137,8 +137,8 @@ plt.show()</code></pre>
 from astropy.io import fits
 
 def save_aligned(fname, data, ref_header):
-    hdr = ref_header.copy()                    # 기준 영상의 헤더를 복사
-    for key in (&quot;BZERO&quot;, &quot;BSCALE&quot;):            # 정수형 저장용 키워드는 지움
+    hdr = ref_header.copy()          # 기준 영상의 헤더를 복사
+    for key in (&quot;BZERO&quot;, &quot;BSCALE&quot;):  # 정수형 저장용 키워드는 지움
         hdr.remove(key, ignore_missing=True)
     fits.writeto(fname, data.astype(np.float32), header=hdr, overwrite=True)
     print(f&quot;{fname} is created...&quot;)
@@ -273,8 +273,8 @@ plt.show()</code></pre>
 <h2 id="code-Ⅲ-172">code Ⅲ-172. <button class="copy">복사</button></h2><pre><code>import numpy as np
 import astroalign as aa
 
-r = 0 # 기준 이미지 번호
-target = np.asarray(hduls_data[r], dtype=np.float32)    # 기준 영상
+r = 0                                                 # 기준 이미지 번호
+target = np.asarray(hduls_data[r], dtype=np.float32)  # 기준 영상
 
 aligned_hduls_data = []
 footprints = []
@@ -314,9 +314,7 @@ plt.show()</code></pre>
 import matplotlib.pyplot as plt
 
 fig, axs = plt.subplots(4, 3, figsize=(6.2, 7.0), constrained_layout=True)   # 영상 10장
-
 axs = axs.ravel()
-
 vmax = int(np.median(aligned_hduls_data[0][:100, :100])*1.1)
 
 for i in range(len(aligned_hduls_data)):
@@ -329,7 +327,6 @@ for ax in axs[len(aligned_hduls_data):]:          # 남는 칸은 비움
 fig.colorbar(im, ax=axs.tolist(), shrink=0.6, pad=0.02)
 
 plt.suptitle(&#x27;IC1848 images [:100, :100] (aligned)&#x27;, fontsize=13)
-
 plt.show()</code></pre>
 <h2 id="code-Ⅲ-174">code Ⅲ-174. <button class="copy">복사</button></h2><pre><code>def centroid(img, x, y, half=5):
     &quot;&quot;&quot;(x, y) 주변 상자에서 밝기 가중 평균으로 별의 중심을 구함&quot;&quot;&quot;
@@ -341,7 +338,8 @@ plt.show()</code></pre>
 
 ny, nx = target.shape
 _, (_, ref_pts) = aa.find_transform(np.asarray(hduls_data[1], dtype=np.float32), target)
-ref_pts = [p for p in ref_pts if 10 &lt; p[0] &lt; nx-10 and 10 &lt; p[1] &lt; ny-10]   # 가장자리 별 제외
+# 가장자리 별 제외
+ref_pts = [p for p in ref_pts if 10 &lt; p[0] &lt; nx-10 and 10 &lt; p[1] &lt; ny-10]
 ref_c = np.array([centroid(target, x, y) for x, y in ref_pts])
 print(f&quot;비교에 쓴 별: {len(ref_c)}개&quot;)
 

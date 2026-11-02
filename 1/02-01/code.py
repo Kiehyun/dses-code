@@ -42,10 +42,10 @@ length2 = 300 * u.centimeter
 time1 = 10 * u.second
 print("length1 + length2 =", length1 + length2)  # 15 m + 3 m = 18 m(단위 자동 변환)
 print("length1 - length2 =", length1 - length2)  # 15 m - 3 m = 12 m
-area = (length1 * length2).to('m**2')  # cm·m를 m²로 맞춤
-print("area =", area)  # 15 m * 3 m = 45 m²
+area = (length1 * length2).to('m**2')            # cm·m를 m²로 맞춤
+print("area =", area)                            # 15 m * 3 m = 45 m²
 speed = length1 / time1
-print("speed =", speed)  # 15 m / 10 s = 1.5 m/s
+print("speed =", speed)                          # 15 m / 10 s = 1.5 m/s
 print("speed.to('km/h') =", speed.to('km/h'))
 # 단위가 맞지 않는 덧셈(오류 발생)
 try:

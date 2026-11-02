@@ -90,12 +90,12 @@ pd.DataFrame({&quot;date&quot;: days, &quot;temp&quot;: temp.round(1)}).to_csv(p
 
 # 2) 에이전트가 만들었다고 가정한 결과: 그림 파일
 df = pd.read_csv(proj_dir / &quot;aws_daily.csv&quot;, parse_dates=[&quot;date&quot;])
-monthly = df.set_index(&quot;date&quot;)[&quot;temp&quot;].resample(&quot;MS&quot;).mean()   # 월평균
+monthly = df.set_index(&quot;date&quot;)[&quot;temp&quot;].resample(&quot;MS&quot;).mean()  # 월평균
 fig, ax = plt.subplots(figsize=(6, 3))
 ax.plot(monthly.index.month, monthly.values, marker=&quot;o&quot;)
 ax.set(xlabel=&quot;월&quot;, ylabel=&quot;월평균 기온 (°C)&quot;, title=&quot;2025년 월평균 기온&quot;)
 fig.savefig(proj_dir / &quot;monthly_temp.png&quot;, dpi=100)
-plt.close(fig)                                                  # 화면에 띄우지 않음
+plt.close(fig)  # 화면에 띄우지 않음
 
 # 3) 에이전트가 만들었다고 가정한 결과: 실행을 마친 노트북
 agent_code = &quot;&quot;&quot;df = pd.read_csv(&quot;aws_daily.csv&quot;, parse_dates=[&quot;date&quot;])

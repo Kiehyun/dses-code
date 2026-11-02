@@ -285,11 +285,8 @@ norm = ImageNormalize(hdul[0].data, interval=MinMaxInterval(),
                       stretch=SqrtStretch())
 
 im0 = axs[0].imshow(hdul[0].data, origin='lower', norm=norm)
-
 axs[0].set_title('Normalization', fontsize=9)
-
 im1 = zimshow(axs[1], hdul[0].data, origin='lower')
-
 axs[1].set_title(f'Zimshow', fontsize=9)
 
 fig.colorbar(im0, ax = axs[0], fraction=0.035, pad=0.04)
@@ -488,7 +485,8 @@ ax2.grid(ls=":")
 ax2.set_ylim(1, 5)
 ax2.invert_yaxis()
 ax2.set_title('log scale = magnitude scale')
-ax1.legend(*ax2.get_legend_handles_labels(), fontsize=8, loc='upper right')   # 범례는 왼쪽 그래프의 빈 곳에
+# 범례는 왼쪽 그래프의 빈 곳에
+ax1.legend(*ax2.get_legend_handles_labels(), fontsize=8, loc='upper right')
 plt.tight_layout()
 plt.show()
 
@@ -509,8 +507,8 @@ plt.plot(row_data)
 plt.xlabel('Pixel Number')
 plt.ylabel('Pixel Value')
 plt.title(f'Pixel Values of Row {row_index}')
-plt.grid(True, which='both')  # 그리드 추가
-plt.minorticks_on()           # 마이너 틱 추가
+plt.grid(True, which='both')    # 그리드 추가
+plt.minorticks_on()             # 마이너 틱 추가
 plt.show()
 
 # %% code Ⅲ-56.
@@ -695,8 +693,8 @@ from astropy.stats import sigma_clipped_stats
 
 avg, med, std = sigma_clipped_stats(hdul[0].data)  # 기본값은 3σ, 5회 반복
 print("avg, med, std :", avg, med, std)
-data_sub = hdul[0].data - med                       # 배경을 뺀 영상
-thresh = 5.*std                                     # 배경 위 5σ
+data_sub = hdul[0].data - med                      # 배경을 뺀 영상
+thresh = 5.*std                                    # 배경 위 5σ
 print("thresh (배경 위 5σ) :", thresh)
 print("detect_threshold − 배경 (배경 위 3σ) :", thresh_snr - med)
 
@@ -712,8 +710,8 @@ DAOfind = DAOStarFinder(
  # sigma_radius = 1.5,             # 기본값
  # ratio = 1.0,                    # 1.0: 원형 가우스
                         )
-DAOfound = DAOfind(data_sub)   # 배경을 뺀 영상
-if "xcentroid" in DAOfound.colnames:   # photutils 3.0 전 판이면 열 이름을 새 판에 맞춤
+DAOfound = DAOfind(data_sub)          # 배경을 뺀 영상
+if "xcentroid" in DAOfound.colnames:  # photutils 3.0 전 판이면 열 이름을 새 판에 맞춤
     DAOfound.rename_columns(["xcentroid", "ycentroid"], ["x_centroid", "y_centroid"])
 print("len(DAOfound) :",len(DAOfound))
 DAOfound

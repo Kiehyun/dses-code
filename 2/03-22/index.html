@@ -57,8 +57,8 @@ display(method_table.sort_values(&quot;적색편이가 있는 수&quot;, ascendi
 <h2 id="code-Ⅲ-18">code Ⅲ-18. <button class="copy">복사</button></h2><pre><code>c = 299792.458  # 빛의 속력(km/s)
 
 z = df[&quot;redshift (z)&quot;]
-df[&quot;v_approx&quot;] = c * z                                     # 비상대론 근사 v = cz
-df[&quot;v_rel&quot;] = c * ((1 + z)**2 - 1) / ((1 + z)**2 + 1)      # 상대론적 도플러 관계
+df[&quot;v_approx&quot;] = c * z  # 비상대론 근사 v = cz
+df[&quot;v_rel&quot;] = c * ((1 + z)**2 - 1) / ((1 + z)**2 + 1)  # 상대론적 도플러 관계
 
 has_z = df.dropna(subset=[&quot;redshift (z)&quot;])
 print(f&quot;적색편이가 있는 측정값: {len(has_z):,}개, z 범위 {z.min():.5f} ~ {z.max():.3f}&quot;)

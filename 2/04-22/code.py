@@ -116,8 +116,8 @@ def draw_skewt_paper(skew, xlim=(-40, 40), ylim=(1050, 100), *,
 
 # %% code Ⅳ-31.
 # 단열선도 전체 그리기 (지상 1050 hPa ~ 100 hPa)
-xxlim = [-40, 40]        # 기온 축 범위 (°C)
-yylim = [1050, 100]      # 기압 축 범위 (hPa)
+xxlim = [-40, 40]    # 기온 축 범위 (°C)
+yylim = [1050, 100]  # 기압 축 범위 (hPa)
 
 fig = plt.figure(figsize=(5.4, 4.6))
 skew = SkewT(fig, rotation=45)          # rotation : 등온선을 기울이는 각도
@@ -133,8 +133,8 @@ plt.close()
 
 # %% code Ⅳ-32.
 # 아래쪽 일부만 확대해 보기 — 범위와 간격만 바꾸어 같은 함수 호출
-xxlim = [-30, 10]        # 기온 축 범위 (°C)
-yylim = [1050, 700]      # 기압 축 범위 (hPa)
+xxlim = [-30, 10]    # 기온 축 범위 (°C)
+yylim = [1050, 700]  # 기압 축 범위 (hPa)
 
 fig = plt.figure(figsize=(6.0, 3.2))
 skew = SkewT(fig, rotation=45)
@@ -654,7 +654,8 @@ df_selected_time['saturation_mixing_ratio'] = \
 df_selected_time['mixing_ratio_from_relative_humidity'] = \
         mpcalc.mixing_ratio_from_relative_humidity(df_selected_time['기압(hPa)'].values * u.hPa,
                 df_selected_time['기온(°C)'].values * u.degC,                                   
-                df_selected_time['relative_humidity_from_dewpoint'].values * u.dimensionless)  # 0~1 비율
+                # 0~1 비율
+                df_selected_time['relative_humidity_from_dewpoint'].values * u.dimensionless)
         
 show_levels(['saturation_mixing_ratio',
              'mixing_ratio_from_relative_humidity'])
@@ -733,9 +734,9 @@ add_moist_adiabats(skew, label_p=600, label_every=5)
 add_mixing_lines(skew, label_p=850, label_every=2)
 
 # 관측값에 단위 붙이기 — 아래 계산에서 되풀이해 쓴다
-p = df_selected_time['기압(hPa)'].values * u.hPa              # 기압
-T = df_selected_time['기온(°C)'].values * u.degC              # 기온
-Td = df_selected_time['이슬점온도(°C)'].values * u.degC       # 이슬점
+p = df_selected_time['기압(hPa)'].values * u.hPa  # 기압
+T = df_selected_time['기온(°C)'].values * u.degC  # 기온
+Td = df_selected_time['이슬점온도(°C)'].values * u.degC  # 이슬점
 
 # 기온: 원을 찍고 실선으로 잇기
 skew.plot(p, T, 'ro', markersize = 8, fillstyle='none', label='기온')
@@ -820,7 +821,8 @@ for k, text in enumerate(info_right):
 plt.legend(loc='upper left', fontsize=7)
 
 # 단열선도 저장하기
-plt.savefig(f"{proj_dir}/{fpaths[0].stem}_{target_date.strftime('%Y%m%d_%HUTC')}.pdf")   # 파일 이름에 ':'를 쓰지 않음
+# 파일 이름에 ':'를 쓰지 않음
+plt.savefig(f"{proj_dir}/{fpaths[0].stem}_{target_date.strftime('%Y%m%d_%HUTC')}.pdf")
 
 plt.show()
 

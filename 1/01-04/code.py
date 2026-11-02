@@ -20,11 +20,11 @@ print("today:", today)
 
 # %% code Ⅰ-38.
 import numpy
-a = numpy.random.rand(6)  # 0과 1 사이 난수 6개
+a = numpy.random.rand(6)    # 0과 1 사이 난수 6개
 print("a :", a)
 print("a.max():", a.max())  # 배열의 메서드로 최댓값
 
-import numpy as np  # 별칭 np로 불러오기
+import numpy as np              # 별칭 np로 불러오기
 a = np.random.rand(6)
 print("a :", a)
 print("np.max(a):", np.max(a))  # 함수로 최댓값
@@ -37,7 +37,8 @@ print("b :", b)
 # 패키지 설치
 !pip install numpy
 
-# 특정 버전 패키지 설치(예시 — 지금 환경의 다른 패키지와 충돌할 수 있으니 그대로 실행하지 말 것)
+# 특정 버전 패키지 설치(예시 — 지금 환경의 다른
+# 패키지와 충돌할 수 있으니 그대로 실행하지 말 것)
 # !pip install pandas==1.5.3
 
 # 패키지 업그레이드(예시)
@@ -48,17 +49,18 @@ print("b :", b)
 
 # %% code Ⅰ-40.
 from pathlib import Path
-cwd = Path.cwd()  # 현재 작업 폴더(current working directory)
+cwd = Path.cwd()                               # 현재 작업 폴더(current working directory)
 print(f"현재 작업 폴더: {cwd}")
-home = Path.home()  # 홈 폴더(Windows: C:\Users\사용자명, macOS: /Users/사용자명, Linux: /home/사용자명)
+# 홈 폴더(Windows: C:\Users\사용자명, macOS: /Users/사용자명, Linux: /home/사용자명)
+home = Path.home()
 print(f"홈 폴더가 있는가: {home.exists()}")  # 실제 경로는 컴퓨터마다 다름
-file_path = Path('/home/user/data.txt')  # 문자열로 Path 객체 만들기
+file_path = Path('/home/user/data.txt')        # 문자열로 Path 객체 만들기
 print(f"문자열로 만든 경로: {file_path}")
-relative = Path('my_folder/my_file.txt')  # 상대 경로
+relative = Path('my_folder/my_file.txt')       # 상대 경로
 print(f"상대 경로: {relative}")
 base = Path('/home/user')
-new_path = base / 'data' / 'file.csv'  # / 연산자로 경로 결합
-print(f"결합한 경로: {new_path}")         # 운영체제에 맞는 구분자로 표시(Windows는 \)
+new_path = base / 'data' / 'file.csv'          # / 연산자로 경로 결합
+print(f"결합한 경로: {new_path}")  # 운영체제에 맞는 구분자로 표시(Windows는 \)
 
 # %% code Ⅰ-41.
 from pathlib import Path
@@ -94,8 +96,8 @@ print("문자열로 바꾼 날짜:", str_date)
 dt = datetime.strptime("2025-04-22 16:20:00", "%Y-%m-%d %H:%M:%S")  # 문자열 → datetime
 print("datetime으로 바꾼 값:", dt)
 now = datetime.now()
-tomorrow = now + timedelta(days=1)  # 하루 뒤
-diff = tomorrow - now               # 시간 차(timedelta)
+tomorrow = now + timedelta(days=1)            # 하루 뒤
+diff = tomorrow - now                         # 시간 차(timedelta)
 print("시간 차:", diff)
 print("type(diff):", type(diff))
 
@@ -188,8 +190,8 @@ print("arr1 ** 2:\n", arr1 ** 2)
 # %% code Ⅰ-50.
 import numpy as np
 a = np.array([[-1,2,3],[3,4,8]])
-print('np.sum(a) =', np.sum(a))  # 함수로 합계
-print('a.sum() =', a.sum())      # 메서드로 합계(결과 같음)
+print('np.sum(a) =', np.sum(a))             # 함수로 합계
+print('a.sum() =', a.sum())                 # 메서드로 합계(결과 같음)
 # axis=0: 열별, axis=1: 행별
 print('열별 합(axis=0) =', a.sum(axis=0))  # 세로 방향 합
 print('행별 합(axis=1) =', a.sum(axis=1))  # 가로 방향 합
@@ -222,14 +224,15 @@ print("-"*20+"\ns3:\n", s3)
 # %% code Ⅰ-52.
 print("-"*20+"\ns1[:3]:", s1[:3])
 print("-"*20+"\ns1[1:4]:", s1[1:4])  # 위치 1~3
-print("-"*20+"\ns1[s1 > s1.median()]:", s1[s1 > s1.median()])  # 중앙값보다 큰 원소만(불 인덱싱)
+# 중앙값보다 큰 원소만(불 인덱싱)
+print("-"*20+"\ns1[s1 > s1.median()]:", s1[s1 > s1.median()])
 print("-"*20+"\ns1.iloc[[4, 3, 1]]:", s1.iloc[[4, 3, 1]])  # 위치로 고르기
 
 # %% code Ⅰ-53.
 print("s2.dtype:", s2.dtype)
 print("np.exp(s2):", np.exp(s2))  # 원소마다 지수 함수 적용
 
-s3_ar = s3.array  # pandas 배열
+s3_ar = s3.array         # pandas 배열
 print("-"*20+"\ns3_ar:", s3_ar)
 s3_ndar = s3.to_numpy()  # NumPy 배열로 변환
 print("s3_ndar:", s3_ndar)
@@ -250,7 +253,8 @@ print("s1 + s1:\n", s1 + s1)
 print("-"*20+"\ns1 * 2:\n", s1 * 2)
 print("-"*20+"\nnp.exp(s1):\n", np.exp(s1))
 
-print("s1[1:] + s1[:-1]:\n", s1[1:] + s1[:-1])  # 인덱스가 같은 원소끼리 더함(짝이 없으면 NaN)
+# 인덱스가 같은 원소끼리 더함(짝이 없으면 NaN)
+print("s1[1:] + s1[:-1]:\n", s1[1:] + s1[:-1])
 
 s = pd.Series(np.random.randn(5), name='something')
 print("-"*20+"\ns:\n", s)
@@ -274,7 +278,8 @@ print("-"*20+"\ndf2:\n", df2)
 df3 = pd.DataFrame(d, index=['d', 'b', 'a'])
 print("-"*20+"\ndf3:\n", df3)
 
-df4 = pd.DataFrame(d, index=['d', 'b', 'a'], columns=['two', 'three'])  # 없는 열 'three'는 NaN
+# 없는 열 'three'는 NaN
+df4 = pd.DataFrame(d, index=['d', 'b', 'a'], columns=['two', 'three'])
 print("-"*20+"\ndf4:\n", df4)
 
 # %% code Ⅰ-57.
@@ -289,7 +294,8 @@ df6 = pd.DataFrame(d, index=['a', 'b', 'c', 'd'])  # 인덱스 지정
 print("-"*20+"\ndf6:\n", df6)
 
 # %% code Ⅰ-58.
-data = np.zeros((2,), dtype=[('A', 'i4'), ('B', 'f4'), ('C', 'S10')])  # 구조화 배열(A: 정수, B: 실수, C: 10바이트 문자열)
+# 구조화 배열(A: 정수, B: 실수, C: 10바이트 문자열)
+data = np.zeros((2,), dtype=[('A', 'i4'), ('B', 'f4'), ('C', 'S10')])
 print("data:", data)
 df7 = pd.DataFrame(data)    
 print("-"*20+"\ndf7:\n", df7)
@@ -388,7 +394,8 @@ d2 = {'one': pd.Series([3., 4., 5.], index=['c', 'd', 'e'])}
 df2 = pd.DataFrame(d2)
 print("-"*20+"\ndf2:\n", df2)
 
-df1_df2 = pd.concat((df1, df2), ignore_index=True, axis=0)  # 위아래로 이어 붙이기(인덱스 새로 매김)
+# 위아래로 이어 붙이기(인덱스 새로 매김)
+df1_df2 = pd.concat((df1, df2), ignore_index=True, axis=0)
 print("df1_df2:\n", df1_df2)
 print("-"*20+"\ndf1_df2.index:\n", df1_df2.index)
 
@@ -729,7 +736,8 @@ import pandas as pd
 np.random.seed(1)  # 실행할 때마다 같은 난수
 times = pd.date_range("2025-07-01", periods=28, freq="6h")  # 7일 × 하루 4번
 hour = times.hour.to_numpy()
-temp = 26 + 4 * np.sin((hour - 8) / 24 * 2 * np.pi) + np.random.randn(28)  # 낮에 높은 기온
+# 낮에 높은 기온
+temp = 26 + 4 * np.sin((hour - 8) / 24 * 2 * np.pi) + np.random.randn(28)
 df = pd.DataFrame({"일시": times.strftime("%Y-%m-%d %H:%M"),  # 날짜를 문자열로
                    "기온(°C)": temp.round(1),
                    "습도(%)": np.random.randint(55, 95, 28)})
@@ -765,7 +773,8 @@ date        temp   rain
 2025-07-04  25.5    2.0
 2025-07-05  28.0    0.0
 """
-df_txt = pd.read_csv(io.StringIO(text), skiprows=3, sep=r"\s+",  # 설명 3줄 건너뛰기, 공백 구분
+# 설명 3줄 건너뛰기, 공백 구분
+df_txt = pd.read_csv(io.StringIO(text), skiprows=3, sep=r"\s+",
                      parse_dates=["date"])                       # date 열은 날짜로
 print(df_txt)
 print("-" * 20)
@@ -773,7 +782,8 @@ print(df_txt.dtypes)
 
 # %% code Ⅰ-73.
 fpath_txt = proj_dir / "station_daily.txt"
-fpath_txt.write_text(text.replace("rain\n", "rain\n-----------------------\n"),  # 열 이름 아래에 구분선
+# 열 이름 아래에 구분선
+fpath_txt.write_text(text.replace("rain\n", "rain\n-----------------------\n"),
                      encoding="utf-8")
 
 with open(fpath_txt, encoding="utf-8") as f:  # 블록이 끝나면 파일이 저절로 닫힘
@@ -807,12 +817,13 @@ daily = df_r.groupby("날짜")["기온(°C)"].mean()  # 날짜별 평균 기온
 print(daily.round(1))
 
 print("-" * 20)
-by_hour = df_r.groupby("시")["기온(°C)"].agg(["mean", "min", "max"])  # 시각별 여러 통계
+# 시각별 여러 통계
+by_hour = df_r.groupby("시")["기온(°C)"].agg(["mean", "min", "max"])
 print(by_hour.round(1))
 
 # %% code Ⅰ-76.
-df_t = df_r.set_index("일시")                     # 일시를 인덱스로
-print(type(df_t.index).__name__)                 # DatetimeIndex
+df_t = df_r.set_index("일시")    # 일시를 인덱스로
+print(type(df_t.index).__name__)  # DatetimeIndex
 
 daily_r = df_t["기온(°C)"].resample("D").agg(["mean", "min", "max"])  # 하루 단위
 print(daily_r.round(1))
@@ -827,7 +838,8 @@ print("f(25) =", f(25))
 
 df_r["기온(°F)"] = df_r["기온(°C)"].apply(f)      # 열의 원소마다 f 적용
 df_r["구분"] = df_r["기온(°C)"].apply(lambda t: "더움" if t >= 28 else "보통")
-df_r["시간대"] = df_r["시"].map({0: "밤", 6: "아침", 12: "낮", 18: "저녁"})  # 딕셔너리로 바꾸기
+# 딕셔너리로 바꾸기
+df_r["시간대"] = df_r["시"].map({0: "밤", 6: "아침", 12: "낮", 18: "저녁"})
 print(df_r[["일시", "기온(°C)", "기온(°F)", "구분", "시간대"]].head(6))
 
 print("-" * 20)
@@ -835,14 +847,15 @@ print(df_r["구분"].value_counts())               # 값마다 개수 세기
 
 # %% code Ⅰ-78.
 fpath_out = proj_dir / "temp_week_result.csv"
-df_r.to_csv(fpath_out, index=False, encoding="utf-8-sig")  # 엑셀에서도 한글이 깨지지 않게
+# 엑셀에서도 한글이 깨지지 않게
+df_r.to_csv(fpath_out, index=False, encoding="utf-8-sig")
 print(fpath_out.name, "저장:", len(df_r), "행,", len(df_r.columns), "열")
 print(pd.read_csv(fpath_out, encoding="utf-8-sig").columns.tolist())
 
 # %% code Ⅰ-79.
 import matplotlib.pyplot as plt
 
-du.set_korean_font()  # 한글 글꼴 지정
+du.set_korean_font()                      # 한글 글꼴 지정
 fig, ax = plt.subplots(figsize=(4, 3))
 ax.plot([1, 2, 3, 4], [2, 3, 5, 10])
 ax.set_xlabel("X축")

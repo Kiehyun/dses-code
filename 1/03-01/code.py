@@ -113,11 +113,11 @@ t3 = Time(t3_string, format='isot')
 print("t3 :", t3)
 print("t3.format: ", t3.format)
 
-t3_jd = t3.jd  # 줄리안 데이
+t3_jd = t3.jd  # 율리우스일
 print("t3_jd :", t3_jd)
 print("type(t3_jd): ", type(t3_jd))
 
-t3_mjd = t3.mjd  # 수정 줄리안 데이
+t3_mjd = t3.mjd  # 수정 율리우스일
 print("t3_mjd :", t3_mjd)
 print("type(t3_mjd): ", type(t3_mjd))
 

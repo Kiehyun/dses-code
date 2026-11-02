@@ -55,8 +55,8 @@ display(method_table.sort_values("적색편이가 있는 수", ascending=False).
 c = 299792.458  # 빛의 속력(km/s)
 
 z = df["redshift (z)"]
-df["v_approx"] = c * z                                     # 비상대론 근사 v = cz
-df["v_rel"] = c * ((1 + z)**2 - 1) / ((1 + z)**2 + 1)      # 상대론적 도플러 관계
+df["v_approx"] = c * z  # 비상대론 근사 v = cz
+df["v_rel"] = c * ((1 + z)**2 - 1) / ((1 + z)**2 + 1)  # 상대론적 도플러 관계
 
 has_z = df.dropna(subset=["redshift (z)"])
 print(f"적색편이가 있는 측정값: {len(has_z):,}개, z 범위 {z.min():.5f} ~ {z.max():.3f}")

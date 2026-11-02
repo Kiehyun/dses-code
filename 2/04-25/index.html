@@ -52,8 +52,8 @@ ax.set_title(&quot;알베도에 따른 지구의 복사 평형 온도&quot;, fon
              fontweight=&quot;bold&quot;)
 ax.grid(alpha=0.3)
 plt.show()</code></pre>
-<h2 id="code-Ⅳ-82">code Ⅳ-82. <button class="copy">복사</button></h2><pre><code>T_a = T_e                    # 대기의 온도 = 복사 평형 온도
-T_s = 2 ** 0.25 * T_e        # 지표의 온도
+<h2 id="code-Ⅳ-82">code Ⅳ-82. <button class="copy">복사</button></h2><pre><code>T_a = T_e              # 대기의 온도 = 복사 평형 온도
+T_s = 2 ** 0.25 * T_e  # 지표의 온도
 
 print(f&quot;복사 평형 온도(대기 없음) : {T_e:7.2f} K = {T_e - 273.15:6.2f} °C&quot;)
 print(f&quot;1층 대기 모형의 지표 온도 : {T_s:7.2f} K = {T_s - 273.15:6.2f} °C&quot;)
@@ -61,13 +61,13 @@ print(f&quot;                    차이 : {T_s - T_e:7.2f} K&quot;)
 print()
 print(f&quot;실제 지구의 평균 기온     :  288.15 K =  15.00 °C&quot;)
 print(f&quot;실제 온실효과의 크기      : {288.15 - T_e:7.2f} K&quot;)</code></pre>
-<h2 id="code-Ⅳ-83">code Ⅳ-83. <button class="copy">복사</button></h2><pre><code>N = np.arange(0, 6)                       # 대기 층 수 (0 = 대기 없음)
+<h2 id="code-Ⅳ-83">code Ⅳ-83. <button class="copy">복사</button></h2><pre><code>N = np.arange(0, 6)                        # 대기 층 수 (0 = 대기 없음)
 T_layers = (N + 1) ** 0.25 * T_e - 273.15  # °C
 
 fig, ax = plt.subplots(figsize=(8.3, 4.4))
 bars = ax.bar(N, T_layers, color=&quot;#4a90d9&quot;, width=0.6)
-bars[0].set_color(&quot;#9aa7b5&quot;)              # 대기 없음
-bars[1].set_color(&quot;#e2553d&quot;)              # 1층 모형
+bars[0].set_color(&quot;#9aa7b5&quot;)  # 대기 없음
+bars[1].set_color(&quot;#e2553d&quot;)  # 1층 모형
 
 for x, y in zip(N, T_layers):
     ax.text(x, y + 1.2, f&quot;{y:.1f}&quot;, ha=&quot;center&quot;, fontsize=10,
@@ -173,7 +173,7 @@ b = budget
 # ① 지구 전체 (대기 위쪽 경계)
 check(&quot;지구 전체&quot;,
       b[&quot;입사&quot;],
-      (b[&quot;대기 반사·산란&quot;] + b[&quot;지표면 반사&quot;])          # 반사 30
+      (b[&quot;대기 반사·산란&quot;] + b[&quot;지표면 반사&quot;])  # 반사 30
       + b[&quot;대기의 창(우주로)&quot;] + b[&quot;대기의 복사(우주로)&quot;])  # 방출 70
 
 # ② 지표면

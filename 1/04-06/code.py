@@ -38,7 +38,7 @@ print("red :", red)
 import numpy as np
 red_arr = np.array(red)  # 이미지 → ndarray
 print("type(red_arr) : {}".format(type(red_arr)))
-print(red_arr.shape)  # (세로, 가로, 채널)
+print(red_arr.shape)     # (세로, 가로, 채널)
 
 # 24비트 RGB → 8비트 흑백('L')
 red = red.convert('L')
